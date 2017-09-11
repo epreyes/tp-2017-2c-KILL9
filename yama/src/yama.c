@@ -20,7 +20,7 @@ t_log* configLog() {
 	return log_create(LOG_PATH, "YAMA", 1, LOG_LEVEL_TRACE);
 }
 
-void setProperties(Yama* yama, t_condig* config) {
+void setProperties(Yama* yama, t_config* config) {
 	yama->port = config_get_int_value(config, "YAMA_PUERTO");
 	yama->fs_port = config_get_int_value(config, "FS_PUERTO");
 	yama->planning_delay = config_get_int_value(config, "RETARDO_PLANIFICACION");

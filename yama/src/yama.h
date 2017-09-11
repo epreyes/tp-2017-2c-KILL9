@@ -35,6 +35,8 @@ typedef struct{
 
 
 t_config* getConfig();
+
+void setProperties(Yama* yama, t_config* config);
 /*-----------------------------*/
 Yama configYama();
 
