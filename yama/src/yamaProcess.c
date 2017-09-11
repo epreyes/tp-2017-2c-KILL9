@@ -164,12 +164,10 @@ void explorarConexiones(Server* servidor, fd_set* readfds, fd_set* master) {
 int main(void) {
 	puts("!!!Hello YAMA!!!");
 	Yama yama = createYama();
-
-	printf("\nYama port: %d\n", yama.port);
-	printf("\nfilesystem port: %d\n", yama.fs_port);
-	printf("\nfilesystem ip: %s\n", yama.fs_ip);
-	printf("\nYama Planning delay: %d\n", yama.planning_delay);
-	printf("\nYama Algorithm: %s\n", yama.balancign_algoritm);
+	yama.yama_server = startServer(yama.port);
+	if(yama.yama_server.status > -1){
+		printf("\nYAMA listo para aceptar conexiones\n");
+	}
 	/*
 	 * char fs_ip[15];
 	int fs_port;

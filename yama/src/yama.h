@@ -12,8 +12,10 @@
 #include <stdlib.h>
 #include <commons/config.h>
 #include <commons/log.h>
-#include "../lib/socket/Socket.h"
+#include "lib/socket/Socket.h"
 #include "../protocol/protocol.h"
+
+static char* CONFIG_PATH="./config/yamaConfig.properties";
 
 typedef struct{
 
