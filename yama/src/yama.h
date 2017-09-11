@@ -16,6 +16,7 @@
 #include "../protocol/protocol.h"
 
 static char* CONFIG_PATH="./config/yamaConfig.properties";
+static char* LOG_PATH="./log/yama.log";
 
 typedef struct{
 
@@ -29,18 +30,31 @@ typedef struct{
 	int port;
 	Server yama_server;
 	Client yama_client;
+	t_log* log;
 }Yama;
 
 
 t_config* getConfig();
 /*-----------------------------*/
-Yama createYama();
+Yama configYama();
+
+void waitForMasters();
+
+Client acceptMasterConnection(Yama* yama, Server* server, fd_set* masterList, int hightSd);
+
+int processRequest(Yama* yama, void* buff, int socket, int nbytes);
+
+int getMasterMessage(Yama* yama, int socket, int* nbytes, fd_set* mastersList);
+
+void exploreMastersConnections(Yama* yama, fd_set* mastersListTemp, fd_set* mastersList);
+
+/*
 void transformation();
 void localReduction();
 void globalReduction();
 void finalStore();
 char* getTemporalFileName();
 void getFileInfo();
-
+*/
 
 #endif /* YAMA_H_ */
