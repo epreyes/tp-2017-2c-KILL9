@@ -15,6 +15,8 @@
 #define HEAD_SIZE 8
 
 int procesarPersona(int sock, void* buff, int tam) {
+	free(buff);
+	buff = malloc(tam);
 	recv(sock, buff, tam, 0);
 
 	typedef struct estructura {
@@ -33,21 +35,26 @@ int procesarPersona(int sock, void* buff, int tam) {
 }
 
 int procesarEmpresa(int sock, void* buff, int tam) {
+	free(buff);
+	buff = malloc(tam);
 	recv(sock, buff, tam, 0);
 
-	typedef struct empre{
-				char nombre[20];
-				int cuit;
-				int tele;
-			}empre;
+	typedef struct empre {
+		char nombre[20];
+		int cuit;
+		int tele;
+	} empre;
 
 	empre empresa;
 	memcpy(empresa.nombre, buff, sizeof(empresa.nombre));
-	memcpy(&(empresa.cuit), buff + sizeof(empresa.nombre), sizeof(empresa.cuit));
-	memcpy(&(empresa.tele), buff + sizeof(empresa.nombre)+sizeof(empresa.cuit), sizeof(empresa.cuit));
+	memcpy(&(empresa.cuit), buff + sizeof(empresa.nombre),
+			sizeof(empresa.cuit));
+	memcpy(&(empresa.tele),
+			buff + sizeof(empresa.nombre) + sizeof(empresa.cuit),
+			sizeof(empresa.cuit));
 
-	printf("Recibi una EMPRESA llamada %s con cuit %d y telef %d\n", empresa.nombre,
-			empresa.cuit, empresa.tele);
+	printf("Recibi una EMPRESA llamada %s con cuit %d y telef %d\n",
+			empresa.nombre, empresa.cuit, empresa.tele);
 
 	return 1;
 }
@@ -79,7 +86,12 @@ int procesarDatos(void* buff, int sock, int bytes) {
 
 int obtenerRespuesta(int socket, int* nbytes, fd_set* master) {
 
-	void* buff;
+	typedef struct header {
+		int tipo;
+		int tam;
+	} header;
+
+	void* buff = malloc(sizeof(header));
 
 	*nbytes = recv(socket, buff, HEAD_SIZE, 0);
 	if (*nbytes <= 0) { //si hubo un error en la conexion puede ser cero o menos uno.
