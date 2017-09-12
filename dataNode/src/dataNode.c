@@ -10,8 +10,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <commons/config.h>
+#include "dataNode.h"
 
 int main(void) {
-	puts("!!!Hello DATANODE!!!"); /* prints !!!Hello World!!! */
+	load_properties_files();
+
 	return EXIT_SUCCESS;
+}
+
+void  load_properties_files(){
+	t_data_node_config = config_create(DATA_NODE_PATH);
 }
