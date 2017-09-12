@@ -234,6 +234,18 @@ int runGlobalReduction(rg_datos yamaAnswer[], int totalRecords){
 	return EXIT_SUCCESS;
 }
 
+////////////////////////////////////SAVE_RESULTS/////////////////////////////////////////
+
+int saveResult(rg_datos yamaAnswer[], int totalRecords){
+	/*
+	..
+
+	//conectarseConWorker y pasar yamaAnswer.rg_tmp
+
+	..
+	*/
+	return EXIT_SUCCESS;
+}
 
 
 
@@ -246,10 +258,10 @@ int main(int argc, char* argv[]){
 	int answerSize_RG = sizeof(rg_answer)/sizeof(rg_answer[0]);
 	int answerSize_AF = sizeof(af_answer)/sizeof(af_answer[0]);
 
-	//validateArgs(argc, argv);						/valido argumentos
+	validateArgs(argc, argv);						//valido argumentos
 	transformFile(tr_answer,answerSize_TR);			//se conecta a YAMA y devuelve array de struct
 	runLocalReduction(rl_answer,answerSize_RL);		//ordena ejecución de Reductor Local
 	runGlobalReduction(rg_answer,answerSize_RG);	//ordena ejecución de Reductor Global
-	//saveResult(argv[])							//ordena guardado en FileSystem
+	saveResult(af_answer,answerSize_AF);			//ordena guardado en FileSystem
 	return EXIT_SUCCESS;
 };
