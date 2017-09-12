@@ -1,0 +1,17 @@
+[TRACE] 16:38:19:298 YAMA/(431:431): YAMA ready to accept Masters connections
+[TRACE] 16:38:29:265 YAMA/(431:431): Connection incomming
+[TRACE] 16:38:29:266 YAMA/(431:431): New Master connection
+[TRACE] 16:38:29:266 YAMA/(431:431): Master process connected!
+[TRACE] 16:38:43:819 YAMA/(431:431): Connection incomming
+[TRACE] 16:38:43:819 YAMA/(431:431): New Master connection
+[TRACE] 16:38:43:819 YAMA/(431:431): Master process connected!
+[TRACE] 16:38:46:208 YAMA/(431:431): Connection incomming
+[TRACE] 16:38:46:208 YAMA/(431:431): Getting Master message...
+[TRACE] 16:38:46:208 YAMA/(431:431): Process Master Request
+[TRACE] 16:38:46:208 YAMA/(431:431): Connection incomming
+[TRACE] 16:38:46:208 YAMA/(431:431): Getting Master message...
+[TRACE] 16:38:46:208 YAMA/(431:431): Process Master Request
+[TRACE] 16:39:10:71 YAMA/(431:431): Connection incomming
+[TRACE] 16:39:10:71 YAMA/(431:431): Master disconnected
+[TRACE] 16:39:20:977 YAMA/(431:431): Connection incomming
+[TRACE] 16:39:20:977 YAMA/(431:431): Master disconnected
