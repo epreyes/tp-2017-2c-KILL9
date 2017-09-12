@@ -1,17 +1,23 @@
 #include "Socket.h"
 
 /*------------------------------- Common functions -------------------------------------*/
+
+/*
+ *  openSocket: funcion commun para clientes y servidores. Devuelve el id del socket creado.*/
 int openSocket() {
 	return socket(AF_INET, SOCK_STREAM, 0);
 }
 /*--------------------------------------------------------------------------------------*/
 
 /*------------------------------- CLIENT -----------------------------------------------*/
+
 /*------------------------ private Client functions ------------------------------------*/
 
 /*------------------------ public Client functions -------------------------------------*/
-
-int connectClient(Client* client, char* ip, int port) {
+/* connectClient: realiza la conexion del cliente a la ip y puerto pasados como parametro.
+ * Devuelve una estructura Client, con el socket_id ya conectado al server.*/
+Client connectClient(char* ip, int port) {
+	Client client;
 	int sockfd;
 	struct sockaddr_in dest_addr;
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -20,21 +26,24 @@ int connectClient(Client* client, char* ip, int port) {
 	dest_addr.sin_addr.s_addr = inet_addr(ip);
 	memset(&(dest_addr.sin_zero), '\0', 8);
 
-	client->address = dest_addr;
-	client->socket_id = connect(sockfd, (struct sockaddr *) &dest_addr, sizeof(struct sockaddr));
-	client->sock_server_id = sockfd;
-	return client->socket_id;
+	client.address = dest_addr;
+	client.socket_id = connect(sockfd, (struct sockaddr *) &dest_addr, sizeof(struct sockaddr));
+	client.socket_server_id = sockfd;
+	return client;
 }
 
-/*int stop(Client* server){
- return 0;
- }*/
+/* disconnectClient: cierra el socket cliente. */
+int disconnectClient(Client* client){
+ return close(client->socket_id);
+}
 
+/* getClientHostName: devuelve el nombre del host del cliente. Falta implementar. No se si es tan util. */
 char* getClientHostName(Client* client) {
 	//return server->host->h_name;
 	return "localhost";
 }
 
+/* getClientIp: devuelve la ip del cliente. Falta implementar. No se si es tan util. */
 char* getClientIp(Client* client) {
 	//return inet_ntoa(*((struct in_addr *) server->host->h_addr));
 	return "127.0.0.1";
@@ -68,14 +77,9 @@ int startListen(Server* server) {
 	return listen(server->server_socket, PENDING_CONECTIONS);
 }
 
-void clearClientsList(Server* server) {
-	int i = 0;
-	for (i = 0; i < MAX_CLIENTS; i++) {
-		server->clients_socket[i] = 0;
-	}
-}
-
 /*------------------------ public Server functions -------------------------------------*/
+/* startServer: crea un servidor en la ip local y el puerto pasado como parametro.
+ * Lo deja listo para recibir conexiones. Devuelve una estructura Server.*/
 Server startServer(int port) {
 	Server server;
 	server.server_socket = openSocket();
@@ -83,20 +87,22 @@ Server startServer(int port) {
 	allowMultipleConnections(server);
 	createAddressStructure(&server, port);
 	bindSocket(&server);
-	clearClientsList(&server);
 	server.higherSocketDesc = server.server_socket;
 	server.status = startListen(&server);
 	return server;
 }
 
-int stop(Server* server) {
+/* stopServer: cierra el socket en el cual se levanto el servidor */
+int stopServer(Server* server) {
 	return close(server->server_socket);
 }
 
+/* getServerHostName: devuelve el nombre del host en el cual se levanto el servidor. */
 char* getServerHostName(Server* server) {
 	return server->host->h_name;
 }
 
+/* getServerIp: devuelve la ip del host en el cual se levanto el servidor. */
 char* getServerIp(Server* server) {
 	return inet_ntoa(*((struct in_addr *) server->host->h_addr));
 }
