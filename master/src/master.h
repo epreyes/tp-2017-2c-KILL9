@@ -12,8 +12,8 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <string.h>
-#include <commons/config.h>
-#include <commons/log.h>
+//#include <commons/config.h>
+//#include <commons/log.h>
 #include "answers.h"
 
 

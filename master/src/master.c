@@ -8,18 +8,11 @@
  ============================================================================
  */
 
+//=====LIBREARIES=========//
 
 #include "master.h"
 
-typedef char tr_tmp[28];
-
-typedef struct dataThread_LR{
-	int		node;
-	char 	conector[21];
-	tr_tmp* tr_tmps;
-	char	rl_tmp[24];
-	int 	tmpsCounter;
-}dataThread_LR;
+//=====STRUCTURES=========//
 
 
 typedef struct block{
@@ -29,10 +22,38 @@ typedef struct block{
 
 typedef struct dataThread_TR{
 	int		node;
-	char 	conector[100];
+	char 	conector[21];
 	block* 	blocks;
 	int		blocksCount;
 }dataThread_TR;
+
+
+typedef char tr_tmp[28];
+
+typedef struct dataThread_LR{
+	int		node;
+	char 	conector[21];
+	tr_tmp* tr_tmps;
+	char	rl_tmp[28];
+	int 	tmpsCounter;
+}dataThread_LR;
+
+typedef struct dataNodes{
+	int		node;
+	char 	conector[21];
+	char	rl_tmp[28];
+}dataNodes;
+
+typedef struct dataThread_GR{
+	int			leadNode;
+	char 		leadConector[21];
+	char		rg_tmp[24];
+	dataNodes* 	brothersData;
+	int			brothersCount;
+}dataThread_GR;
+
+
+//=============================================
 
 void validateArgs(int argc, char* argv[]){
 	int count;
@@ -48,6 +69,8 @@ void validateArgs(int argc, char* argv[]){
 	}
 };
 
+////////////////////////////////////TRANSFORM/////////////////////////////////////////
+
 void *runTransformThread(void* data){
 	int i;
 	dataThread_TR* datos = (dataThread_TR*) data;
@@ -58,19 +81,6 @@ void *runTransformThread(void* data){
 	//conectarse con WORKER y esperar respuesta.
 	return NULL;
 }
-
-void *runLocalRedThread(void* data){
-	int i;
-	dataThread_LR* datos = (dataThread_LR*) data;
-	printf("hilo iniciado:%d\t servidor:%s\t reduciónFile:%s\n",datos[0].node,datos[0].conector,datos[0].rl_tmp);
-	for (i = 0; i <= (datos[0].tmpsCounter); ++i){
-		printf("\t nodo:%d \t local:%s\n", datos[0].node, datos[0].tr_tmps[i]);
-	}
-	//conectarse con WORKER y esperar respuesta.
-	return NULL;
-}
-
-////////////////////////////////////TRANSFORM/////////////////////////////////////////
 
 int transformFile(tr_datos yamaAnswer[], int totalRecords){
 	int blockCounter=0,recordCounter=0, nodeCounter=0, threadIndex=0, nodo;
@@ -109,7 +119,6 @@ int transformFile(tr_datos yamaAnswer[], int totalRecords){
 //---joineo los hilos----
 
 	for(threadIndex=0;threadIndex<nodeCounter;++threadIndex){
-		printf("Espero al thread %d\n", threadIndex);
 		pthread_join(threads[threadIndex],NULL);
 	}
 /*
@@ -127,6 +136,17 @@ int transformFile(tr_datos yamaAnswer[], int totalRecords){
 }
 
 ////////////////////////////////////LOCAL_REDUCTION/////////////////////////////////////////
+void *runLocalRedThread(void* data){
+	int i;
+	dataThread_LR* datos = (dataThread_LR*) data;
+	printf("hilo iniciado:%d\t servidor:%s\t reduciónFile:%s\n",datos[0].node,datos[0].conector,datos[0].rl_tmp);
+	for (i = 0; i <= (datos[0].tmpsCounter); ++i){
+		printf("\t nodo:%d \t local:%s\n", datos[0].node, datos[0].tr_tmps[i]);
+	}
+	//conectarse con WORKER y esperar respuesta.
+	return NULL;
+}
+
 
 int runLocalReduction(rl_datos yamaAnswer[], int totalRecords){
 	int tmpsCounter=0,recordCounter=0, nodeCounter=0, threadIndex=0, nodo;
@@ -164,7 +184,6 @@ int runLocalReduction(rl_datos yamaAnswer[], int totalRecords){
 //------joineo los hilos----
 
 	for(threadIndex=0;threadIndex<nodeCounter;++threadIndex){
-		printf("Espero al thread %d\n", threadIndex);
 		pthread_join(threads[threadIndex],NULL);
 	}
 //------libero memoria-----------------
@@ -181,6 +200,41 @@ int runLocalReduction(rl_datos yamaAnswer[], int totalRecords){
 }
 
 
+////////////////////////////////////GLOBAL_REDUCTION/////////////////////////////////////////
+
+int runGlobalReduction(rg_datos yamaAnswer[], int totalRecords){
+	int recordCounter=0;
+	dataNodes *brothersData = NULL;
+	brothersData = (dataNodes*) malloc(sizeof(dataNodes));
+	dataThread_GR* dataThread = NULL;
+	dataThread = (dataThread_GR*) malloc(sizeof(dataThread_GR));
+	//recorro los registros de la respuesta
+	while(recordCounter<totalRecords){
+		if(yamaAnswer[recordCounter].encargado==1){
+			dataThread->leadNode = yamaAnswer[recordCounter].nodo;
+			strcpy(dataThread->leadConector, yamaAnswer[recordCounter].direccion);
+			strcpy(dataThread->rg_tmp, yamaAnswer[recordCounter].rg_tmp);
+		}else{
+			brothersData = (dataNodes*)realloc(brothersData,(sizeof(dataNodes)*(recordCounter+1)));
+			strcpy(brothersData[recordCounter].conector, yamaAnswer[recordCounter].direccion);
+			brothersData[recordCounter].node = yamaAnswer[recordCounter].nodo;
+			strcpy(brothersData[recordCounter].rl_tmp, yamaAnswer[recordCounter].rl_tmp);
+		}
+		recordCounter++;
+	};
+	dataThread->brothersData = (dataNodes *) malloc(sizeof(dataNodes)*recordCounter);
+	dataThread->brothersData = (dataNodes *) memcpy(dataThread->brothersData,brothersData, sizeof(dataNodes)*recordCounter);
+	dataThread->brothersCount = recordCounter;
+
+
+	free(brothersData);
+	free(dataThread->brothersData);
+	free(dataThread);
+
+	return EXIT_SUCCESS;
+}
+
+
 
 
 ///////////MAIN PROGRAM///////////
@@ -189,11 +243,13 @@ int main(int argc, char* argv[]){
 	//recibo respuesta de Yama
 	int answerSize_TR = sizeof(tr_answer)/sizeof(tr_answer[0]);
 	int answerSize_RL = sizeof(rl_answer)/sizeof(rl_answer[0]);
-	//
-	validateArgs(argc, argv);					//valido argumentos
-	//transformFile(tr_answer,answerSize_TR);	//se conecta a YAMA y devuelve array de struct
-	runLocalReduction(rl_answer,answerSize_RL);	//ordena ejecución de Reductor Local
-	//runGlobalReduction(argv[2])				//ordena ejecución de Reductor Global
-	//saveResult(argv[])						//ordena guardado en FileSystem
+	int answerSize_RG = sizeof(rg_answer)/sizeof(rg_answer[0]);
+	int answerSize_AF = sizeof(af_answer)/sizeof(af_answer[0]);
+
+	//validateArgs(argc, argv);						/valido argumentos
+	transformFile(tr_answer,answerSize_TR);			//se conecta a YAMA y devuelve array de struct
+	runLocalReduction(rl_answer,answerSize_RL);		//ordena ejecución de Reductor Local
+	runGlobalReduction(rg_answer,answerSize_RG);	//ordena ejecución de Reductor Global
+	//saveResult(argv[])							//ordena guardado en FileSystem
 	return EXIT_SUCCESS;
 };
