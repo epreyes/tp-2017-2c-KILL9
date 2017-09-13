@@ -10,8 +10,18 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <tp-share-library/socket.h>
 int main(void) {
-	puts("!!!Hello FILESYSTEM!!!"); /* prints !!!Hello World!!! */
+
+	//Prueba socket servidor
+	int fd_client_socket;
+	int listenning_socket = open_socket(5003,10);
+
+	for(;;){
+		fd_client_socket = accept_connection(listenning_socket);
+		puts("se coneceto client");
+	}
+
+
 	return EXIT_SUCCESS;
 }
