@@ -8,20 +8,9 @@
 #ifndef ANSWERS_H_
 #define ANSWERS_H_
 
-typedef struct tr_datos tr_datos;
-typedef struct rl_datos rl_datos;
-typedef struct rg_datos rg_datos;
-typedef struct af_datos af_datos;
+#include "master.h"
 
 /*===================TRANSFORMACION====================*/
-
-struct tr_datos{
-	int		nodo;
-	char	direccion[21];
-	int		bloque;
-	int		tamanio;
-	char	tr_tmp[28];
-};
 
 tr_datos tr_answer[] = {
 	{1,"123.123.123.123:4202",68,100000,"/tmp/1415463776-T-M000-B068"},
@@ -38,12 +27,7 @@ tr_datos tr_answer[] = {
 
 /*===================REDUCCIÓN=LOCAL====================*/
 
-struct rl_datos{
-	int	nodo;
-	char	direccion[21];
-	char	tr_tmp[28];
-	char	rl_tmp[28];
-};
+
 
 rl_datos rl_answer[] = {
 	{1,"123.123.123.123:4202","/tmp/1415463776-T-M000-B068","/tmp/1415463776-RL-M000-W01"},
@@ -56,13 +40,7 @@ rl_datos rl_answer[] = {
 
 /*===================REDUCCIÓN=GLOBAL====================*/
 
-struct rg_datos{				//es un record por nodo
-	int		nodo;
-	char	direccion[21];
-	char	rl_tmp[28];
-	char	rg_tmp[24];
-	char	encargado;
-};
+
 
 rg_datos rg_answer[] = {
 	{1,"123.123.123.123:4202","/tmp/1415463776-RL-M000-W01","",0},
@@ -72,12 +50,6 @@ rg_datos rg_answer[] = {
 };
 
 /*===================ALMACENADO=FINAL====================*/
-
-struct af_datos{
-	int	nodo;
-	char	direccion[21];
-	char	rg_tmp[24];
-};
 
 af_datos af_answer[] = {
 	{1,"123.123.123.123:4202","/tmp/1415463776-RG-M000"},
