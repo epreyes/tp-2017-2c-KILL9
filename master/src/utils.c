@@ -37,3 +37,8 @@ void validateConfigs(){
 	}
 	config_destroy(config);
 }
+
+void createLoggers(){
+	char* LOG_PATH = "../logs/master.log";
+	logger = log_create(LOG_PATH,"master",1,LOG_LEVEL_INFO);
+}

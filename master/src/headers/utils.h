@@ -16,4 +16,6 @@ void validateArgs(int argc, char* argv[]);
 
 void validateConfigs(void);
 
+void createLoggers(void);
+
 #endif /* HEADERS_UTILS_H_ */

@@ -18,5 +18,6 @@ int saveResult(af_datos yamaAnswer[], int totalRecords, metrics *masterMetrics){
 	gettimeofday(&af_end,NULL);
 	masterMetrics->finalStorage.runTime = timediff(&af_end,&af_start);
 	masterMetrics->finalStorage.errors = 0;
+
 	return EXIT_SUCCESS;
 }

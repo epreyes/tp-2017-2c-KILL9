@@ -18,11 +18,11 @@
 #include <time.h>
 #include <sys/time.h>
 #include <commons/config.h>
+#include <commons/log.h>
 
+//=========LOGGERS=============//
 
-
-//=========CONFIG===============//
-
+t_log* logger;
 
 //=========METRICS TAD=========//
 
