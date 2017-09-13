@@ -19,6 +19,7 @@
 #include "headers/localReduction.h"
 #include "headers/globalReduction.h"
 #include "headers/finalStorage.h"
+#include <commons/config.h>
 
 
 ///////////MAIN PROGRAM///////////
@@ -37,6 +38,7 @@ int main(int argc, char* argv[]){
 	int answerSize_RG = sizeof(rg_answer)/sizeof(rg_answer[0]);
 	int answerSize_AF = sizeof(af_answer)/sizeof(af_answer[0]);
 
+	validateConfigs();
 	validateArgs(argc, argv);									//valido argumentos
 	transformFile(tr_answer,answerSize_TR,&masterMetrics);		//ordena ejecución de transformacion
 	runLocalReduction(rl_answer,answerSize_RL,&masterMetrics);	//ordena ejecución de Reductor Local
@@ -47,4 +49,5 @@ int main(int argc, char* argv[]){
 	masterMetrics.runTime = timediff(&end,&start);
 	printMetrics(masterMetrics);
 	return EXIT_SUCCESS;
+
 };

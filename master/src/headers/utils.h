@@ -14,4 +14,6 @@ double timediff(struct timeval *a, struct timeval *b);
 
 void validateArgs(int argc, char* argv[]);
 
+void validateConfigs(void);
+
 #endif /* HEADERS_UTILS_H_ */
