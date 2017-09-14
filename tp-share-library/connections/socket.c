@@ -7,8 +7,7 @@
  *
  */
 
-#include "../tp-share-library/socket.h"
-
+#include "../connections/socket.h"
 #include <commons/config.h>
 #include <errno.h>
 #include <netdb.h>
@@ -49,8 +48,9 @@ int accept_connection(int fd_server_socket){
 
 	return fd_client_socket;
 }
+/**Guarda en socket_int el valor del fd del socket de conexion**/
 
-int connect_to_socket(char * server_ip,char * server_port){
+int connect_to_servidor(char * server_ip,char * server_port,int * socket_int){
 	struct addrinfo hints;
 	struct addrinfo * server_info;
 
@@ -76,10 +76,11 @@ int connect_to_socket(char * server_ip,char * server_port){
 		perror("socket -> error en connect()\n");
 		exit(1);
 	}
+	(*socket_int) = fd_server_socket;
 	//libero recursos
 	freeaddrinfo(server_info);
 
-	return fd_server_socket;
+	return EXIT_SUCCESS;
 }
 
 int close_client(int fd_client_socket) {

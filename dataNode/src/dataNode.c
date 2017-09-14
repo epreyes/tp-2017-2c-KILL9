@@ -11,18 +11,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <commons/config.h>
-#include "dataNode.h"
-#include <tp-share-library/socket.h>
+#include "headers/dataNode.h"
+#include <connections/socket.h>
 
 int fd_server_socket;
 
 int main(void) {
 	load_properties_files();
 
-	fd_server_socket = connect_to_socket(data_node_conf->file_system_ip,data_node_conf->file_system_port);
+	//fd_server_socket = connect_to_servidor(data_node_conf->file_system_ip,data_node_conf->file_system_port,&fileSystemSocket);
 
-
-
+	connectionToFileSystem();
 	return EXIT_SUCCESS;
 }
 

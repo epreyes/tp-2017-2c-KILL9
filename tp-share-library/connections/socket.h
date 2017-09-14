@@ -5,18 +5,20 @@
  *      Author: utnso
  */
 
-#ifndef TP_SHARE_LIBRARY_SOCKET_H_
-#define TP_SHARE_LIBRARY_SOCKET_H_
+#ifndef CONNECTIONS_SOCKET_H_
+#define CONNECTIONS_SOCKET_H_
 
-#include "../tp-share-library/socket.h"
-
-#include <commons/config.h>
-#include <errno.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netdb.h>
-#include <sys/time.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
+#include <errno.h>
+#include <string.h>
+#include <netdb.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <commons/string.h>
 
 /**
  * Crear un socket servidor
@@ -47,10 +49,10 @@ int accept_connection(int);
  *
  * @PARAMS char * server_ip   : ip del socket servidor
  * 		   char * server_port : puerto del socket servidor
- *
- * @RETURN int : file descriptor del socket servidor
+ *		   int * server_int  : El valor del fd del socket de conexion
+ * @RETURN int : 0 en caso de exito
  */
-int connect_to_socket(char *, char *);
+int connect_to_servidor(char *server_ip, char *server_port,int *fdsocket);
 
 /**
  * @NAME:  close_client
@@ -63,4 +65,4 @@ int connect_to_socket(char *, char *);
 int close_client(int);
 
 
-#endif /* TP_SHARE_LIBRARY_SOCKET_H_ */
+#endif /* CONNECTIONS_SOCKET_H_ */
