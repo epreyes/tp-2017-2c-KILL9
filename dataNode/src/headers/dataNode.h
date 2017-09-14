@@ -7,15 +7,16 @@
 
 #ifndef DATANODE_DATANODE_H_
 #define DATANODE_DATANODE_H_
+#include <stdio.h>
+#include <stdlib.h>
 #include <commons/config.h>
+#include <connections/socket.h>
+#include <commons/config.h>
+#include <commons/log.h>
+#include <protocolos/protocols.h>
 /*
  * STATIC
  */
-static char* IP_FILESYSTEM = "IP_FILESYSTEM";
-static char* PORT_FILESYSTEM="PORT_FILESYSTEM";
-static char* NAME_NODO="NAME_NODO";
-static char* PORT_WORKER="PORT_WORKER";
-static char* PORT_DATANODE="PORT_DATANODE";
 static char* PATH_DATABIN="PATH_DATABIN";
 
 static char* DATA_NODE_PATH="./properties/dataNode.properties";
@@ -30,7 +31,11 @@ typedef struct{
 }t_data_node_config;
 
 
+/**Variables Globales */
 t_data_node_config* data_node_conf;
+t_log* infoLogger;
+int32_t fileSystemSocket;
+
 void load_properties_files();
 
 
