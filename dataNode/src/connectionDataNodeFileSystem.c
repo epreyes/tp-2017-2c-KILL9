@@ -17,17 +17,30 @@ void connectionToFileSystem(){
 		exit(EXIT_FAILURE);
 	}
 
-	PROTOCOLO_DATANODE_TO_FILESYSTEM handshake = HANDSHAKE_CONNECT_DATANODE_TO_FILESYSTEM;
+	PROTOCOL_DATANODE_TO_FILESYSTEM handshake = HANDSHAKE_CONNECT_DATANODE_TO_FILESYSTEM;
+	//Envio  mensaje al file system
+	libtp_sendMessage(fileSystemSocket, &handshake,sizeof(PROTOCOL_DATANODE_TO_FILESYSTEM), infoLogger);
 
-	libtp_sendMessage(fileSystemSocket, &handshake,
-				sizeof(PROTOCOLO_DATANODE_TO_FILESYSTEM), infoLogger);
+	//Espero respuesta del filesytem
+	PROTOCOL_FILESYSTEM_TO_DATANODE handshakeResponse;
+	result =  libtp_receiveMessage(fileSystemSocket,&handshakeResponse,
+			sizeof(PROTOCOL_FILESYSTEM_TO_DATANODE),infoLogger);
 
-	//TODO manejar de acuerdo al resultado enviado por filesystem
+	//Manejo respuesta del FILESYTEM
 	switch(result){
-	case  :
+	case CLOSE_CONNECTION :
+		log_info(infoLogger,"-> Se  desconecto el FILESYSTEM");
+		printf("Se desconecto el FILESYSTEM");
 		break;
+	case RECEIVE_OK:
+		if(handshakeResponse == HANDSHAKE_CONNECTION_FILESYSTEM_TO_DATANODE_OK){
+			//TODO tirar magia -> atender get y set de bloques de datos.
 
+		}
+		break;
 	default:
+		log_info(infoLogger,"-- Error al recibir los datos del FILESYSTEM");
+		printf("-- Error al recibir los datos del FILESYSTEM ");
 		break;
 
 	}

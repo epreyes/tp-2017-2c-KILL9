@@ -9,8 +9,6 @@
 #define HEADERS_CONNECTIONDATANODEFILESYSTEM_H_
 
 #include "dataNode.h"
-
-
 /** Funciones */
 void connectionToFileSystem();
 

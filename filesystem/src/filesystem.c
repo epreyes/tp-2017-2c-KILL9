@@ -8,9 +8,9 @@
  ============================================================================
  */
 
+#include <connections/socket.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <tp-share-library/socket.h>
 int main(void) {
 
 	//Prueba socket servidor
