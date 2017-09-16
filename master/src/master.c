@@ -40,41 +40,29 @@ void validateArgs(int argc, char* argv[]){
 	}
 };
 
-int runWorkerThread(int node, block* blocks, int quantity, char* server){
-	int i;
-	printf("estableciendo conexion con nodo %d del server: %s \n", node, server);
-	usleep(1000000);
-	for (i = 0; i <= quantity; ++i) {
-		printf("\t posicion: %d\n", blocks[i].pos);
-		printf("\t tamanio: %d\n", blocks[i].size);
-	};
-	return EXIT_SUCCESS;
-}
-
-
-void holaHilo(void *args){
+int runWorkerThread(void *args){
 	int i;
 	dataThread* datos;
 	datos = malloc(sizeof(dataThread));
 	datos = (dataThread*) args;
-	printf("hilo iniciado:%d\n",datos->node);
-	printf("servidor:%s\n",datos->conector);
-	printf("bloques:\n");
+	usleep(1000);
+	printf("hilo iniciado:%d\n servidor:%s\n",datos->node,datos->conector);
 	for (i = 0; i <= (datos->blocksCount); ++i){
-		printf("\t posicion: %d\n", datos->blocks[i].pos);
-		printf("\t tamanio: %d\n", datos->blocks[i].size);
+		printf("\t nodo:%d \t pos:%d  \t tam:%d\n", datos->node, datos->blocks[i].pos, datos->blocks[i].size);
 	}
+	return EXIT_SUCCESS;
 }
 
 /////////////////////////TRANSFORM///////////////////////////////////
 
 int transformFile(tr_datos yamaAnswer[], int totalRecords){
-	int blockCounter=0,recordCounter=0, nodo;
+	int blockCounter=0,recordCounter=0,threadCounter=0, threadIndex=0, nodo;
 	block *blocks=NULL;
 	blocks=malloc(sizeof(block));
-	pthread_t thread;
-	dataThread *dataThread1;
-	dataThread1 = malloc(sizeof(dataThread));
+	pthread_t *threads;
+	threads=malloc(sizeof(pthread_t)*10); //pasar a realloc dinámico
+	dataThread *dataThreads;
+	dataThreads = malloc(sizeof(dataThread)*10); //pasar a realloc dinámico
 
 	while(recordCounter<totalRecords){
 		nodo = yamaAnswer[recordCounter].nodo;	//init first key
@@ -85,20 +73,25 @@ int transformFile(tr_datos yamaAnswer[], int totalRecords){
 			blockCounter++;
 			recordCounter++;
 		};
-		dataThread1->node=nodo;
-		dataThread1->conector=yamaAnswer[recordCounter-1].direccion;
-		dataThread1->blocks=blocks;
-		dataThread1->blocksCount=blockCounter-1;
-
-		pthread_create(&thread,NULL,holaHilo,(void*) dataThread1);
-		pthread_join(thread,NULL);
-		printf("se creo el hilo %d", nodo);
-		//runWorkerThread(nodo, blocks, blockCounter-1, yamaAnswer[nodo].direccion); //crea hilo, se conecta, pasa datos y espera respuesta
+		dataThreads[threadCounter].node=nodo;
+		dataThreads[threadCounter].conector=yamaAnswer[recordCounter-1].direccion;
+		dataThreads[threadCounter].blocks=blocks;
+		dataThreads[threadCounter].blocksCount=blockCounter-1;
+		int i=0;
+		for(i=0;i<=blockCounter-1;++i){
+			printf("\t thread: %d \t pos:%d\t size:%d\n",threadCounter, dataThreads[threadCounter].blocks[i].pos,dataThreads[threadCounter].blocks[i].size);
+		}
+		pthread_create(&threads[threadCounter],NULL,(void*) runWorkerThread,(void*) &dataThreads[threadCounter]);
+		threadCounter++;
 		blockCounter = 0;
 	};
-	usleep(1000000);
+	for (threadIndex=0;threadIndex<=threadCounter;++threadIndex){
+		pthread_join(threads[threadCounter],NULL);
+	}
+	usleep(100000);
 	free(blocks);
-	free(dataThread1);
+	free(dataThreads);
+	free(threads);
 	return EXIT_SUCCESS;
 };
 
