@@ -14,26 +14,20 @@
 #include <connections/handler.h>
 #include <commons/config.h>
 #include <commons/log.h>
-#include "protocols/protocol.h"
+#include <struct/struct.h>
+#include "../protocols/protocol.h"
+
 /*
  * STATIC
  */
-static char* PATH_DATABIN="PATH_DATABIN";
 
 static char* DATA_NODE_PATH="./properties/dataNode.properties";
+
+/** Variables globales **/
 t_config * t_data_node;
-
-/**
- * Struct
- */
-typedef struct{
- char * file_system_ip;
- char * file_system_port;
-}t_data_node_config;
+t_data_node_config* data_node_config;
 
 
-/**Variables Globales */
-t_data_node_config* data_node_conf;
 t_log* infoLogger;
 int32_t fileSystemSocket;
 

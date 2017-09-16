@@ -17,7 +17,7 @@
 int fd_server_socket;
 
 int main(void) {
-	load_properties_files();
+	load_data_node_properties_files();
 
 	//fd_server_socket = connect_to_servidor(data_node_conf->file_system_ip,data_node_conf->file_system_port,&fileSystemSocket);
 	connectionToFileSystem();
@@ -26,10 +26,10 @@ int main(void) {
 
 
 //TODO mover a otro archivo de funciones
-void  load_properties_files(){
+void  load_data_node_properties_files(){
 	t_data_node = config_create(DATA_NODE_PATH);
-	data_node_conf = malloc(sizeof(t_data_node_config));
-	data_node_conf->file_system_ip = config_get_string_value(t_data_node,"IP_FILESYSTEM");
-	data_node_conf->file_system_port= config_get_string_value(t_data_node,"PORT_FILESYSTEM");
+	data_node_config = malloc(sizeof(t_data_node_config));
+	data_node_config->file_system_ip= config_get_string_value(t_data_node,"IP_FILESYSTEM");
+	data_node_config->file_system_port= config_get_string_value(t_data_node,"PORT_FILESYSTEM");
 	free(t_data_node);
 }
