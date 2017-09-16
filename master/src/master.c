@@ -15,13 +15,16 @@
 #include "answers.h"
 
 typedef struct block{
-		int pos;
-		int size;
-	}block;
+	int pos;
+	int size;
+}block;
 
-void getFileInfo(char* fileName){
-	printf("hola soy %s \n",fileName);
-}
+typedef struct{
+	int		node;
+	char* 	conector;
+	block* 	blocks;
+	int		blocksCount;
+}dataThread;
 
 void validateArgs(int argc, char* argv[]){
 	int count;
@@ -48,12 +51,30 @@ int runWorkerThread(int node, block* blocks, int quantity, char* server){
 	return EXIT_SUCCESS;
 }
 
+
+void holaHilo(void *args){
+	int i;
+	dataThread* datos;
+	datos = malloc(sizeof(dataThread));
+	datos = (dataThread*) args;
+	printf("hilo iniciado:%d\n",datos->node);
+	printf("servidor:%s\n",datos->conector);
+	printf("bloques:\n");
+	for (i = 0; i <= (datos->blocksCount); ++i){
+		printf("\t posicion: %d\n", datos->blocks[i].pos);
+		printf("\t tamanio: %d\n", datos->blocks[i].size);
+	}
+}
+
 /////////////////////////TRANSFORM///////////////////////////////////
 
 int transformFile(tr_datos yamaAnswer[], int totalRecords){
 	int blockCounter=0,recordCounter=0, nodo;
 	block *blocks=NULL;
 	blocks=malloc(sizeof(block));
+	pthread_t thread;
+	dataThread *dataThread1;
+	dataThread1 = malloc(sizeof(dataThread));
 
 	while(recordCounter<totalRecords){
 		nodo = yamaAnswer[recordCounter].nodo;	//init first key
@@ -64,10 +85,20 @@ int transformFile(tr_datos yamaAnswer[], int totalRecords){
 			blockCounter++;
 			recordCounter++;
 		};
-		runWorkerThread(nodo, blocks, blockCounter-1, yamaAnswer[nodo].direccion); //crea hilo, se conecta, pasa datos y espera respuesta
+		dataThread1->node=nodo;
+		dataThread1->conector=yamaAnswer[recordCounter-1].direccion;
+		dataThread1->blocks=blocks;
+		dataThread1->blocksCount=blockCounter-1;
+
+		pthread_create(&thread,NULL,holaHilo,(void*) dataThread1);
+		pthread_join(thread,NULL);
+		printf("se creo el hilo %d", nodo);
+		//runWorkerThread(nodo, blocks, blockCounter-1, yamaAnswer[nodo].direccion); //crea hilo, se conecta, pasa datos y espera respuesta
 		blockCounter = 0;
 	};
+	usleep(1000000);
 	free(blocks);
+	free(dataThread1);
 	return EXIT_SUCCESS;
 };
 
@@ -77,8 +108,8 @@ int transformFile(tr_datos yamaAnswer[], int totalRecords){
 int main(int argc, char* argv[]){
 	int answerSize = sizeof(tr_answer)/sizeof(tr_answer[0]);
 
-	//validateArgs(argc, argv);					//valido argumentos
-	transformFile(tr_answer,answerSize);					//se conecta a YAMA y devuelve array de struct
+	validateArgs(argc, argv);					//valido argumentos
+	transformFile(tr_answer,answerSize);		//se conecta a YAMA y devuelve array de struct
 	//runLocalReduction(argv[2]);				//ordena ejecución de Reductor Local
 	//runGlobalReduction						//ordena ejecución de Reductor Global
 	//saveResult(argv[])						//ordena guardado en FileSystem
