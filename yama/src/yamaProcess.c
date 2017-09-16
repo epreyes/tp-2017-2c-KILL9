@@ -11,7 +11,6 @@
 #include "yama.h"
 
 int main(void) {
-	puts("!!!Hello YAMA!!!");
 	Yama yama = configYama();
 	yama.yama_server = startServer(yama.port);
 

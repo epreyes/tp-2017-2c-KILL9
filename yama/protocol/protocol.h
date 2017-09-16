@@ -8,24 +8,82 @@
 #ifndef PROTOCOL_H_
 #define PROTOCOL_H_
 
+/*--------- Operations Codes -------*/
+/*
+ * TR: Transformation
+ * LR: Local Reduction
+ * GR: Global Reduction
+ * FS: Final Store
+ * */
+typedef enum operation_code{
+	T, L, G, S
+}operation_code;
+
+/*----------- HEADER ---------------*/
 typedef struct{
-	int op;
+	operation_code op;
 	int msg_size;
+	char file[20];
 }header;
 
 typedef struct{
+	int msg_size;
+	char file[20];
+}fs_header;
 
-}transformationMsg;
+/*------------------------- FileSystem Response -------------------*/
+typedef struct t_copy{
+	int node_id;
+	int block_id;
+}t_copy;
 
-typedef struct{
+typedef struct block{
+	int block_id;
+	t_copy copy1;
+	t_copy copy2;
+	int end_block;
+}block;
 
-}localReductionMsg;
+typedef struct file_info{
+	int size;
+	char type;
+	int parent_dir;
+	char status;
+	block blocks[100];
+}file_info;
 
-typedef struct{
 
-}globalReductionMsg;
+/*------------------------- MASTER'S MESSAGES ---------------------*/
+/*----------- RESPONSES ------------*/
+typedef struct tr_datos{
+	int		nodo;
+	char	direccion[21];
+	int		bloque;
+	int		tamanio;
+	char	tr_tmp[10];
+}tr_datos;
 
-typedef struct{
+typedef struct rl_datos{
+	int		nodo;
+	char	direccion[21];
+	char	tr_tmp[10];
+	char	rl_tmp[10];
+}rl_datos;
 
-}finalStoreMsg;
+typedef struct rg_datos{
+	int		nodo;
+	char	direccion[21];
+	char	tr_tmp[10];
+	char	rl_tmp[10];
+	char	encargado;
+}rg_datos;
+
+typedef struct af_datos{
+	int		nodo;
+	char	direccion[21];
+	char	encargado;
+}af_datos;
+/*----------------------- END MASTER'S MESSAGES ------------------*/
+
+
 #endif /* PROTOCOL_H_ */

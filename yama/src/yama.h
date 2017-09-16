@@ -12,7 +12,9 @@
 #include <stdlib.h>
 #include <commons/config.h>
 #include <commons/log.h>
-#include "lib/socket/Socket.h"
+#include <tplibraries/sockets/socket.h>
+#include <tplibraries/utils/utils.h>
+
 #include "../protocol/protocol.h"
 
 static char* CONFIG_PATH="./config/yamaConfig.properties";
@@ -25,6 +27,7 @@ typedef struct{
 typedef struct{
 	char fs_ip[15];
 	int fs_port;
+	int fs_socket;
 	int planning_delay;
 	char balancign_algoritm[3];
 	int port;
@@ -34,7 +37,7 @@ typedef struct{
 }Yama;
 
 
-t_config* getConfig();
+t_config* getConfig(Yama* yama);
 
 void setProperties(Yama* yama, t_config* config);
 /*-----------------------------*/
@@ -46,15 +49,13 @@ Client acceptMasterConnection(Yama* yama, Server* server, fd_set* masterList, in
 
 int processRequest(Yama* yama, void* buff, int socket, int nbytes);
 
-int getMasterMessage(Yama* yama, int socket, int* nbytes, fd_set* mastersList);
-
 void exploreMastersConnections(Yama* yama, fd_set* mastersListTemp, fd_set* mastersList);
 
+int getMasterMessage(Yama* yama, int socket, fd_set* mastersList);
+
+int processRequest(Yama* yama, void* buff, int master, int nbytes);
+
 /*
-void transformation();
-void localReduction();
-void globalReduction();
-void finalStore();
 char* getTemporalFileName();
 void getFileInfo();
 */
