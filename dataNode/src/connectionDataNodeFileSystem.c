@@ -11,7 +11,7 @@
 void connectionToFileSystem(){
 
 	//int result = connect_to_servidor(,&fileSystemSocket);
-	int result = connect_to_servidor(data_node_config-> file_system_ip,data_node_config-> file_system_port,&fileSystemSocket);
+	int result = connect_connect_to_socket(data_node_config-> file_system_ip,data_node_config-> file_system_port,&fileSystemSocket);
 	if(result != 0){
 		log_info(infoLogger,"Error al conectar al fileSystem.");
 		perror("No se puede conectar al fileSystem");
