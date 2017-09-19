@@ -19,50 +19,35 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <commons/string.h>
+#include <commons/log.h>
 
-/**
- * Crear un socket servidor
- * Abre un puerto y espera que se conecten clientes
- *
- */
-int open_socket(int port ,int countClient);
+typedef int socket_t;
 
-/**
- *file descriptor a cerrar
- */
-int close_socket(int fd_socket);
+/** Struct **/
+typedef struct __attribute__((packed)) t_paquete{
+	int idProceso;
+	int cod_operacion;
+	int tamanio;
+	void* datos;
+} t_paquete;
 
 
-/**
- * @NAME:  connect_to_socket
- * @DESC:  Acepta la conexion de un cliente al socket
- *
- * @PARAMS int fd_listening_socket :fd del socket que va a aceptar conexiones
- *
- * @RETURN int : fd del del cliente que se conecto
- */
-int accept_connection(int);
+int connect_to_socket(char *server_ip, char *server_port);
 
-/**
- * @NAME:  connect_to_socket
- * @DESC:   conectarse a un socket servidor
- *
- * @PARAMS char * server_ip   : ip del socket servidor
- * 		   char * server_port : puerto del socket servidor
- *		   int * server_int  : El valor del fd del socket de conexion
- * @RETURN int : 0 en caso de exito
- */
-int connect_to_servidor(char *server_ip, char *server_port,int *fdsocket);
+socket_t listen_Socket(char* host, char*port) ;
 
-/**
- * @NAME:  close_client
- * @DESC:  Cierra la conexion de un cliente
- *
- * @PARAMS int * client_socket : file descriptor del socket cliente a cerrar
- *
- * @RETURN int : 0 funcionamiento normal, -1 en caso de error
- */
-int close_client(int);
+socket_t accept_connection(socket_t listenSocket) ;
 
+// Envia datos al Socket asignado
+
+void enviarDatos(socket_t, int, int, int, void*);
+
+// Recibir datos del Socket
+
+t_paquete* recibirPaquete(socket_t);
+
+int socket_recv(int * client_socket, void * buffer, int buffer_size) ;
+
+int socket_send(int * server_socket, void * buffer, int buffer_size, int flags);
 
 #endif /* CONNECTIONS_SOCKET_H_ */
