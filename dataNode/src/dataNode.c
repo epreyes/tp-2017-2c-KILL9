@@ -1,7 +1,7 @@
 /*
  ============================================================================
  Name        : dataNode.c
- Author      : 
+ Author      :
  Version     :
  Copyright   : Your copyright notice
  Description : Hello World in C, Ansi-style
@@ -19,7 +19,6 @@ int fd_server_socket;
 int main(void) {
 	load_data_node_properties_files();
 
-	//fd_server_socket = connect_to_servidor(data_node_conf->file_system_ip,data_node_conf->file_system_port,&fileSystemSocket);
 	connectionToFileSystem();
 	return EXIT_SUCCESS;
 }

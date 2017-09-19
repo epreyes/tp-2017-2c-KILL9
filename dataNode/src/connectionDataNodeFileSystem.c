@@ -10,8 +10,7 @@
 
 void connectionToFileSystem(){
 
-	//int result = connect_to_servidor(,&fileSystemSocket);
-	int result = connect_connect_to_socket(data_node_config-> file_system_ip,data_node_config-> file_system_port,&fileSystemSocket);
+	fileSystemSocket = connect_to_socket(data_node_config-> file_system_ip,data_node_config-> file_system_port);
 	if(result != 0){
 		log_info(infoLogger,"Error al conectar al fileSystem.");
 		perror("No se puede conectar al fileSystem");
@@ -35,8 +34,7 @@ void connectionToFileSystem(){
 		break;
 	case RECEIVE_OK:
 		if(handshakeResponse == HANDSHAKE_CONNECTION_FILESYSTEM_TO_DATANODE_OK){
-			//TODO tirar magia -> atender get y set de bloques de datos.
-
+				process_request_file_system(fileSystemSocket);
 		}
 		break;
 	default:
@@ -45,4 +43,31 @@ void connectionToFileSystem(){
 		break;
 
 	}
+}
+
+void process_request_file_system(int * client_socket) {
+	int ope_code = recv_operation_code(client_socket, logger);
+	while (ope_code != DISCONNECTED_CLIENT) {
+		log_info(logger, "CLIENT %d >> codigo de operacion : %d", * client_socket, ope_code);
+		switch (ope_code) {
+			case GET_BLOQUE:
+					get_block(client_socket);
+			  break;
+			default:
+				  set_block(client_socket);
+				break;
+		}
+		ope_code = recv_operation_code(client_socket, logger);
+	}
+		close_client(* client_socket);
+		free(client_socket);
+		return;
+}
+/*****************************************************
+*	Implementacion para leer un bloque de un archivo   *
+******************************************************/
+void get_block(int client_socket){
+		t_dn_get_block_req * request = dn_get_block_recv_req(client_socket,logger);
+		//TODO obtener el puntero al archivo memoria , leer y enviar las respues al cliente.	
+
 }
