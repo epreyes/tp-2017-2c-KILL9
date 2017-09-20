@@ -15,7 +15,6 @@
 #include <commons/config.h>
 #include <commons/log.h>
 #include <struct/struct.h>
-#include "../protocols/protocol.h"
 
 /*
  * STATIC
@@ -31,7 +30,7 @@ t_data_node_config* data_node_config;
 t_log* infoLogger;
 int32_t fileSystemSocket;
 
-void load_properties_files();
+void load_data_node_properties_files(void);
 
 
 #endif /* DATANODE_DATANODE_H_ */

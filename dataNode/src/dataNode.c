@@ -13,7 +13,8 @@
 #include <commons/config.h>
 #include "headers/dataNode.h"
 #include <connections/socket.h>
-
+#include "headers/connectionDataNodeFileSystem.h"
+#include <struct/struct.h>
 int fd_server_socket;
 
 int main(void) {
@@ -30,5 +31,7 @@ void  load_data_node_properties_files(){
 	data_node_config = malloc(sizeof(t_data_node_config));
 	data_node_config->file_system_ip= config_get_string_value(t_data_node,"IP_FILESYSTEM");
 	data_node_config->file_system_port= config_get_string_value(t_data_node,"PORT_FILESYSTEM");
+	data_node_config->path_data_bin= config_get_string_value(t_data_node,"PATH_DATABIN");
+
 	free(t_data_node);
 }
