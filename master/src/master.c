@@ -104,7 +104,6 @@ int transformFile(tr_datos yamaAnswer[], int totalRecords){
 */
 //---------------
 
-
 //---cierro los hilos----
 
 	for (threadIndex=0;threadIndex<=(nodeCounter-1);++threadIndex){
