@@ -5,82 +5,108 @@
  *      Author: utnso
  */
 #include "yamaOperations.h"
-
-int getFileSystemInfo(Yama* yama, header head, int master) {
-	Client fs_client = connectClient(yama->fs_ip, yama->fs_port);
-
-	int fileNameSize = sizeof(head.file);
-	char fileName[20];
-	strcpy(fileName, head.file);
-
-	void* buff = malloc(sizeof(int) + fileNameSize);
-	memcpy(buff, &fileNameSize, sizeof(int));
-	memcpy(buff + sizeof(int), fileName, fileNameSize);
-
-	int bytesSent = send(fs_client.socket_server_id, buff, sizeof(int) + fileNameSize, 0);
-
-	if (bytesSent > 0) {
-		free(buff);
-		buff = malloc(sizeof(int));
-		recv(fs_client.socket_server_id, buff, sizeof(int), 0);
-		int numBlocks = *(int*) buff;
-		free(buff);
-		buff = malloc(numBlocks * sizeof(block));
-		recv(fs_client.socket_server_id, buff, numBlocks * sizeof(block), 0);
-
-		processOperation(yama, head, master, buff);
-	} else {
-
-	}
-	disconnectClient(&fs_client);
-	return 1;
-}
+#include "yamaFS.h"
+#include "yamaUtils.h"
 
 /*-----------------------------------------------------------------------------------*/
-int transformation(Yama* yama, header head, int master, void* buff) {
+
+void* processTransformation(t_header* head, void* fsInfo, int master) {
+
+	int totalBlocksRecived = head->msg_size / (sizeof(block));
+	int totalSizeToSend = totalBlocksRecived * sizeof(tr_datos);
+	head->op = 'T';
+	head->msg_size = totalSizeToSend;
+
+	t_list* listToOrder = list_create();
+
+	int index = 0;
+	for (index = 0; index < totalBlocksRecived; index++) {
+
+		block blockRecived;
+		memcpy(&blockRecived, fsInfo + (index * sizeof(block)), sizeof(block));
+
+		tr_datos* rsBlock = malloc(sizeof(tr_datos));
+		rsBlock->nodo = blockRecived.node;
+		strcpy(rsBlock->ip, blockRecived.node_ip);
+		rsBlock->port = blockRecived.node_port;
+		rsBlock->bloque = blockRecived.node_block;
+		rsBlock->tamanio = blockRecived.end_block;
+		strcpy(rsBlock->tr_tmp, getTmpName(head, rsBlock->bloque, master));
+		list_add(listToOrder, rsBlock);
+	}
+
+	return sortTransformationResponse(listToOrder, totalSizeToSend);
+}
+
+int transformation(Yama* yama, t_header head, int master, void* fsInfo) {
+	int response = 0;
+
 	log_trace(yama->log, "Doing transformation...");
 
-	return 1;
+	void* masterRS = processTransformation(&head, fsInfo, master);
+
+	void* package = buildPackage(masterRS, head);
+
+	int sizepack = sizeof(t_header) + head.msg_size;
+
+	if( sendPackage(yama, master, package, sizepack) > 0 ){
+		response = addToStatusTable(yama, master, package);
+		viewStateTable(yama);
+	}
+	return response;
 }
 
-int localReduction(Yama* yama, header head, int master, void* buff) {
+void* processLocalReduction(t_header* head, void* fsInfo, int master) {
+	int totalBlocksRecived = head->msg_size / (sizeof(block));
+	int totalSizeToSend = totalBlocksRecived * sizeof(tr_datos);
+	head->op = 'T';
+	head->msg_size = totalSizeToSend;
+
+	t_list* listToOrder = list_create();
+
+	int index = 0;
+	for (index = 0; index < totalBlocksRecived; index++) {
+
+		block blockRecived;
+		memcpy(&blockRecived, fsInfo + (index * sizeof(block)), sizeof(block));
+
+		tr_datos* rsBlock = malloc(sizeof(tr_datos));
+		rsBlock->nodo = blockRecived.node;
+		strcpy(rsBlock->ip, blockRecived.node_ip);
+		rsBlock->port = blockRecived.node_port;
+		rsBlock->bloque = blockRecived.node_block;
+		rsBlock->tamanio = blockRecived.end_block;
+		strcpy(rsBlock->tr_tmp, getTmpName(head, rsBlock->bloque, master));
+		list_add(listToOrder, rsBlock);
+	}
+
+	return sortLocalReductionResponse(listToOrder, totalSizeToSend);
+}
+
+int localReduction(Yama* yama, t_header head, int master, void* fsInfo) {
 	log_trace(yama->log, "Doing Local Reduction...");
+
+	void* masterRS = processLocalReduction(&head, fsInfo, master);
+
+	t_header headSend = head;
+	void* package = malloc(sizeof(t_header) + head.msg_size);
+
+	printf("\nTamaño mensaje : %d \nCantidad de elementos en la lista: %d\n",
+			head.msg_size, head.msg_size / sizeof(tr_datos));
+	memcpy(package, &headSend, sizeof(t_header));
+	memcpy(package + sizeof(t_header), masterRS, head.msg_size);
+	int sizepack = sizeof(t_header) + head.msg_size;
+	return send(master, package, sizepack, 0);
 	return 1;
 }
 
-int globalReduction(Yama* yama, header head, int master, void* buff) {
+int globalReduction(Yama* yama, t_header head, int master, void* fsInfo) {
 	log_trace(yama->log, "Doing Global Reduction...");
 	return 1;
 }
 
-int finalStore(Yama* yama, header head, int master, void* buff) {
+int finalStore(Yama* yama, t_header head, int master, void* fsInfo) {
 	log_trace(yama->log, "Doing Final Store...");
 	return 1;
-}
-
-int processFileSystemInfo(Yama* yama, block* response, int master, void* buff) {
-	int result = 0;
-
-	return result;
-}
-
-int processOperation(Yama* yama, header head, int master, void* buff) {
-
-	int result;
-
-	switch (head.op) {
-	case T:
-		result = transformation(yama, head, master, buff);
-		break;
-	case L:
-		result = localReduction(yama, head, master, buff);
-		break;
-	case G:
-		result = globalReduction(yama, head, master, buff);
-		break;
-	case S:
-		result = finalStore(yama, head, master, buff);
-	}
-	return result;
 }
 

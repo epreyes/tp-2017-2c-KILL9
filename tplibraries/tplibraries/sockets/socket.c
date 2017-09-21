@@ -34,7 +34,7 @@ Client connectClient(char* ip, int port) {
 
 /* disconnectClient: cierra el socket cliente. */
 int disconnectClient(Client* client){
- return close(client->socket_id);
+ return close(client->socket_server_id);
 }
 
 /* getClientHostName: devuelve el nombre del host del cliente. Falta implementar. No se si es tan util. */
