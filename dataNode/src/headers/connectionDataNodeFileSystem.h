@@ -9,8 +9,8 @@
 #ifndef HEADERS_CONNECTIONDATANODEFILESYSTEM_H_
 #define HEADERS_CONNECTIONDATANODEFILESYSTEM_H_
 
- const char * mapped_data_node;
-
+const char * mapped_data_node;
+const int block_size =1048576;
 /** Funciones */
 
 void process_request_file_system(int client_socket);
