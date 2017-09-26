@@ -8,9 +8,10 @@
 
 #ifndef HEADERS_CONNECTIONDATANODEFILESYSTEM_H_
 #define HEADERS_CONNECTIONDATANODEFILESYSTEM_H_
+#define DATANODE 1
 
- const char * mapped_data_node;
-
+void * mapped_data_node;
+//int block_size = 1048576; /**Erro al incluir aca **
 /** Funciones */
 
 void process_request_file_system(int client_socket);

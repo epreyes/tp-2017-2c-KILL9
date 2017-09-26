@@ -17,69 +17,81 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+int block_size = 1076;
 
 void connectionToFileSystem(){
-	map_data_node();
+	t_paquete *  paquete;
 	fileSystemSocket = connect_to_socket(data_node_config-> file_system_ip,data_node_config-> file_system_port);
-	if(fileSystemSocket != 0){
-		log_info(infoLogger,"Error al conectar al fileSystem.");
-		perror("No se puede conectar al fileSystem");
+
+	enviarDatos(fileSystemSocket,DATANODE,DATANODE,4,&fileSystemSocket);
+	paquete = recibirPaquete(fileSystemSocket);
+
+	if(paquete == NULL){
+		puts("*****SE DESCONECTO EL FILESYSTEM");
+		close(fileSystemSocket);
+		free(data_node_config);
+		config_destroy(data_node_config);
 		exit(EXIT_FAILURE);
 	}
 
-	PROTOCOL_DATANODE_TO_FILESYSTEM handshake = HANDSHAKE_CONNECTION_DATANODE_TO_FILESYSTEM;
-	//Envio  mensaje al file system
-	libtp_sendMessage(fileSystemSocket, &handshake,sizeof(PROTOCOL_DATANODE_TO_FILESYSTEM), infoLogger);
-
-	//Espero respuesta del filesytem
-	PROTOCOL_FILESYSTEM_TO_DATANODE handshakeResponse;
-	int result =  libtp_receiveMessage(fileSystemSocket,&handshakeResponse,
-			sizeof(PROTOCOL_FILESYSTEM_TO_DATANODE),infoLogger);
-
 	//Manejo respuesta del FILESYTEM
-	switch(RECEIVE_OK){
-	case CLOSE_CONNECTION :
-		log_info(infoLogger,"-> Se  desconecto el FILESYSTEM");
-		printf("Se desconecto el FILESYSTEM");
+	switch(paquete ->cod_operacion){
+	case ACCESOAPROBADO :
+		//log_info(infoLogger,"-> Se  desconecto el FILESYSTEM");
+		printf("Se conecto al FILESYSTEM");
+		process_request_file_system(fileSystemSocket);
 		break;
-	case RECEIVE_OK:
-		if(handshakeResponse == HANDSHAKE_CONNECTION_FILESYSTEM_TO_DATANODE_OK){
-				process_request_file_system(fileSystemSocket);
-		}
+	case ACCESODENEGADO :
+		log_info(infoLogger,"-> Se  desconecto el FILESYSTEM");
+		printf("No se conecto al FILESYSTEM");
 		break;
 	default:
 		log_info(infoLogger,"-- Error al recibir los datos del FILESYSTEM");
 		printf("-- Error al recibir los datos del FILESYSTEM ");
 		break;
-
 	}
 }
 
-void process_request_file_system(int  client_socket) {
-	int ope_code = recv_operation_code(client_socket, infoLogger);
+void process_request_file_system(int client_socket) {
+
+	int ope_code = recv_operation_code(&client_socket, infoLogger);
 	while (ope_code != DISCONNECTED_CLIENT) {
-		log_info(infoLogger, "CLIENT %d >> codigo de operacion : %d", client_socket, ope_code);
+		//log_info(infoLogger, "CLIENT %d >> codigo de operacion : %d", client_socket, ope_code);
 		switch (ope_code) {
 			case GET_BLOQUE:
-					get_block(client_socket);
-			  break;
+				get_block(client_socket);
+				break;
 			default:
-				  set_block(client_socket);
+				set_block(client_socket);
 				break;
 		}
-		ope_code = recv_operation_code(client_socket, infoLogger);
+		ope_code = recv_operation_code(&client_socket, infoLogger);
 	}
-		close_client(client_socket);
-		free(client_socket);
-		return;
+	close_client(client_socket);
+	free(client_socket);
+	exit(EXIT_SUCCESS);
 }
 /*****************************************************
 *	Implementacion para leer un bloque de un archivo   *
 ******************************************************/
-void get_block(int client_socket){
-		t_dn_get_block_req * request = dn_get_block_recv_req(client_socket,infoLogger);
-		//TODO obtener el puntero al archivo memoria , leer y enviar las respues al cliente.	
+void get_block(int  client_socket){
+		t_dn_get_block_req * request = dn_get_block_recv_req(&client_socket,infoLogger);
 
+		map_data_node();
+		void * buffer = malloc(block_size);
+		void * pos = mapped_data_node + (request ->number_block)*block_size;
+		memcpy(buffer, pos, block_size);
+		//Envio los datos del bloque
+
+		printf("-- Informacion a enviar al FILESYSTEM ");
+		int i;
+		for (i = 0; i < block_size; i++) {
+			char c;
+			c = ((char *) buffer)[i];
+			putchar(c);
+		}
+		printf("-- Fin Informacion a enviar al FILESYSTEM ");
+		dn_get_block_resp(client_socket,SUCCESS,block_size,buffer);
 }
 
 void set_block(int  client_socket){
@@ -134,5 +146,4 @@ int map_data_node() {
 
 	return EXIT_SUCCESS;
 }
-
 

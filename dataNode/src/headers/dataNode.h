@@ -16,6 +16,10 @@
 #include <commons/log.h>
 #include <struct/struct.h>
 
+typedef enum {
+	ACCESOAPROBADO = 0,
+	ACCESODENEGADO = 1,
+}dataNode;
 /*
  * STATIC
  */
