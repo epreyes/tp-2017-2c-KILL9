@@ -5,13 +5,18 @@
  *      Author: miguel tomicha
  */
 
-#ifndef PROTOCOLOS_PROTOCOLS_H_
-#define PROTOCOLOS_PROTOCOLS_H_
+#ifndef PROTOCOLS_PROTOCOL_H_
+#define PROTOCOLS_PROTOCOL_H_
+#include <stdio.h>
+// TODO mover a tp_share_library -> error al compilar
+// si se importa desde tp_share_library
+typedef enum PROTOCOL_DATANODE_TO_FILESYSTEM{
+	HANDSHAKE_CONNECTION_DATANODE_TO_FILESYSTEM
+}PROTOCOL_DATANODE_TO_FILESYSTEM;
 
-/**Definir los distintos  tipos de mensajes que envia cada proceso**/
-//
-typedef enum PROTOCOLO_DATANODE_TO_FILESYSTEM{
-	HANDSHAKE_CONNECT_DATANODE_TO_FILESYSTEM
-} PROTOCOLO_DATANODE_TO_FILESYSTEM;
 
-#endif /* PROTOCOLOS_PROTOCOLS_H_ */
+typedef enum PROTOCOL_FILESYSTEM_TO_DATANODE {
+	HANDSHAKE_CONNECTION_FILESYSTEM_TO_DATANODE_OK
+}PROTOCOL_FILESYSTEM_TO_DATANODE;
+
+#endif /* PROTOCOLS_PROTOCOL_H_ */

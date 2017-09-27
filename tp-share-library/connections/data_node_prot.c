@@ -29,7 +29,7 @@ int recv_operation_code(int * client_socket, t_log * logger) {
 /***************************************
  * 		 DN - GET BLOQUE		   *							   *
  ***************************************/
-t_dn_get_block_resp dn_get_block(int server_socket,int number_block,t_log * logger){
+t_dn_get_block_resp * dn_get_block(int server_socket,int number_block,t_log * logger){
 
 	/** operation_code (1 byte),number_block (4 bytes)	**/
 	uint8_t prot_ope_code = 1;

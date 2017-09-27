@@ -23,6 +23,8 @@
 
 typedef int socket_t;
 
+
+
 /** Struct **/
 typedef struct __attribute__((packed)) t_paquete{
 	int idProceso;
@@ -34,7 +36,7 @@ typedef struct __attribute__((packed)) t_paquete{
 
 int connect_to_socket(char *server_ip, char *server_port);
 
-socket_t listen_Socket(char* host, char*port) ;
+socket_t open_socket(char* host, char*port) ;
 
 socket_t accept_connection(socket_t listenSocket) ;
 
@@ -49,5 +51,9 @@ t_paquete* recibirPaquete(socket_t);
 int socket_recv(int * client_socket, void * buffer, int buffer_size) ;
 
 int socket_send(int * server_socket, void * buffer, int buffer_size, int flags);
+
+int socket_write(int * client_socket, void * response, int response_size) ;
+
+int close_client(int);
 
 #endif /* CONNECTIONS_SOCKET_H_ */

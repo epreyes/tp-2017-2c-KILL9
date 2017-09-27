@@ -5,12 +5,12 @@
  *      Author: utnso
  */
 
+#ifndef CONNECTIONS_DATA_NODE_PROT_H_
+#define CONNECTIONS_DATA_NODE_PROT_H_
+
 #include <commons/log.h>
 #include <stdint.h>
 #include <stdlib.h>
-
-#ifndef CONNECTIONS_DATA_NODE_PROT_H_
-#define CONNECTIONS_DATA_NODE_PROT_H_
 
 
 
@@ -39,7 +39,7 @@ typedef struct{
 
 
 
-t_dn_get_block_resp dn_get_block(int server_socket,int number_block,t_log * logger);
+t_dn_get_block_resp* dn_get_block(int server_socket,int number_block,t_log * logger);
 
 t_dn_get_block_req * dn_get_block_recv_req(int * client_socket, t_log * logger) ;
 

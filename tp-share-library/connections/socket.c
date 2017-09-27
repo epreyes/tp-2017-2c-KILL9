@@ -17,6 +17,8 @@
 #include <netdb.h>
 #include <unistd.h>
 
+int size_int = sizeof(int);
+
 struct addrinfo* configurarAddrinfo(char* host, char*port) {
 	struct addrinfo addrinf, *serverInfo;
 	int16_t res;
@@ -60,21 +62,21 @@ int connect_to_socket(char *host,char * port){
 	return serverSock;
 }
 
-socket_t listen_Socket(char* host, char*port) {
+socket_t open_socket(char* host, char*port) {
 	struct addrinfo* serverInf = configurarAddrinfo(host, port);
-		if (serverInf == NULL) {
-			exit(EXIT_FAILURE);
-		}
+	if (serverInf == NULL) {
+		exit(EXIT_FAILURE);
+	}
 
-		int socketEscuchar;
-		socketEscuchar = socket(serverInf->ai_family, serverInf->ai_socktype,
-				serverInf->ai_protocol);
-		int activo = 1;
-		setsockopt(socketEscuchar, SOL_SOCKET, SO_REUSEADDR, &activo, sizeof(int));
-		bind(socketEscuchar, serverInf->ai_addr, serverInf->ai_addrlen);
+	int socketEscuchar;
+	socketEscuchar = socket(serverInf->ai_family, serverInf->ai_socktype,
+			serverInf->ai_protocol);
+	int activo = 1;
+	setsockopt(socketEscuchar, SOL_SOCKET, SO_REUSEADDR, &activo, sizeof(int));
+	bind(socketEscuchar, serverInf->ai_addr, serverInf->ai_addrlen);
 
-		freeaddrinfo(serverInf);
-		return socketEscuchar;
+	freeaddrinfo(serverInf);
+	return socketEscuchar;
 }
 
 socket_t accept_connection(socket_t listenSocket) {
@@ -90,17 +92,17 @@ socket_t accept_connection(socket_t listenSocket) {
 void enviarDatos(socket_t fd, int idProceso, int cod_operacion, int tam,
 		void* buff) {
 
-	int res, tamanioPaquete = (3 * sizeof(int)) + tam;
+	int res, tamanioPaquete = (3 * size_int) + tam;
 
 	void* buffer = malloc(tamanioPaquete);
 	//void* aux = buffer;
-	memcpy(buffer, &idProceso, sizeof(int));
+	memcpy(buffer, &idProceso, size_int);
 	//aux += sizeof(int);
-	memcpy(buffer+(sizeof(int)), &cod_operacion, sizeof(int));
+	memcpy(buffer+(size_int), &cod_operacion, size_int);
 	//aux += sizeof(int);
-	memcpy(buffer+(2*sizeof(int)), &tam, sizeof(int));
+	memcpy(buffer+(2*size_int), &tam, size_int);
 	//aux += sizeof(int);
-	memcpy(buffer+(3*sizeof(int)), buff, tam);
+	memcpy(buffer+(3*size_int), buff, tam);
 	//aux += tam;
 
 	res = send(fd, buffer, tamanioPaquete, MSG_WAITALL);
@@ -133,5 +135,12 @@ int socket_recv(int * client_socket, void * buffer, int buffer_size) {
 
 int socket_send(int * server_socket, void * buffer, int buffer_size, int flags) {
 	return send(* server_socket, buffer, buffer_size, flags);
+}
+
+int close_client(int client_socket) {
+	return close(client_socket);
+}
+int socket_write(int * client_socket, void * response, int response_size) {
+	return write(* client_socket, response, response_size);
 }
 
