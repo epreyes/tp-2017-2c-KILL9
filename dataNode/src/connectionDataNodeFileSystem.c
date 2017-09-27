@@ -74,6 +74,7 @@ void process_request_file_system(int client_socket) {
 /*****************************************************
 *	Implementacion para leer un bloque de un archivo   *
 ******************************************************/
+<<<<<<< HEAD
 void get_block(int  client_socket){
 		t_dn_get_block_req * request = dn_get_block_recv_req(&client_socket,infoLogger);
 
@@ -92,6 +93,15 @@ void get_block(int  client_socket){
 		}
 		printf("-- Fin Informacion a enviar al FILESYSTEM ");
 		dn_get_block_resp(client_socket,SUCCESS,block_size,buffer);
+=======
+void get_block(int client_socket){
+		t_dn_get_block_req * request = dn_get_block_recv_req(client_socket,infoLogger);
+		//TODO obtener el puntero al archivo memoria , leer y enviar las respues al cliente.	
+		map_data_node();
+
+		void * buffer = malloc(block_size);
+		int pos = (request->number_block) * block_size;
+>>>>>>> ad0384cf86aa636bfad207f4c33202887bb7962d
 }
 
 void set_block(int  client_socket){
@@ -137,12 +147,12 @@ int map_data_node() {
 	 check (mapped_data_node == MAP_FAILED, "mmap %s failed: %s",file_name, strerror (errno));
 
 	 /* Now do something with the information. */
-	int i;
-	for (i = 0; i < size; i++) {
-		char c;
-		c = ((char *) mapped_data_node)[i];
-		putchar(c);
-	}
+//	int i;
+//	for (i = 0; i < size; i++) {
+//		char c;
+//		c = ((char *) mapped_data_node)[i];
+//		putchar(c);
+//	}
 
 	return EXIT_SUCCESS;
 }

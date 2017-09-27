@@ -9,7 +9,10 @@
 #define UTILS_H_
 
 #include <stdio.h>
+#include <sys/time.h>
 
 int fileExist(char *file);
+
+long current_timestamp();
 
 #endif /* UTILS_H_ */
