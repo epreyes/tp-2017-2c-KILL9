@@ -20,6 +20,21 @@
 static char* CONFIG_PATH = "./config/yamaConfig.properties";
 static char* LOG_PATH = "./log/yama.log";
 
+typedef struct{
+	int blocks;
+	int sizeInfo;
+	char* filename;
+	void* info;
+}t_fileInfo;
+
+typedef struct{
+	int node_id;
+	int tasks_in_progress;
+	int tasts_done;
+	int considered;
+	int availability;
+}t_nodeStateTable;
+
 typedef struct {
 	int job;
 	int master;
@@ -30,24 +45,44 @@ typedef struct {
 	int status;
 } rowStateTable;
 
+/*FS_IP=127.0.1.1
+FS_PUERTO=8880
+RETARDO_PLANIFICACION=5
+ALGORITMO_BALANCEO=WRR
+YAMA_PUERTO=8881
+NODE_AVAIL = 5*/
+
 typedef struct {
-	char fs_ip[15];
-	int fs_port;
-	int fs_socket;
-	int planning_delay;
-	char balancign_algoritm[3];
-	int port;
-	t_list* stateTable;
+	t_config* config;
+	t_list* node_state_table;
+	t_list* state_table;
+	t_list* file_info;
 	Server yama_server;
 	Client yama_client;
 	t_log* log;
 } Yama;
 
-/*---------------------- Private ---------------------------------*/
-t_config* getConfig(Yama* yama);
+t_config* getConfig();
 
 t_log* configLog();
 
-void setProperties(Yama* yama, t_config* config);
+void setProperties(Yama* yama);
+
+/*---------------------- Public ----------------------------------*/
+Yama configYama();
+
+Client acceptMasterConnection(Yama* yama, Server* server, fd_set* masterList, int hightSd);
+
+t_package* getRequest(Yama* yama, void* request, int master);
+
+void* getResponse(Yama* yama, t_package* request, int master);
+
+int sendResponse(Yama* yama, int master, void* masterRS);
+
+int getMasterMessage(Yama* yama, int socket, fd_set* mastersList);
+
+void exploreMastersConnections(Yama* yama, fd_set* mastersListTemp, fd_set* mastersList);
+
+void waitForMasters(Yama* yama);
 
 #endif /* YAMA_H_ */

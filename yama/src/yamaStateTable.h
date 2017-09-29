@@ -11,5 +11,7 @@
 #include "yama.h"
 
 int addToStatusTable(Yama* yama, int master, void* package);
+void viewStateTable(Yama* yama);
+void updateNodeList(Yama* yama, void* fsInfo);
 
 #endif /* YAMASTATETABLE_H_ */

@@ -8,12 +8,12 @@
 #ifndef SRC_YAMAPROCESS_H_
 #define SRC_YAMAPROCESS_H_
 
-#include "yamaAdmin.h"
 #include "yamaFS.h"
 #include "yamaOperations.h"
 
-int processRequest(Yama* yama, void* request, int master, int nbytes);
+void* processOperation(Yama* yama, int master, t_header head, void* payload);
 
-int processOperation(Yama* yama, int master, t_header head, void* fsInfo);
+void* processFileInfo(Yama* yama, int op, t_fileInfo* fsInfo, int master);
+
 
 #endif /* SRC_YAMAPROCESS_H_ */

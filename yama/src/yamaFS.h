@@ -8,10 +8,13 @@
 #ifndef SRC_YAMAFS_H_
 #define SRC_YAMAFS_H_
 
-#include "yamaAdmin.h"
-#include "yamaOperations.h"
+#include "yamaStateTable.h"
 #include <tplibraries/protocol/protocol.h>
 
-int getFileSystemInfo(Yama* yama, t_header head, void* payload, int master);
+void* getFileSystemInfo(Yama* yama, t_header head, void* payload);
+
+int findFile(Yama* yama, char* fileName);
+
+t_fileInfo* getFileInfo(Yama* yama, t_header head, char* fileName, int master);
 
 #endif /* SRC_YAMAFS_H_ */

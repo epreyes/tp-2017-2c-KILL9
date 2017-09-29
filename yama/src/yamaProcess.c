@@ -6,37 +6,40 @@
  */
 
 #include "yamaProcess.h"
-#include "yamaFS.h"
-#include "yamaOperations.h"
 
-int processRequest(Yama* yama, void* request, int master, int nbytes) {
-	log_trace(yama->log, "Processing Master Request...");
+void* processOperation(Yama* yama, int master, t_header head, void* payload) {
 
-	t_header head;
-	memcpy(&head, request, sizeof(t_header));
+	//me traigo la informacion del archivo.
+	t_fileInfo* fsInfo = getFileInfo(yama, head, payload, master);
+	free(payload);
+	//proceso la informacion
+	void* masterRS = processFileInfo(yama, head.op, fsInfo, master);
 
-	void* payload = malloc(head.msg_size);
-	free(request);
-	recv(master, payload, head.msg_size, 0);
+	//me fijo el tamaño del paquete a enviar
+	t_header* fsInfoHeader = malloc(sizeof(t_header));
+	memcpy(fsInfoHeader, masterRS, sizeof(t_header));
+	int sizepack = sizeof(t_header) + fsInfoHeader->msg_size;
 
-	return getFileSystemInfo(yama, head, payload, master);
+	//retorno el paquete
+	return masterRS;
 }
 
-int processOperation(Yama* yama, int master, t_header head, void* fsInfo) {
-	int result;
+void* processFileInfo(Yama* yama, int op, t_fileInfo* fsInfo, int master){
+	void* response = NULL;
 
-	switch (head.op) {
+	switch( op ){
 	case 'T':
-		result = transformation(yama, head, master, fsInfo);
+		response = processTransformation(yama, fsInfo, master);
 		break;
 	case 'L':
-		result = localReduction(yama, head, master, fsInfo);
-		break;
+		//response = processLocalReduction(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
+			break;
 	case 'G':
-		result = globalReduction(yama, head, master, fsInfo);
-		break;
+		//response = processGlobalReduction(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
+			break;
 	case 'S':
-		result = finalStore(yama, head, master, fsInfo);
+		//response = processFinalStore(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
+			break;
 	}
-	return result;
+	return response;
 }
