@@ -236,7 +236,7 @@ int runGlobalReduction(rg_datos yamaAnswer[], int totalRecords){
 
 ////////////////////////////////////SAVE_RESULTS/////////////////////////////////////////
 
-int saveResult(rg_datos yamaAnswer[], int totalRecords){
+int saveResult(af_datos yamaAnswer[], int totalRecords){
 	/*
 	..
 
@@ -251,7 +251,16 @@ int saveResult(rg_datos yamaAnswer[], int totalRecords){
 
 ///////////MAIN PROGRAM///////////
 
+double timediff(struct timeval *a, struct timeval *b){
+	return (double)(a->tv_sec + (double)a->tv_usec/1000000)-(double)(b->tv_sec + (double)b->tv_usec/1000000);
+}
+
+
 int main(int argc, char* argv[]){
+	metrics masterMetrics;
+	struct timeval start,end;
+	gettimeofday(&start,NULL);
+
 	//recibo respuesta de Yama
 	int answerSize_TR = sizeof(tr_answer)/sizeof(tr_answer[0]);
 	int answerSize_RL = sizeof(rl_answer)/sizeof(rl_answer[0]);
@@ -263,5 +272,47 @@ int main(int argc, char* argv[]){
 	runLocalReduction(rl_answer,answerSize_RL);		//ordena ejecución de Reductor Local
 	runGlobalReduction(rg_answer,answerSize_RG);	//ordena ejecución de Reductor Global
 	saveResult(af_answer,answerSize_AF);			//ordena guardado en FileSystem
+
+
+	gettimeofday(&end,NULL);
+	masterMetrics.runTime = timediff(&end,&start)*1000.0;
+
+
+/////////METRICAS////////////////////
+//Tiempos de ejecucion
+	printf("=============================================\n");
+	printf("TIEMPO DE EJECUCIÓN:\t\t\t%.6gms\n", masterMetrics.runTime);
+	printf("=============================================\n");
+	printf("> Transformacion\t\t\t%.6gms\n", 10.0);
+	printf("> LocalReduction\t\t\t%.6gms\n", 20.0);
+	printf("> GlobalReduction\t\t\t%.6gms\n", 30.0);
+	printf("=============================================\n");
+//Detalle de procesos
+//Reducción Local
+	printf("TRANSFORMACIÓN\n");
+	printf("=============================================\n");
+	printf("Cantidad total de tareas:\t\t%d\n", 40);
+	printf("Cantidad de tareas paralelas:\t\t%d\n", 40);
+	printf("Cantidad de errores:\t\t\t%d\n", 0);
+	printf("=============================================\n");
+//Reducción Local
+	printf("REDUCCIÓN LOCAL\n");
+	printf("=============================================\n");
+	printf("Cantidad de tareas paralelas:\t\t%d\n", 40);
+	printf("Cantidad total de tareas:\t\t%d\n", 40);
+	printf("Cantidad de errores:\t\t\t%d\n", 0);
+	printf("=============================================\n");
+//Reducción global
+	printf("REDUCCIÓN GLOBAL\n");
+	printf("=============================================\n");
+	printf("Cantidad de tareas paralelas:\t\t%d\n", 40);
+	printf("Cantidad total de tareas:\t\t%d\n", 40);
+	printf("Cantidad de errores:\t\t\t%d\n", 0);
+	printf("=============================================\n");
+	printf("ALMACENADO FINAL\n");
+//Reducción Local
+	printf("=============================================\n");
+	printf("Cantidad de errores:\t\t\t%d\n", 0);
+	printf("=============================================\n");
 	return EXIT_SUCCESS;
 };
