@@ -14,7 +14,6 @@
 
 //=====STRUCTURES=========//
 
-
 typedef struct block{
 	int pos;
 	int size;
@@ -54,6 +53,10 @@ typedef struct dataThread_GR{
 
 
 //=============================================
+double timediff(struct timeval *a, struct timeval *b){
+	return ((double)(a->tv_sec + (double)a->tv_usec/1000000)-(double)(b->tv_sec + (double)b->tv_usec/1000000))*1000.0;
+}
+
 
 void validateArgs(int argc, char* argv[]){
 	int count;
@@ -82,7 +85,9 @@ void *runTransformThread(void* data){
 	return NULL;
 }
 
-int transformFile(tr_datos yamaAnswer[], int totalRecords){
+int transformFile(tr_datos yamaAnswer[], int totalRecords, metrics *masterMetrics){
+	struct timeval tr_start,tr_end;
+	gettimeofday(&tr_start,NULL);
 	int blockCounter=0,recordCounter=0, nodeCounter=0, threadIndex=0, nodo;
 	block* blocks = NULL;
 	pthread_t *threads = NULL; 					//creo array de hilos dinámico
@@ -132,6 +137,9 @@ int transformFile(tr_datos yamaAnswer[], int totalRecords){
 	free(dataThreads);
 	free(threads);
 
+	gettimeofday(&tr_end,NULL);
+	masterMetrics->transformation.runTime = timediff(&tr_end,&tr_start);
+
 	return EXIT_SUCCESS;
 }
 
@@ -148,7 +156,9 @@ void *runLocalRedThread(void* data){
 }
 
 
-int runLocalReduction(rl_datos yamaAnswer[], int totalRecords){
+int runLocalReduction(rl_datos yamaAnswer[], int totalRecords, metrics *masterMetrics){
+	struct timeval lr_start,lr_end;
+	gettimeofday(&lr_start,NULL);
 	int tmpsCounter=0,recordCounter=0, nodeCounter=0, threadIndex=0, nodo;
 	tr_tmp* tr_tmps = NULL;
 	pthread_t *threads = NULL; 						//creo array de hilos dinámico
@@ -196,13 +206,18 @@ int runLocalReduction(rl_datos yamaAnswer[], int totalRecords){
 	free(dataThreads);
 	free(threads);
 
+	gettimeofday(&lr_end,NULL);
+	masterMetrics->localReduction.runTime = timediff(&lr_end,&lr_start);
 	return EXIT_SUCCESS;
 }
 
 
 ////////////////////////////////////GLOBAL_REDUCTION/////////////////////////////////////////
 
-int runGlobalReduction(rg_datos yamaAnswer[], int totalRecords){
+int runGlobalReduction(rg_datos yamaAnswer[], int totalRecords, metrics *masterMetrics){
+	struct timeval gr_start,gr_end;
+	gettimeofday(&gr_start,NULL);
+
 	int recordCounter=0;
 	dataNodes *brothersData = NULL;
 	brothersData = (dataNodes*) malloc(sizeof(dataNodes));
@@ -231,88 +246,90 @@ int runGlobalReduction(rg_datos yamaAnswer[], int totalRecords){
 	free(dataThread->brothersData);
 	free(dataThread);
 
+	gettimeofday(&gr_end,NULL);
+	masterMetrics->globalReduction.runTime = timediff(&gr_end,&gr_start);
+
 	return EXIT_SUCCESS;
 }
 
 ////////////////////////////////////SAVE_RESULTS/////////////////////////////////////////
 
-int saveResult(af_datos yamaAnswer[], int totalRecords){
-	/*
-	..
+int saveResult(af_datos yamaAnswer[], int totalRecords, metrics *masterMetrics){
+
+	struct timeval af_start,af_end;
+	gettimeofday(&af_start,NULL);
+
 
 	//conectarseConWorker y pasar yamaAnswer.rg_tmp
 
-	..
-	*/
+
+	gettimeofday(&af_end,NULL);
+	masterMetrics->finalStorage.runTime = timediff(&af_end,&af_start);
+	masterMetrics->finalStorage.errors = 0;
 	return EXIT_SUCCESS;
 }
+
+//////////////////////////////////PRINT_METRICS/////////////////////////////////////////
+void printSeparator(char c){
+	int i;
+	for (i=0; i <= 52; ++i) printf("%c",c);
+	printf("\n");
+}
+
+void printProcessMetrics(char* name, procMetrics metrics){
+	printf("%s\n", name);
+	printSeparator('-');
+	printf("Cantidad total de tareas:\t\t%d\n", 40);
+	printf("Cantidad de tareas paralelas:\t\t%d\n", 40);
+	printf("Cantidad de errores:\t\t\t%d\n", 0);
+	printSeparator('=');
+}
+
+void printMetrics(metrics masterMetrics){
+	//Tiempos de ejecucion
+		printSeparator('=');
+		printf("TIEMPO DE EJECUCIÓN TOTAL:\t\t%.6gms\n", masterMetrics.runTime);
+		printSeparator('-');
+		printf("> Transformacion\t\t\t%.6gms\n", masterMetrics.transformation.runTime);
+		printf("> LocalReduction\t\t\t%.6gms\n", masterMetrics.localReduction.runTime);
+		printf("> GlobalReduction\t\t\t%.6gms\n", masterMetrics.globalReduction.runTime);
+		printf("> FinalStorage\t\t\t\t%.6gms\n", masterMetrics.finalStorage.runTime);
+		printSeparator('=');
+
+	//Imprimo las métricas de cada proceso
+		printProcessMetrics("TRANSFORMACIÓN", masterMetrics.transformation);
+		printProcessMetrics("REDUCCIÓN LOCAL", masterMetrics.localReduction);
+		printProcessMetrics("REDUCCIÓN GLOBAL", masterMetrics.globalReduction);
+		printProcessMetrics("ALMACENADO FINAL",masterMetrics.finalStorage);
+}
+
 
 
 
 ///////////MAIN PROGRAM///////////
 
-double timediff(struct timeval *a, struct timeval *b){
-	return (double)(a->tv_sec + (double)a->tv_usec/1000000)-(double)(b->tv_sec + (double)b->tv_usec/1000000);
-}
-
-
 int main(int argc, char* argv[]){
+
+//--preparo metricas---------
 	metrics masterMetrics;
 	struct timeval start,end;
 	gettimeofday(&start,NULL);
 
-	//recibo respuesta de Yama
+//--recibo respuestas de Yama
+
 	int answerSize_TR = sizeof(tr_answer)/sizeof(tr_answer[0]);
 	int answerSize_RL = sizeof(rl_answer)/sizeof(rl_answer[0]);
 	int answerSize_RG = sizeof(rg_answer)/sizeof(rg_answer[0]);
 	int answerSize_AF = sizeof(af_answer)/sizeof(af_answer[0]);
 
 	validateArgs(argc, argv);						//valido argumentos
-	transformFile(tr_answer,answerSize_TR);			//se conecta a YAMA y devuelve array de struct
-	runLocalReduction(rl_answer,answerSize_RL);		//ordena ejecución de Reductor Local
-	runGlobalReduction(rg_answer,answerSize_RG);	//ordena ejecución de Reductor Global
-	saveResult(af_answer,answerSize_AF);			//ordena guardado en FileSystem
-
+	transformFile(tr_answer,answerSize_TR,&masterMetrics);			//se conecta a YAMA y devuelve array de struct
+	runLocalReduction(rl_answer,answerSize_RL,&masterMetrics);		//ordena ejecución de Reductor Local
+	runGlobalReduction(rg_answer,answerSize_RG,&masterMetrics);	//ordena ejecución de Reductor Global
+	saveResult(af_answer,answerSize_AF,&masterMetrics);			//ordena guardado en FileSystem
 
 	gettimeofday(&end,NULL);
-	masterMetrics.runTime = timediff(&end,&start)*1000.0;
-
-
-/////////METRICAS////////////////////
-//Tiempos de ejecucion
-	printf("=============================================\n");
-	printf("TIEMPO DE EJECUCIÓN:\t\t\t%.6gms\n", masterMetrics.runTime);
-	printf("=============================================\n");
-	printf("> Transformacion\t\t\t%.6gms\n", 10.0);
-	printf("> LocalReduction\t\t\t%.6gms\n", 20.0);
-	printf("> GlobalReduction\t\t\t%.6gms\n", 30.0);
-	printf("=============================================\n");
-//Detalle de procesos
-//Reducción Local
-	printf("TRANSFORMACIÓN\n");
-	printf("=============================================\n");
-	printf("Cantidad total de tareas:\t\t%d\n", 40);
-	printf("Cantidad de tareas paralelas:\t\t%d\n", 40);
-	printf("Cantidad de errores:\t\t\t%d\n", 0);
-	printf("=============================================\n");
-//Reducción Local
-	printf("REDUCCIÓN LOCAL\n");
-	printf("=============================================\n");
-	printf("Cantidad de tareas paralelas:\t\t%d\n", 40);
-	printf("Cantidad total de tareas:\t\t%d\n", 40);
-	printf("Cantidad de errores:\t\t\t%d\n", 0);
-	printf("=============================================\n");
-//Reducción global
-	printf("REDUCCIÓN GLOBAL\n");
-	printf("=============================================\n");
-	printf("Cantidad de tareas paralelas:\t\t%d\n", 40);
-	printf("Cantidad total de tareas:\t\t%d\n", 40);
-	printf("Cantidad de errores:\t\t\t%d\n", 0);
-	printf("=============================================\n");
-	printf("ALMACENADO FINAL\n");
-//Reducción Local
-	printf("=============================================\n");
-	printf("Cantidad de errores:\t\t\t%d\n", 0);
-	printf("=============================================\n");
+	masterMetrics.runTime = timediff(&end,&start);
+	printMetrics(masterMetrics);
 	return EXIT_SUCCESS;
 };

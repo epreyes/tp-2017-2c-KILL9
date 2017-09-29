@@ -34,9 +34,10 @@ typedef struct procMetrics{
 
 typedef struct metrics{
 	double runTime;
-	procMetrics* transformation;
-	procMetrics* localReduction;
-	procMetrics* globalReduction;
+	procMetrics transformation;
+	procMetrics localReduction;
+	procMetrics globalReduction;
+	procMetrics finalStorage;
 }metrics;
 
 #endif /* MASTER_H_ */
