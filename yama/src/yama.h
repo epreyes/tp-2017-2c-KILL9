@@ -29,7 +29,7 @@ typedef struct{
 
 typedef struct{
 	int node_id;
-	int tasks_in_progress;
+	unsigned int tasks_in_progress;
 	int tasts_done;
 	int considered;
 	int availability;
@@ -53,6 +53,7 @@ YAMA_PUERTO=8881
 NODE_AVAIL = 5*/
 
 typedef struct {
+	unsigned int work_charge;
 	t_config* config;
 	t_list* node_state_table;
 	t_list* state_table;

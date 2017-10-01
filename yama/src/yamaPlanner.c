@@ -10,24 +10,21 @@
 
 void doPlanning(Yama* yama, t_list* nodeList) {
 	//if (strcmp(yama->balancign_algoritm, "WRR") == 0)
-		hRoundRobinPlanning(yama, nodeList);
+		//hRoundRobinPlanning(yama, nodeList);
 
 	//if (strcmp(yama->balancign_algoritm, "RR") == 0)
-		roundRobinPlanning(yama, nodeList);
+		//roundRobinPlanning(yama, nodeList);
 }
 
-void hRoundRobinPlanning(Yama* yama, t_list* nodeList) {
+//WLmax: la mayor carga de trabajo existente entre todos Workers
+//WL(w): la carga de trabajo actual del Worker.
+
+void hclockPlanning(Yama* yama, t_list* nodeList) {
 
 }
 
-void roundRobinPlanning(Yama* yama, t_list* nodeList) {
-	int index = 0;
-	for (index = 0; index < list_size(nodeList); index+=2) {
-		tr_datos* nodeCopy1 = list_get(nodeList, index);
-		tr_datos* nodeCopy2 = list_get(nodeList, index+1);
-		//tr_datos* choosed = chooseNode(yama, nodeCopy1, nodeCopy2);
+void clockPlanning(Yama* yama, t_list* nodeList) {
 
-	}
 }
 
 /*tr_datos* chooseNode(Yama* yama, tr_datos* nodeCopy1, tr_datos* nodeCopy2){

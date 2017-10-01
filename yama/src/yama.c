@@ -28,6 +28,7 @@ t_log* configLog() {
 }
 
 void setProperties(Yama* yama) {
+	yama->work_charge = 0;
 	yama->log = configLog();
 	yama->state_table = list_create();
 	yama->node_state_table = list_create();

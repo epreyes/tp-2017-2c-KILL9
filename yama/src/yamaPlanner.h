@@ -13,8 +13,8 @@
 
 void doPlanning(Yama* yama, t_list* nodeList);
 
-void hRoundRobinPlanning(Yama* yama, t_list* nodeList);
+void clockPlanning(Yama* yama, t_list* nodeList);
 
-void roundRobinPlanning(Yama* yama, t_list* nodeList);
+void hClockPlanning(Yama* yama, t_list* nodeList);
 
 #endif /* YAMAPLANNER_H_ */

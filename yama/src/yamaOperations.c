@@ -13,7 +13,7 @@ void* processTransformation(Yama* yama, t_fileInfo* fsInfo, int master) {
 	t_list*  nodeList = list_create();
 	nodeList = buildTransformationResponseNodeList(yama, fsInfo, master);
 
-	//doPlanning();
+	//doPlanning(yama, nodeList);
 
 	return sortTransformationResponse(nodeList);
 }

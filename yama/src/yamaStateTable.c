@@ -53,7 +53,6 @@ void viewNodeTable(Yama* yama){
 	int index = 0;
 	for(index = 0; index < list_size(yama->node_state_table); index++){
 		t_nodeStateTable* node = list_get(yama->node_state_table, index);
-		printf("\nNodoId: %d\n", node->node_id);
 	}
 }
 
