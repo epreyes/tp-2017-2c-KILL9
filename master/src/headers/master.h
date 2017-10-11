@@ -19,10 +19,20 @@
 #include <sys/time.h>
 #include <commons/config.h>
 #include <commons/log.h>
-
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include "../../protocol/protocol.h"
 //=========LOGGERS=============//
 
 t_log* logger;
+
+//=========CONFIGS============//
+
+t_config* config;
+
+//=========SOCKETS=========//
+
+int masterSocket;
 
 //=========METRICS TAD=========//
 

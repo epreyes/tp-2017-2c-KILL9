@@ -14,7 +14,7 @@ double timediff(struct timeval *a, struct timeval *b);
 
 void validateArgs(int argc, char* argv[]);
 
-void validateConfigs(void);
+void loadConfigs(void);
 
 void createLoggers(void);
 
