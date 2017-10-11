@@ -8,7 +8,7 @@
 #include "headers/transform.h"
 
 //=============YAMA_REQUEST=============================//
-void sendRequest(char* fileName){
+void sendTRequest(char* fileName){
 
 //---Preparo Paquete---
 	transform_rq* data;
@@ -65,7 +65,7 @@ int transformFile(tr_datos yamaAnswer[], int totalRecords, metrics *masterMetric
 	pthread_t *threads = NULL; 						//creo array de hilos dinámico
 	dataThread_TR *dataThreads = NULL;				//creo array de params para el hilo
 
-	sendRequest(filename);
+	sendTRequest(filename);
 
 	while(recordCounter<totalRecords){
 		nodo = yamaAnswer[recordCounter].nodo;	//init first key

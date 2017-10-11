@@ -47,19 +47,16 @@ int main(int argc, char* argv[]){
 	openYamaConnection();
 
 	createLoggers();
-	validateArgs(argc, argv);									//valido argumentos
+	validateArgs(argc, argv);										//valido argumentos
 
-	transformFile(tr_answer,answerSize_TR,&masterMetrics,argv[3]);		//ordena ejecución de transformacion
-
-/*
-	runLocalReduction(rl_answer,answerSize_RL,&masterMetrics);	//ordena ejecución de Reductor Local
-	runGlobalReduction(rg_answer,answerSize_RG,&masterMetrics);	//ordena ejecución de Reductor Global
-	saveResult(af_answer,answerSize_AF,&masterMetrics);			//ordena guardado en FileSystem
+	transformFile(tr_answer,answerSize_TR,&masterMetrics,argv[3]);	//ordena ejecución de transformacion
+	runLocalReduction(rl_answer,answerSize_RL,&masterMetrics);		//ordena ejecución de Reductor Local
+	runGlobalReduction(rg_answer,answerSize_RG,&masterMetrics);		//ordena ejecución de Reductor Global
+	saveResult(af_answer,answerSize_AF,&masterMetrics);				//ordena guardado en FileSystem
 
 	gettimeofday(&end,NULL);
 	masterMetrics.runTime = timediff(&end,&start);
 	printMetrics(masterMetrics);
-*/
 	log_destroy(logger);
 	config_destroy(config);
 

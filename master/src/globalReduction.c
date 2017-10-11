@@ -7,6 +7,28 @@
 
 #include "headers/globalReduction.h"
 
+//=============YAMA_REQUEST=============================//
+void sendGRequest(){
+
+//---Preparo Paquete---
+	global_rq* data;
+	data = malloc(sizeof(global_rq));
+	data->code='G';
+
+//---Serializo---
+	void* buffer = malloc(sizeof(char));
+	memcpy(buffer,&(data->code),1);
+
+//---Envío---
+	send(masterSocket,buffer,sizeof(char),0);
+
+	free(buffer);
+	free(data);
+}
+
+//=============THREAD_ACTION===================================//
+
+
 
 ////////////////////////////////////GLOBAL_REDUCTION/////////////////////////////////////////
 
@@ -19,6 +41,8 @@ int runGlobalReduction(rg_datos yamaAnswer[], int totalRecords, metrics *masterM
 	brothersData = (dataNodes*) malloc(sizeof(dataNodes));
 	dataThread_GR* dataThread = NULL;
 	dataThread = (dataThread_GR*) malloc(sizeof(dataThread_GR));
+
+	sendGRequest();
 
 	//recorro los registros de la respuesta
 	while(recordCounter<totalRecords){

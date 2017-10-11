@@ -7,6 +7,26 @@
 
 #include "headers/localReduction.h"
 
+//=============YAMA_REQUEST=============================//
+void sendLRequest(){
+
+//---Preparo Paquete---
+	local_rq* data;
+	data = malloc(sizeof(local_rq));
+	data->code='L';
+
+//---Serializo---
+	void* buffer = malloc(sizeof(char));
+	memcpy(buffer,&(data->code),1);
+
+//---Envío---
+	send(masterSocket,buffer,sizeof(char),0);
+
+	free(buffer);
+	free(data);
+}
+
+//=============THREAD_ACTION===================================//
 
 void *runLocalRedThread(void* data){
 	int i;
@@ -27,6 +47,8 @@ int runLocalReduction(rl_datos yamaAnswer[], int totalRecords, metrics *masterMe
 	tr_tmp* tr_tmps = NULL;
 	pthread_t *threads = NULL; 						//creo array de hilos dinámico
 	dataThread_LR *dataThreads = NULL;				//creo array de params para el hilo
+
+	sendLRequest();
 
 	while(recordCounter<totalRecords){
 		nodo = yamaAnswer[recordCounter].nodo;	//init first key
