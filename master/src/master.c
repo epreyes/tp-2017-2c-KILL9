@@ -19,7 +19,6 @@
 #include "headers/localReduction.h"
 #include "headers/globalReduction.h"
 #include "headers/finalStorage.h"
-#include "headers/connect.h"
 #include "headers/connectionsManager.h"
 
 ///////////MAIN PROGRAM///////////

@@ -52,41 +52,5 @@ typedef struct metrics{
 	procMetrics finalStorage;
 }metrics;
 
-//===================ANSWERS TAD===============
-
-typedef struct tr_datos tr_datos;
-typedef struct rl_datos rl_datos;
-typedef struct rg_datos rg_datos;
-typedef struct af_datos af_datos;
-
-
-struct tr_datos{
-	int		nodo;
-	char	direccion[21];
-	int		bloque;
-	int		tamanio;
-	char	tr_tmp[28];
-};
-
-struct rl_datos{
-	int		nodo;
-	char	direccion[21];
-	char	tr_tmp[28];
-	char	rl_tmp[28];
-};
-
-struct rg_datos{				//es un record por nodo
-	int		nodo;
-	char	direccion[21];
-	char	rl_tmp[28];
-	char	rg_tmp[24];
-	char	encargado;
-};
-
-struct af_datos{
-	int		nodo;
-	char	direccion[21];
-	char	rg_tmp[24];
-};
 
 #endif /* MASTER_H_ */
