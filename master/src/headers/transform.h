@@ -11,11 +11,6 @@
 #include "master.h"
 #include "utils.h"
 
-typedef struct block{
-	int pos;
-	int size;
-}block;
-
 typedef struct dataThread_TR{
 	int		node;
 	char 	conector[21];

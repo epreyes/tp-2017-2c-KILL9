@@ -7,10 +7,11 @@
 
 #include "headers/utils.h"
 
-
+//calculo el tiempo entre 2 timeval
 double timediff(struct timeval *a, struct timeval *b){
 	return ((double)(a->tv_sec + (double)a->tv_usec/1000000)-(double)(b->tv_sec + (double)b->tv_usec/1000000))*1000.0;
 }
+
 
 void validateArgs(int argc, char* argv[]){
 	int count;
@@ -26,6 +27,7 @@ void validateArgs(int argc, char* argv[]){
 	}
 };
 
+
 void loadConfigs(){
 	char* CONFIG_PATH = "../properties/master.properties";
 	config = config_create(CONFIG_PATH);
@@ -35,6 +37,7 @@ void loadConfigs(){
 		exit(0);
 	}
 }
+
 
 void createLoggers(){
 	char* LOG_PATH = "../logs/master.log";

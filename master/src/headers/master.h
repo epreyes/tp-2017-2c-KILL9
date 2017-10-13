@@ -21,7 +21,8 @@
 #include <commons/log.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
-#include "../../protocol/protocol.h"
+#include "../../protocol/master_yama.h"
+#include "../../protocol/master_worker.h"
 //=========LOGGERS=============//
 
 t_log* logger;
