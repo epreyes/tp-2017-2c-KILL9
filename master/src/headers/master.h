@@ -23,6 +23,7 @@
 #include <sys/socket.h>
 #include "../../protocol/master_yama.h"
 #include "../../protocol/master_worker.h"
+#include "utils.h"
 //=========LOGGERS=============//
 
 t_log* logger;
@@ -34,14 +35,12 @@ t_config* config;
 //=========SOCKETS=========//
 
 int masterSocket;
+int nodeSockets[100]; //pasar a dinámico
 
 //=========SCRIPTS=========//
 
 FILE* script_transform;
-char* script_transform_content;
-
 FILE* script_reduction;
-char* script_reduction_content;
 
 //=========METRICS TAD=========//
 

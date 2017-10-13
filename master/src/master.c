@@ -12,7 +12,6 @@
 
 #include "headers/master.h"
 #include "headers/metrics.h"
-#include "headers/utils.h"
 #include "headers/answers.h"
 #include "headers/connectionsManager.h"
 

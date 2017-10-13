@@ -27,14 +27,9 @@ void validateArgs(int argc, char* argv[]){
 	}
 };
 
-void serializeFile(FILE* file, char* stringFile){
+char* serializeFile(FILE* file){
 	int caracter, fileSize, charCounter=0;
-
-//---valido existencia de los archivos
-	if(file==NULL){
-		printf("\x1b[31m" "no existe el script solicitado\n" "\x1b[0m");
-		exit(0);
-	}
+	char* stringFile;
 
 //---obtengo el tamaño del archivo
 
@@ -50,8 +45,7 @@ void serializeFile(FILE* file, char* stringFile){
 		charCounter++;
 	}
 	stringFile[charCounter] = '\0';
-	printf("%s\n",stringFile);
-	free(stringFile);
+	return stringFile;
 }
 
 void loadScripts(char* transformScript, char* reductionScript){
@@ -59,8 +53,14 @@ void loadScripts(char* transformScript, char* reductionScript){
 	script_transform=fopen(transformScript,"r");
 	script_reduction=fopen(reductionScript,"r");
 
-	serializeFile(script_transform, script_transform_content);
-	serializeFile(script_reduction, script_transform_content);
+//---valído existencia de los archivos
+	if(transformScript==NULL||reductionScript==NULL){
+		printf("\x1b[31m" "no existe el script solicitado\n" "\x1b[0m");
+		exit(0);
+	}
+
+	//serializeFile(script_transform, script_transform_content);
+	//serializeFile(script_reduction, script_transform_content);
 }
 
 //------------------------------

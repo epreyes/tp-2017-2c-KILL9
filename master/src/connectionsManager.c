@@ -7,8 +7,6 @@
 
 #include "headers/connectionsManager.h"
 
-int nodeSockets[100]; //pasar a dinámico
-
 void openYamaConnection(void) {
 	struct sockaddr_in yamaAddr;
 	yamaAddr.sin_family = AF_INET;

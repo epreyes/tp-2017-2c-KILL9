@@ -46,21 +46,27 @@ void sendTRequest(char* fileName){
 void *runTransformThread(void* data){
 	dataThread_TR* datos = (dataThread_TR*) data;
 	int i, counter=0;
-	char file[5]="hola"; //REEMPLAZAR POR EL ARCHIVO FINAL
+	char* scriptString;
 
 //---Preparo Paquete---
+
+	scriptString=serializeFile(script_transform);
+
 	tr_node* nodeData=malloc(sizeof(tr_node));
 	nodeData->code='T';
-	nodeData->fileSize=strlen(file)+1;
+	nodeData->fileSize=strlen(scriptString)+1;
 	nodeData->file=malloc(nodeData->fileSize);		//ver el +1
 	nodeData->blocksSize=datos->blocksCount;
-	strcpy(nodeData->file,file);
+	strcpy(nodeData->file,scriptString);
+
+	//printf("FILE_CONTENT:%s\n",nodeData->file);
+
 
 //---Serializo---
 	void* buffer = malloc(1+4+nodeData->fileSize+4+(8*(datos->blocksCount+1)));
 	memcpy(buffer,&(nodeData->code),1);
 	memcpy(buffer+1,&(nodeData->fileSize),4);
-	memcpy(buffer+1+4,&(nodeData->file),nodeData->fileSize);
+	memcpy(buffer+1+4,(nodeData->file),nodeData->fileSize);
 	memcpy(buffer+1+4+(nodeData->fileSize),&(nodeData->blocksSize),4);
 	counter=1+4+(nodeData->fileSize)+4;
 	for (i = 0; i <= (datos->blocksCount); ++i){
@@ -68,16 +74,17 @@ void *runTransformThread(void* data){
 		memcpy(buffer+counter+4+i*8,&(datos->blocks[i].size),4);
 	}
 	openNodeConnection(datos[0].node, datos[0].conector);
-/*
 	counter=1+4+nodeData->fileSize+4+(8*(datos->blocksCount+1l));
 //---Envío---
 	send(nodeSockets[datos->node],buffer,counter,0);
 
+/*
 	for (i = 0; i <= (datos[0].blocksCount); ++i){
 		printf("\t nodo:%d \t pos:%d  \t tam:%d\n", datos[0].node, datos[0].blocks[i].pos, datos[0].blocks[i].size);
 	}
 */
 	free(buffer);
+	free(scriptString);
 	free(nodeData->file);
 	free(nodeData);
 	return NULL;
