@@ -50,7 +50,7 @@ void *runTransformThread(void* data){
 
 //---Preparo Paquete---
 
-	scriptString=serializeFile(script_transform);
+	scriptString=serializeFile(script_transform);	//hacer que se genere una sola vez
 
 	tr_node* nodeData=malloc(sizeof(tr_node));
 	nodeData->code='T';
@@ -59,24 +59,51 @@ void *runTransformThread(void* data){
 	nodeData->blocksSize=datos->blocksCount;
 	strcpy(nodeData->file,scriptString);
 
-	//printf("FILE_CONTENT:%s\n",nodeData->file);
-
-
 //---Serializo---
-	void* buffer = malloc(1+4+nodeData->fileSize+4+(8*(datos->blocksCount+1)));
+	void* buffer = malloc(1+4+nodeData->fileSize+4+(8*(datos->blocksCount)));
 	memcpy(buffer,&(nodeData->code),1);
 	memcpy(buffer+1,&(nodeData->fileSize),4);
 	memcpy(buffer+1+4,(nodeData->file),nodeData->fileSize);
 	memcpy(buffer+1+4+(nodeData->fileSize),&(nodeData->blocksSize),4);
 	counter=1+4+(nodeData->fileSize)+4;
-	for (i = 0; i <= (datos->blocksCount); ++i){
+
+	for (i = 0; i < (datos->blocksCount); ++i){
 		memcpy(buffer+counter+i*8,&(datos->blocks[i].pos),4);
 		memcpy(buffer+counter+4+i*8,&(datos->blocks[i].size),4);
 	}
-	openNodeConnection(datos[0].node, datos[0].conector);
-	counter=1+4+nodeData->fileSize+4+(8*(datos->blocksCount+1l));
+	//openNodeConnection(datos[0].node, datos[0].conector);
+	counter=1+4+(nodeData->fileSize)+4+(8*(datos->blocksCount));
+
 //---Envío---
-	send(nodeSockets[datos->node],buffer,counter,0);
+	//send(nodeSockets[datos->node],buffer,counter,0);
+
+//---DES_SERIALIZACIÓN---
+	tr_node *reciv = malloc(sizeof(tr_node));
+	memcpy(&(reciv->code),buffer,1);
+	memcpy(&(reciv->fileSize),buffer+1,4);
+
+	reciv->file = malloc(reciv->fileSize);
+	strcpy(reciv->file, buffer+5);
+
+	memcpy(&(reciv->blocksSize), buffer+5+(reciv->fileSize),4);
+
+	reciv->blocks = malloc(sizeof(block)*reciv->blocksSize);
+	memcpy(reciv->blocks, buffer+5+(reciv->fileSize)+4,sizeof(block)*reciv->blocksSize);
+
+	for (i = 0; i < reciv->blocksSize; ++i){
+		printf("\t nodo:%d \t pos:%d  \t tam:%d\n", datos->node, reciv->blocks[i].pos, reciv->blocks[i].size);
+	}
+/*
+*/
+
+	printf("CODE:%c\n",reciv->code);
+	printf("FILESIZE:%d\n",reciv->fileSize);
+	printf("FILE:%s\n",reciv->file);
+	printf("BLOCKSIZE:%d\n", reciv->blocksSize);
+
+	free(reciv->blocks);
+	free(reciv->file);
+	free(reciv);
 
 /*
 	for (i = 0; i <= (datos[0].blocksCount); ++i){
@@ -84,9 +111,9 @@ void *runTransformThread(void* data){
 	}
 */
 	free(buffer);
-	free(scriptString);
 	free(nodeData->file);
 	free(nodeData);
+	free(scriptString);
 	return NULL;
 }
 
@@ -122,7 +149,7 @@ int transformFile(tr_datos yamaAnswer[], int totalRecords, metrics *masterMetric
 
 		dataThreads[nodeCounter].node=nodo;
 		strcpy(dataThreads[nodeCounter].conector,yamaAnswer[recordCounter-1].direccion);
-		dataThreads[nodeCounter].blocksCount=blockCounter-1;
+		dataThreads[nodeCounter].blocksCount=blockCounter;
 		nodeCounter++;
 		blockCounter = 0;
 	}

@@ -10,7 +10,7 @@
 
 /*========TRANSFORM==========*/
 //----Request----//
-typedef struct block{
+typedef struct{
 	int pos;
 	int size;
 }block;
