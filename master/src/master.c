@@ -40,6 +40,7 @@ int main(int argc, char* argv[]){
 	openYamaConnection();
 	createLoggers();
 	validateArgs(argc, argv);										//valido argumentos
+	loadScripts(argv[1],argv[2]);
 
 	transformFile(tr_answer,answerSize_TR,&masterMetrics,argv[3]);	//ordena ejecución de transformacion
 	/*
@@ -51,8 +52,12 @@ int main(int argc, char* argv[]){
 	masterMetrics.runTime = timediff(&end,&start);
 	printMetrics(masterMetrics);
 	*/
+
+//--cierro todo lo grobal
 	log_destroy(logger);
 	config_destroy(config);
+	fclose(script_transform);
+	fclose(script_reduction);
 
 	return EXIT_SUCCESS;
 };

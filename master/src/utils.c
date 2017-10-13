@@ -28,6 +28,20 @@ void validateArgs(int argc, char* argv[]){
 };
 
 
+void loadScripts(char* transformScript, char* reductionScript){
+	script_transform=fopen(transformScript,"r");
+	if(script_transform==NULL){
+		printf("\x1b[31m" "no existe el script de transformación solicitado\n" "\x1b[0m");
+		exit(0);
+	}
+	script_reduction=fopen(reductionScript,"r");
+	if(script_transform==NULL){
+		printf("\x1b[31m" "no existe el script de reducción solicitado\n" "\x1b[0m");
+		exit(0);
+	}
+}
+
+
 void loadConfigs(){
 	char* CONFIG_PATH = "../properties/master.properties";
 	config = config_create(CONFIG_PATH);

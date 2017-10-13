@@ -35,6 +35,11 @@ t_config* config;
 
 int masterSocket;
 
+//=========SCRIPTS=========//
+
+FILE* script_transform;
+FILE* script_reduction;
+
 //=========METRICS TAD=========//
 
 typedef struct procMetrics{
