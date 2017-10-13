@@ -16,4 +16,5 @@
 void openYamaConnection(void);
 int openNodeConnection(int node, char* direction);
 
+
 #endif /* HEADERS_CONNECTIONSMANAGER_H_ */

@@ -38,7 +38,10 @@ int masterSocket;
 //=========SCRIPTS=========//
 
 FILE* script_transform;
+char* script_transform_content;
+
 FILE* script_reduction;
+char* script_reduction_content;
 
 //=========METRICS TAD=========//
 

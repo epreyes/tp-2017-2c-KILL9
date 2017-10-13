@@ -27,19 +27,43 @@ void validateArgs(int argc, char* argv[]){
 	}
 };
 
+void serializeFile(FILE* file, char* stringFile){
+	int caracter, fileSize, charCounter=0;
+
+//---valido existencia de los archivos
+	if(file==NULL){
+		printf("\x1b[31m" "no existe el script solicitado\n" "\x1b[0m");
+		exit(0);
+	}
+
+//---obtengo el tamaño del archivo
+
+	fseek(file,0,SEEK_END);
+	fileSize = ftell(file)+1;
+	stringFile=malloc(fileSize);
+	rewind(file);
+
+//---paso contenido a string
+
+	while((caracter = fgetc(file))!= EOF){
+		stringFile[charCounter] = caracter;
+		charCounter++;
+	}
+	stringFile[charCounter] = '\0';
+	printf("%s\n",stringFile);
+	free(stringFile);
+}
 
 void loadScripts(char* transformScript, char* reductionScript){
+
 	script_transform=fopen(transformScript,"r");
-	if(script_transform==NULL){
-		printf("\x1b[31m" "no existe el script de transformación solicitado\n" "\x1b[0m");
-		exit(0);
-	}
 	script_reduction=fopen(reductionScript,"r");
-	if(script_transform==NULL){
-		printf("\x1b[31m" "no existe el script de reducción solicitado\n" "\x1b[0m");
-		exit(0);
-	}
+
+	serializeFile(script_transform, script_transform_content);
+	serializeFile(script_reduction, script_transform_content);
 }
+
+//------------------------------
 
 
 void loadConfigs(){

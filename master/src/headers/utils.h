@@ -14,6 +14,8 @@ double timediff(struct timeval *a, struct timeval *b);
 
 void validateArgs(int argc, char* argv[]);
 
+void serializeFile(FILE* file, char* stringFile);
+
 void loadScripts(char* transformScript, char* reductionScript);
 
 void loadConfigs(void);
