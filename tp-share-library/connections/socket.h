@@ -19,50 +19,46 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <commons/string.h>
+#include <commons/log.h>
 
-/**
- * Crear un socket servidor
- * Abre un puerto y espera que se conecten clientes
- *
- */
-int open_socket(int port ,int countClient);
-
-/**
- *file descriptor a cerrar
- */
-int close_socket(int fd_socket);
+typedef int socket_t;
 
 
-/**
- * @NAME:  connect_to_socket
- * @DESC:  Acepta la conexion de un cliente al socket
- *
- * @PARAMS int fd_listening_socket :fd del socket que va a aceptar conexiones
- *
- * @RETURN int : fd del del cliente que se conecto
- */
-int accept_connection(int);
 
-/**
- * @NAME:  connect_to_socket
- * @DESC:   conectarse a un socket servidor
- *
- * @PARAMS char * server_ip   : ip del socket servidor
- * 		   char * server_port : puerto del socket servidor
- *		   int * server_int  : El valor del fd del socket de conexion
- * @RETURN int : 0 en caso de exito
- */
-int connect_to_servidor(char *server_ip, char *server_port,int *fdsocket);
+/** Struct **/
+typedef struct __attribute__((packed)) t_paquete{
+	int idProceso;
+	int cod_operacion;
+	int tamanio;
+	void* datos;
+} t_paquete;
 
-/**
- * @NAME:  close_client
- * @DESC:  Cierra la conexion de un cliente
- *
- * @PARAMS int * client_socket : file descriptor del socket cliente a cerrar
- *
- * @RETURN int : 0 funcionamiento normal, -1 en caso de error
- */
+
+int connect_to_socket(char *server_ip, char *server_port);
+
+socket_t open_socket(char* host, char*port) ;
+
+socket_t accept_connection(socket_t listenSocket) ;
+
+// Envia datos al Socket asignado
+
+void enviarDatos(socket_t, int, int, int, void*);
+
+// Recibir datos del Socket
+
+t_paquete* recibirPaquete(socket_t);
+
+int socket_recv(int  client_socket, void * buffer, int buffer_size) ;
+
+int socket_send(int  server_socket, void * buffer, int buffer_size, int flags);
+
+int socket_write(int  client_socket, void * response, int response_size) ;
+
 int close_client(int);
+
+int enviarMensaje(int sockfd, const void * datos, size_t bytesAenviar,t_log* t_log);
+
+int recibirMensaje(int sockfd, void* buffer, size_t bytesAleer,t_log* log);
 
 
 #endif /* CONNECTIONS_SOCKET_H_ */

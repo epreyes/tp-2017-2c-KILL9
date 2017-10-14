@@ -1,7 +1,7 @@
 /*
  ============================================================================
  Name        : dataNode.c
- Author      : 
+ Author      :
  Version     :
  Copyright   : Your copyright notice
  Description : Hello World in C, Ansi-style
@@ -13,13 +13,13 @@
 #include <commons/config.h>
 #include "headers/dataNode.h"
 #include <connections/socket.h>
-
+#include "headers/connectionDataNodeFileSystem.h"
+#include <struct/struct.h>
 int fd_server_socket;
 
 int main(void) {
 	load_data_node_properties_files();
 
-	//fd_server_socket = connect_to_servidor(data_node_conf->file_system_ip,data_node_conf->file_system_port,&fileSystemSocket);
 	connectionToFileSystem();
 	return EXIT_SUCCESS;
 }
@@ -31,5 +31,14 @@ void  load_data_node_properties_files(){
 	data_node_config = malloc(sizeof(t_data_node_config));
 	data_node_config->file_system_ip= config_get_string_value(t_data_node,"IP_FILESYSTEM");
 	data_node_config->file_system_port= config_get_string_value(t_data_node,"PORT_FILESYSTEM");
+	data_node_config->path_data_bin= config_get_string_value(t_data_node,"PATH_DATABIN");
+
+	infoLogger = log_create(LOG_PATH,"FileSystem",true,LOG_LEVEL_INFO);
+	info_ejecucion = log_create(LOG_EJECUCION,"FileSystem",true,LOG_LEVEL_INFO);
+
 	free(t_data_node);
+
+	printf("Se setearon configuraciones: IP-FILESYSTEM [%s] PUERTO-FILESYSTEM [%s] \n",
+		    data_node_config ->file_system_ip, data_node_config ->file_system_port);
+
 }

@@ -16,6 +16,7 @@ char* nodosBin = "/home/proyectomacro/SO/fs/bin/metadata/nodos.bin";
 
 int debug;
 
+/**
 int main(void) {
 
 	debug = 1;
@@ -114,7 +115,7 @@ int main(void) {
 
 	return EXIT_SUCCESS;
 }
-
+*/
 void iniciarFS() {
 
 	int fd;

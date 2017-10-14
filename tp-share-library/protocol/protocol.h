@@ -1,8 +1,8 @@
 /*
- * protocol.h
+ * protocols.h
  *
  *  Created on: 14/9/2017
- *      Author: utnso
+ *      Author: miguel tomicha
  */
 
 #ifndef PROTOCOLS_PROTOCOL_H_
@@ -19,4 +19,8 @@ typedef enum PROTOCOL_FILESYSTEM_TO_DATANODE {
 	HANDSHAKE_CONNECTION_FILESYSTEM_TO_DATANODE_OK
 }PROTOCOL_FILESYSTEM_TO_DATANODE;
 
+
+#define	SUCCESS	    1
+#define GET_BLOQUE  2
+#define ACCESOAPROBADO  3
 #endif /* PROTOCOLS_PROTOCOL_H_ */
