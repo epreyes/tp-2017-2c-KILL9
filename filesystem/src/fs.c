@@ -18,6 +18,7 @@ t_directorio* inicioTablaDirectorios;
 // Tabla de archivos (es una lista de archivos con su path completo empezando desde el indice de directorio padre)
 t_list* tablaArchivos;
 
+/**
 int main(void) {
 
 	logger = log_create("yamafs.log", "PD_FS", 1, LOG_LEVEL_DEBUG);
@@ -47,7 +48,7 @@ int main(void) {
 
 	return EXIT_SUCCESS;
 }
-
+*/
 void iniciarFS() {
 
 	int fd, offset;

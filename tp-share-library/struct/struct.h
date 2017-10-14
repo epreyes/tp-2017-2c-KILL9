@@ -14,7 +14,7 @@
 
 typedef struct {
 	char* file_system_port;
-	char* file_sytem_ip;
+	char* file_system_ip;
 }__attribute__ ((__packed__)) t_file_system_config;
 
 

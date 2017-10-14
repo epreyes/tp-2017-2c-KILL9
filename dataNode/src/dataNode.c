@@ -33,5 +33,12 @@ void  load_data_node_properties_files(){
 	data_node_config->file_system_port= config_get_string_value(t_data_node,"PORT_FILESYSTEM");
 	data_node_config->path_data_bin= config_get_string_value(t_data_node,"PATH_DATABIN");
 
+	infoLogger = log_create(LOG_PATH,"FileSystem",true,LOG_LEVEL_INFO);
+	info_ejecucion = log_create(LOG_EJECUCION,"FileSystem",true,LOG_LEVEL_INFO);
+
 	free(t_data_node);
+
+	printf("Se setearon configuraciones: IP-FILESYSTEM [%s] PUERTO-FILESYSTEM [%s] \n",
+		    data_node_config ->file_system_ip, data_node_config ->file_system_port);
+
 }

@@ -20,11 +20,9 @@
 
 #define	SUCCESS				   1
 
-int recv_operation_code(int * client_socket, t_log * logger);
 
-/**
- * DN - GET BLOQUE
- */
+int recv_operation_code(int client_socket, t_log * logger);
+/** DN - GET BLOQUE  */
 
 typedef struct {
 	int16_t exec_code;
@@ -38,12 +36,11 @@ typedef struct{
 }t_dn_get_block_req;
 
 
-
 t_dn_get_block_resp* dn_get_block(int server_socket,int number_block,t_log * logger);
 
-t_dn_get_block_req * dn_get_block_recv_req(int * client_socket, t_log * logger) ;
+t_dn_get_block_req * dn_get_block_recv_req(int client_socket, t_log * logger) ;
 
-void dn_get_block_resp(int * client_socket, int resp_code, int buffer_size, void * buffer);
+void dn_get_block_resp(int client_socket, int resp_code, int buffer_size, void * buffer);
 
 
 

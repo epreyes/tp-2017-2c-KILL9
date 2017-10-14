@@ -48,12 +48,17 @@ void enviarDatos(socket_t, int, int, int, void*);
 
 t_paquete* recibirPaquete(socket_t);
 
-int socket_recv(int * client_socket, void * buffer, int buffer_size) ;
+int socket_recv(int  client_socket, void * buffer, int buffer_size) ;
 
-int socket_send(int * server_socket, void * buffer, int buffer_size, int flags);
+int socket_send(int  server_socket, void * buffer, int buffer_size, int flags);
 
-int socket_write(int * client_socket, void * response, int response_size) ;
+int socket_write(int  client_socket, void * response, int response_size) ;
 
 int close_client(int);
+
+int enviarMensaje(int sockfd, const void * datos, size_t bytesAenviar,t_log* t_log);
+
+int recibirMensaje(int sockfd, void* buffer, size_t bytesAleer,t_log* log);
+
 
 #endif /* CONNECTIONS_SOCKET_H_ */

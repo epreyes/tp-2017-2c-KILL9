@@ -35,9 +35,6 @@ uint32_t vg_tamanio_memoria, vg_tamanio_marco, vg_cant_paginas_adm,
 		vg_cant_marcos;
 int vg_paginas_stack;
 
-typedef enum {
-	ACCESOAPROBADO = 0, ACCESODENEGADO = 1
-} handshake;
 
 typedef enum {
 	LEER = 1, ESCRIBIR = 2
@@ -47,10 +44,11 @@ typedef enum {
 /** Funciones **/
 void load_file_system_properties(void);
 
-int process_request(void * socket);
+void process_request(void * socket);
 
 void loadServidorMultihread(void);
 
 void process_dataNode();
+void connectionFileSystemDataNode();
 
 #endif /* HEADER_FILESYSTEM_H_ */

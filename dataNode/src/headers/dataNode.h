@@ -16,6 +16,10 @@
 #include <commons/log.h>
 #include <struct/struct.h>
 
+// Definiciones
+#define LOG_PATH "info_logs"
+#define LOG_EJECUCION "info_ejecucion"
+
 typedef enum {
 	ACCESOAPROBADO = 0,
 	ACCESODENEGADO = 1,
@@ -32,6 +36,8 @@ t_data_node_config* data_node_config;
 
 
 t_log* infoLogger;
+t_log* info_ejecucion;
+
 int32_t fileSystemSocket;
 
 void load_data_node_properties_files(void);
