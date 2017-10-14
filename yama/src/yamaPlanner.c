@@ -5,28 +5,68 @@
  *      Author: utnso
  */
 
-#include "yamaPlanner.h"
+#include "headers/yamaPlanner.h"
+
 #include <string.h>
 
-void doPlanning(Yama* yama, t_list* nodeList) {
-	//if (strcmp(yama->balancign_algoritm, "WRR") == 0)
-		//hRoundRobinPlanning(yama, nodeList);
-
-	//if (strcmp(yama->balancign_algoritm, "RR") == 0)
-		//roundRobinPlanning(yama, nodeList);
+int getMaxWorkload(Yama* yama){
+	int max = 0;
+	int index = 0;
+	for(index = 0; index < list_size(yama->tabla_nodos); index++){
+		elem_tabla_nodos* elem = list_get(yama->tabla_nodos, index);
+		if( max < elem->tasks_in_progress ){
+			max = elem->tasks_in_progress;
+		}
+	}
+	return max;
 }
 
-//WLmax: la mayor carga de trabajo existente entre todos Workers
-//WL(w): la carga de trabajo actual del Worker.
+int clockAvail(Yama* yama){
+	return config_get_int_value(yama->config, "NODE_AVAIL");
+}
 
-void hclockPlanning(Yama* yama, t_list* nodeList) {
+int hClockAvail(Yama* yama, elem_tabla_nodos* elem){
+	return clockAvail(yama) + (getMaxWorkload(yama) - elem->tasks_in_progress);
+}
+
+int setNewAvailability(Yama* yama, elem_tabla_nodos* elem){
+
+	if (strcmp(config_get_string_value(yama->config, "ALGORITMO_BALANCEO"), "WRR") == 0)
+			return hClockAvail(yama, elem);
+	if (strcmp(config_get_string_value(yama->config, "ALGORITMO_BALANCEO"), "RR") == 0)
+			return clockAvail(yama);
+
+	return 0;
+}
+
+void updateAvailability(Yama* yama){
+	int index = 0;
+	for(index = 0; index < list_size(yama->tabla_nodos); index++){
+		elem_tabla_nodos* elem = list_get(yama->tabla_nodos, index);
+		elem->availability = setNewAvailability(yama, elem);
+		list_replace(yama->tabla_nodos, index, elem);
+	}
+
 
 }
 
-void clockPlanning(Yama* yama, t_list* nodeList) {
+elem_tabla_nodos* getHigerAvailNode(Yama* yama){
+	elem_tabla_nodos* higer = list_get(yama->tabla_nodos, 0);
 
+	int index = 1;
+	for(index = 1; index < list_size(yama->tabla_nodos); index++){
+		elem_tabla_nodos* current = list_get(yama->tabla_nodos, index);
+		if( (current->availability > higer->availability) ||
+				((current->availability == higer->availability) && (current->tasts_done < higer->tasts_done)) ){
+			higer = current;
+		}
+	}
+
+	return higer;
 }
 
-/*tr_datos* chooseNode(Yama* yama, tr_datos* nodeCopy1, tr_datos* nodeCopy2){
-
-}*/
+void doPlanning(Yama* yama, block* blockRecived) {
+	updateAvailability(yama);
+	elem_tabla_nodos* clock = getHigerAvailNode(yama);
+	//blockRecived->
+}

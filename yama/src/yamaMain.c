@@ -8,13 +8,16 @@
  ============================================================================
  */
 
-#include "yama.h"
+#include "headers/connectionManager.h"
+#include "headers/yama.h"
 
 int main(void) {
-	Yama yama = configYama();
-	yama.yama_server = startServer(config_get_int_value(yama.config, "YAMA_PUERTO"));
 
-	waitForMasters(&yama);
+	/* inicializo yama */
+	init();
+
+	/* espero las conexiones de los masters */
+	waitMastersConnections();
 
 
 	return EXIT_SUCCESS;

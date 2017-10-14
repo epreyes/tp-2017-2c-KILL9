@@ -8,10 +8,10 @@
 #ifndef YAMAPLANNER_H_
 #define YAMAPLANNER_H_
 
-#include "yama.h"
 #include <commons/collections/list.h>
+#include "yama.h"
 
-void doPlanning(Yama* yama, t_list* nodeList);
+void doPlanning(Yama* yama, block* nodeList);
 
 void clockPlanning(Yama* yama, t_list* nodeList);
 

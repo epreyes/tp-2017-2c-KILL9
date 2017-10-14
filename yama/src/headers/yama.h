@@ -13,27 +13,27 @@
 #include <commons/collections/list.h>
 #include <commons/config.h>
 #include <commons/log.h>
-#include <tplibraries/sockets/socket.h>
 #include <tplibraries/utils/utils.h>
+#include <tplibraries/sockets/socket.h>
 #include <tplibraries/protocol/protocol.h>
 
 static char* CONFIG_PATH = "./config/yamaConfig.properties";
 static char* LOG_PATH = "./log/yama.log";
 
-typedef struct{
+typedef struct {
 	int blocks;
 	int sizeInfo;
 	char* filename;
 	void* info;
-}t_fileInfo;
+} elem_info_archivo;
 
-typedef struct{
+typedef struct {
 	int node_id;
 	unsigned int tasks_in_progress;
 	int tasts_done;
 	int considered;
 	int availability;
-}t_nodeStateTable;
+} elem_tabla_nodos;
 
 typedef struct {
 	int job;
@@ -43,47 +43,40 @@ typedef struct {
 	char op;
 	char tmp[28];
 	int status;
-} rowStateTable;
+} elem_tabla_estados;
 
 /*FS_IP=127.0.1.1
-FS_PUERTO=8880
-RETARDO_PLANIFICACION=5
-ALGORITMO_BALANCEO=WRR
-YAMA_PUERTO=8881
-NODE_AVAIL = 5*/
+ FS_PUERTO=8880
+ RETARDO_PLANIFICACION=5
+ ALGORITMO_BALANCEO=WRR
+ YAMA_PUERTO=8881
+ NODE_AVAIL = 5*/
 
 typedef struct {
-	unsigned int work_charge;
 	t_config* config;
-	t_list* node_state_table;
-	t_list* state_table;
-	t_list* file_info;
+	t_list* tabla_nodos;
+	t_list* tabla_estados;
+	t_list* tabla_info_archivos;
+	t_list* tabla_planificados;
 	Server yama_server;
 	Client yama_client;
 	t_log* log;
 } Yama;
 
+Yama* yama;
+
+/*---------------------- Private ---------------------------------*/
 t_config* getConfig();
 
-t_log* configLog();
-
-void setProperties(Yama* yama);
+t_log* getLog();
 
 /*---------------------- Public ----------------------------------*/
-Yama configYama();
+void init();
 
-Client acceptMasterConnection(Yama* yama, Server* server, fd_set* masterList, int hightSd);
+void* getResponse(int master, char request);
 
-t_package* getRequest(Yama* yama, void* request, int master);
+void* processOperation(int master, char op);
 
-void* getResponse(Yama* yama, t_package* request, int master);
-
-int sendResponse(Yama* yama, int master, void* masterRS);
-
-int getMasterMessage(Yama* yama, int socket, fd_set* mastersList);
-
-void exploreMastersConnections(Yama* yama, fd_set* mastersListTemp, fd_set* mastersList);
-
-void waitForMasters(Yama* yama);
+void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId);
 
 #endif /* YAMA_H_ */

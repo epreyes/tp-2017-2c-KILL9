@@ -4,39 +4,44 @@
  *  Created on: 21/9/2017
  *      Author: utnso
  */
-#include "yamaFS.h"
+#include "headers/yamaFS.h"
 
-void* getFileSystemInfo(Yama* yama, t_header head, void* payload) {
+void* getFileSystemInfo(char* name) {
+
+	/*configuro la ip del filesystem*/
 	char fs_ip[15];
 	strcpy(fs_ip, config_get_string_value(yama->config, "FS_IP"));
+	/*configuro el puerto del filesystem*/
 	int fs_port = config_get_int_value(yama->config, "FS_PUERTO");
 
+	/*me conecto al filesystem*/
 	Client fs_client = connectClient(fs_ip, fs_port);
-	char* name = (char*) payload;
 
 	void* fsInfo = NULL;
 
-	void* buffer = malloc(sizeof(t_header) + head.msg_size);
-	memcpy(buffer, &head, sizeof(t_header));
-	memcpy(buffer + sizeof(t_header), name, head.msg_size);
+	/*creo el buffer que contendra la solicitud al filesystem*/
+	int buffersize = sizeof(int)+strlen(name);
+	int sizename = strlen(name);
 
-	if (send(fs_client.socket_server_id, buffer,
-			sizeof(t_header) + head.msg_size, 0) > 0) {
+	void* buffer = malloc( buffersize );
+	memcpy(buffer, &sizename, sizeof(int));
+	memcpy(buffer+sizeof(int), name, sizename);
 
+	int infoSize = 0;
+	if (send(fs_client.socket_server_id, buffer, buffersize, 0) > 0) {
 		free(buffer);
 
-		buffer = malloc(sizeof(t_header));
+		buffer = malloc(sizeof(int));
 
-		int recved = recv(fs_client.socket_server_id, buffer, sizeof(t_header),
-				0);
+		int recved = recv(fs_client.socket_server_id, buffer, sizeof(int), 0);
 		if (recved > 0) {
-			t_header headFromFS = *(t_header*) buffer;
+			infoSize = *(int*) buffer;
 			free(buffer);
-			buffer = malloc(headFromFS.msg_size);
-			if( recv(fs_client.socket_server_id, buffer, headFromFS.msg_size, 0) > 0){
-				fsInfo = malloc(sizeof(t_header)+headFromFS.msg_size);
-				memcpy(fsInfo, &headFromFS, sizeof(t_header));
-				memcpy(fsInfo+sizeof(t_header), buffer, headFromFS.msg_size);
+			buffer = malloc(infoSize);
+			if( recv(fs_client.socket_server_id, buffer, infoSize, 0) > 0){
+				fsInfo = malloc(sizeof(int)+infoSize);
+				memcpy(fsInfo, &infoSize, sizeof(int));
+				memcpy(fsInfo+sizeof(int), buffer, infoSize);
 			}else{
 				perror("Recibing payload from FileSystem...");
 			}
@@ -48,16 +53,16 @@ void* getFileSystemInfo(Yama* yama, t_header head, void* payload) {
 		perror("Sending");
 	}
 	disconnectClient(&fs_client);
-	updateNodeList(yama, fsInfo);
-	viewNodeTable(yama);
+	updateNodeList(fsInfo);
+
 	return fsInfo;
 }
 
-int findFile(Yama* yama, char* fileName) {
+int findFile(char* fileName) {
 	int index = 0;
-	if ( !list_is_empty(yama->file_info) ) {
-		for (index = 0; index < list_size(yama->file_info); index++) {
-			t_fileInfo* fileInfo = list_get(yama->file_info, index);
+	if ( !list_is_empty(yama->tabla_info_archivos) ) {
+		for (index = 0; index < list_size(yama->tabla_info_archivos); index++) {
+			elem_info_archivo* fileInfo = list_get(yama->tabla_info_archivos, index);
 			if (strcmp(fileName, fileInfo->filename) == 0) {
 				return index;
 			}
@@ -67,30 +72,49 @@ int findFile(Yama* yama, char* fileName) {
 	return -1;
 }
 
-t_fileInfo* getFileInfo(Yama* yama, t_header head, char* fileName, int master) {
-	t_fileInfo* info = NULL;
-	int fileIndex = findFile(yama, (char*) fileName);
+elem_info_archivo* getFileInfo(int master) {
+	elem_info_archivo* info = NULL;
 
+	/*recivo del master el tamanio del nombre del archivo.*/
+	void* buff = malloc(sizeof(int));
+	recv(master, buff, sizeof(int), 0);
+
+	int nameSize;
+	memcpy(&nameSize, buff, sizeof(int));
+	free(buff);
+
+	/*recivo los bytes correspondientes al tamanio del nombre del archivo*/
+	buff = malloc(nameSize);
+	recv(master, buff, nameSize, 0);
+
+	char* fileName = malloc(nameSize);
+	memcpy(fileName, buff, nameSize);
+	free(buff);
+
+	int fileIndex = findFile(fileName);
+
+	/*Si ya tengo la info del archivo, en la lista, la saco de ahi.*/
 	if (fileIndex >= 0) {
-		t_fileInfo* fileInfo = list_get(yama->file_info, fileIndex);
+		elem_info_archivo* fileInfo = list_get(yama->tabla_info_archivos, fileIndex);
 		info = fileInfo;
-	} else {
-		void* fsInfo = getFileSystemInfo(yama, head, fileName);
+	}
+	/*Si no tengo la informacion en la tabla, se la pido al filesystem*/
+	else {
+		void* fsInfo = getFileSystemInfo(fileName);
+		elem_info_archivo* fileInfo =  malloc(sizeof(elem_info_archivo));
+		fileInfo->filename = fileName;
 
-		t_fileInfo* fileInfo =  malloc(sizeof(t_fileInfo));
-		fileInfo->filename = malloc(strlen(fileName));
-		memcpy(fileInfo->filename, fileName, strlen(fileName));
+		int* size = malloc(sizeof(int));
+		memcpy(size, fsInfo, sizeof(int));
+		fileInfo->sizeInfo = *size;
 
-		t_header* head = malloc(sizeof(t_header));
-		memcpy(head, fsInfo, sizeof(t_header));
-		fileInfo->sizeInfo = head->msg_size;
+		fileInfo->info = malloc(*size);
+		memcpy( fileInfo->info, fsInfo + sizeof(int), *size );
 
-		fileInfo->info = malloc(head->msg_size);
-		memcpy( fileInfo->info, fsInfo + sizeof(t_header), head->msg_size );
+		fileInfo->blocks = *size / sizeof(block);
 
-		fileInfo->blocks = head->msg_size / sizeof(block);
+		list_add(yama->tabla_info_archivos, fileInfo);
 
-		list_add(yama->file_info, fileInfo);
 		info = fileInfo;
 	}
 	return info;

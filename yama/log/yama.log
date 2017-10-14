@@ -15,3 +15,1085 @@
 [TRACE] 16:39:10:71 YAMA/(431:431): Master disconnected
 [TRACE] 16:39:20:977 YAMA/(431:431): Connection incomming
 [TRACE] 16:39:20:977 YAMA/(431:431): Master disconnected
+[TRACE] 22:50:52:473 YAMA/(5530:5530): YAMA was succesfully configured.
+[TRACE] 22:50:52:481 YAMA/(5530:5530): YAMA ready to accept Masters connections
+[TRACE] 22:51:36:411 YAMA/(5530:5530): New Master connection
+[TRACE] 22:51:36:412 YAMA/(5530:5530): Master process connected!
+[TRACE] 22:51:36:414 YAMA/(5530:5530): Getting Master message...
+[TRACE] 22:51:36:414 YAMA/(5530:5530): Processing Master Request...
+[TRACE] 22:51:36:414 YAMA/(5530:5530): Master disconnected.
+[TRACE] 22:51:45:401 YAMA/(8270:8270): YAMA was succesfully configured.
+[TRACE] 22:51:54:708 YAMA/(8270:8270): YAMA ready to accept Masters connections
+[TRACE] 22:53:22:37 YAMA/(8270:8270): New Master connection
+[TRACE] 22:53:23:334 YAMA/(8270:8270): Master process connected!
+[TRACE] 22:54:18:246 YAMA/(8270:8270): Getting Master message...
+[TRACE] 00:13:39:116 YAMA/(9485:9485): YAMA was succesfully configured.
+[TRACE] 00:13:44:353 YAMA/(9485:9485): YAMA ready to accept Masters connections
+[TRACE] 00:14:04:969 YAMA/(9485:9485): New Master connection
+[TRACE] 00:14:04:969 YAMA/(9485:9485): Master process connected!
+[TRACE] 00:14:36:252 YAMA/(9485:9485): Getting Master message...
+[TRACE] 00:18:43:520 YAMA/(9809:9809): YAMA was succesfully configured.
+[TRACE] 00:18:47:250 YAMA/(9809:9809): YAMA ready to accept Masters connections
+[TRACE] 00:19:02:804 YAMA/(9809:9809): New Master connection
+[TRACE] 00:19:02:805 YAMA/(9809:9809): Master process connected!
+[TRACE] 00:19:31:979 YAMA/(9809:9809): Getting Master message...
+[TRACE] 00:28:17:327 YAMA/(10178:10178): YAMA was succesfully configured.
+[TRACE] 00:28:22:854 YAMA/(10178:10178): YAMA ready to accept Masters connections
+[TRACE] 00:28:34:884 YAMA/(10178:10178): New Master connection
+[TRACE] 00:28:34:884 YAMA/(10178:10178): Master process connected!
+[TRACE] 00:29:14:508 YAMA/(10178:10178): Getting Master message...
+[TRACE] 00:29:46:432 YAMA/(10326:10326): YAMA was succesfully configured.
+[TRACE] 00:29:50:684 YAMA/(10326:10326): YAMA ready to accept Masters connections
+[TRACE] 00:30:03:879 YAMA/(10326:10326): New Master connection
+[TRACE] 00:30:03:879 YAMA/(10326:10326): Master process connected!
+[TRACE] 00:30:32:157 YAMA/(10326:10326): Getting Master message...
+[TRACE] 00:43:51:617 YAMA/(10891:10891): YAMA was succesfully configured.
+[TRACE] 00:44:01:53 YAMA/(10891:10891): YAMA ready to accept Masters connections
+[TRACE] 00:44:28:67 YAMA/(10891:10891): New Master connection
+[TRACE] 00:44:28:67 YAMA/(10891:10891): Master process connected!
+[TRACE] 00:45:12:766 YAMA/(10891:10891): Getting Master message...
+[TRACE] 00:47:25:286 YAMA/(11097:11097): YAMA was succesfully configured.
+[TRACE] 00:47:28:666 YAMA/(11097:11097): YAMA ready to accept Masters connections
+[TRACE] 00:47:45:819 YAMA/(11097:11097): New Master connection
+[TRACE] 00:47:45:820 YAMA/(11097:11097): Master process connected!
+[TRACE] 00:48:15:772 YAMA/(11097:11097): Getting Master message...
+[TRACE] 00:50:23:423 YAMA/(11283:11283): YAMA was succesfully configured.
+[TRACE] 00:50:23:424 YAMA/(11283:11283): YAMA ready to accept Masters connections
+[TRACE] 00:50:30:522 YAMA/(11283:11283): New Master connection
+[TRACE] 00:50:30:522 YAMA/(11283:11283): Master process connected!
+[TRACE] 00:50:30:526 YAMA/(11283:11283): Getting Master message...
+[TRACE] 00:51:28:270 YAMA/(11369:11369): YAMA was succesfully configured.
+[TRACE] 00:51:28:272 YAMA/(11369:11369): YAMA ready to accept Masters connections
+[TRACE] 00:51:41:891 YAMA/(11369:11369): New Master connection
+[TRACE] 00:51:41:891 YAMA/(11369:11369): Master process connected!
+[TRACE] 00:51:41:893 YAMA/(11369:11369): Getting Master message...
+[TRACE] 00:51:58:182 YAMA/(11467:11467): YAMA was succesfully configured.
+[TRACE] 00:51:58:182 YAMA/(11467:11467): YAMA ready to accept Masters connections
+[TRACE] 00:52:03:887 YAMA/(11467:11467): New Master connection
+[TRACE] 00:52:03:887 YAMA/(11467:11467): Master process connected!
+[TRACE] 00:52:03:890 YAMA/(11467:11467): Getting Master message...
+[TRACE] 00:54:58:574 YAMA/(11588:11588): YAMA was succesfully configured.
+[TRACE] 00:54:58:578 YAMA/(11588:11588): YAMA ready to accept Masters connections
+[TRACE] 00:55:36:446 YAMA/(11588:11588): New Master connection
+[TRACE] 00:55:36:446 YAMA/(11588:11588): Master process connected!
+[TRACE] 00:55:36:449 YAMA/(11588:11588): Getting Master message...
+[TRACE] 00:58:03:103 YAMA/(11836:11836): YAMA was succesfully configured.
+[TRACE] 00:58:03:107 YAMA/(11836:11836): YAMA ready to accept Masters connections
+[TRACE] 00:58:08:958 YAMA/(11836:11836): New Master connection
+[TRACE] 00:58:08:959 YAMA/(11836:11836): Master process connected!
+[TRACE] 00:58:08:961 YAMA/(11836:11836): Getting Master message...
+[TRACE] 01:00:55:666 YAMA/(12145:12145): YAMA was succesfully configured.
+[TRACE] 01:00:55:675 YAMA/(12145:12145): YAMA ready to accept Masters connections
+[TRACE] 01:01:02:583 YAMA/(12145:12145): New Master connection
+[TRACE] 01:01:02:583 YAMA/(12145:12145): Master process connected!
+[TRACE] 01:01:02:587 YAMA/(12145:12145): Getting Master message...
+[TRACE] 01:04:18:534 YAMA/(12302:12302): YAMA was succesfully configured.
+[TRACE] 01:04:18:542 YAMA/(12302:12302): YAMA ready to accept Masters connections
+[TRACE] 01:04:30:375 YAMA/(12302:12302): New Master connection
+[TRACE] 01:04:30:375 YAMA/(12302:12302): Master process connected!
+[TRACE] 01:04:30:376 YAMA/(12302:12302): Getting Master message...
+[TRACE] 01:07:20:754 YAMA/(12469:12469): YAMA was succesfully configured.
+[TRACE] 01:07:20:755 YAMA/(12469:12469): YAMA ready to accept Masters connections
+[TRACE] 01:07:26:642 YAMA/(12469:12469): New Master connection
+[TRACE] 01:07:26:643 YAMA/(12469:12469): Master process connected!
+[TRACE] 01:07:26:646 YAMA/(12469:12469): Getting Master message...
+[TRACE] 01:08:33:454 YAMA/(12617:12617): YAMA was succesfully configured.
+[TRACE] 01:08:33:455 YAMA/(12617:12617): YAMA ready to accept Masters connections
+[TRACE] 01:08:43:511 YAMA/(12617:12617): New Master connection
+[TRACE] 01:08:43:511 YAMA/(12617:12617): Master process connected!
+[TRACE] 01:08:43:512 YAMA/(12617:12617): Getting Master message...
+[TRACE] 01:09:40:815 YAMA/(12756:12756): YAMA was succesfully configured.
+[TRACE] 01:09:40:817 YAMA/(12756:12756): YAMA ready to accept Masters connections
+[TRACE] 01:09:57:903 YAMA/(12756:12756): New Master connection
+[TRACE] 01:09:57:903 YAMA/(12756:12756): Master process connected!
+[TRACE] 01:09:57:904 YAMA/(12756:12756): Getting Master message...
+[TRACE] 01:13:50:817 YAMA/(12934:12934): YAMA was succesfully configured.
+[TRACE] 01:13:50:818 YAMA/(12934:12934): YAMA ready to accept Masters connections
+[TRACE] 01:13:57:103 YAMA/(12934:12934): New Master connection
+[TRACE] 01:13:57:103 YAMA/(12934:12934): Master process connected!
+[TRACE] 01:13:57:106 YAMA/(12934:12934): Getting Master message...
+[TRACE] 01:15:13:773 YAMA/(13077:13077): YAMA was succesfully configured.
+[TRACE] 01:15:13:773 YAMA/(13077:13077): YAMA ready to accept Masters connections
+[TRACE] 01:15:25:83 YAMA/(13077:13077): New Master connection
+[TRACE] 01:15:25:83 YAMA/(13077:13077): Master process connected!
+[TRACE] 01:15:25:88 YAMA/(13077:13077): Getting Master message...
+[TRACE] 01:16:30:588 YAMA/(13218:13218): YAMA was succesfully configured.
+[TRACE] 01:16:30:589 YAMA/(13218:13218): YAMA ready to accept Masters connections
+[TRACE] 01:16:38:324 YAMA/(13218:13218): New Master connection
+[TRACE] 01:16:38:324 YAMA/(13218:13218): Master process connected!
+[TRACE] 01:16:38:328 YAMA/(13218:13218): Getting Master message...
+[TRACE] 01:17:15:958 YAMA/(13360:13360): YAMA was succesfully configured.
+[TRACE] 01:17:15:959 YAMA/(13360:13360): YAMA ready to accept Masters connections
+[TRACE] 01:17:22:293 YAMA/(13360:13360): New Master connection
+[TRACE] 01:17:22:293 YAMA/(13360:13360): Master process connected!
+[TRACE] 01:17:22:298 YAMA/(13360:13360): Getting Master message...
+[TRACE] 01:18:46:657 YAMA/(13499:13499): YAMA was succesfully configured.
+[TRACE] 01:18:46:657 YAMA/(13499:13499): YAMA ready to accept Masters connections
+[TRACE] 01:18:52:3 YAMA/(13499:13499): New Master connection
+[TRACE] 01:18:52:3 YAMA/(13499:13499): Master process connected!
+[TRACE] 01:18:53:8 YAMA/(13499:13499): Getting Master message...
+[TRACE] 01:20:43:890 YAMA/(13837:13837): YAMA was succesfully configured.
+[TRACE] 01:20:43:891 YAMA/(13837:13837): YAMA ready to accept Masters connections
+[TRACE] 01:20:55:650 YAMA/(13837:13837): New Master connection
+[TRACE] 01:20:55:650 YAMA/(13837:13837): Master process connected!
+[TRACE] 01:20:55:650 YAMA/(13837:13837): Getting Master message...
+[TRACE] 01:23:01:945 YAMA/(14226:14226): YAMA was succesfully configured.
+[TRACE] 01:23:01:947 YAMA/(14226:14226): YAMA ready to accept Masters connections
+[TRACE] 01:23:22:320 YAMA/(14226:14226): New Master connection
+[TRACE] 01:23:22:320 YAMA/(14226:14226): Master process connected!
+[TRACE] 01:23:22:320 YAMA/(14226:14226): Getting Master message...
+[TRACE] 01:24:33:247 YAMA/(14553:14553): YAMA was succesfully configured.
+[TRACE] 01:24:33:247 YAMA/(14553:14553): YAMA ready to accept Masters connections
+[TRACE] 01:24:43:153 YAMA/(14553:14553): New Master connection
+[TRACE] 01:24:43:153 YAMA/(14553:14553): Master process connected!
+[TRACE] 01:24:43:154 YAMA/(14553:14553): Getting Master message...
+[TRACE] 01:26:46:855 YAMA/(14669:14669): YAMA was succesfully configured.
+[TRACE] 01:26:46:857 YAMA/(14669:14669): YAMA ready to accept Masters connections
+[TRACE] 01:26:52:852 YAMA/(14669:14669): New Master connection
+[TRACE] 01:26:52:852 YAMA/(14669:14669): Master process connected!
+[TRACE] 01:26:52:852 YAMA/(14669:14669): Getting Master message...
+[TRACE] 01:27:21:735 YAMA/(14814:14814): YAMA was succesfully configured.
+[TRACE] 01:27:21:736 YAMA/(14814:14814): YAMA ready to accept Masters connections
+[TRACE] 01:27:26:978 YAMA/(14814:14814): New Master connection
+[TRACE] 01:27:26:978 YAMA/(14814:14814): Master process connected!
+[TRACE] 01:27:26:982 YAMA/(14814:14814): Getting Master message...
+[TRACE] 01:45:08:667 YAMA/(15218:15218): YAMA was succesfully configured.
+[TRACE] 01:45:08:675 YAMA/(15218:15218): YAMA ready to accept Masters connections
+[TRACE] 01:45:16:358 YAMA/(15218:15218): New Master connection
+[TRACE] 01:45:16:358 YAMA/(15218:15218): Master process connected!
+[TRACE] 01:45:16:358 YAMA/(15218:15218): Getting Master message...
+[TRACE] 01:47:34:394 YAMA/(15550:15550): YAMA was succesfully configured.
+[TRACE] 01:47:34:397 YAMA/(15550:15550): YAMA ready to accept Masters connections
+[TRACE] 01:47:38:126 YAMA/(15550:15550): New Master connection
+[TRACE] 01:47:38:127 YAMA/(15550:15550): Master process connected!
+[TRACE] 01:47:38:130 YAMA/(15550:15550): Getting Master message...
+[TRACE] 01:47:58:62 YAMA/(15665:15665): YAMA was succesfully configured.
+[TRACE] 01:47:58:68 YAMA/(15665:15665): YAMA ready to accept Masters connections
+[TRACE] 01:48:03:789 YAMA/(15665:15665): New Master connection
+[TRACE] 01:48:03:789 YAMA/(15665:15665): Master process connected!
+[TRACE] 01:48:03:789 YAMA/(15665:15665): Getting Master message...
+[TRACE] 01:48:58:321 YAMA/(15794:15794): YAMA was succesfully configured.
+[TRACE] 01:48:58:327 YAMA/(15794:15794): YAMA ready to accept Masters connections
+[TRACE] 01:49:02:46 YAMA/(15794:15794): New Master connection
+[TRACE] 01:49:02:46 YAMA/(15794:15794): Master process connected!
+[TRACE] 01:49:02:51 YAMA/(15794:15794): Getting Master message...
+[TRACE] 01:51:24:38 YAMA/(15959:15959): YAMA was succesfully configured.
+[TRACE] 01:51:24:38 YAMA/(15959:15959): YAMA ready to accept Masters connections
+[TRACE] 01:51:26:767 YAMA/(15959:15959): New Master connection
+[TRACE] 01:51:26:767 YAMA/(15959:15959): Master process connected!
+[TRACE] 01:51:26:767 YAMA/(15959:15959): Getting Master message...
+[TRACE] 01:54:28:758 YAMA/(16052:16052): YAMA was succesfully configured.
+[TRACE] 01:54:28:761 YAMA/(16052:16052): YAMA ready to accept Masters connections
+[TRACE] 01:54:34:645 YAMA/(16052:16052): New Master connection
+[TRACE] 01:54:34:646 YAMA/(16052:16052): Master process connected!
+[TRACE] 01:54:34:649 YAMA/(16052:16052): Getting Master message...
+[TRACE] 01:55:15:646 YAMA/(16156:16156): YAMA was succesfully configured.
+[TRACE] 01:55:15:650 YAMA/(16156:16156): YAMA ready to accept Masters connections
+[TRACE] 01:55:20:598 YAMA/(16156:16156): New Master connection
+[TRACE] 01:55:20:598 YAMA/(16156:16156): Master process connected!
+[TRACE] 01:55:20:601 YAMA/(16156:16156): Getting Master message...
+[TRACE] 02:06:40:564 YAMA/(16585:16585): YAMA was succesfully configured.
+[TRACE] 02:06:40:564 YAMA/(16585:16585): YAMA ready to accept Masters connections
+[TRACE] 02:06:47:716 YAMA/(16585:16585): New Master connection
+[TRACE] 02:06:47:716 YAMA/(16585:16585): Master process connected!
+[TRACE] 02:06:47:717 YAMA/(16585:16585): Getting Master message...
+[TRACE] 02:08:46:866 YAMA/(16953:16953): YAMA was succesfully configured.
+[TRACE] 02:08:46:866 YAMA/(16953:16953): YAMA ready to accept Masters connections
+[TRACE] 02:08:54:566 YAMA/(16953:16953): New Master connection
+[TRACE] 02:08:54:566 YAMA/(16953:16953): Master process connected!
+[TRACE] 02:08:54:569 YAMA/(16953:16953): Getting Master message...
+[TRACE] 02:10:24:71 YAMA/(17104:17104): YAMA was succesfully configured.
+[TRACE] 02:10:24:71 YAMA/(17104:17104): YAMA ready to accept Masters connections
+[TRACE] 02:10:31:632 YAMA/(17104:17104): New Master connection
+[TRACE] 02:10:31:632 YAMA/(17104:17104): Master process connected!
+[TRACE] 02:10:31:632 YAMA/(17104:17104): Getting Master message...
+[TRACE] 02:12:05:824 YAMA/(17254:17254): YAMA was succesfully configured.
+[TRACE] 02:12:05:824 YAMA/(17254:17254): YAMA ready to accept Masters connections
+[TRACE] 02:12:12:46 YAMA/(17254:17254): New Master connection
+[TRACE] 02:12:12:46 YAMA/(17254:17254): Master process connected!
+[TRACE] 02:12:12:50 YAMA/(17254:17254): Getting Master message...
+[TRACE] 02:15:12:374 YAMA/(17439:17439): YAMA was succesfully configured.
+[TRACE] 02:15:12:378 YAMA/(17439:17439): YAMA ready to accept Masters connections
+[TRACE] 02:15:18:395 YAMA/(17439:17439): New Master connection
+[TRACE] 02:15:18:395 YAMA/(17439:17439): Master process connected!
+[TRACE] 02:15:18:399 YAMA/(17439:17439): Getting Master message...
+[TRACE] 02:16:22:6 YAMA/(17584:17584): YAMA was succesfully configured.
+[TRACE] 02:16:22:6 YAMA/(17584:17584): YAMA ready to accept Masters connections
+[TRACE] 02:16:41:270 YAMA/(17584:17584): New Master connection
+[TRACE] 02:16:41:270 YAMA/(17584:17584): Master process connected!
+[TRACE] 02:16:41:273 YAMA/(17584:17584): Getting Master message...
+[TRACE] 02:18:56:438 YAMA/(17730:17730): YAMA was succesfully configured.
+[TRACE] 02:18:56:438 YAMA/(17730:17730): YAMA ready to accept Masters connections
+[TRACE] 02:19:01:454 YAMA/(17730:17730): New Master connection
+[TRACE] 02:19:01:454 YAMA/(17730:17730): Master process connected!
+[TRACE] 02:19:01:459 YAMA/(17730:17730): Getting Master message...
+[TRACE] 02:20:00:406 YAMA/(17865:17865): YAMA was succesfully configured.
+[TRACE] 02:20:00:407 YAMA/(17865:17865): YAMA ready to accept Masters connections
+[TRACE] 02:20:06:590 YAMA/(17865:17865): New Master connection
+[TRACE] 02:20:06:590 YAMA/(17865:17865): Master process connected!
+[TRACE] 02:20:06:590 YAMA/(17865:17865): Getting Master message...
+[TRACE] 02:22:15:311 YAMA/(18032:18032): YAMA was succesfully configured.
+[TRACE] 02:22:15:311 YAMA/(18032:18032): YAMA ready to accept Masters connections
+[TRACE] 02:22:22:66 YAMA/(18032:18032): New Master connection
+[TRACE] 02:22:22:66 YAMA/(18032:18032): Master process connected!
+[TRACE] 02:22:22:70 YAMA/(18032:18032): Getting Master message...
+[TRACE] 02:23:07:227 YAMA/(18346:18346): YAMA was succesfully configured.
+[TRACE] 02:23:07:232 YAMA/(18346:18346): YAMA ready to accept Masters connections
+[TRACE] 02:23:13:761 YAMA/(18346:18346): New Master connection
+[TRACE] 02:23:13:761 YAMA/(18346:18346): Master process connected!
+[TRACE] 02:23:13:764 YAMA/(18346:18346): Getting Master message...
+[TRACE] 02:24:22:911 YAMA/(18490:18490): YAMA was succesfully configured.
+[TRACE] 02:24:22:914 YAMA/(18490:18490): YAMA ready to accept Masters connections
+[TRACE] 02:24:27:725 YAMA/(18490:18490): New Master connection
+[TRACE] 02:24:27:725 YAMA/(18490:18490): Master process connected!
+[TRACE] 02:24:27:725 YAMA/(18490:18490): Getting Master message...
+[TRACE] 02:25:50:633 YAMA/(18635:18635): YAMA was succesfully configured.
+[TRACE] 02:25:50:633 YAMA/(18635:18635): YAMA ready to accept Masters connections
+[TRACE] 02:25:55:722 YAMA/(18635:18635): New Master connection
+[TRACE] 02:25:55:723 YAMA/(18635:18635): Master process connected!
+[TRACE] 02:25:55:727 YAMA/(18635:18635): Getting Master message...
+[TRACE] 02:29:11:451 YAMA/(18783:18783): YAMA was succesfully configured.
+[TRACE] 02:29:11:451 YAMA/(18783:18783): YAMA ready to accept Masters connections
+[TRACE] 02:29:16:239 YAMA/(18783:18783): New Master connection
+[TRACE] 02:29:16:239 YAMA/(18783:18783): Master process connected!
+[TRACE] 02:29:16:242 YAMA/(18783:18783): Getting Master message...
+[TRACE] 02:32:20:943 YAMA/(18930:18930): YAMA was succesfully configured.
+[TRACE] 02:32:20:949 YAMA/(18930:18930): YAMA ready to accept Masters connections
+[TRACE] 02:32:27:107 YAMA/(18930:18930): New Master connection
+[TRACE] 02:32:27:107 YAMA/(18930:18930): Master process connected!
+[TRACE] 02:32:27:109 YAMA/(18930:18930): Getting Master message...
+[TRACE] 02:36:16:184 YAMA/(19037:19037): YAMA was succesfully configured.
+[TRACE] 02:36:16:184 YAMA/(19037:19037): YAMA ready to accept Masters connections
+[TRACE] 02:36:22:532 YAMA/(19037:19037): New Master connection
+[TRACE] 02:36:22:532 YAMA/(19037:19037): Master process connected!
+[TRACE] 02:36:22:534 YAMA/(19037:19037): Getting Master message...
+[TRACE] 02:37:47:332 YAMA/(19211:19211): YAMA was succesfully configured.
+[TRACE] 02:37:47:336 YAMA/(19211:19211): YAMA ready to accept Masters connections
+[TRACE] 02:38:01:655 YAMA/(19211:19211): New Master connection
+[TRACE] 02:38:01:655 YAMA/(19211:19211): Master process connected!
+[TRACE] 02:38:01:658 YAMA/(19211:19211): Getting Master message...
+[TRACE] 02:40:37:249 YAMA/(19371:19371): YAMA was succesfully configured.
+[TRACE] 02:40:37:249 YAMA/(19371:19371): YAMA ready to accept Masters connections
+[TRACE] 02:40:42:183 YAMA/(19371:19371): New Master connection
+[TRACE] 02:40:42:183 YAMA/(19371:19371): Master process connected!
+[TRACE] 02:40:42:184 YAMA/(19371:19371): Getting Master message...
+[TRACE] 02:44:07:403 YAMA/(19556:19556): YAMA was succesfully configured.
+[TRACE] 02:44:07:403 YAMA/(19556:19556): YAMA ready to accept Masters connections
+[TRACE] 02:44:15:973 YAMA/(19556:19556): New Master connection
+[TRACE] 02:44:15:973 YAMA/(19556:19556): Master process connected!
+[TRACE] 02:44:15:974 YAMA/(19556:19556): Getting Master message...
+[TRACE] 02:46:07:63 YAMA/(19770:19770): YAMA was succesfully configured.
+[TRACE] 02:46:07:64 YAMA/(19770:19770): YAMA ready to accept Masters connections
+[TRACE] 02:46:12:294 YAMA/(19770:19770): New Master connection
+[TRACE] 02:46:12:294 YAMA/(19770:19770): Master process connected!
+[TRACE] 02:46:12:298 YAMA/(19770:19770): Getting Master message...
+[TRACE] 02:47:48:708 YAMA/(19932:19932): YAMA was succesfully configured.
+[TRACE] 02:47:48:709 YAMA/(19932:19932): YAMA ready to accept Masters connections
+[TRACE] 02:47:53:297 YAMA/(19932:19932): New Master connection
+[TRACE] 02:47:53:297 YAMA/(19932:19932): Master process connected!
+[TRACE] 02:47:53:300 YAMA/(19932:19932): Getting Master message...
+[TRACE] 02:48:51:412 YAMA/(20073:20073): YAMA was succesfully configured.
+[TRACE] 02:48:51:412 YAMA/(20073:20073): YAMA ready to accept Masters connections
+[TRACE] 02:48:57:47 YAMA/(20073:20073): New Master connection
+[TRACE] 02:48:57:47 YAMA/(20073:20073): Master process connected!
+[TRACE] 02:48:57:51 YAMA/(20073:20073): Getting Master message...
+[TRACE] 02:51:00:787 YAMA/(20214:20214): YAMA was succesfully configured.
+[TRACE] 02:51:00:791 YAMA/(20214:20214): YAMA ready to accept Masters connections
+[TRACE] 02:51:08:148 YAMA/(20214:20214): New Master connection
+[TRACE] 02:51:08:148 YAMA/(20214:20214): Master process connected!
+[TRACE] 02:51:08:152 YAMA/(20214:20214): Getting Master message...
+[TRACE] 02:53:20:914 YAMA/(20390:20390): YAMA was succesfully configured.
+[TRACE] 02:53:20:915 YAMA/(20390:20390): YAMA ready to accept Masters connections
+[TRACE] 02:53:26:388 YAMA/(20390:20390): New Master connection
+[TRACE] 02:53:26:388 YAMA/(20390:20390): Master process connected!
+[TRACE] 02:53:26:392 YAMA/(20390:20390): Getting Master message...
+[TRACE] 02:58:14:616 YAMA/(20636:20636): YAMA was succesfully configured.
+[TRACE] 02:58:14:621 YAMA/(20636:20636): YAMA ready to accept Masters connections
+[TRACE] 02:58:22:569 YAMA/(20636:20636): New Master connection
+[TRACE] 02:58:22:569 YAMA/(20636:20636): Master process connected!
+[TRACE] 02:58:22:574 YAMA/(20636:20636): Getting Master message...
+[TRACE] 03:02:06:500 YAMA/(20806:20806): YAMA was succesfully configured.
+[TRACE] 03:02:06:505 YAMA/(20806:20806): YAMA ready to accept Masters connections
+[TRACE] 03:02:12:62 YAMA/(20806:20806): New Master connection
+[TRACE] 03:02:12:62 YAMA/(20806:20806): Master process connected!
+[TRACE] 03:02:12:62 YAMA/(20806:20806): Getting Master message...
+[TRACE] 03:03:18:687 YAMA/(20953:20953): YAMA was succesfully configured.
+[TRACE] 03:03:18:687 YAMA/(20953:20953): YAMA ready to accept Masters connections
+[TRACE] 03:03:28:917 YAMA/(20953:20953): New Master connection
+[TRACE] 03:03:28:917 YAMA/(20953:20953): Master process connected!
+[TRACE] 03:03:28:921 YAMA/(20953:20953): Getting Master message...
+[TRACE] 03:03:53:550 YAMA/(21074:21074): YAMA was succesfully configured.
+[TRACE] 03:03:53:550 YAMA/(21074:21074): YAMA ready to accept Masters connections
+[TRACE] 03:03:58:915 YAMA/(21074:21074): New Master connection
+[TRACE] 03:03:58:915 YAMA/(21074:21074): Master process connected!
+[TRACE] 03:03:58:919 YAMA/(21074:21074): Getting Master message...
+[TRACE] 03:04:29:541 YAMA/(21210:21210): YAMA was succesfully configured.
+[TRACE] 03:04:29:541 YAMA/(21210:21210): YAMA ready to accept Masters connections
+[TRACE] 03:04:34:834 YAMA/(21210:21210): New Master connection
+[TRACE] 03:04:34:834 YAMA/(21210:21210): Master process connected!
+[TRACE] 03:04:34:834 YAMA/(21210:21210): Getting Master message...
+[TRACE] 03:07:26:528 YAMA/(21354:21354): YAMA was succesfully configured.
+[TRACE] 03:07:26:529 YAMA/(21354:21354): YAMA ready to accept Masters connections
+[TRACE] 03:07:33:651 YAMA/(21354:21354): New Master connection
+[TRACE] 03:07:33:651 YAMA/(21354:21354): Master process connected!
+[TRACE] 03:07:33:655 YAMA/(21354:21354): Getting Master message...
+[TRACE] 03:10:24:544 YAMA/(21508:21508): YAMA was succesfully configured.
+[TRACE] 03:10:24:547 YAMA/(21508:21508): YAMA ready to accept Masters connections
+[TRACE] 03:10:29:947 YAMA/(21508:21508): New Master connection
+[TRACE] 03:10:29:947 YAMA/(21508:21508): Master process connected!
+[TRACE] 03:10:29:954 YAMA/(21508:21508): Getting Master message...
+[TRACE] 03:10:54:952 YAMA/(21644:21644): YAMA was succesfully configured.
+[TRACE] 03:10:54:952 YAMA/(21644:21644): YAMA ready to accept Masters connections
+[TRACE] 03:11:00:852 YAMA/(21644:21644): New Master connection
+[TRACE] 03:11:00:852 YAMA/(21644:21644): Master process connected!
+[TRACE] 03:11:00:858 YAMA/(21644:21644): Getting Master message...
+[TRACE] 03:13:11:944 YAMA/(21795:21795): YAMA was succesfully configured.
+[TRACE] 03:13:11:949 YAMA/(21795:21795): YAMA ready to accept Masters connections
+[TRACE] 03:13:17:32 YAMA/(21795:21795): New Master connection
+[TRACE] 03:13:17:32 YAMA/(21795:21795): Master process connected!
+[TRACE] 03:13:17:36 YAMA/(21795:21795): Getting Master message...
+[TRACE] 03:21:34:515 YAMA/(22038:22038): YAMA was succesfully configured.
+[TRACE] 03:21:34:516 YAMA/(22038:22038): YAMA ready to accept Masters connections
+[TRACE] 03:21:40:396 YAMA/(22038:22038): New Master connection
+[TRACE] 03:21:40:396 YAMA/(22038:22038): Master process connected!
+[TRACE] 03:21:40:400 YAMA/(22038:22038): Getting Master message...
+[TRACE] 03:23:28:108 YAMA/(22205:22205): YAMA was succesfully configured.
+[TRACE] 03:23:28:111 YAMA/(22205:22205): YAMA ready to accept Masters connections
+[TRACE] 03:23:34:56 YAMA/(22205:22205): New Master connection
+[TRACE] 03:23:34:56 YAMA/(22205:22205): Master process connected!
+[TRACE] 03:23:34:57 YAMA/(22205:22205): Getting Master message...
+[TRACE] 03:24:21:738 YAMA/(22345:22345): YAMA was succesfully configured.
+[TRACE] 03:24:21:738 YAMA/(22345:22345): YAMA ready to accept Masters connections
+[TRACE] 03:24:27:92 YAMA/(22345:22345): New Master connection
+[TRACE] 03:24:27:92 YAMA/(22345:22345): Master process connected!
+[TRACE] 03:24:27:93 YAMA/(22345:22345): Getting Master message...
+[TRACE] 03:30:16:944 YAMA/(22477:22477): YAMA was succesfully configured.
+[TRACE] 03:30:16:949 YAMA/(22477:22477): YAMA ready to accept Masters connections
+[TRACE] 03:30:20:391 YAMA/(22477:22477): New Master connection
+[TRACE] 03:30:20:391 YAMA/(22477:22477): Master process connected!
+[TRACE] 03:30:20:392 YAMA/(22477:22477): Getting Master message...
+[TRACE] 03:32:00:632 YAMA/(22605:22605): YAMA was succesfully configured.
+[TRACE] 03:32:00:633 YAMA/(22605:22605): YAMA ready to accept Masters connections
+[TRACE] 03:32:03:339 YAMA/(22605:22605): New Master connection
+[TRACE] 03:32:03:339 YAMA/(22605:22605): Master process connected!
+[TRACE] 03:32:03:342 YAMA/(22605:22605): Getting Master message...
+[TRACE] 03:33:36:999 YAMA/(22722:22722): YAMA was succesfully configured.
+[TRACE] 03:33:36:1 YAMA/(22722:22722): YAMA ready to accept Masters connections
+[TRACE] 03:33:39:982 YAMA/(22722:22722): New Master connection
+[TRACE] 03:33:39:982 YAMA/(22722:22722): Master process connected!
+[TRACE] 03:33:39:982 YAMA/(22722:22722): Getting Master message...
+[TRACE] 03:34:52:152 YAMA/(22852:22852): YAMA was succesfully configured.
+[TRACE] 03:34:52:157 YAMA/(22852:22852): YAMA ready to accept Masters connections
+[TRACE] 03:34:54:806 YAMA/(22852:22852): New Master connection
+[TRACE] 03:34:54:806 YAMA/(22852:22852): Master process connected!
+[TRACE] 03:34:54:806 YAMA/(22852:22852): Getting Master message...
+[TRACE] 03:35:42:257 YAMA/(22959:22959): YAMA was succesfully configured.
+[TRACE] 03:35:42:261 YAMA/(22959:22959): YAMA ready to accept Masters connections
+[TRACE] 03:35:45:63 YAMA/(22959:22959): New Master connection
+[TRACE] 03:35:45:64 YAMA/(22959:22959): Master process connected!
+[TRACE] 03:35:45:64 YAMA/(22959:22959): Getting Master message...
+[TRACE] 03:36:12:992 YAMA/(23064:23064): YAMA was succesfully configured.
+[TRACE] 03:36:12:996 YAMA/(23064:23064): YAMA ready to accept Masters connections
+[TRACE] 03:36:24:728 YAMA/(23064:23064): New Master connection
+[TRACE] 03:36:24:728 YAMA/(23064:23064): Master process connected!
+[TRACE] 03:36:24:731 YAMA/(23064:23064): Getting Master message...
+[TRACE] 03:36:56:829 YAMA/(23199:23199): YAMA was succesfully configured.
+[TRACE] 03:36:56:829 YAMA/(23199:23199): YAMA ready to accept Masters connections
+[TRACE] 03:36:58:920 YAMA/(23199:23199): New Master connection
+[TRACE] 03:36:58:921 YAMA/(23199:23199): Master process connected!
+[TRACE] 03:36:58:924 YAMA/(23199:23199): Getting Master message...
+[TRACE] 03:37:20:764 YAMA/(23302:23302): YAMA was succesfully configured.
+[TRACE] 03:37:20:765 YAMA/(23302:23302): YAMA ready to accept Masters connections
+[TRACE] 03:37:24:84 YAMA/(23302:23302): New Master connection
+[TRACE] 03:37:24:84 YAMA/(23302:23302): Master process connected!
+[TRACE] 03:37:24:87 YAMA/(23302:23302): Getting Master message...
+[TRACE] 03:43:14:816 YAMA/(23616:23616): YAMA was succesfully configured.
+[TRACE] 03:43:14:824 YAMA/(23616:23616): YAMA ready to accept Masters connections
+[TRACE] 03:43:24:964 YAMA/(23616:23616): New Master connection
+[TRACE] 03:43:24:964 YAMA/(23616:23616): Master process connected!
+[TRACE] 03:43:24:968 YAMA/(23616:23616): Getting Master message...
+[TRACE] 03:46:09:176 YAMA/(23769:23769): YAMA was succesfully configured.
+[TRACE] 03:46:09:179 YAMA/(23769:23769): YAMA ready to accept Masters connections
+[TRACE] 03:46:15:469 YAMA/(23769:23769): New Master connection
+[TRACE] 03:46:15:469 YAMA/(23769:23769): Master process connected!
+[TRACE] 03:46:15:470 YAMA/(23769:23769): Getting Master message...
+[TRACE] 03:49:18:528 YAMA/(23913:23913): YAMA was succesfully configured.
+[TRACE] 03:49:18:532 YAMA/(23913:23913): YAMA ready to accept Masters connections
+[TRACE] 03:49:20:939 YAMA/(23913:23913): New Master connection
+[TRACE] 03:49:20:939 YAMA/(23913:23913): Master process connected!
+[TRACE] 03:49:20:939 YAMA/(23913:23913): Getting Master message...
+[TRACE] 03:50:04:392 YAMA/(24029:24029): YAMA was succesfully configured.
+[TRACE] 03:50:04:396 YAMA/(24029:24029): YAMA ready to accept Masters connections
+[TRACE] 03:50:13:516 YAMA/(24029:24029): New Master connection
+[TRACE] 03:50:13:516 YAMA/(24029:24029): Master process connected!
+[TRACE] 03:50:13:517 YAMA/(24029:24029): Getting Master message...
+[TRACE] 03:53:03:36 YAMA/(24251:24251): YAMA was succesfully configured.
+[TRACE] 03:53:03:37 YAMA/(24251:24251): YAMA ready to accept Masters connections
+[TRACE] 03:53:08:934 YAMA/(24251:24251): New Master connection
+[TRACE] 03:53:08:934 YAMA/(24251:24251): Master process connected!
+[TRACE] 03:53:08:935 YAMA/(24251:24251): Getting Master message...
+[TRACE] 03:54:48:60 YAMA/(24415:24415): YAMA was succesfully configured.
+[TRACE] 03:54:48:65 YAMA/(24415:24415): YAMA ready to accept Masters connections
+[TRACE] 03:54:53:697 YAMA/(24415:24415): New Master connection
+[TRACE] 03:54:53:697 YAMA/(24415:24415): Master process connected!
+[TRACE] 03:54:53:697 YAMA/(24415:24415): Getting Master message...
+[TRACE] 03:57:03:57 YAMA/(24579:24579): YAMA was succesfully configured.
+[TRACE] 03:57:03:58 YAMA/(24579:24579): YAMA ready to accept Masters connections
+[TRACE] 03:57:12:914 YAMA/(24579:24579): New Master connection
+[TRACE] 03:57:12:914 YAMA/(24579:24579): Master process connected!
+[TRACE] 03:57:12:917 YAMA/(24579:24579): Getting Master message...
+[TRACE] 03:58:26:132 YAMA/(24728:24728): YAMA was succesfully configured.
+[TRACE] 03:58:26:133 YAMA/(24728:24728): YAMA ready to accept Masters connections
+[TRACE] 03:58:30:484 YAMA/(24728:24728): New Master connection
+[TRACE] 03:58:30:484 YAMA/(24728:24728): Master process connected!
+[TRACE] 03:58:30:484 YAMA/(24728:24728): Getting Master message...
+[TRACE] 04:00:08:474 YAMA/(24890:24890): YAMA was succesfully configured.
+[TRACE] 04:00:08:474 YAMA/(24890:24890): YAMA ready to accept Masters connections
+[TRACE] 04:00:15:595 YAMA/(24890:24890): New Master connection
+[TRACE] 04:00:15:595 YAMA/(24890:24890): Master process connected!
+[TRACE] 04:00:15:600 YAMA/(24890:24890): Getting Master message...
+[TRACE] 04:01:29:159 YAMA/(25042:25042): YAMA was succesfully configured.
+[TRACE] 04:01:29:159 YAMA/(25042:25042): YAMA ready to accept Masters connections
+[TRACE] 04:01:35:191 YAMA/(25042:25042): New Master connection
+[TRACE] 04:01:35:191 YAMA/(25042:25042): Master process connected!
+[TRACE] 04:01:35:194 YAMA/(25042:25042): Getting Master message...
+[TRACE] 04:02:45:250 YAMA/(25192:25192): YAMA was succesfully configured.
+[TRACE] 04:02:45:253 YAMA/(25192:25192): YAMA ready to accept Masters connections
+[TRACE] 04:02:49:462 YAMA/(25192:25192): New Master connection
+[TRACE] 04:02:49:462 YAMA/(25192:25192): Master process connected!
+[TRACE] 04:02:49:462 YAMA/(25192:25192): Getting Master message...
+[TRACE] 04:03:40:737 YAMA/(25338:25338): YAMA was succesfully configured.
+[TRACE] 04:03:40:737 YAMA/(25338:25338): YAMA ready to accept Masters connections
+[TRACE] 04:03:47:975 YAMA/(25338:25338): New Master connection
+[TRACE] 04:03:47:975 YAMA/(25338:25338): Master process connected!
+[TRACE] 04:03:47:978 YAMA/(25338:25338): Getting Master message...
+[TRACE] 04:06:51:220 YAMA/(25518:25518): YAMA was succesfully configured.
+[TRACE] 04:06:51:223 YAMA/(25518:25518): YAMA ready to accept Masters connections
+[TRACE] 04:06:58:387 YAMA/(25518:25518): New Master connection
+[TRACE] 04:06:58:387 YAMA/(25518:25518): Master process connected!
+[TRACE] 04:06:58:388 YAMA/(25518:25518): Getting Master message...
+[TRACE] 04:10:16:36 YAMA/(25723:25723): YAMA was succesfully configured.
+[TRACE] 04:10:16:42 YAMA/(25723:25723): YAMA ready to accept Masters connections
+[TRACE] 04:10:21:972 YAMA/(25723:25723): New Master connection
+[TRACE] 04:10:21:972 YAMA/(25723:25723): Master process connected!
+[TRACE] 04:10:21:976 YAMA/(25723:25723): Getting Master message...
+[TRACE] 04:17:16:44 YAMA/(26141:26141): YAMA was succesfully configured.
+[TRACE] 04:17:16:48 YAMA/(26141:26141): YAMA ready to accept Masters connections
+[TRACE] 04:17:24:89 YAMA/(26141:26141): New Master connection
+[TRACE] 04:17:24:89 YAMA/(26141:26141): Master process connected!
+[TRACE] 04:17:24:93 YAMA/(26141:26141): Getting Master message...
+[TRACE] 04:18:00:649 YAMA/(26289:26289): YAMA was succesfully configured.
+[TRACE] 04:18:00:653 YAMA/(26289:26289): YAMA ready to accept Masters connections
+[TRACE] 04:18:04:775 YAMA/(26289:26289): New Master connection
+[TRACE] 04:18:04:775 YAMA/(26289:26289): Master process connected!
+[TRACE] 04:18:04:779 YAMA/(26289:26289): Getting Master message...
+[TRACE] 04:20:20:4 YAMA/(26453:26453): YAMA was succesfully configured.
+[TRACE] 04:20:20:5 YAMA/(26453:26453): YAMA ready to accept Masters connections
+[TRACE] 04:20:24:973 YAMA/(26453:26453): New Master connection
+[TRACE] 04:20:24:974 YAMA/(26453:26453): Master process connected!
+[TRACE] 04:20:24:977 YAMA/(26453:26453): Getting Master message...
+[TRACE] 04:33:46:728 YAMA/(27212:27212): YAMA was succesfully configured.
+[TRACE] 04:33:46:737 YAMA/(27212:27212): YAMA ready to accept Masters connections
+[TRACE] 04:33:52:238 YAMA/(27212:27212): New Master connection
+[TRACE] 04:33:52:238 YAMA/(27212:27212): Master process connected!
+[TRACE] 04:33:52:242 YAMA/(27212:27212): Getting Master message...
+[TRACE] 12:14:38:153 YAMA/(1505:1505): YAMA was succesfully configured.
+[TRACE] 12:14:38:153 YAMA/(1505:1505): YAMA ready to accept Masters connections
+[TRACE] 12:16:14:895 YAMA/(1505:1505): New Master connection
+[TRACE] 12:16:14:895 YAMA/(1505:1505): Master process connected!
+[TRACE] 12:16:14:895 YAMA/(1505:1505): Getting Master message...
+[TRACE] 12:16:14:895 YAMA/(1505:1505): 55384 bytes sent to master id
+[TRACE] 12:16:14:895 YAMA/(1505:1505): Error getting data from Master
+[TRACE] 12:16:43:456 YAMA/(1661:1661): YAMA was succesfully configured.
+[TRACE] 12:16:43:456 YAMA/(1661:1661): YAMA ready to accept Masters connections
+[TRACE] 12:16:49:725 YAMA/(1661:1661): New Master connection
+[TRACE] 12:16:49:725 YAMA/(1661:1661): Master process connected!
+[TRACE] 12:16:49:725 YAMA/(1661:1661): Getting Master message...
+[TRACE] 12:16:49:725 YAMA/(1661:1661): 55384 bytes sent to master id
+[TRACE] 12:16:49:725 YAMA/(1661:1661): Error getting data from Master
+[TRACE] 12:18:53:768 YAMA/(1847:1847): YAMA was succesfully configured.
+[TRACE] 12:18:53:768 YAMA/(1847:1847): YAMA ready to accept Masters connections
+[TRACE] 12:18:58:782 YAMA/(1847:1847): New Master connection
+[TRACE] 12:18:58:782 YAMA/(1847:1847): Master process connected!
+[TRACE] 12:18:58:782 YAMA/(1847:1847): Getting Master message...
+[TRACE] 12:18:58:783 YAMA/(1847:1847): 55384 bytes sent to master id
+[TRACE] 12:18:58:783 YAMA/(1847:1847): Error getting data from Master
+[TRACE] 12:23:46:994 YAMA/(2202:2202): YAMA was succesfully configured.
+[TRACE] 12:23:46:994 YAMA/(2202:2202): YAMA ready to accept Masters connections
+[TRACE] 12:23:55:808 YAMA/(2202:2202): New Master connection
+[TRACE] 12:23:55:809 YAMA/(2202:2202): Master process connected!
+[TRACE] 12:23:55:809 YAMA/(2202:2202): Getting Master message...
+[TRACE] 12:23:55:809 YAMA/(2202:2202): 55384 bytes sent to master id
+[TRACE] 12:23:55:809 YAMA/(2202:2202): Error getting data from Master
+[TRACE] 12:24:59:152 YAMA/(2428:2428): YAMA was succesfully configured.
+[TRACE] 12:24:59:152 YAMA/(2428:2428): YAMA ready to accept Masters connections
+[TRACE] 12:25:04:857 YAMA/(2428:2428): New Master connection
+[TRACE] 12:25:04:857 YAMA/(2428:2428): Master process connected!
+[TRACE] 12:25:04:857 YAMA/(2428:2428): Getting Master message...
+[TRACE] 12:25:04:858 YAMA/(2428:2428): 55384 bytes sent to master id
+[TRACE] 12:25:04:858 YAMA/(2428:2428): Error getting data from Master
+[TRACE] 12:32:53:613 YAMA/(3073:3073): YAMA was succesfully configured.
+[TRACE] 12:32:53:613 YAMA/(3073:3073): YAMA ready to accept Masters connections
+[TRACE] 12:33:02:465 YAMA/(3073:3073): New Master connection
+[TRACE] 12:33:02:465 YAMA/(3073:3073): Master process connected!
+[TRACE] 12:33:02:465 YAMA/(3073:3073): Getting Master message...
+[TRACE] 12:33:02:466 YAMA/(3073:3073): 221 bytes sent to master id 6
+[TRACE] 12:33:02:466 YAMA/(3073:3073): Error getting data from Master
+[TRACE] 12:43:21:723 YAMA/(3740:3740): YAMA was succesfully configured.
+[TRACE] 12:43:21:723 YAMA/(3740:3740): YAMA ready to accept Masters connections
+[TRACE] 12:43:27:533 YAMA/(3740:3740): New Master connection
+[TRACE] 12:43:27:534 YAMA/(3740:3740): Master process connected!
+[TRACE] 12:43:27:534 YAMA/(3740:3740): Getting Master message...
+[TRACE] 12:43:27:534 YAMA/(3740:3740): 221 bytes sent to master id 6
+[TRACE] 12:43:27:536 YAMA/(3740:3740): Master disconnected.
+[TRACE] 12:44:30:573 YAMA/(3892:3892): YAMA was succesfully configured.
+[TRACE] 12:44:30:573 YAMA/(3892:3892): YAMA ready to accept Masters connections
+[TRACE] 12:44:34:787 YAMA/(3892:3892): New Master connection
+[TRACE] 12:44:34:787 YAMA/(3892:3892): Master process connected!
+[TRACE] 12:44:34:787 YAMA/(3892:3892): Getting Master message...
+[TRACE] 12:44:34:787 YAMA/(3892:3892): 221 bytes sent to master id 6
+[TRACE] 12:44:34:788 YAMA/(3892:3892): Master disconnected.
+[TRACE] 12:45:50:506 YAMA/(3892:3892): New Master connection
+[TRACE] 12:45:50:506 YAMA/(3892:3892): Master process connected!
+[TRACE] 12:45:50:507 YAMA/(3892:3892): Getting Master message...
+[TRACE] 14:16:57:668 YAMA/(6850:6850): YAMA was succesfully configured.
+[TRACE] 14:16:57:668 YAMA/(6850:6850): YAMA ready to accept Masters connections
+[TRACE] 14:17:01:552 YAMA/(6850:6850): New Master connection
+[TRACE] 14:17:01:552 YAMA/(6850:6850): Master process connected!
+[TRACE] 14:17:01:552 YAMA/(6850:6850): Getting Master message...
+[TRACE] 14:17:01:553 YAMA/(6850:6850): 221 bytes sent to master id 6
+[TRACE] 14:17:01:553 YAMA/(6850:6850): Master disconnected.
+[TRACE] 14:22:03:165 YAMA/(7103:7103): YAMA was succesfully configured.
+[TRACE] 14:22:03:165 YAMA/(7103:7103): YAMA ready to accept Masters connections
+[TRACE] 14:22:13:498 YAMA/(7103:7103): New Master connection
+[TRACE] 14:22:13:498 YAMA/(7103:7103): Master process connected!
+[TRACE] 14:22:13:498 YAMA/(7103:7103): Getting Master message...
+[TRACE] 14:22:13:498 YAMA/(7103:7103): 221 bytes sent to master id 6
+[TRACE] 14:22:13:499 YAMA/(7103:7103): Master disconnected.
+[TRACE] 14:24:32:245 YAMA/(7348:7348): YAMA was succesfully configured.
+[TRACE] 14:24:32:245 YAMA/(7348:7348): YAMA ready to accept Masters connections
+[TRACE] 14:24:38:726 YAMA/(7348:7348): New Master connection
+[TRACE] 14:24:38:726 YAMA/(7348:7348): Master process connected!
+[TRACE] 14:24:38:726 YAMA/(7348:7348): Getting Master message...
+[TRACE] 14:24:38:727 YAMA/(7348:7348): 437 bytes sent to master id 6
+[TRACE] 14:24:38:727 YAMA/(7348:7348): Master disconnected.
+[TRACE] 14:28:39:539 YAMA/(7648:7648): YAMA was succesfully configured.
+[TRACE] 14:28:39:539 YAMA/(7648:7648): YAMA ready to accept Masters connections
+[TRACE] 14:28:45:888 YAMA/(7648:7648): New Master connection
+[TRACE] 14:28:45:888 YAMA/(7648:7648): Master process connected!
+[TRACE] 14:28:45:888 YAMA/(7648:7648): Getting Master message...
+[TRACE] 14:28:45:888 YAMA/(7648:7648): 221 bytes sent to master id 6
+[TRACE] 14:28:45:889 YAMA/(7648:7648): Master disconnected.
+[TRACE] 14:32:29:997 YAMA/(8001:8001): YAMA was succesfully configured.
+[TRACE] 14:32:29:997 YAMA/(8001:8001): YAMA ready to accept Masters connections
+[TRACE] 14:32:35:470 YAMA/(8060:8060): YAMA was succesfully configured.
+[TRACE] 14:32:35:470 YAMA/(8060:8060): YAMA ready to accept Masters connections
+[TRACE] 14:32:52:339 YAMA/(8001:8001): New Master connection
+[TRACE] 14:32:52:339 YAMA/(8001:8001): Master process connected!
+[TRACE] 14:32:52:339 YAMA/(8001:8001): Getting Master message...
+[TRACE] 14:32:52:339 YAMA/(8001:8001): 221 bytes sent to master id 6
+[TRACE] 14:32:52:340 YAMA/(8001:8001): Master disconnected.
+[TRACE] 14:39:02:446 YAMA/(8646:8646): YAMA was succesfully configured.
+[TRACE] 14:39:02:447 YAMA/(8646:8646): YAMA ready to accept Masters connections
+[TRACE] 14:39:11:566 YAMA/(8646:8646): New Master connection
+[TRACE] 14:39:11:566 YAMA/(8646:8646): Master process connected!
+[TRACE] 14:39:11:566 YAMA/(8646:8646): Getting Master message...
+[TRACE] 14:39:11:567 YAMA/(8646:8646): 221 bytes sent to master id 6
+[TRACE] 14:39:11:567 YAMA/(8646:8646): Master disconnected.
+[TRACE] 14:46:39:863 YAMA/(9078:9078): YAMA was succesfully configured.
+[TRACE] 14:46:39:863 YAMA/(9078:9078): YAMA ready to accept Masters connections
+[TRACE] 14:46:45:283 YAMA/(9078:9078): New Master connection
+[TRACE] 14:46:45:283 YAMA/(9078:9078): Master process connected!
+[TRACE] 14:46:45:283 YAMA/(9078:9078): Getting Master message...
+[TRACE] 14:46:45:284 YAMA/(9078:9078): 221 bytes sent to master id 6
+[TRACE] 14:46:45:284 YAMA/(9078:9078): Master disconnected.
+[TRACE] 14:48:23:339 YAMA/(9290:9290): YAMA was succesfully configured.
+[TRACE] 14:48:23:339 YAMA/(9290:9290): YAMA ready to accept Masters connections
+[TRACE] 14:48:39:326 YAMA/(9290:9290): New Master connection
+[TRACE] 14:48:39:326 YAMA/(9290:9290): Master process connected!
+[TRACE] 14:48:39:326 YAMA/(9290:9290): Getting Master message...
+[TRACE] 14:48:39:326 YAMA/(9290:9290): 437 bytes sent to master id 6
+[TRACE] 14:48:39:326 YAMA/(9290:9290): Master disconnected.
+[TRACE] 14:50:17:328 YAMA/(9475:9475): YAMA was succesfully configured.
+[TRACE] 14:50:17:328 YAMA/(9475:9475): YAMA ready to accept Masters connections
+[TRACE] 14:50:24:246 YAMA/(9475:9475): New Master connection
+[TRACE] 14:50:24:246 YAMA/(9475:9475): Master process connected!
+[TRACE] 14:50:24:246 YAMA/(9475:9475): Getting Master message...
+[TRACE] 14:50:24:246 YAMA/(9475:9475): 437 bytes sent to master id 6
+[TRACE] 14:50:24:246 YAMA/(9475:9475): Master disconnected.
+[TRACE] 15:00:22:824 YAMA/(9991:9991): YAMA was succesfully configured.
+[TRACE] 15:00:22:824 YAMA/(9991:9991): YAMA ready to accept Masters connections
+[TRACE] 15:00:30:597 YAMA/(9991:9991): New Master connection
+[TRACE] 15:00:30:597 YAMA/(9991:9991): Master process connected!
+[TRACE] 15:00:30:597 YAMA/(9991:9991): Getting Master message...
+[TRACE] 15:01:53:784 YAMA/(10108:10108): YAMA was succesfully configured.
+[TRACE] 15:02:05:941 YAMA/(10108:10108): YAMA ready to accept Masters connections
+[TRACE] 15:02:28:960 YAMA/(10108:10108): New Master connection
+[TRACE] 15:02:28:960 YAMA/(10108:10108): Master process connected!
+[TRACE] 15:02:49:884 YAMA/(10108:10108): Getting Master message...
+[TRACE] 15:12:58:117 YAMA/(10655:10655): YAMA was succesfully configured.
+[TRACE] 15:12:58:117 YAMA/(10655:10655): YAMA ready to accept Masters connections
+[TRACE] 15:13:03:578 YAMA/(10655:10655): New Master connection
+[TRACE] 15:13:03:578 YAMA/(10655:10655): Master process connected!
+[TRACE] 15:13:03:579 YAMA/(10655:10655): Getting Master message...
+[TRACE] 15:14:02:436 YAMA/(10823:10823): YAMA was succesfully configured.
+[TRACE] 15:14:05:147 YAMA/(10823:10823): YAMA ready to accept Masters connections
+[TRACE] 15:14:31:181 YAMA/(10823:10823): New Master connection
+[TRACE] 15:14:31:917 YAMA/(10823:10823): Master process connected!
+[TRACE] 15:17:06:338 YAMA/(10823:10823): Getting Master message...
+[TRACE] 15:17:26:532 YAMA/(11118:11118): YAMA was succesfully configured.
+[TRACE] 15:17:30:485 YAMA/(11118:11118): YAMA ready to accept Masters connections
+[TRACE] 15:17:47:131 YAMA/(11118:11118): New Master connection
+[TRACE] 15:17:47:131 YAMA/(11118:11118): Master process connected!
+[TRACE] 15:18:10:462 YAMA/(11118:11118): Getting Master message...
+[TRACE] 15:29:21:820 YAMA/(12009:12009): YAMA was succesfully configured.
+[TRACE] 15:29:25:133 YAMA/(12009:12009): YAMA ready to accept Masters connections
+[TRACE] 15:29:37:330 YAMA/(12009:12009): New Master connection
+[TRACE] 15:29:37:330 YAMA/(12009:12009): Master process connected!
+[TRACE] 15:29:58:766 YAMA/(12009:12009): Getting Master message...
+[TRACE] 15:58:28:650 YAMA/(14427:14427): YAMA was succesfully configured.
+[TRACE] 15:58:28:650 YAMA/(14427:14427): YAMA ready to accept Masters connections
+[TRACE] 15:58:36:913 YAMA/(14427:14427): New Master connection
+[TRACE] 15:58:36:913 YAMA/(14427:14427): Master process connected!
+[TRACE] 15:58:36:913 YAMA/(14427:14427): Getting Master message...
+[TRACE] 15:58:48:174 YAMA/(14522:14522): YAMA was succesfully configured.
+[TRACE] 15:58:50:556 YAMA/(14522:14522): YAMA ready to accept Masters connections
+[TRACE] 15:59:15:500 YAMA/(14522:14522): New Master connection
+[TRACE] 15:59:15:500 YAMA/(14522:14522): Master process connected!
+[TRACE] 15:59:49:44 YAMA/(14522:14522): Getting Master message...
+[TRACE] 16:04:12:171 YAMA/(15004:15004): YAMA was succesfully configured.
+[TRACE] 16:04:12:171 YAMA/(15004:15004): YAMA ready to accept Masters connections
+[TRACE] 16:04:18:978 YAMA/(15004:15004): New Master connection
+[TRACE] 16:04:18:978 YAMA/(15004:15004): Master process connected!
+[TRACE] 16:04:18:979 YAMA/(15004:15004): Getting Master message...
+[TRACE] 16:06:23:287 YAMA/(15225:15225): YAMA was succesfully configured.
+[TRACE] 16:06:23:288 YAMA/(15225:15225): YAMA ready to accept Masters connections
+[TRACE] 16:06:27:640 YAMA/(15225:15225): New Master connection
+[TRACE] 16:06:27:640 YAMA/(15225:15225): Master process connected!
+[TRACE] 16:06:27:640 YAMA/(15225:15225): Getting Master message...
+[TRACE] 16:06:49:493 YAMA/(15321:15321): YAMA was succesfully configured.
+[TRACE] 16:06:52:140 YAMA/(15321:15321): YAMA ready to accept Masters connections
+[TRACE] 16:07:05:206 YAMA/(15321:15321): New Master connection
+[TRACE] 16:07:05:206 YAMA/(15321:15321): Master process connected!
+[TRACE] 16:07:27:886 YAMA/(15321:15321): Getting Master message...
+[TRACE] 16:13:45:669 YAMA/(15930:15930): YAMA was succesfully configured.
+[TRACE] 16:13:45:669 YAMA/(15930:15930): YAMA ready to accept Masters connections
+[TRACE] 16:13:51:643 YAMA/(15930:15930): New Master connection
+[TRACE] 16:13:51:643 YAMA/(15930:15930): Master process connected!
+[TRACE] 16:13:51:643 YAMA/(15930:15930): Getting Master message...
+[TRACE] 16:14:06:336 YAMA/(16041:16041): YAMA was succesfully configured.
+[TRACE] 16:14:08:445 YAMA/(16041:16041): YAMA ready to accept Masters connections
+[TRACE] 16:14:35:972 YAMA/(16041:16041): New Master connection
+[TRACE] 16:14:35:972 YAMA/(16041:16041): Master process connected!
+[TRACE] 16:14:54:908 YAMA/(16041:16041): Getting Master message...
+[TRACE] 16:16:06:71 YAMA/(16258:16258): YAMA was succesfully configured.
+[TRACE] 16:16:08:110 YAMA/(16258:16258): YAMA ready to accept Masters connections
+[TRACE] 16:16:18:645 YAMA/(16258:16258): New Master connection
+[TRACE] 16:16:18:645 YAMA/(16258:16258): Master process connected!
+[TRACE] 16:16:37:567 YAMA/(16258:16258): Getting Master message...
+[TRACE] 16:18:50:242 YAMA/(16561:16561): YAMA was succesfully configured.
+[TRACE] 16:18:52:494 YAMA/(16561:16561): YAMA ready to accept Masters connections
+[TRACE] 16:19:06:644 YAMA/(16561:16561): New Master connection
+[TRACE] 16:19:06:644 YAMA/(16561:16561): Master process connected!
+[TRACE] 16:19:25:78 YAMA/(16561:16561): Getting Master message...
+[TRACE] 16:28:03:820 YAMA/(17024:17024): YAMA was succesfully configured.
+[TRACE] 16:28:07:160 YAMA/(17024:17024): YAMA ready to accept Masters connections
+[TRACE] 16:28:35:997 YAMA/(17024:17024): New Master connection
+[TRACE] 16:28:39:917 YAMA/(17024:17024): Master process connected!
+[TRACE] 16:29:03:917 YAMA/(17024:17024): Getting Master message...
+[TRACE] 16:34:43:811 YAMA/(17231:17231): YAMA was succesfully configured.
+[TRACE] 16:34:50:392 YAMA/(17231:17231): YAMA ready to accept Masters connections
+[TRACE] 16:35:12:822 YAMA/(17231:17231): New Master connection
+[TRACE] 16:35:12:822 YAMA/(17231:17231): Master process connected!
+[TRACE] 16:35:41:528 YAMA/(17231:17231): Getting Master message...
+[TRACE] 16:53:57:279 YAMA/(18010:18010): YAMA was succesfully configured.
+[TRACE] 16:54:00:106 YAMA/(18010:18010): YAMA ready to accept Masters connections
+[TRACE] 16:54:11:430 YAMA/(18010:18010): New Master connection
+[TRACE] 16:54:11:430 YAMA/(18010:18010): Master process connected!
+[TRACE] 16:54:35:327 YAMA/(18010:18010): Getting Master message...
+[TRACE] 17:03:36:514 YAMA/(18387:18387): YAMA was succesfully configured.
+[TRACE] 17:03:40:513 YAMA/(18387:18387): YAMA ready to accept Masters connections
+[TRACE] 17:03:54:566 YAMA/(18387:18387): New Master connection
+[TRACE] 17:03:54:566 YAMA/(18387:18387): Master process connected!
+[TRACE] 17:04:16:512 YAMA/(18387:18387): Getting Master message...
+[TRACE] 17:07:35:788 YAMA/(18709:18709): YAMA was succesfully configured.
+[TRACE] 17:07:35:789 YAMA/(18709:18709): YAMA ready to accept Masters connections
+[TRACE] 17:09:08:230 YAMA/(18966:18966): YAMA was succesfully configured.
+[TRACE] 17:09:10:154 YAMA/(18966:18966): YAMA ready to accept Masters connections
+[TRACE] 17:09:19:969 YAMA/(18966:18966): New Master connection
+[TRACE] 17:09:19:969 YAMA/(18966:18966): Master process connected!
+[TRACE] 17:09:41:794 YAMA/(18966:18966): Getting Master message...
+[TRACE] 17:17:57:374 YAMA/(19953:19953): YAMA was succesfully configured.
+[TRACE] 17:17:59:546 YAMA/(19953:19953): YAMA ready to accept Masters connections
+[TRACE] 17:18:14:296 YAMA/(19953:19953): New Master connection
+[TRACE] 17:18:14:296 YAMA/(19953:19953): Master process connected!
+[TRACE] 17:18:31:832 YAMA/(19953:19953): Getting Master message...
+[TRACE] 17:20:08:266 YAMA/(20188:20188): YAMA was succesfully configured.
+[TRACE] 17:20:10:315 YAMA/(20188:20188): YAMA ready to accept Masters connections
+[TRACE] 17:20:26:641 YAMA/(20188:20188): New Master connection
+[TRACE] 17:20:26:641 YAMA/(20188:20188): Master process connected!
+[TRACE] 17:20:41:739 YAMA/(20188:20188): Getting Master message...
+[TRACE] 17:23:32:637 YAMA/(20415:20415): YAMA was succesfully configured.
+[TRACE] 17:23:32:637 YAMA/(20415:20415): YAMA ready to accept Masters connections
+[TRACE] 17:23:36:626 YAMA/(20415:20415): New Master connection
+[TRACE] 17:23:36:626 YAMA/(20415:20415): Master process connected!
+[TRACE] 17:23:36:626 YAMA/(20415:20415): Getting Master message...
+[TRACE] 17:25:02:790 YAMA/(20589:20589): YAMA was succesfully configured.
+[TRACE] 17:25:02:790 YAMA/(20589:20589): YAMA ready to accept Masters connections
+[TRACE] 17:25:06:708 YAMA/(20589:20589): New Master connection
+[TRACE] 17:25:06:708 YAMA/(20589:20589): Master process connected!
+[TRACE] 17:25:06:708 YAMA/(20589:20589): Getting Master message...
+[TRACE] 17:25:06:708 YAMA/(20589:20589): 293 bytes sent to master id 6
+[TRACE] 17:25:06:709 YAMA/(20589:20589): Master disconnected.
+[TRACE] 19:45:24:264 YAMA/(2927:2927): YAMA was succesfully configured.
+[TRACE] 19:45:24:264 YAMA/(2927:2927): YAMA ready to accept Masters connections
+[TRACE] 19:45:32:144 YAMA/(2927:2927): New Master connection
+[TRACE] 19:45:32:144 YAMA/(2927:2927): Master process connected!
+[TRACE] 19:45:32:144 YAMA/(2927:2927): Getting Master message...
+[TRACE] 19:45:32:145 YAMA/(2927:2927): 245 bytes sent to master id 6
+[TRACE] 19:45:32:396 YAMA/(2927:2927): Master disconnected.
+[TRACE] 19:47:26:887 YAMA/(3052:3052): YAMA was succesfully configured.
+[TRACE] 19:47:26:888 YAMA/(3052:3052): YAMA ready to accept Masters connections
+[TRACE] 19:47:43:700 YAMA/(2927:2927): New Master connection
+[TRACE] 19:47:43:700 YAMA/(2927:2927): Master process connected!
+[TRACE] 19:47:53:408 YAMA/(2927:2927): Getting Master message...
+[TRACE] 19:47:53:408 YAMA/(2927:2927): 245 bytes sent to master id 6
+[TRACE] 19:48:43:727 YAMA/(2927:2927): Master disconnected.
+[TRACE] 19:51:39:170 YAMA/(3312:3312): YAMA was succesfully configured.
+[TRACE] 19:51:39:170 YAMA/(3312:3312): YAMA ready to accept Masters connections
+[TRACE] 19:51:43:996 YAMA/(2927:2927): New Master connection
+[TRACE] 19:51:43:996 YAMA/(2927:2927): Master process connected!
+[TRACE] 19:51:43:2 YAMA/(2927:2927): Getting Master message...
+[TRACE] 19:51:43:2 YAMA/(2927:2927): 245 bytes sent to master id 6
+[TRACE] 19:51:44:298 YAMA/(2927:2927): Master disconnected.
+[TRACE] 19:54:11:963 YAMA/(3541:3541): YAMA was succesfully configured.
+[TRACE] 19:54:11:963 YAMA/(3541:3541): YAMA ready to accept Masters connections
+[TRACE] 19:54:16:653 YAMA/(2927:2927): New Master connection
+[TRACE] 19:54:16:653 YAMA/(2927:2927): Master process connected!
+[TRACE] 19:54:16:655 YAMA/(2927:2927): Getting Master message...
+[TRACE] 19:54:16:655 YAMA/(2927:2927): 245 bytes sent to master id 6
+[TRACE] 19:54:16:901 YAMA/(2927:2927): Master disconnected.
+[TRACE] 19:54:42:904 YAMA/(3632:3632): YAMA was succesfully configured.
+[TRACE] 19:54:42:907 YAMA/(3632:3632): YAMA ready to accept Masters connections
+[TRACE] 19:54:48:14 YAMA/(3632:3632): New Master connection
+[TRACE] 19:54:48:14 YAMA/(3632:3632): Master process connected!
+[TRACE] 19:54:48:14 YAMA/(3632:3632): Getting Master message...
+[TRACE] 19:54:48:14 YAMA/(3632:3632): 245 bytes sent to master id 6
+[TRACE] 19:54:48:266 YAMA/(3632:3632): Master disconnected.
+[TRACE] 19:56:21:652 YAMA/(3790:3790): YAMA was succesfully configured.
+[TRACE] 19:56:21:653 YAMA/(3790:3790): YAMA ready to accept Masters connections
+[TRACE] 19:56:27:300 YAMA/(3632:3632): New Master connection
+[TRACE] 19:56:27:300 YAMA/(3632:3632): Master process connected!
+[TRACE] 19:56:27:302 YAMA/(3632:3632): Getting Master message...
+[TRACE] 19:56:27:302 YAMA/(3632:3632): 245 bytes sent to master id 6
+[TRACE] 19:56:27:302 YAMA/(3632:3632): Master disconnected.
+[TRACE] 19:58:32:532 YAMA/(3957:3957): YAMA was succesfully configured.
+[TRACE] 19:58:32:532 YAMA/(3957:3957): YAMA ready to accept Masters connections
+[TRACE] 19:58:44:756 YAMA/(3957:3957): New Master connection
+[TRACE] 19:58:44:756 YAMA/(3957:3957): Master process connected!
+[TRACE] 19:58:44:756 YAMA/(3957:3957): Getting Master message...
+[TRACE] 19:58:44:757 YAMA/(3957:3957): 245 bytes sent to master id 6
+[TRACE] 19:58:44:757 YAMA/(3957:3957): Master disconnected.
+[TRACE] 19:59:59:361 YAMA/(3957:3957): New Master connection
+[TRACE] 19:59:59:361 YAMA/(3957:3957): Master process connected!
+[TRACE] 19:59:59:362 YAMA/(3957:3957): Getting Master message...
+[TRACE] 19:59:59:362 YAMA/(3957:3957): 245 bytes sent to master id 6
+[TRACE] 19:59:59:363 YAMA/(3957:3957): Master disconnected.
+[TRACE] 20:01:00:127 YAMA/(3957:3957): New Master connection
+[TRACE] 20:01:00:128 YAMA/(3957:3957): Master process connected!
+[TRACE] 20:01:00:129 YAMA/(3957:3957): Getting Master message...
+[TRACE] 20:01:00:129 YAMA/(3957:3957): 245 bytes sent to master id 6
+[TRACE] 20:01:00:130 YAMA/(3957:3957): Master disconnected.
+[TRACE] 01:37:35:479 YAMA/(4655:4655): YAMA was succesfully configured.
+[TRACE] 01:37:35:479 YAMA/(4655:4655): YAMA ready to accept Masters connections
+[TRACE] 01:37:43:421 YAMA/(4655:4655): New Master connection
+[TRACE] 01:37:43:421 YAMA/(4655:4655): Master process connected!
+[TRACE] 01:37:43:421 YAMA/(4655:4655): Getting Master message...
+[TRACE] 01:37:43:421 YAMA/(4655:4655): 245 bytes sent to master id 6
+[TRACE] 01:37:43:422 YAMA/(4655:4655): Master disconnected.
+[TRACE] 01:44:04:354 YAMA/(4973:4973): YAMA was succesfully configured.
+[TRACE] 01:44:04:363 YAMA/(4973:4973): YAMA ready to accept Masters connections
+[TRACE] 01:44:11:499 YAMA/(4973:4973): New Master connection
+[TRACE] 01:44:11:499 YAMA/(4973:4973): Master process connected!
+[TRACE] 01:44:11:502 YAMA/(4973:4973): Getting Master message...
+[TRACE] 01:44:11:502 YAMA/(4973:4973): 245 bytes sent to master id 6
+[TRACE] 01:44:11:502 YAMA/(4973:4973): Master disconnected.
+[TRACE] 01:46:46:937 YAMA/(5174:5174): YAMA was succesfully configured.
+[TRACE] 01:46:46:937 YAMA/(5174:5174): YAMA ready to accept Masters connections
+[TRACE] 01:46:54:27 YAMA/(5174:5174): New Master connection
+[TRACE] 01:46:54:27 YAMA/(5174:5174): Master process connected!
+[TRACE] 01:46:54:29 YAMA/(5174:5174): Getting Master message...
+[TRACE] 01:46:54:30 YAMA/(5174:5174): 245 bytes sent to master id 6
+[TRACE] 01:46:54:30 YAMA/(5174:5174): Master disconnected.
+[TRACE] 01:48:11:323 YAMA/(5257:5257): YAMA was succesfully configured.
+[TRACE] 01:48:11:332 YAMA/(5257:5257): YAMA ready to accept Masters connections
+[TRACE] 01:48:19:871 YAMA/(5257:5257): New Master connection
+[TRACE] 01:48:19:871 YAMA/(5257:5257): Master process connected!
+[TRACE] 01:48:19:871 YAMA/(5257:5257): Getting Master message...
+[TRACE] 01:48:19:871 YAMA/(5257:5257): 245 bytes sent to master id 6
+[TRACE] 01:48:19:871 YAMA/(5257:5257): Master disconnected.
+[TRACE] 01:48:41:403 YAMA/(5257:5257): New Master connection
+[TRACE] 01:48:41:404 YAMA/(5257:5257): Master process connected!
+[TRACE] 01:48:41:409 YAMA/(5257:5257): Getting Master message...
+[TRACE] 01:48:41:409 YAMA/(5257:5257): 245 bytes sent to master id 6
+[TRACE] 01:48:41:410 YAMA/(5257:5257): Master disconnected.
+[TRACE] 10:03:34:22 YAMA/(6406:6406): YAMA was succesfully configured.
+[TRACE] 10:03:34:31 YAMA/(6406:6406): YAMA ready to accept Masters connections
+[TRACE] 10:03:47:454 YAMA/(6406:6406): New Master connection
+[TRACE] 10:03:47:455 YAMA/(6406:6406): Master process connected!
+[TRACE] 10:03:47:458 YAMA/(6406:6406): Getting Master message...
+[TRACE] 10:03:47:458 YAMA/(6406:6406): 245 bytes sent to master id 6
+[TRACE] 10:03:47:458 YAMA/(6406:6406): Master disconnected.
+[TRACE] 10:04:28:961 YAMA/(6406:6406): New Master connection
+[TRACE] 10:04:28:961 YAMA/(6406:6406): Master process connected!
+[TRACE] 10:04:28:961 YAMA/(6406:6406): Getting Master message...
+[TRACE] 10:04:28:961 YAMA/(6406:6406): 245 bytes sent to master id 6
+[TRACE] 10:04:28:961 YAMA/(6406:6406): Master disconnected.
+[TRACE] 10:06:04:491 YAMA/(6872:6872): YAMA was succesfully configured.
+[TRACE] 10:06:04:492 YAMA/(6872:6872): YAMA ready to accept Masters connections
+[TRACE] 10:06:11:863 YAMA/(6872:6872): New Master connection
+[TRACE] 10:06:11:863 YAMA/(6872:6872): Master process connected!
+[TRACE] 10:06:11:863 YAMA/(6872:6872): Getting Master message...
+[TRACE] 10:06:11:864 YAMA/(6872:6872): 245 bytes sent to master id 6
+[TRACE] 10:06:12:146 YAMA/(6872:6872): Master disconnected.
+[TRACE] 10:09:51:635 YAMA/(7047:7047): YAMA was succesfully configured.
+[TRACE] 10:09:51:642 YAMA/(7047:7047): YAMA ready to accept Masters connections
+[TRACE] 10:09:57:922 YAMA/(7047:7047): New Master connection
+[TRACE] 10:09:57:923 YAMA/(7047:7047): Master process connected!
+[TRACE] 10:09:57:926 YAMA/(7047:7047): Getting Master message...
+[TRACE] 10:09:57:927 YAMA/(7047:7047): 245 bytes sent to master id 6
+[TRACE] 10:09:58:285 YAMA/(7047:7047): Master disconnected.
+[TRACE] 10:11:20:351 YAMA/(7362:7362): YAMA was succesfully configured.
+[TRACE] 10:11:20:356 YAMA/(7362:7362): YAMA ready to accept Masters connections
+[TRACE] 10:11:45:990 YAMA/(7442:7442): YAMA was succesfully configured.
+[TRACE] 10:11:45:992 YAMA/(7442:7442): YAMA ready to accept Masters connections
+[TRACE] 10:11:51:572 YAMA/(7442:7442): New Master connection
+[TRACE] 10:11:51:572 YAMA/(7442:7442): Master process connected!
+[TRACE] 10:11:51:580 YAMA/(7442:7442): Getting Master message...
+[TRACE] 10:11:51:581 YAMA/(7442:7442): 245 bytes sent to master id 6
+[TRACE] 10:11:52:221 YAMA/(7442:7442): Master disconnected.
+[TRACE] 10:12:37:819 YAMA/(7525:7525): YAMA was succesfully configured.
+[TRACE] 10:12:37:824 YAMA/(7525:7525): YAMA ready to accept Masters connections
+[TRACE] 10:12:53:171 YAMA/(7442:7442): New Master connection
+[TRACE] 10:12:53:171 YAMA/(7442:7442): Master process connected!
+[TRACE] 10:13:10:243 YAMA/(7442:7442): Getting Master message...
+[TRACE] 10:13:10:244 YAMA/(7442:7442): 245 bytes sent to master id 6
+[TRACE] 10:13:52:742 YAMA/(7442:7442): Master disconnected.
+[TRACE] 10:19:36:345 YAMA/(8093:8093): YAMA was succesfully configured.
+[TRACE] 10:19:36:345 YAMA/(8093:8093): YAMA ready to accept Masters connections
+[TRACE] 10:19:43:897 YAMA/(8093:8093): New Master connection
+[TRACE] 10:19:43:898 YAMA/(8093:8093): Master process connected!
+[TRACE] 10:19:43:898 YAMA/(8093:8093): Getting Master message...
+[TRACE] 10:19:43:899 YAMA/(8093:8093): 245 bytes sent to master id 6
+[TRACE] 10:19:44:465 YAMA/(8093:8093): Master disconnected.
+[TRACE] 10:23:12:579 YAMA/(8281:8281): YAMA was succesfully configured.
+[TRACE] 10:23:12:587 YAMA/(8281:8281): YAMA ready to accept Masters connections
+[TRACE] 10:23:18:562 YAMA/(8281:8281): New Master connection
+[TRACE] 10:23:18:562 YAMA/(8281:8281): Master process connected!
+[TRACE] 10:23:18:565 YAMA/(8281:8281): Getting Master message...
+[TRACE] 10:23:18:566 YAMA/(8281:8281): 245 bytes sent to master id 6
+[TRACE] 10:23:19:267 YAMA/(8281:8281): Master disconnected.
+[TRACE] 10:23:55:88 YAMA/(8281:8281): New Master connection
+[TRACE] 10:23:55:88 YAMA/(8281:8281): Master process connected!
+[TRACE] 10:23:55:90 YAMA/(8281:8281): Getting Master message...
+[TRACE] 10:23:55:90 YAMA/(8281:8281): 245 bytes sent to master id 6
+[TRACE] 10:23:55:91 YAMA/(8281:8281): Master disconnected.
+[TRACE] 10:24:18:660 YAMA/(8281:8281): New Master connection
+[TRACE] 10:24:18:660 YAMA/(8281:8281): Master process connected!
+[TRACE] 10:24:24:249 YAMA/(8281:8281): Getting Master message...
+[TRACE] 10:24:24:250 YAMA/(8281:8281): 245 bytes sent to master id 6
+[TRACE] 10:25:07:380 YAMA/(8281:8281): Master disconnected.
+[TRACE] 10:27:21:236 YAMA/(8622:8622): YAMA was succesfully configured.
+[TRACE] 10:27:21:239 YAMA/(8622:8622): YAMA ready to accept Masters connections
+[TRACE] 10:27:28:41 YAMA/(8622:8622): New Master connection
+[TRACE] 10:27:28:41 YAMA/(8622:8622): Master process connected!
+[TRACE] 10:27:28:41 YAMA/(8622:8622): Getting Master message...
+[TRACE] 10:27:28:41 YAMA/(8622:8622): 461 bytes sent to master id 6
+[TRACE] 10:27:28:42 YAMA/(8622:8622): Master disconnected.
+[TRACE] 10:30:30:264 YAMA/(8799:8799): YAMA was succesfully configured.
+[TRACE] 10:30:30:265 YAMA/(8799:8799): YAMA ready to accept Masters connections
+[TRACE] 10:30:36:210 YAMA/(8799:8799): New Master connection
+[TRACE] 10:30:36:210 YAMA/(8799:8799): Master process connected!
+[TRACE] 10:30:36:214 YAMA/(8799:8799): Getting Master message...
+[TRACE] 10:30:36:214 YAMA/(8799:8799): 461 bytes sent to master id 6
+[TRACE] 10:30:36:215 YAMA/(8799:8799): Master disconnected.
+[TRACE] 10:31:36:689 YAMA/(9104:9104): YAMA was succesfully configured.
+[TRACE] 10:31:36:690 YAMA/(9104:9104): YAMA ready to accept Masters connections
+[TRACE] 10:31:43:466 YAMA/(9104:9104): New Master connection
+[TRACE] 10:31:43:467 YAMA/(9104:9104): Master process connected!
+[TRACE] 10:31:43:467 YAMA/(9104:9104): Getting Master message...
+[TRACE] 10:31:43:467 YAMA/(9104:9104): 245 bytes sent to master id 6
+[TRACE] 10:31:43:468 YAMA/(9104:9104): Master disconnected.
+[TRACE] 10:39:18:803 YAMA/(9411:9411): YAMA was succesfully configured.
+[TRACE] 10:39:18:808 YAMA/(9411:9411): YAMA ready to accept Masters connections
+[TRACE] 10:39:25:46 YAMA/(9411:9411): New Master connection
+[TRACE] 10:39:25:47 YAMA/(9411:9411): Master process connected!
+[TRACE] 10:39:25:47 YAMA/(9411:9411): Getting Master message...
+[TRACE] 10:39:25:47 YAMA/(9411:9411): 245 bytes sent to master id 6
+[TRACE] 10:39:25:47 YAMA/(9411:9411): Master disconnected.
+[TRACE] 10:41:06:317 YAMA/(9573:9573): YAMA was succesfully configured.
+[TRACE] 10:41:06:320 YAMA/(9573:9573): YAMA ready to accept Masters connections
+[TRACE] 10:41:12:675 YAMA/(9573:9573): New Master connection
+[TRACE] 10:41:12:675 YAMA/(9573:9573): Master process connected!
+[TRACE] 10:41:12:676 YAMA/(9573:9573): Getting Master message...
+[TRACE] 10:41:12:676 YAMA/(9573:9573): 245 bytes sent to master id 6
+[TRACE] 10:41:12:677 YAMA/(9573:9573): Master disconnected.
+[TRACE] 10:45:58:303 YAMA/(10029:10029): YAMA was succesfully configured.
+[TRACE] 10:45:58:307 YAMA/(10029:10029): YAMA ready to accept Masters connections
+[TRACE] 10:46:06:223 YAMA/(10029:10029): New Master connection
+[TRACE] 10:46:06:223 YAMA/(10029:10029): Master process connected!
+[TRACE] 10:46:06:223 YAMA/(10029:10029): Getting Master message...
+[TRACE] 10:46:06:223 YAMA/(10029:10029): 245 bytes sent to master id 6
+[TRACE] 10:46:06:223 YAMA/(10029:10029): Master disconnected.
+[TRACE] 10:46:53:182 YAMA/(10170:10170): YAMA was succesfully configured.
+[TRACE] 10:46:53:184 YAMA/(10170:10170): YAMA ready to accept Masters connections
+[TRACE] 10:46:58:359 YAMA/(10170:10170): New Master connection
+[TRACE] 10:46:58:360 YAMA/(10170:10170): Master process connected!
+[TRACE] 10:46:58:361 YAMA/(10170:10170): Getting Master message...
+[TRACE] 10:46:58:361 YAMA/(10170:10170): 245 bytes sent to master id 6
+[TRACE] 10:46:58:898 YAMA/(10170:10170): Master disconnected.
+[TRACE] 10:58:25:865 YAMA/(11368:11368): YAMA was succesfully configured.
+[TRACE] 10:58:25:865 YAMA/(11368:11368): YAMA ready to accept Masters connections
+[TRACE] 10:58:31:523 YAMA/(11368:11368): New Master connection
+[TRACE] 10:58:31:523 YAMA/(11368:11368): Master process connected!
+[TRACE] 10:58:31:528 YAMA/(11368:11368): Getting Master message...
+[TRACE] 10:58:31:530 YAMA/(11368:11368): 245 bytes sent to master id 6
+[TRACE] 10:58:32:92 YAMA/(11368:11368): Master disconnected.
+[TRACE] 11:02:07:909 YAMA/(11711:11711): YAMA was succesfully configured.
+[TRACE] 11:02:07:909 YAMA/(11711:11711): YAMA ready to accept Masters connections
+[TRACE] 11:02:14:851 YAMA/(11711:11711): New Master connection
+[TRACE] 11:02:14:851 YAMA/(11711:11711): Master process connected!
+[TRACE] 11:02:14:862 YAMA/(11711:11711): Getting Master message...
+[TRACE] 11:02:14:864 YAMA/(11711:11711): 269 bytes sent to master id 6
+[TRACE] 11:02:15:729 YAMA/(11711:11711): Master disconnected.
+[TRACE] 11:06:36:27 YAMA/(11881:11881): YAMA was succesfully configured.
+[TRACE] 11:06:36:45 YAMA/(11881:11881): YAMA ready to accept Masters connections
+[TRACE] 11:06:42:284 YAMA/(11881:11881): New Master connection
+[TRACE] 11:06:42:284 YAMA/(11881:11881): Master process connected!
+[TRACE] 11:06:42:287 YAMA/(11881:11881): Getting Master message...
+[TRACE] 11:06:42:288 YAMA/(11881:11881): 269 bytes sent to master id 6
+[TRACE] 11:06:42:876 YAMA/(11881:11881): Master disconnected.
+[TRACE] 11:07:44:861 YAMA/(12026:12026): YAMA was succesfully configured.
+[TRACE] 11:07:44:863 YAMA/(12026:12026): YAMA ready to accept Masters connections
+[TRACE] 11:07:50:236 YAMA/(12026:12026): New Master connection
+[TRACE] 11:07:50:236 YAMA/(12026:12026): Master process connected!
+[TRACE] 11:07:50:236 YAMA/(12026:12026): Getting Master message...
+[TRACE] 11:07:50:237 YAMA/(12026:12026): 269 bytes sent to master id 6
+[TRACE] 11:07:50:682 YAMA/(12026:12026): Master disconnected.
+[TRACE] 11:08:11:759 YAMA/(12131:12131): YAMA was succesfully configured.
+[TRACE] 11:08:11:769 YAMA/(12131:12131): YAMA ready to accept Masters connections
+[TRACE] 11:08:18:512 YAMA/(12131:12131): New Master connection
+[TRACE] 11:08:18:513 YAMA/(12131:12131): Master process connected!
+[TRACE] 11:08:18:513 YAMA/(12131:12131): Getting Master message...
+[TRACE] 11:08:18:514 YAMA/(12131:12131): 269 bytes sent to master id 6
+[TRACE] 11:08:18:973 YAMA/(12131:12131): Master disconnected.
+[TRACE] 11:09:04:904 YAMA/(12242:12242): YAMA was succesfully configured.
+[TRACE] 11:09:04:908 YAMA/(12242:12242): YAMA ready to accept Masters connections
+[TRACE] 11:09:09:888 YAMA/(12242:12242): New Master connection
+[TRACE] 11:09:09:889 YAMA/(12242:12242): Master process connected!
+[TRACE] 11:09:09:889 YAMA/(12242:12242): Getting Master message...
+[TRACE] 11:09:09:889 YAMA/(12242:12242): 269 bytes sent to master id 6
+[TRACE] 11:09:10:284 YAMA/(12242:12242): Master disconnected.
+[TRACE] 11:17:54:883 YAMA/(12519:12519): YAMA was succesfully configured.
+[TRACE] 11:17:54:883 YAMA/(12519:12519): YAMA ready to accept Masters connections
+[TRACE] 11:18:00:667 YAMA/(12519:12519): New Master connection
+[TRACE] 11:18:00:668 YAMA/(12519:12519): Master process connected!
+[TRACE] 11:18:00:668 YAMA/(12519:12519): Getting Master message...
+[TRACE] 11:18:00:668 YAMA/(12519:12519): 269 bytes sent to master id 6
+[TRACE] 11:18:01:151 YAMA/(12519:12519): Master disconnected.
+[TRACE] 11:18:49:651 YAMA/(12660:12660): YAMA was succesfully configured.
+[TRACE] 11:18:49:652 YAMA/(12660:12660): YAMA ready to accept Masters connections
+[TRACE] 11:18:54:699 YAMA/(12660:12660): New Master connection
+[TRACE] 11:18:54:699 YAMA/(12660:12660): Master process connected!
+[TRACE] 11:18:54:699 YAMA/(12660:12660): Getting Master message...
+[TRACE] 11:18:54:699 YAMA/(12660:12660): 269 bytes sent to master id 6
+[TRACE] 11:18:55:180 YAMA/(12660:12660): Master disconnected.
+[TRACE] 11:22:56:966 YAMA/(12874:12874): YAMA was succesfully configured.
+[TRACE] 11:22:56:974 YAMA/(12874:12874): YAMA ready to accept Masters connections
+[TRACE] 11:23:02:374 YAMA/(12874:12874): New Master connection
+[TRACE] 11:23:02:374 YAMA/(12874:12874): Master process connected!
+[TRACE] 11:23:02:381 YAMA/(12874:12874): Getting Master message...
+[TRACE] 11:23:02:381 YAMA/(12874:12874): 269 bytes sent to master id 6
+[TRACE] 11:23:02:827 YAMA/(12874:12874): Master disconnected.
+[TRACE] 11:26:31:996 YAMA/(13216:13216): YAMA was succesfully configured.
+[TRACE] 11:26:32:5 YAMA/(13216:13216): YAMA ready to accept Masters connections
+[TRACE] 11:26:38:929 YAMA/(13216:13216): New Master connection
+[TRACE] 11:26:38:929 YAMA/(13216:13216): Master process connected!
+[TRACE] 11:26:38:929 YAMA/(13216:13216): Getting Master message...
+[TRACE] 11:26:38:930 YAMA/(13216:13216): 437 bytes sent to master id 6
+[TRACE] 11:26:38:930 YAMA/(13216:13216): Master disconnected.
+[TRACE] 11:32:21:410 YAMA/(13377:13377): YAMA was succesfully configured.
+[TRACE] 11:32:21:417 YAMA/(13377:13377): YAMA ready to accept Masters connections
+[TRACE] 11:32:32:772 YAMA/(13377:13377): New Master connection
+[TRACE] 11:32:32:772 YAMA/(13377:13377): Master process connected!
+[TRACE] 11:32:32:773 YAMA/(13377:13377): Getting Master message...
+[TRACE] 11:32:32:774 YAMA/(13377:13377): 5 bytes sent to master id 6
+[TRACE] 11:33:03:1 YAMA/(13497:13497): YAMA was succesfully configured.
+[TRACE] 11:33:03:1 YAMA/(13497:13497): YAMA ready to accept Masters connections
+[TRACE] 11:33:09:552 YAMA/(13497:13497): New Master connection
+[TRACE] 11:33:09:552 YAMA/(13497:13497): Master process connected!
+[TRACE] 11:33:09:553 YAMA/(13497:13497): Getting Master message...
+[TRACE] 11:33:09:553 YAMA/(13497:13497): 5 bytes sent to master id 6
+[TRACE] 11:33:15:290 YAMA/(13497:13497): Master disconnected.
+[TRACE] 11:33:50:992 YAMA/(13793:13793): YAMA was succesfully configured.
+[TRACE] 11:33:50:995 YAMA/(13793:13793): YAMA ready to accept Masters connections
+[TRACE] 11:33:59:282 YAMA/(13793:13793): New Master connection
+[TRACE] 11:33:59:282 YAMA/(13793:13793): Master process connected!
+[TRACE] 11:33:59:286 YAMA/(13793:13793): Getting Master message...
+[TRACE] 11:33:59:287 YAMA/(13793:13793): 5 bytes sent to master id 6
+[TRACE] 11:34:29:465 YAMA/(13793:13793): Master disconnected.
+[TRACE] 11:35:05:459 YAMA/(13881:13881): YAMA was succesfully configured.
+[TRACE] 11:35:05:467 YAMA/(13881:13881): YAMA ready to accept Masters connections
+[TRACE] 11:35:14:157 YAMA/(13881:13881): New Master connection
+[TRACE] 11:35:14:158 YAMA/(13881:13881): Master process connected!
+[TRACE] 11:35:19:2 YAMA/(13881:13881): Getting Master message...
+[TRACE] 11:35:19:2 YAMA/(13881:13881): 5 bytes sent to master id 6
+[TRACE] 11:35:41:73 YAMA/(13881:13881): Master disconnected.
+[TRACE] 11:36:00:821 YAMA/(14002:14002): YAMA was succesfully configured.
+[TRACE] 11:36:04:151 YAMA/(14002:14002): YAMA ready to accept Masters connections
+[TRACE] 11:36:18:222 YAMA/(14002:14002): New Master connection
+[TRACE] 11:36:18:222 YAMA/(14002:14002): Master process connected!
+[TRACE] 11:36:36:650 YAMA/(14002:14002): Getting Master message...
+[TRACE] 11:36:57:57 YAMA/(14002:14002): 5 bytes sent to master id 6
+[TRACE] 11:39:06:358 YAMA/(14382:14382): YAMA was succesfully configured.
+[TRACE] 11:39:06:360 YAMA/(14382:14382): YAMA ready to accept Masters connections
+[TRACE] 11:39:12:675 YAMA/(14382:14382): New Master connection
+[TRACE] 11:39:12:675 YAMA/(14382:14382): Master process connected!
+[TRACE] 11:39:12:685 YAMA/(14382:14382): Getting Master message...
+[TRACE] 11:39:12:685 YAMA/(14382:14382): 5 bytes sent to master id 6
+[TRACE] 11:39:17:220 YAMA/(14382:14382): Master disconnected.
+[TRACE] 11:40:15:656 YAMA/(14691:14691): YAMA was succesfully configured.
+[TRACE] 11:40:15:660 YAMA/(14691:14691): YAMA ready to accept Masters connections
+[TRACE] 11:40:20:755 YAMA/(14691:14691): New Master connection
+[TRACE] 11:40:20:755 YAMA/(14691:14691): Master process connected!
+[TRACE] 11:40:20:756 YAMA/(14691:14691): Getting Master message...
+[TRACE] 11:40:20:757 YAMA/(14691:14691): 413 bytes sent to master id 6
+[TRACE] 11:40:20:757 YAMA/(14691:14691): Master disconnected.
+[TRACE] 11:41:13:407 YAMA/(14782:14782): YAMA was succesfully configured.
+[TRACE] 11:41:13:408 YAMA/(14782:14782): YAMA ready to accept Masters connections
+[TRACE] 11:41:18:598 YAMA/(14782:14782): New Master connection
+[TRACE] 11:41:18:598 YAMA/(14782:14782): Master process connected!
+[TRACE] 11:41:18:601 YAMA/(14782:14782): Getting Master message...
+[TRACE] 11:41:18:601 YAMA/(14782:14782): 413 bytes sent to master id 6
+[TRACE] 11:41:18:601 YAMA/(14782:14782): Master disconnected.
+[TRACE] 11:43:23:205 YAMA/(14947:14947): YAMA was succesfully configured.
+[TRACE] 11:43:23:208 YAMA/(14947:14947): YAMA ready to accept Masters connections
+[TRACE] 11:43:28:513 YAMA/(14947:14947): New Master connection
+[TRACE] 11:43:28:513 YAMA/(14947:14947): Master process connected!
+[TRACE] 11:43:28:514 YAMA/(14947:14947): Getting Master message...
+[TRACE] 11:43:28:514 YAMA/(14947:14947): 413 bytes sent to master id 6
+[TRACE] 11:43:28:515 YAMA/(14947:14947): Master disconnected.
+[TRACE] 11:50:29:105 YAMA/(15164:15164): YAMA was succesfully configured.
+[TRACE] 11:50:29:115 YAMA/(15164:15164): YAMA ready to accept Masters connections
+[TRACE] 11:50:35:873 YAMA/(15164:15164): New Master connection
+[TRACE] 11:50:35:874 YAMA/(15164:15164): Master process connected!
+[TRACE] 11:50:35:878 YAMA/(15164:15164): Getting Master message...
+[TRACE] 11:50:35:878 YAMA/(15164:15164): 413 bytes sent to master id 6
+[TRACE] 11:50:35:878 YAMA/(15164:15164): Master disconnected.
+[TRACE] 12:12:21:919 YAMA/(15963:15963): YAMA was succesfully configured.
+[TRACE] 12:12:21:920 YAMA/(15963:15963): YAMA ready to accept Masters connections
+[TRACE] 12:12:29:18 YAMA/(15963:15963): New Master connection
+[TRACE] 12:12:29:18 YAMA/(15963:15963): Master process connected!
+[TRACE] 12:12:29:21 YAMA/(15963:15963): Getting Master message...
+[TRACE] 12:12:29:22 YAMA/(15963:15963): 5 bytes sent to master id 6
+[TRACE] 12:13:05:947 YAMA/(15963:15963): Master disconnected.

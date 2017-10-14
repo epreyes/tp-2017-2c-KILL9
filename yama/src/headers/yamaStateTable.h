@@ -5,13 +5,13 @@
  *      Author: utnso
  */
 
-#ifndef YAMASTATETABLE_H_
-#define YAMASTATETABLE_H_
+#ifndef SRC_HEADERS_YAMASTATETABLE_H_
+#define SRC_HEADERS_YAMASTATETABLE_H_
 
 #include "yama.h"
 
 int addToStatusTable(Yama* yama, int master, void* package);
 void viewStateTable(Yama* yama);
-void updateNodeList(Yama* yama, void* fsInfo);
+void updateNodeList(void* fsInfo);
 
-#endif /* YAMASTATETABLE_H_ */
+#endif /* SRC_HEADERS_YAMASTATETABLE_H_ */
