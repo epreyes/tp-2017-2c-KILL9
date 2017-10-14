@@ -111,7 +111,7 @@ elem_info_archivo* getFileInfo(int master) {
 		fileInfo->info = malloc(*size);
 		memcpy( fileInfo->info, fsInfo + sizeof(int), *size );
 
-		fileInfo->blocks = *size / sizeof(block);
+		fileInfo->blocks = *size / sizeof(block_info);
 
 		list_add(yama->tabla_info_archivos, fileInfo);
 

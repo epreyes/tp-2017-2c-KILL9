@@ -110,7 +110,7 @@ typedef struct{
 	char	opCode;
 	int 	bloque;
 	int		nodo;
-}error_rq;
+}ok;
 
 /*
  * '0': "no se puede conectar con el nodo Y"

@@ -29,8 +29,8 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 
 	int index = 0;
 	for (index = 0; index < fsInfo->blocks; index++) {
-		block* blockInfo = malloc(sizeof(block));
-		memcpy(blockInfo, info + (index * sizeof(block)), sizeof(block));
+		block_info* blockInfo = malloc(sizeof(block_info));
+		memcpy(blockInfo, info + (index * sizeof(block_info)), sizeof(block_info));
 
 		tr_datos* nodeData = malloc(sizeof(tr_datos));
 		nodeData->nodo = blockInfo->node1;
@@ -43,7 +43,6 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 
 		printf("\nTemporal====%s\n", nodeData->tr_tmp);
 
-		nodeData->bloque_id = blockInfo->block_id;
 		list_add(nodeList, nodeData);
 
 		tr_datos* nodeData2 = malloc(sizeof(tr_datos));
@@ -53,7 +52,6 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 		nodeData2->bloque = blockInfo->node2_block;
 		nodeData2->tamanio = blockInfo->end_block;
 		getTmpName(nodeData2, 'T', nodeData->bloque, master);
-		nodeData2->bloque_id = blockInfo->block_id;
 		list_add(nodeList, nodeData2);
 
 	}
@@ -91,7 +89,7 @@ void* sortTransformationResponse(t_list* buffer) {
 		data->tr_tmp*/
 
 		printf("\n---- %s ---- %d - %d\n", data->tr_tmp, sizeof(*data), sizeof(tr_datos));
-
+/*
 		memcpy(sortedBuffer+buffIncrement, &(data->bloque_id), sizeof(int));
 		buffIncrement+=sizeof(int);
 		memcpy(sortedBuffer+buffIncrement, &(data->nodo), sizeof(int));
@@ -104,12 +102,12 @@ void* sortTransformationResponse(t_list* buffer) {
 		buffIncrement+=sizeof(int);
 		memcpy(sortedBuffer+buffIncrement, &(data->tr_tmp), sizeof(char)*31);
 		buffIncrement+=sizeof(char)*31;
-
-		/*memcpy(
+*/
+		memcpy(
 				sortedBuffer
 						+ ((sizeof(char) + sizeof(int))
 								+ (index * sizeof(tr_datos))), data,
-				sizeof(tr_datos));*/
+				sizeof(tr_datos));
 	}
 
 	return sortedBuffer;

@@ -65,7 +65,7 @@ elem_tabla_nodos* getHigerAvailNode(Yama* yama){
 	return higer;
 }
 
-void doPlanning(Yama* yama, block* blockRecived) {
+void doPlanning(Yama* yama, block_info* blockRecived) {
 	updateAvailability(yama);
 	elem_tabla_nodos* clock = getHigerAvailNode(yama);
 	//blockRecived->

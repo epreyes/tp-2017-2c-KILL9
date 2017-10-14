@@ -11,7 +11,7 @@
 #include <commons/collections/list.h>
 #include "yama.h"
 
-void doPlanning(Yama* yama, block* nodeList);
+void doPlanning(Yama* yama, block_info* nodeList);
 
 void clockPlanning(Yama* yama, t_list* nodeList);
 

@@ -64,9 +64,9 @@ void updateNodeList(void* fsInfo) {
 	memcpy(nodes, fsInfo + sizeof(int), *size);
 
 	int index = 0;
-	for (index = 0; index < *size; index += sizeof(block)) {
-		block* b = malloc(sizeof(block));
-		memcpy(b, nodes + index, sizeof(block));
+	for (index = 0; index < *size; index += sizeof(block_info)) {
+		block_info* b = malloc(sizeof(block_info));
+		memcpy(b, nodes + index, sizeof(block_info));
 		int position = findNode(yama, b->node1);
 		if (position == -1) {
 			elem_tabla_nodos* node = malloc(sizeof(elem_tabla_nodos));
@@ -107,7 +107,7 @@ void viewStateTable(Yama* yama) {
 }
 
 int addToStatusTable(Yama* yama, int master, void* package) {
-	t_header head;
+	/*t_header head;
 	memcpy(&head, package, sizeof(t_header));
 
 	int nblocks = head.msg_size / sizeof(tr_datos);
@@ -129,5 +129,6 @@ int addToStatusTable(Yama* yama, int master, void* package) {
 
 		list_add(yama->tabla_estados, row);
 	}
+	*/
 	return 1;
 }

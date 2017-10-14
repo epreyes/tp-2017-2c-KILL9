@@ -15,10 +15,11 @@
 #include <commons/log.h>
 #include <tplibraries/utils/utils.h>
 #include <tplibraries/sockets/socket.h>
-#include <tplibraries/protocol/protocol.h>
+#include <tplibraries/protocol/master_yama.h>
+#include <tplibraries/protocol/filesystem_yama.h>
 
-static char* CONFIG_PATH = "./config/yamaConfig.properties";
-static char* LOG_PATH = "./log/yama.log";
+static char* CONFIG_PATH = "../config/yamaConfig.properties";
+static char* LOG_PATH = "../log/yama.log";
 
 typedef struct {
 	int blocks;

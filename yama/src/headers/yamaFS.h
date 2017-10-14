@@ -9,7 +9,7 @@
 #define SRC_HEADERS_YAMAFS_H_
 
 #include "yamaStateTable.h"
-#include <tplibraries/protocol/protocol.h>
+#include <tplibraries/protocol/filesystem_yama.h>
 
 void* getFileSystemInfo(char* name);
 
