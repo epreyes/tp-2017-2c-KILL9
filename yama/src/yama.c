@@ -61,51 +61,53 @@ void* processOperation(int master, char op) {
 
 	void* response = NULL;
 
-		switch( op ){
-		case 'T':
-			response = processTransformation(master);
+	switch (op) {
+	case 'T':
+		response = processTransformation(master);
 
-			break;
-		case 'L':
-			//response = processLocalReduction(yama, head, master);
-			break;
-		case 'G':
-			//response = processGlobalReduction(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
-				break;
-		case 'S':
-			//response = processFinalStore(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
-				break;
-		case 'E':
-				//response = processError(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
-					break;
+		char op;
+		memcpy(&op, response, sizeof(char));
+		int blocks;
+		memcpy(&blocks, response + sizeof(char), sizeof(int));
+
+		printf("\n--->La respuesta en yama.c es: Op=%c, bloques=%d y tamanio=%d<---\n",
+				op, blocks, blocks * sizeof(tr_datos));
+
+
+		int increment = 0;
+		for (increment = 0; increment < blocks; increment++) {
+			tr_datos* data = malloc(sizeof(tr_datos));
+			int plus = (sizeof(char)+sizeof(int))+(increment * sizeof(tr_datos));
+			memcpy(data, response + plus, sizeof(tr_datos));
+			printf("\nEn yama-> %d - %s - %d - %d - %d - %s\n", data->nodo, data->ip,
+					data->port, data->tamanio, data->bloque, data->tr_tmp);
 		}
-		return response;
+
+		break;
+	case 'L':
+		//response = processLocalReduction(yama, head, master);
+		break;
+	case 'G':
+		//response = processGlobalReduction(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
+		break;
+	case 'S':
+		//response = processFinalStore(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
+		break;
+	case 'E':
+		//response = processError(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
+		break;
+	}
+	return response;
 }
-
-
 
 /************************* Utils **********************************/
 /******************************************************************/
 void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId) {
 	char* name;
 	long timestamp = current_timestamp();
-	asprintf(&name, "%s%ld-%c-M%03d-B%03d.bin", "/tmp/", timestamp, op, masterId, blockId);
+	asprintf(&name, "%s%ld-%c-M%03d-B%03d", "/tmp/", timestamp, op, masterId,
+			blockId);
 
 	strcpy(nodeData->tr_tmp, name);
 }
-
-int sendPackage(int master, void* package, int sizepack) {
-	int bytesSent = send(master, package, sizepack, 0);
-	if (bytesSent > 0) {
-		//addToStateTable();
-		char message[30];
-		snprintf(message, sizeof(message), "%d bytes sent to master id %d",
-				bytesSent, master);
-		log_trace(yama->log, message);
-	} else {
-		perror("Send response to master.");
-	}
-	return bytesSent;
-}
-
 

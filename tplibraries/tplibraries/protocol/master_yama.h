@@ -23,7 +23,7 @@ typedef struct tr_datos{
 	int 	port;
 	int		bloque;
 	int		tamanio;
-	char	tr_tmp[28];
+	char	tr_tmp[27];
 }tr_datos;
 
 typedef struct{
