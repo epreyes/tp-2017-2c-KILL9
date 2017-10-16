@@ -16,15 +16,6 @@ void* processTransformation(int master) {
 	t_list* nodeList = list_create();
 	nodeList = buildTransformationResponseNodeList(fsInfo, master);
 
-	int i = 0;
-	for (i = 0; i < list_size(nodeList); i++) {
-		tr_datos* data = list_get(nodeList, i);
-		printf("\nlueog de build transformation %d - %s - %d - %d - %d - %s\n", data->nodo, data->ip,
-				data->port, data->tamanio, data->bloque, data->tr_tmp);
-	}
-	printf(
-			"\n------------------------------------------------------------------------\n");
-
 	return sortTransformationResponse(nodeList);
 }
 
@@ -41,6 +32,10 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 		block_info* blockInfo = malloc(sizeof(block_info));
 		memcpy(blockInfo, info + (index * sizeof(block_info)),
 				sizeof(block_info));
+
+//planificar: me devuelve el nodeData que voy a meter en la lista.
+//agregar nodo a la lista
+		//actualizar la tabla de estados
 
 		tr_datos* nodeData = malloc(sizeof(tr_datos));
 		nodeData->nodo = blockInfo->node1;
@@ -71,18 +66,6 @@ void* sortTransformationResponse(t_list* buffer) {
 	comparator = &compareTransformationBlocks;
 	list_sort(buffer, comparator);
 
-	printf(
-			"\n--------------------------Ordenada-------------------------------\n");
-	int i = 0;
-	for (i = 0; i < list_size(buffer); i++) {
-		tr_datos* data = list_get(buffer, i);
-		printf("\n%d - %s - %d - %d - %d - %s\n", data->nodo, data->ip,
-				data->port, data->tamanio, data->bloque, data->tr_tmp);
-	}
-	printf(
-			"\n------------------------------------------------------------------------\n");
-
-
 	int sizeData = (sizeof(tr_datos)*list_size(buffer));
 	void* sortedBuffer = malloc(sizeof(char)+sizeof(int)+sizeData);
 
@@ -96,25 +79,6 @@ void* sortTransformationResponse(t_list* buffer) {
 	for(index=0; index < *blocks; index++){
 		tr_datos* data = list_get(buffer, index);
 		memcpy(sortedBuffer+sizeof(char)+sizeof(int)+(index*sizeof(tr_datos)), data, sizeof(tr_datos));
-	}
-
-	char opt;
-	memcpy(&opt, sortedBuffer, sizeof(char));
-	int blockes;
-	memcpy(&blockes, sortedBuffer + sizeof(char), sizeof(int));
-
-	printf("\n->La respuesta es: Op=%c, bloques=%d y tamanio=%d\n", opt,
-			blockes, blockes * sizeof(tr_datos));
-
-	int increment = 0;
-	void* info = malloc(blockes*sizeof(tr_datos));
-	memcpy(info, sortedBuffer+sizeof(char)+sizeof(int), blockes*sizeof(tr_datos));
-	for (increment = 0; increment < blockes; increment++) {
-		tr_datos* data = malloc(sizeof(tr_datos));
-		memcpy(data, info + (increment * sizeof(tr_datos)), sizeof(tr_datos));
-		printf("\nEn transformation.c-> %d - %s - %d - %d - %d - %s\n", data->nodo,
-				data->ip, data->port, data->tamanio, data->bloque,
-				data->tr_tmp);
 	}
 
 	return sortedBuffer;

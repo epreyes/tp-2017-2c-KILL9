@@ -65,24 +65,6 @@ void* processOperation(int master, char op) {
 	case 'T':
 		response = processTransformation(master);
 
-		char op;
-		memcpy(&op, response, sizeof(char));
-		int blocks;
-		memcpy(&blocks, response + sizeof(char), sizeof(int));
-
-		printf("\n--->La respuesta en yama.c es: Op=%c, bloques=%d y tamanio=%d<---\n",
-				op, blocks, blocks * sizeof(tr_datos));
-
-
-		int increment = 0;
-		for (increment = 0; increment < blocks; increment++) {
-			tr_datos* data = malloc(sizeof(tr_datos));
-			int plus = (sizeof(char)+sizeof(int))+(increment * sizeof(tr_datos));
-			memcpy(data, response + plus, sizeof(tr_datos));
-			printf("\nEn yama-> %d - %s - %d - %d - %d - %s\n", data->nodo, data->ip,
-					data->port, data->tamanio, data->bloque, data->tr_tmp);
-		}
-
 		break;
 	case 'L':
 		//response = processLocalReduction(yama, head, master);

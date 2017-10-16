@@ -35,33 +35,12 @@ Client acceptMasterConnection(Server* server, fd_set* masterList, int hightSd) {
 
 int sendResponse(int master, void* masterRS) {
 
-	char op;
-	memcpy(&op, masterRS, sizeof(char));
-	int blocks;
-	memcpy(&blocks, masterRS + sizeof(char), sizeof(int));
-
-	printf(
-			"\n--->La respuesta en yama.c es: Op=%c, bloques=%d y tamanio=%d<---\n",
-			op, blocks, blocks * sizeof(tr_datos));
-
-	int increment = 0;
-	for (increment = 0; increment < blocks; increment++) {
-		tr_datos* data = malloc(sizeof(tr_datos));
-		int plus = (sizeof(char) + sizeof(int))
-				+ (increment * sizeof(tr_datos));
-		memcpy(data, masterRS + plus, sizeof(tr_datos));
-		printf("\nEn yama-> %d - %s - %d - %d - %d - %s\n", data->nodo,
-				data->ip, data->port, data->tamanio, data->bloque,
-				data->tr_tmp);
-	}
-
 	int sizeInfo;
 	memcpy(&sizeInfo, masterRS + sizeof(char), sizeof(int));
 	int sizepack = sizeof(char) + sizeof(int) + sizeInfo*sizeof(tr_datos);
 
 	int bytesSent = send(master, masterRS, sizepack, 0);
 	if (bytesSent > 0) {
-		//addToStateTable();
 		char message[30];
 		snprintf(message, sizeof(message), "%d bytes sent to master id %d",
 				bytesSent, master);
@@ -93,26 +72,6 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 
 		//proceso el request y obtengo la respuesta
 		void* response = getResponse(socket, *(char*) request);
-
-		char op;
-		memcpy(&op, response, sizeof(char));
-		int blocks;
-		memcpy(&blocks, response + sizeof(char), sizeof(int));
-
-		printf(
-				"\n--->La respuesta en connectionManager.c es: Op=%c, bloques=%d y tamanio=%d<---\n",
-				op, blocks, blocks * sizeof(tr_datos));
-
-		int increment = 0;
-		for (increment = 0; increment < blocks; increment++) {
-			tr_datos* data = malloc(sizeof(tr_datos));
-			int plus = (sizeof(char) + sizeof(int))
-					+ (increment * sizeof(tr_datos));
-			memcpy(data, response + plus, sizeof(tr_datos));
-			printf("\nEn yama-> %d - %s - %d - %d - %d - %s\n", data->nodo,
-					data->ip, data->port, data->tamanio, data->bloque,
-					data->tr_tmp);
-		}
 
 		//envio el paquete al master
 		sendResponse(socket, response);
