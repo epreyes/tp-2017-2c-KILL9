@@ -24,6 +24,7 @@ Client acceptMasterConnection(Server* server, fd_set* masterList, int hightSd) {
 		}
 		theClient.socket_id = client;
 		theClient.address = client_address;
+		yama->jobs++;
 	} else {
 		log_trace(yama->log, "Error trying to accept connection");
 		perror("Error trying to accept connection");

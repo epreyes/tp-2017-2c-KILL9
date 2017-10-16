@@ -16,7 +16,24 @@ void* processTransformation(int master) {
 	t_list* nodeList = list_create();
 	nodeList = buildTransformationResponseNodeList(fsInfo, master);
 
+	viewStateTable();
+
+	viewNodeTable();
+
 	return sortTransformationResponse(nodeList);
+}
+
+void setInStatusTable(tr_datos* nodeData, int master) {
+	elem_tabla_estados* elemStatus = malloc(sizeof(elem_tabla_estados));
+	elemStatus->block = getBlockId(nodeData->tr_tmp);
+	elemStatus->job = yama->jobs;
+	elemStatus->master = master;
+	elemStatus->node = nodeData->nodo;
+	elemStatus->op = 'T';
+	elemStatus->status = 'P';
+	strcpy(elemStatus->tmp, nodeData->tr_tmp);
+
+	updateStatusTable(elemStatus);
 }
 
 t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
@@ -34,8 +51,7 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 				sizeof(block_info));
 
 //planificar: me devuelve el nodeData que voy a meter en la lista.
-//agregar nodo a la lista
-		//actualizar la tabla de estados
+//agregar nodo a la lista que se va a enviar, y al historial de planificacion.
 
 		tr_datos* nodeData = malloc(sizeof(tr_datos));
 		nodeData->nodo = blockInfo->node1;
@@ -43,8 +59,11 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 		nodeData->port = blockInfo->node1_port;
 		nodeData->bloque = blockInfo->node1_block;
 		nodeData->tamanio = blockInfo->end_block;
-		getTmpName(nodeData, 'T', nodeData->bloque, master);
+		getTmpName(nodeData, 'T', blockInfo->block_id, master);
 		list_add(nodeList, nodeData);
+		list_add(yama->tabla_planificados, nodeData);
+		setInStatusTable(nodeData, master);
+		updateNodeList('T', nodeData->nodo);
 
 		tr_datos* nodeData2 = malloc(sizeof(tr_datos));
 		nodeData2->nodo = blockInfo->node2;
@@ -52,8 +71,11 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 		nodeData2->port = blockInfo->node2_port;
 		nodeData2->bloque = blockInfo->node2_block;
 		nodeData2->tamanio = blockInfo->end_block;
-		getTmpName(nodeData2, 'T', nodeData2->bloque, master);
+		getTmpName(nodeData2, 'T', blockInfo->block_id, master);
 		list_add(nodeList, nodeData2);
+		list_add(yama->tabla_planificados, nodeData2);
+		setInStatusTable(nodeData2, master);
+		updateNodeList('T', nodeData2->nodo);
 
 		free(blockInfo);
 	}
@@ -66,19 +88,21 @@ void* sortTransformationResponse(t_list* buffer) {
 	comparator = &compareTransformationBlocks;
 	list_sort(buffer, comparator);
 
-	int sizeData = (sizeof(tr_datos)*list_size(buffer));
-	void* sortedBuffer = malloc(sizeof(char)+sizeof(int)+sizeData);
+	int sizeData = (sizeof(tr_datos) * list_size(buffer));
+	void* sortedBuffer = malloc(sizeof(char) + sizeof(int) + sizeData);
 
 	int* blocks = malloc(sizeof(int));
 	*blocks = list_size(buffer);
 
 	memcpy(sortedBuffer, "T", sizeof(char));
-	memcpy(sortedBuffer+sizeof(char), blocks, sizeof(int));
+	memcpy(sortedBuffer + sizeof(char), blocks, sizeof(int));
 
 	int index = 0;
-	for(index=0; index < *blocks; index++){
+	for (index = 0; index < *blocks; index++) {
 		tr_datos* data = list_get(buffer, index);
-		memcpy(sortedBuffer+sizeof(char)+sizeof(int)+(index*sizeof(tr_datos)), data, sizeof(tr_datos));
+		memcpy(
+				sortedBuffer + sizeof(char) + sizeof(int)
+						+ (index * sizeof(tr_datos)), data, sizeof(tr_datos));
 	}
 
 	return sortedBuffer;

@@ -54,7 +54,7 @@ void* getFileSystemInfo(char* name) {
 		perror("Sending");
 	}
 	disconnectClient(&fs_client);
-	updateNodeList(fsInfo);
+	addToNodeList(fsInfo);
 
 	return fsInfo;
 }

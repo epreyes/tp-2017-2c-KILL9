@@ -47,6 +47,7 @@ void init() {
 			config_get_int_value(yama->config, "YAMA_PUERTO"));
 
 	log_trace(yama->log, "YAMA was succesfully configured.");
+	yama->jobs = 0;
 }
 
 void* getResponse(int master, char request) {
