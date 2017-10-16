@@ -26,13 +26,12 @@ void listarDirectorios(t_directorio* inicioTablaDirectorios) {
 		dir++;
 	}
 
-
-
 }
 
 // Simula la entrada de un nodo al fs
 
 void simularEntradaConexionNodo(t_nodos* nodos) {
+
 
 	// Aca deberia modificarse nodos.bin
 
@@ -43,12 +42,14 @@ void simularEntradaConexionNodo(t_nodos* nodos) {
 
 	t_nodo* nodo1 = malloc(sizeof(t_nodo));
 	nodo1->id = 3;
-	nodo1->libre = 100;
-	nodo1->total = 100;
+	nodo1->libre = 16;
+	nodo1->total = 16;
+	nodo1->direccion="127.0.0.1:6001";
 
-	nodos->nodos=list_create();
+	nodos->nodos = list_create();
 
 	list_add(nodos->nodos, nodo1);
+
 
 	crearBitMapBloquesNodo(nodo1);
 
