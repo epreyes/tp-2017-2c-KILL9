@@ -36,10 +36,14 @@
 #include <sys/time.h>
 #include <netdb.h>
 #include <sys/select.h>
+#include <commons/log.h>
+
 
 #define TRUE   1
 #define FALSE  0
 #define PENDING_CONECTIONS 10 //cantidad maxima de conexiones pendientes cuando se hace el accept()
+
+typedef int socket_t;
 
 /* Estructura para manejar servidores */
 typedef struct{
@@ -101,6 +105,23 @@ char* getServerHostName(Server* server);
 
 char* getServerIp(Server* server);
 /*--------------------------------------------------------------------------------------*/
+
+
+
+int connect_to_socket(char *server_ip, char *server_port);
+
+socket_t open_socket(char* host, char*port) ;
+
+socket_t accept_connection(socket_t listenSocket) ;
+
+
+int enviarMensaje(int sockfd, const void * datos, size_t bytesAenviar,t_log* t_log);
+
+int recibirMensaje(int sockfd, void* buffer, size_t bytesAleer,t_log* log);
+
+
+
+
 
 
 #endif /* SOCKET_H_ */

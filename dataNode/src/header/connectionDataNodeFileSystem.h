@@ -10,7 +10,6 @@
 #define HEADERS_CONNECTIONDATANODEFILESYSTEM_H_
 #define DATANODE 1
 
-void * mapped_data_node;
 //int block_size = 1048576; /**Erro al incluir aca **
 void * mapped_data_node;
 /** Funciones */
@@ -22,7 +21,5 @@ void connectionToFileSystem();
 void get_block(int client_socket);
 
 void set_block(int client_socket);
-
-int map_data_node(void);
 
 #endif /* HEADERS_CONNECTIONDATANODEFILESYSTEM_H_ */

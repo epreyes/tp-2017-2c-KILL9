@@ -3,7 +3,7 @@
 	<name>dataNode</name>
 	<comment></comment>
 	<projects>
-		<project>tp-share-library</project>
+		<project>tplibraries</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

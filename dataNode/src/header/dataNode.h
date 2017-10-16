@@ -10,20 +10,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <commons/config.h>
-#include <connections/socket.h>
-#include <connections/handler.h>
+#include <tplibraries/sockets/socket.h>
 #include <commons/config.h>
 #include <commons/log.h>
-#include <struct/struct.h>
+#include <tplibraries/struct/struct.h>
 
 // Definiciones
-#define LOG_PATH "info_logs"
-#define LOG_EJECUCION "info_ejecucion"
+#define LOG_INFO "logInfo"
+#define LOG_ERROR "logError"
 
-typedef enum {
-	ACCESOAPROBADO = 0,
-	ACCESODENEGADO = 1,
-}dataNode;
+//typedef enum {
+//	ACCESOAPROBADO = 0,
+//	ACCESODENEGADO = 1
+//}dataNode;
 /*
  * STATIC
  */
@@ -36,7 +35,7 @@ t_data_node_config* data_node_config;
 
 
 t_log* infoLogger;
-t_log* info_ejecucion;
+t_log* logError;
 
 int32_t fileSystemSocket;
 
