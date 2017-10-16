@@ -11,14 +11,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <commons/config.h>
-#include "dataNode.h"
+#include "headers/dataNode.h"
+#include <connections/socket.h>
+
+int fd_server_socket;
 
 int main(void) {
-	load_properties_files();
+	load_data_node_properties_files();
 
+	//fd_server_socket = connect_to_servidor(data_node_conf->file_system_ip,data_node_conf->file_system_port,&fileSystemSocket);
+	connectionToFileSystem();
 	return EXIT_SUCCESS;
 }
 
-void  load_properties_files(){
-	t_data_node_config = config_create(DATA_NODE_PATH);
+
+//TODO mover a otro archivo de funciones
+void  load_data_node_properties_files(){
+	t_data_node = config_create(DATA_NODE_PATH);
+	data_node_config = malloc(sizeof(t_data_node_config));
+	data_node_config->file_system_ip= config_get_string_value(t_data_node,"IP_FILESYSTEM");
+	data_node_config->file_system_port= config_get_string_value(t_data_node,"PORT_FILESYSTEM");
+	free(t_data_node);
 }

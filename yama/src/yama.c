@@ -1,146 +1,112 @@
 /*
  ============================================================================
  Name        : yama.c
- Author      : 
+ Author      :
  Version     :
  Copyright   : Your copyright notice
  Description : Hello World in C, Ansi-style
  ============================================================================
  */
 
-#include "yama.h"
+#include "headers/yama.h"
 
 /*---------------------- Private ---------------------------------*/
 t_config* getConfig() {
-	t_config* config = config_create(CONFIG_PATH);
+	t_config* config;
+	if (fileExist(CONFIG_PATH)) {
+		config = config_create(CONFIG_PATH);
+	} else {
+		perror("Missing configuration file.");
+		exit(1);
+	}
 	return config;
 }
 
-t_log* configLog() {
+t_log* getLog() {
 	return log_create(LOG_PATH, "YAMA", 1, LOG_LEVEL_TRACE);
 }
 
-void setProperties(Yama* yama, t_config* config) {
-	yama->port = config_get_int_value(config, "YAMA_PUERTO");
-	yama->fs_port = config_get_int_value(config, "FS_PUERTO");
-	yama->planning_delay = config_get_int_value(config, "RETARDO_PLANIFICACION");
-
-	strcpy(yama->fs_ip, config_get_string_value(config, "FS_IP"));
-	strcpy(yama->balancign_algoritm, config_get_string_value(config, "ALGORITMO_BALANCEO"));
-
-	yama->log = configLog();
-}
-
 /*---------------------- Public ----------------------------------*/
-Yama configYama() {
-	Yama yama;
-	t_config* config = getConfig();
+void init() {
+	yama = malloc(sizeof(Yama));
 
-	setProperties(&yama, config);
+	/* obtengo el archivo de configuracion */
+	yama->config = getConfig();
 
-	return yama;
+	/* obtengo el log */
+	yama->log = getLog();
+
+	/* inicializo las tablas de informacion necesarias para el procesamiento*/
+	yama->tabla_estados = list_create();
+	yama->tabla_nodos = list_create();
+	yama->tabla_info_archivos = list_create();
+	yama->tabla_planificados = list_create();
+
+	/* inicializo el server en el socket configurado */
+	yama->yama_server = startServer(
+			config_get_int_value(yama->config, "YAMA_PUERTO"));
+
+	log_trace(yama->log, "YAMA was succesfully configured.");
 }
 
-Client acceptMasterConnection(Yama* yama, Server* server, fd_set* masterList, int hightSd) {
-	struct sockaddr_in client_address;
-	socklen_t addrlen = sizeof(client_address);
-	int client = accept(server->server_socket,
-			(struct sockaddr *) &client_address, &addrlen);
-	if (client == -1) {
-		perror("accept");
-	} else {
-		log_trace(yama->log, "New Master connection");
-		FD_SET(client, &(*masterList));
-		if (client > hightSd) {
-			server->higherSocketDesc = client;
-		}
-		printf("selectserver: new connection from %s on socket %d\n",
-				inet_ntoa(client_address.sin_addr), client);
-	}
-	Client theClient;
-	theClient.socket_id = client;
-	theClient.address = client_address;
-
-	return theClient;
+void* getResponse(int master, char request) {
+	return processOperation(master, request);
 }
 
-int processRequest(Yama* yama, void* buff, int socket, int nbytes) {
-	log_trace(yama->log, "Process Master Request");
-	return 1;
-}
+/*
+ * Proceso la operacion que viene en el header. Si es una transformacion, saco la info de la tabla de archivos, si existe;
+ * si no, se la pido al filesystem.
+ * */
+void* processOperation(int master, char op) {
 
-int getMasterMessage(Yama* yama, int socket, int* nbytes, fd_set* mastersList) {
-	void* buff = malloc(sizeof(header));
-	*nbytes = recv(socket, buff, sizeof(header), 0);
-	if (*nbytes <= 0) {
-		if (*nbytes == 0) {
-			log_trace(yama->log, "Master disconnected");
-			printf("se desconecto el socket %d \n", socket);
-		} else {
-			perror("recv");
-		}
-		close(socket);
-		FD_CLR(socket, &(*mastersList));
-	}
+	void* response = NULL;
 
-	else {
-		log_trace(yama->log, "Getting Master message...");
-		printf("\nRecibi %d bytes\n", *nbytes);
-		processRequest(yama, buff, socket, *nbytes);
-	}
-	return *nbytes;
-}
+	switch (op) {
+	case 'T':
+		response = processTransformation(master);
 
-void exploreMastersConnections(Yama* yama, fd_set* mastersListTemp,
-		fd_set* mastersList) {
-	int i = 0;
-	Client client;
-	int nbytes = 0;
-	int hightSd = yama->yama_server.higherSocketDesc;
+		char op;
+		memcpy(&op, response, sizeof(char));
+		int blocks;
+		memcpy(&blocks, response + sizeof(char), sizeof(int));
 
-	for (i = 0; i <= hightSd; i++) {
-		if (FD_ISSET(i, &(*mastersListTemp))) {
-			log_trace(yama->log, "Connection incomming");
-			if (i == yama->yama_server.server_socket) {
-				client = acceptMasterConnection(yama, &(yama->yama_server),
-						&(*mastersList), hightSd);
-				log_trace(yama->log, "Master process connected!");
-				printf("\nse me conecto el socket %d\n", client.socket_id);
-			} else {
-				printf("\n\nRecibi %d bytes de client %d!\n\n",
-						getMasterMessage(yama, i, &nbytes, &(*mastersList)), i);
-			}
+		printf("\n--->La respuesta en yama.c es: Op=%c, bloques=%d y tamanio=%d<---\n",
+				op, blocks, blocks * sizeof(tr_datos));
+
+
+		int increment = 0;
+		for (increment = 0; increment < blocks; increment++) {
+			tr_datos* data = malloc(sizeof(tr_datos));
+			int plus = (sizeof(char)+sizeof(int))+(increment * sizeof(tr_datos));
+			memcpy(data, response + plus, sizeof(tr_datos));
+			printf("\nEn yama-> %d - %s - %d - %d - %d - %s\n", data->nodo, data->ip,
+					data->port, data->tamanio, data->bloque, data->tr_tmp);
 		}
 
+		break;
+	case 'L':
+		//response = processLocalReduction(yama, head, master);
+		break;
+	case 'G':
+		//response = processGlobalReduction(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
+		break;
+	case 'S':
+		//response = processFinalStore(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
+		break;
+	case 'E':
+		//response = processError(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
+		break;
 	}
+	return response;
 }
 
-void waitForMasters(Yama* yama) {
+/************************* Utils **********************************/
+/******************************************************************/
+void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId) {
+	char* name;
+	long timestamp = current_timestamp();
+	asprintf(&name, "%s%ld-%c-M%03d-B%03d", "/tmp/", timestamp, op, masterId,
+			blockId);
 
-	if (yama->yama_server.status > -1) {
-		log_trace(yama->log, "YAMA ready to accept Masters connections");
-	}
-
-	fd_set mastersList;
-	fd_set mastersListTemp;
-
-	FD_ZERO(&mastersList);
-	FD_ZERO(&mastersListTemp);
-	FD_SET(yama->yama_server.server_socket, &mastersList);
-
-	puts("Waiting for Masters connections...");
-	int activity;
-
-	while (TRUE) {
-		mastersListTemp = mastersList;
-		activity = select(yama->yama_server.higherSocketDesc + 1,
-				&mastersListTemp, NULL, NULL, NULL);
-
-		if (activity == -1) {
-			perror("select");
-			exit(1);
-		}
-
-		exploreMastersConnections(yama, &mastersListTemp, &mastersList);
-	}
+	strcpy(nodeData->tr_tmp, name);
 }
