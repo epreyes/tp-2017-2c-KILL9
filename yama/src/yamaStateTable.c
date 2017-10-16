@@ -7,25 +7,6 @@
 
 #include "headers/yamaStateTable.h"
 
-/*
- * typedef struct tr_datos {
- int nodo;
- char ip[15];
- long port;
- int bloque;
- int tamanio;
- char tr_tmp[28];
- } tr_datos;
-
- typedef struct{
- int node_id;
- int tasks_in_progress;
- int tasts_done;
- int considered;
- int availability;
- }elem_tabla_nodos;
- */
-
 int findNode(int node_id) {
 	int index = 0;
 	if (!list_is_empty(yama->tabla_nodos)) {
@@ -48,6 +29,17 @@ void viewNodeTable() {
 		printf("\nnodo id: %d, avail: %d, in progres: %d, done: %d\n",
 				node->node_id, node->availability, node->tasks_in_progress,
 				node->tasts_done);
+	}
+}
+
+void viewPlannedTable() {
+	printf("\nLa cantidad de entradas de la tabla de tareas planificadas es: %d\n",
+			list_size(yama->tabla_planificados));
+	int index = 0;
+	for (index = 0; index < list_size(yama->tabla_planificados); index++) {
+		elem_tabla_planificados* planed = list_get(yama->tabla_planificados, index);
+		printf("\nmaster: %d, node: %d, bloque: %d, temporal: %s\n",
+				planed->master, planed->data->nodo, planed->data->bloque, planed->data->tr_tmp);
 	}
 }
 

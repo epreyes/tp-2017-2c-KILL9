@@ -20,7 +20,18 @@ void* processTransformation(int master) {
 
 	viewNodeTable();
 
+	viewPlannedTable();
+
 	return sortTransformationResponse(nodeList);
+}
+
+void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId) {
+	char* name;
+	long timestamp = current_timestamp();
+	asprintf(&name, "%s%ld-%c-M%03d-B%03d", "/tmp/", timestamp, op, masterId,
+			blockId);
+
+	strcpy(nodeData->tr_tmp, name);
 }
 
 void setInStatusTable(tr_datos* nodeData, int master) {
@@ -61,7 +72,12 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 		nodeData->tamanio = blockInfo->end_block;
 		getTmpName(nodeData, 'T', blockInfo->block_id, master);
 		list_add(nodeList, nodeData);
-		list_add(yama->tabla_planificados, nodeData);
+		elem_tabla_planificados* planed = malloc(
+				sizeof(elem_tabla_planificados));
+		planed->data = malloc(sizeof(tr_datos));
+		memcpy(planed->data, nodeData, sizeof(tr_datos));
+		planed->master = master;
+		list_add(yama->tabla_planificados, planed);
 		setInStatusTable(nodeData, master);
 		updateNodeList('T', nodeData->nodo);
 
@@ -73,7 +89,11 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 		nodeData2->tamanio = blockInfo->end_block;
 		getTmpName(nodeData2, 'T', blockInfo->block_id, master);
 		list_add(nodeList, nodeData2);
-		list_add(yama->tabla_planificados, nodeData2);
+		elem_tabla_planificados* planed2 = malloc(sizeof(elem_tabla_planificados));
+		planed2->data = malloc(sizeof(tr_datos));
+		memcpy(planed2->data, nodeData2, sizeof(tr_datos));
+		planed2->master = master;
+		list_add(yama->tabla_planificados, planed2);
 		setInStatusTable(nodeData2, master);
 		updateNodeList('T', nodeData2->nodo);
 

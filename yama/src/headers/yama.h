@@ -46,6 +46,11 @@ typedef struct {
 	char status;
 } elem_tabla_estados;
 
+typedef struct{
+	tr_datos* data;
+	int master;
+}elem_tabla_planificados;
+
 typedef struct {
 	t_config* config;
 	t_list* tabla_nodos;

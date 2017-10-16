@@ -68,7 +68,7 @@ void* processOperation(int master, char op) {
 
 		break;
 	case 'L':
-		//response = processLocalReduction(yama, head, master);
+		response = processLocalReduction(master);
 		break;
 	case 'G':
 		//response = processGlobalReduction(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
@@ -81,16 +81,5 @@ void* processOperation(int master, char op) {
 		break;
 	}
 	return response;
-}
-
-/************************* Utils **********************************/
-/******************************************************************/
-void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId) {
-	char* name;
-	long timestamp = current_timestamp();
-	asprintf(&name, "%s%ld-%c-M%03d-B%03d", "/tmp/", timestamp, op, masterId,
-			blockId);
-
-	strcpy(nodeData->tr_tmp, name);
 }
 
