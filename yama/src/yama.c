@@ -110,4 +110,3 @@ void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId) {
 
 	strcpy(nodeData->tr_tmp, name);
 }
-
