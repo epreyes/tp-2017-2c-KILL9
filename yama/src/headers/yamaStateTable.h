@@ -10,8 +10,12 @@
 
 #include "yama.h"
 
-int addToStatusTable(Yama* yama, int master, void* package);
-void viewStateTable(Yama* yama);
-void updateNodeList(void* fsInfo);
+void updateStatusTable(elem_tabla_estados* elemToUpdate);
+void viewStateTable();
+void addToNodeList(void* fsInfo);
+void viewNodeTable();
+void updateNodeList(char op, int node_id);
+int getBlockId(char* tmpName);
+void viewPlannedTable();
 
 #endif /* SRC_HEADERS_YAMASTATETABLE_H_ */

@@ -19,11 +19,11 @@ typedef struct{
 //----Response----//
 typedef struct tr_datos{
 	int		nodo;
-	char	ip[15];
+	char	ip[16];
 	int 	port;
 	int		bloque;
 	int		tamanio;
-	char	tr_tmp[28];
+	char	tr_tmp[27];
 }tr_datos;
 
 typedef struct{
@@ -44,7 +44,8 @@ typedef struct{
 
 typedef struct rl_datos{
 	int		nodo;
-	char	direccion[21];
+	char	ip[16];
+	int 	port;
 	char	tr_tmp[28];
 	char	rl_tmp[28];
 }rl_datos;
@@ -64,7 +65,8 @@ typedef struct{
 //----Response----//
 typedef struct rg_datos{				//es un record por nodo
 	int		nodo;
-	char	direccion[21];
+	char	ip[16];
+	int 	port;
 	char	rl_tmp[28];
 	char	rg_tmp[24];
 	char	encargado;
@@ -88,13 +90,15 @@ typedef struct{
 typedef struct{
 	char	code;
 	int		nodo;
-	char	direccion[21];
+	char	ip[16];
+	int 	port;
 	char	rg_tmp[24];
 }store_rs;
 
 typedef struct af_datos{
 	int		nodo;
-	char	direccion[21];
+	char	ip[16];
+	int 	port;
 	char	rg_tmp[24];
 }af_datos;
 
@@ -112,8 +116,4 @@ typedef struct{
 	int		nodo;
 }ok;
 
-/*
- * '0': "no se puede conectar con el nodo Y"
- * '1': "no es posible procesar el bloque X del nofo Y"
-*/
 #endif /* MASTER_YAMA_H_ */

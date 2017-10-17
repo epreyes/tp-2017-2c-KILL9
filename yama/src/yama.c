@@ -47,6 +47,7 @@ void init() {
 			config_get_int_value(yama->config, "YAMA_PUERTO"));
 
 	log_trace(yama->log, "YAMA was succesfully configured.");
+	yama->jobs = 0;
 }
 
 void* getResponse(int master, char request) {
@@ -61,51 +62,23 @@ void* processOperation(int master, char op) {
 
 	void* response = NULL;
 
-		switch( op ){
-		case 'T':
-			response = processTransformation(master);
+	switch (op) {
+	case 'T':
+		response = processTransformation(master);
 
-			break;
-		case 'L':
-			//response = processLocalReduction(yama, head, master);
-			break;
-		case 'G':
-			//response = processGlobalReduction(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
-				break;
-		case 'S':
-			//response = processFinalStore(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
-				break;
-		case 'E':
-				//response = processError(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
-					break;
-		}
-		return response;
-}
-
-
-
-/************************* Utils **********************************/
-/******************************************************************/
-void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId) {
-	char* name;
-	long timestamp = current_timestamp();
-	asprintf(&name, "%s%ld-%c-M%03d-B%03d.bin", "/tmp/", timestamp, op, masterId, blockId);
-
-	strcpy(nodeData->tr_tmp, name);
-}
-
-int sendPackage(int master, void* package, int sizepack) {
-	int bytesSent = send(master, package, sizepack, 0);
-	if (bytesSent > 0) {
-		//addToStateTable();
-		char message[30];
-		snprintf(message, sizeof(message), "%d bytes sent to master id %d",
-				bytesSent, master);
-		log_trace(yama->log, message);
-	} else {
-		perror("Send response to master.");
+		break;
+	case 'L':
+		response = processLocalReduction(master);
+		break;
+	case 'G':
+		//response = processGlobalReduction(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
+		break;
+	case 'S':
+		//response = processFinalStore(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
+		break;
+	case 'E':
+		//response = processError(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
+		break;
 	}
-	return bytesSent;
+	return response;
 }
-
-

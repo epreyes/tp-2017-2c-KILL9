@@ -18,8 +18,8 @@
 #include <tplibraries/protocol/master_yama.h>
 #include <tplibraries/protocol/filesystem_yama.h>
 
-static char* CONFIG_PATH = "../config/yamaConfig.properties";
-static char* LOG_PATH = "../log/yama.log";
+static char* CONFIG_PATH = "./config/yamaConfig.properties";
+static char* LOG_PATH = "./log/yama.log";
 
 typedef struct {
 	int blocks;
@@ -43,15 +43,13 @@ typedef struct {
 	int block;
 	char op;
 	char tmp[28];
-	int status;
+	char status;
 } elem_tabla_estados;
 
-/*FS_IP=127.0.1.1
- FS_PUERTO=8880
- RETARDO_PLANIFICACION=5
- ALGORITMO_BALANCEO=WRR
- YAMA_PUERTO=8881
- NODE_AVAIL = 5*/
+typedef struct{
+	tr_datos* data;
+	int master;
+}elem_tabla_planificados;
 
 typedef struct {
 	t_config* config;
@@ -62,6 +60,7 @@ typedef struct {
 	Server yama_server;
 	Client yama_client;
 	t_log* log;
+	int jobs;
 } Yama;
 
 Yama* yama;

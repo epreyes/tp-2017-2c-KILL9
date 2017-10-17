@@ -24,6 +24,7 @@ Client acceptMasterConnection(Server* server, fd_set* masterList, int hightSd) {
 		}
 		theClient.socket_id = client;
 		theClient.address = client_address;
+		yama->jobs++;
 	} else {
 		log_trace(yama->log, "Error trying to accept connection");
 		perror("Error trying to accept connection");
@@ -36,20 +37,19 @@ Client acceptMasterConnection(Server* server, fd_set* masterList, int hightSd) {
 int sendResponse(int master, void* masterRS) {
 
 	int sizeInfo;
-	memcpy(&sizeInfo, masterRS+sizeof(char), sizeof(int));
-	int sizepack = sizeof(char)+sizeof(int)+sizeInfo;
+	memcpy(&sizeInfo, masterRS + sizeof(char), sizeof(int));
+	int sizepack = sizeof(char) + sizeof(int) + sizeInfo*sizeof(tr_datos);
 
 	int bytesSent = send(master, masterRS, sizepack, 0);
-		if (bytesSent > 0) {
-			//addToStateTable();
-			char message[30];
-			snprintf(message, sizeof(message), "%d bytes sent to master id %d",
-					bytesSent, master);
-			log_trace(yama->log, message);
-		} else {
-			perror("Send response to master.");
-		}
-		return bytesSent;
+	if (bytesSent > 0) {
+		char message[30];
+		snprintf(message, sizeof(message), "%d bytes sent to master id %d",
+				bytesSent, master);
+		log_trace(yama->log, message);
+	} else {
+		perror("Send response to master.");
+	}
+	return bytesSent;
 }
 
 int getMasterMessage(int socket, fd_set* mastersList) {

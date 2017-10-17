@@ -49,18 +49,13 @@ char* serializeFile(FILE* file){
 }
 
 void loadScripts(char* transformScript, char* reductionScript){
-
 	script_transform=fopen(transformScript,"r");
 	script_reduction=fopen(reductionScript,"r");
-
 //---valído existencia de los archivos
-	if(transformScript==NULL||reductionScript==NULL){
+	if(script_transform==NULL || script_reduction==NULL){
 		printf("\x1b[31m" "no existe el script solicitado\n" "\x1b[0m");
-		exit(0);
+		exit(1);
 	}
-
-	//serializeFile(script_transform, script_transform_content);
-	//serializeFile(script_reduction, script_transform_content);
 }
 
 //------------------------------
