@@ -8,6 +8,8 @@
 #ifndef MASTER_WORKER_H_
 #define MASTER_WORKER_H_
 
+#include <stdlib.h>
+
 /*========TRANSFORM==========*/
 //----Request----//
 typedef struct{

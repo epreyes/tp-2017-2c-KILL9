@@ -8,6 +8,8 @@
 #ifndef MASTER_YAMA_H_
 #define MASTER_YAMA_H_
 
+#include <stdlib.h>
+
 /*========TRANSFORM==========*/
 //----Request----//
 typedef struct{

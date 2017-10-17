@@ -13,7 +13,7 @@
 typedef struct {
     int idNodo;
     int idBloque;
-    char* contenido
+    char* contenido;
 } t_escribirDataNode;
 
 
