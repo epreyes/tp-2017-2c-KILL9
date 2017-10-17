@@ -16,7 +16,6 @@ char* nodosBin = "metadata/nodos.bin";
 
 int debug;
 
-/**
 int main(void) {
 
 	debug = 1;
@@ -83,15 +82,10 @@ int main(void) {
 	//crearBitMapBloquesNodo(nodo2);
 
 	/*	log_info(logger, "---existeArchivo test/test2/test2.csv test---");
-
 	 int t = existeArchivo("test/test2/test2");
-
 	 log_info(logger, "Existe: %d", t);
-
 	 log_info(logger, "---existeArchivo enRaiz.csv test---");
-
 	 t = existeArchivo("enRaiz");
-
 	 log_info(logger, "Existe: %d", t);*/
 
 	log_info(logger, "---escribirArchivo('test/test2/prueba') test---");
@@ -145,7 +139,7 @@ int main(void) {
 
 	return EXIT_SUCCESS;
 }
-*/
+
 void iniciarFS() {
 
 	int fd;
