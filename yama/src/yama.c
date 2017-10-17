@@ -69,6 +69,7 @@ void* processOperation(int master, char op) {
 		break;
 	case 'L':
 		response = processLocalReduction(master);
+		viewLocalReductionResponse(response);
 		break;
 	case 'G':
 		//response = processGlobalReduction(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);

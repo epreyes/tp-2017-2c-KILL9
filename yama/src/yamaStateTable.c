@@ -129,7 +129,7 @@ int findRow(int master, int node_id, int block) {
 int getBlockId(char* tmpName) {
 	char block_code[3];
 	strncpy(block_code, tmpName + 24, 3);
-	int code;
+	int code = 0;
 	sscanf(block_code, "%d", &code);
 	return code;
 }

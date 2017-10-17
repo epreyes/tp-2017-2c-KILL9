@@ -19,12 +19,20 @@ t_list* findPlaned(int master){
 	return planed_list;
 }
 
-/*typedef struct rl_datos{
-	int		nodo;
-	char	direccion[21];
-	char	tr_tmp[28];
-	char	rl_tmp[28];
-}rl_datos;*/
+void viewLocalReductionResponse(void* response){
+	char* op = malloc(sizeof(char));
+	memcpy(op, response, sizeof(char));
+	int* bloques = malloc(sizeof(int));
+	memcpy(bloques, response+sizeof(char), sizeof(int));
+printf("\nLa respuesta de la reduccion local es (%c, %d, %d): ", *op, *bloques, (*bloques)*sizeof(rl_datos));
+	int plus = sizeof(int)+sizeof(char);
+	int i = 0;
+	for(i = 0; i < *bloques; i++){
+		rl_datos* data = malloc(sizeof(rl_datos));
+		memcpy(data, response+plus+(i*sizeof(rl_datos)), sizeof(rl_datos));
+		printf("\nNodo=%d - Ip=%s - Puerto=%d - TR_TMP=%s - RL_TMP=%s\n",data->nodo, data->ip, data->port, data->tr_tmp, data->rl_tmp);
+	}
+}
 
 void getLocalReductionTmpName(rl_datos* nodeData, int op, int blockId, int masterId) {
 	char* name;
@@ -32,7 +40,7 @@ void getLocalReductionTmpName(rl_datos* nodeData, int op, int blockId, int maste
 	asprintf(&name, "%s%ld-%c-M%03d-B%03d", "/tmp/", timestamp, op, masterId,
 			blockId);
 
-	strcpy(nodeData->tr_tmp, name);
+	strcpy(nodeData->rl_tmp, name);
 }
 
 void* processLocalReduction(int master){
@@ -45,13 +53,13 @@ void* processLocalReduction(int master){
 
 	int index = 0;
 	for(index = 0; index < list_size(planed); index++){
-		elem_tabla_planificados* elem = list_get(planed, index);
+		tr_datos* elem = list_get(planed, index);
 		rl_datos* localRedData = malloc(sizeof(rl_datos));
-		localRedData->nodo = elem->data->nodo;
-		localRedData->port = elem->data->port;
-		strcpy(localRedData->ip, elem->data->ip);
-		strcpy(localRedData->tr_tmp, elem->data->tr_tmp);
-		getLocalReductionTmpName(localRedData, 'L', elem->data->bloque, master);
+		localRedData->nodo = elem->nodo;
+		localRedData->port = elem->port;
+		strcpy(localRedData->ip, elem->ip);
+		strcpy(localRedData->tr_tmp, elem->tr_tmp);
+		getLocalReductionTmpName(localRedData, 'L', getBlockId(elem->tr_tmp), master);
 
 		memcpy(localReductionRes+sizeof(char)+sizeof(int)+(index*sizeof(rl_datos)), localRedData, sizeof(rl_datos));
 	}

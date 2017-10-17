@@ -34,13 +34,29 @@ Client acceptMasterConnection(Server* server, fd_set* masterList, int hightSd) {
 	return theClient;
 }
 
+int getSizeToSend(void* masterRS){
+	char op;
+	memcpy(&op, masterRS, sizeof(char));
+
+	int blocks;
+	memcpy(&blocks, masterRS+sizeof(char), sizeof(int));
+
+	int size = 0;
+
+	switch(op){
+	case 'T':
+		size = blocks*sizeof(tr_datos);
+		break;
+	case 'L':
+			size = blocks*sizeof(rl_datos);
+			break;
+	}
+
+	return size+sizeof(char)+sizeof(int);
+}
+
 int sendResponse(int master, void* masterRS) {
-
-	int sizeInfo;
-	memcpy(&sizeInfo, masterRS + sizeof(char), sizeof(int));
-	int sizepack = sizeof(char) + sizeof(int) + sizeInfo*sizeof(tr_datos);
-
-	int bytesSent = send(master, masterRS, sizepack, 0);
+	int bytesSent = send(master, masterRS, getSizeToSend(masterRS), 0);
 	if (bytesSent > 0) {
 		char message[30];
 		snprintf(message, sizeof(message), "%d bytes sent to master id %d",
