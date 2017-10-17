@@ -65,11 +65,11 @@ void* processOperation(int master, char op) {
 	switch (op) {
 	case 'T':
 		response = processTransformation(master);
-
+		viewStateTable();
 		break;
 	case 'L':
 		response = processLocalReduction(master);
-		viewLocalReductionResponse(response);
+		viewStateTable();
 		break;
 	case 'G':
 		//response = processGlobalReduction(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);

@@ -60,7 +60,7 @@ void* processLocalReduction(int master){
 		strcpy(localRedData->ip, elem->ip);
 		strcpy(localRedData->tr_tmp, elem->tr_tmp);
 		getLocalReductionTmpName(localRedData, 'L', getBlockId(elem->tr_tmp), master);
-
+		setInStatusTable(localRedData->tr_tmp, localRedData->nodo, 'L', master);
 		memcpy(localReductionRes+sizeof(char)+sizeof(int)+(index*sizeof(rl_datos)), localRedData, sizeof(rl_datos));
 	}
 	return localReductionRes;

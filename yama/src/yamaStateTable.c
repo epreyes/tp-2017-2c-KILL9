@@ -7,6 +7,19 @@
 
 #include "headers/yamaStateTable.h"
 
+void setInStatusTable(char* tr_tmp, int nodo, char op, int master) {
+	elem_tabla_estados* elemStatus = malloc(sizeof(elem_tabla_estados));
+	elemStatus->block = getBlockId(tr_tmp);
+	elemStatus->job = yama->jobs;
+	elemStatus->master = master;
+	elemStatus->node = nodo;
+	elemStatus->op = op;
+	elemStatus->status = 'P';
+	strcpy(elemStatus->tmp, tr_tmp);
+
+	updateStatusTable(elemStatus);
+}
+
 int findNode(int node_id) {
 	int index = 0;
 	if (!list_is_empty(yama->tabla_nodos)) {
@@ -112,13 +125,13 @@ void viewStateTable() {
 	}
 }
 
-int findRow(int master, int node_id, int block) {
+int findRow(int master, int node_id, int block, char op) {
 	int index = 0;
 	if (!list_is_empty(yama->tabla_estados)) {
 		for (index = 0; index < list_size(yama->tabla_estados); index++) {
 			elem_tabla_estados* node = list_get(yama->tabla_estados, index);
 			if ((node->node == node_id) && (master == node->master)
-					&& (block == node->block)) {
+					&& (block == node->block) && (op == node->op)) {
 				return index;
 			}
 		}
@@ -135,7 +148,7 @@ int getBlockId(char* tmpName) {
 }
 
 void updateStatusTable(elem_tabla_estados* elem) {
-	int index = findRow(elem->master, elem->node, elem->block);
+	int index = findRow(elem->master, elem->node, elem->block, elem->op);
 	elem_tabla_estados* row;
 	if (index == -1) {
 		row = malloc(sizeof(elem_tabla_estados));

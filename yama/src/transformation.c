@@ -34,19 +34,6 @@ void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId) {
 	strcpy(nodeData->tr_tmp, name);
 }
 
-void setInStatusTable(tr_datos* nodeData, int master) {
-	elem_tabla_estados* elemStatus = malloc(sizeof(elem_tabla_estados));
-	elemStatus->block = getBlockId(nodeData->tr_tmp);
-	elemStatus->job = yama->jobs;
-	elemStatus->master = master;
-	elemStatus->node = nodeData->nodo;
-	elemStatus->op = 'T';
-	elemStatus->status = 'P';
-	strcpy(elemStatus->tmp, nodeData->tr_tmp);
-
-	updateStatusTable(elemStatus);
-}
-
 t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 		int master) {
 
@@ -78,7 +65,7 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 		memcpy(planed->data, nodeData, sizeof(tr_datos));
 		planed->master = master;
 		list_add(yama->tabla_planificados, planed);
-		setInStatusTable(nodeData, master);
+		setInStatusTable(nodeData->tr_tmp, nodeData->nodo, 'T', master);
 		updateNodeList('T', nodeData->nodo);
 
 		tr_datos* nodeData2 = malloc(sizeof(tr_datos));
@@ -94,7 +81,7 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 		memcpy(planed2->data, nodeData2, sizeof(tr_datos));
 		planed2->master = master;
 		list_add(yama->tabla_planificados, planed2);
-		setInStatusTable(nodeData2, master);
+		setInStatusTable(nodeData2->tr_tmp, nodeData2->nodo, 'T', master);
 		updateNodeList('T', nodeData2->nodo);
 
 		free(blockInfo);

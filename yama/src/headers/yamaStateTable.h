@@ -10,12 +10,22 @@
 
 #include "yama.h"
 
-void updateStatusTable(elem_tabla_estados* elemToUpdate);
-void viewStateTable();
-void addToNodeList(void* fsInfo);
+int findNode(int node_id);
+
 void viewNodeTable();
-void updateNodeList(char op, int node_id);
-int getBlockId(char* tmpName);
+
 void viewPlannedTable();
+
+void addToNodeList(void* fsInfo);
+
+void updateNodeList(char op, int node_id);
+
+void viewStateTable();
+
+int findRow(int master, int node_id, int block, char op);
+
+int getBlockId(char* tmpName);
+
+void updateStatusTable(elem_tabla_estados* elem);
 
 #endif /* SRC_HEADERS_YAMASTATETABLE_H_ */

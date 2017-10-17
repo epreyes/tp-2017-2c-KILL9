@@ -15,7 +15,7 @@ void* processTransformation(int master);
 
 void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId);
 
-void setInStatusTable(tr_datos* nodeData, int master);
+void setInStatusTable(char* tmp, int nodo, char op, int master);
 
 t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo, int master);
 
