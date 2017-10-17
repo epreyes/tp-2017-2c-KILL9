@@ -22,11 +22,12 @@ void openYamaConnection(void) {
 }
 
 int openNodeConnection(int node, char* direction){
+
 	int port;
 	char* ip;
-
 	ip=strtok(direction,":");
 	port=atoi(strtok(NULL,":"));
+
 
 	struct sockaddr_in workerAddr;
 	workerAddr.sin_family = AF_INET;

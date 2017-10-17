@@ -99,9 +99,9 @@ typedef struct af_datos{
 
 /*=======ERRORS==========*/
 typedef struct{
-	char	code;
-	char	type;
-	int		nodo;
+	char	code;	// 'e'
+	char	type;	// '0':nodo caido '1':bloque inexistente
+	int		item;	// numero de nodo
 }error_rq;
 
 /*

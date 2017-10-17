@@ -11,8 +11,9 @@
 /*========TRANSFORM==========*/
 //----Request----//
 typedef struct{
-	int pos;
-	int size;
+	int 	pos;
+	int 	size;
+	char	tmp[28];
 }block;
 
 typedef struct{

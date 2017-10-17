@@ -82,4 +82,3 @@ void* processOperation(int master, char op) {
 	}
 	return response;
 }
-

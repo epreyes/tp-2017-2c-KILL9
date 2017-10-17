@@ -14,7 +14,6 @@
 #include <dirent.h>
 #include <commons/collections/list.h>
 
-
 int obtenerUltimoIndiceDirValido();
 int obtenerIndiceDirPadre(char* path);
 int obtenerIndiceDir(char* path);
@@ -24,14 +23,24 @@ void formatear();
 
 void crearBitMapBloquesNodo(t_nodo* nodo);
 t_bitarray* obtenerBitMapBloquesNodo(t_nodo* nodo);
-t_list* obtenerBloquesLibres(t_nodo* nodo, int cantBloques);
+t_list* obtenerBloquesLibres(int cantBloques);
 char* obtenerIdNodo(char* cadena);
 int obtenerIdBloque(char* cadena);
+int obtenerBloquesNecesarios(char* contenido, int tipo);
 
 t_archivoInfo* obtenerArchivoInfo(char* path);
 char* obtenerDirArchivo(char* path);
 char* obtenerNombreArchivo(char* path);
 int existeArchivo(char* path);
 int escribirArchivo(char* path, char* contenido, int tipo);
+int crearArchivoMetadata(t_list* bloquesInfo, char* path, int tipo, int tamanio);
+int leerArchivo(char* path);
+void actualizarBitMapBloques(t_list* bloquesInfo);
+
+bool ordenarPorCarga(t_nodo *nodoConMasCarga, t_nodo *nodoConMenosCarga);
+t_list* decidirNodo(t_list* nodos);
+
+// Pedidos al datanode
+int escribirEnDataNode(int idBloque, char* contenido, int idNodo);
 
 #endif /* FS_CORE_H_ */
