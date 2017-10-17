@@ -80,6 +80,10 @@ void* processOperation(int master, char op) {
 	case 'E':
 		//response = processError(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
 		break;
+	case 'O':
+		response = processOk(master);
+		break;
 	}
+
 	return response;
 }
