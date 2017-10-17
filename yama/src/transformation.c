@@ -16,11 +16,11 @@ void* processTransformation(int master) {
 	t_list* nodeList = list_create();
 	nodeList = buildTransformationResponseNodeList(fsInfo, master);
 
-	viewStateTable();
+	//viewStateTable();
 
-	viewNodeTable();
+	//viewNodeTable();
 
-	viewPlannedTable();
+	//viewPlannedTable();
 
 	return sortTransformationResponse(nodeList);
 }

@@ -19,6 +19,7 @@ int main(void) {
 	/* espero las conexiones de los masters */
 	waitMastersConnections();
 
+	//getFileSystemInfo("/tmp/archivoooo-teststs.bin");
 
 	return EXIT_SUCCESS;
 }
