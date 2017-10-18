@@ -12,7 +12,7 @@ void viewGlobalReductionResponse(void* response) {
 	memcpy(op, response, sizeof(char));
 	int* bloques = malloc(sizeof(int));
 	memcpy(bloques, response + sizeof(char), sizeof(int));
-	printf("\nLa respuesta de la Global local es (%c, %d, %d): ", *op,
+	printf("\nLa respuesta de la reduccion GLOBAL es (%c, %d, %d): ", *op,
 			*bloques, (*bloques) * sizeof(rg_datos));
 	int plus = sizeof(int) + sizeof(char);
 	int i = 0;
@@ -49,7 +49,7 @@ void getGlobalReductionTmpName(rg_datos* nodeData, int op, int blockId,
 }
 
 void* processGlobalReduction(int master) {
-	viewLRPlannedTable();
+	//viewLRPlannedTable();
 	t_list* planed = findLocalReductionPlaned(master);
 
 	void* globalReductionRes = malloc(
@@ -57,6 +57,16 @@ void* processGlobalReduction(int master) {
 	memcpy(globalReductionRes, "G", sizeof(char));
 	int size = list_size(planed);
 	memcpy(globalReductionRes + sizeof(char), &size, sizeof(int));
+
+	/*********************/
+	int i=0;
+	printf("\nPlaned--->");
+	for(i = 0; i < list_size(planed); i++){
+		rl_datos* data = list_get(planed,i);
+		printf("\nnode: %d, ip: %s, port: %d, TRtemporal: %s, LRtemporal: %s\n",
+						data->nodo, data->ip, data->port, data->tr_tmp, data->rl_tmp);
+	}
+	/*********************/
 
 	int index = 0;
 	for (index = 0; index < list_size(planed); index++) {
@@ -76,8 +86,8 @@ void* processGlobalReduction(int master) {
 		}
 		memcpy(
 				globalReductionRes + sizeof(char) + sizeof(int)
-						+ (index * sizeof(rl_datos)), globalRedData,
-				sizeof(rl_datos));
+						+ (index * sizeof(rg_datos)), globalRedData,
+				sizeof(rg_datos));
 	}
 	return globalReductionRes;
 }
