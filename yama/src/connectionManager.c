@@ -101,6 +101,7 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 			sendResponse(socket, response);
 		}
 	}
+	free(request);
 	return nbytes;
 }
 

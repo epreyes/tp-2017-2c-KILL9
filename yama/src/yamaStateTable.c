@@ -46,24 +46,31 @@ void viewNodeTable() {
 }
 
 void viewPlannedTable() {
-	printf("\nLa cantidad de entradas de la tabla de tareas planificadas es: %d\n",
+	printf(
+			"\nLa cantidad de entradas de la tabla de tareas planificadas es: %d\n",
 			list_size(yama->tabla_planificados));
 	int index = 0;
 	for (index = 0; index < list_size(yama->tabla_planificados); index++) {
-		elem_tabla_planificados* planed = list_get(yama->tabla_planificados, index);
+		elem_tabla_planificados* planed = list_get(yama->tabla_planificados,
+				index);
 		printf("\nmaster: %d, node: %d, bloque: %d, temporal: %s\n",
-				planed->master, planed->data->nodo, planed->data->bloque, planed->data->tr_tmp);
+				planed->master, planed->data->nodo, planed->data->bloque,
+				planed->data->tr_tmp);
 	}
 }
 
 void viewLRPlannedTable() {
-	printf("\nLa cantidad de entradas de la tabla de reducciones locales es: %d\n",
+	printf(
+			"\nLa cantidad de entradas de la tabla de reducciones locales es: %d\n",
 			list_size(yama->tabla_LR_planificados));
 	int index = 0;
 	for (index = 0; index < list_size(yama->tabla_LR_planificados); index++) {
-		elem_tabla_LR_planificados* planed = list_get(yama->tabla_LR_planificados, index);
-		printf("\nmaster: %d, node: %d, ip: %s, port: %d, TRtemporal: %s, LRtemporal: %s\n",
-				planed->master, planed->data->nodo, planed->data->ip, planed->data->port, planed->data->tr_tmp, planed->data->rl_tmp);
+		elem_tabla_LR_planificados* planed = list_get(
+				yama->tabla_LR_planificados, index);
+		printf(
+				"\nmaster: %d, node: %d, ip: %s, port: %d, TRtemporal: %s, LRtemporal: %s\n",
+				planed->master, planed->data->nodo, planed->data->ip,
+				planed->data->port, planed->data->tr_tmp, planed->data->rl_tmp);
 	}
 }
 
@@ -81,7 +88,8 @@ void addToNodeList(void* fsInfo) {
 		int position = findNode(b->node1);
 		if (position == -1) {
 			elem_tabla_nodos* node = malloc(sizeof(elem_tabla_nodos));
-			node->availability = config_get_int_value(yama->config, "NODE_AVAIL");
+			node->availability = config_get_int_value(yama->config,
+					"NODE_AVAIL");
 			node->considered = 0;
 			node->node_id = b->node1;
 			node->tasks_in_progress = 0;
@@ -92,7 +100,8 @@ void addToNodeList(void* fsInfo) {
 		position = findNode(b->node2);
 		if (position == -1) {
 			elem_tabla_nodos* node = malloc(sizeof(elem_tabla_nodos));
-			node->availability = config_get_int_value(yama->config, "NODE_AVAIL");
+			node->availability = config_get_int_value(yama->config,
+					"NODE_AVAIL");
 			node->considered = 0;
 			node->node_id = b->node2;
 			node->tasks_in_progress = 0;
@@ -105,7 +114,7 @@ void addToNodeList(void* fsInfo) {
 void updateNodeList(char op, int node_id) {
 	int index = findNode(node_id);
 	elem_tabla_nodos* node = list_get(yama->tabla_nodos, index);
-	switch(op){
+	switch (op) {
 	case 'T':
 		node->availability--;
 		node->tasks_in_progress++;

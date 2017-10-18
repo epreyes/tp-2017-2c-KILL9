@@ -58,16 +58,6 @@ void* processGlobalReduction(int master) {
 	int size = list_size(planed);
 	memcpy(globalReductionRes + sizeof(char), &size, sizeof(int));
 
-	/*********************/
-	int i=0;
-	printf("\nPlaned--->");
-	for(i = 0; i < list_size(planed); i++){
-		rl_datos* data = list_get(planed,i);
-		printf("\nnode: %d, ip: %s, port: %d, TRtemporal: %s, LRtemporal: %s\n",
-						data->nodo, data->ip, data->port, data->tr_tmp, data->rl_tmp);
-	}
-	/*********************/
-
 	int index = 0;
 	for (index = 0; index < list_size(planed); index++) {
 		rl_datos* elem = list_get(planed, index);
