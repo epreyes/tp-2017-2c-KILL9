@@ -29,7 +29,7 @@ t_list* findLocalReductionPlaned(int master) {
 	t_list* planed_list = list_create();
 	int i = 0;
 	for (i = 0; i < list_size(yama->tabla_LR_planificados); i++) {
-		elem_tabla_planificados* elem = list_get(yama->tabla_LR_planificados,
+		elem_tabla_LR_planificados* elem = list_get(yama->tabla_LR_planificados,
 				i);
 		if (elem->master == master) {
 			list_add(planed_list, elem->data);
@@ -49,6 +49,7 @@ void getGlobalReductionTmpName(rg_datos* nodeData, int op, int blockId,
 }
 
 void* processGlobalReduction(int master) {
+	viewLRPlannedTable();
 	t_list* planed = findLocalReductionPlaned(master);
 
 	void* globalReductionRes = malloc(

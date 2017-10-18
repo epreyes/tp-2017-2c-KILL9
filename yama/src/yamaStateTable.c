@@ -56,6 +56,17 @@ void viewPlannedTable() {
 	}
 }
 
+void viewLRPlannedTable() {
+	printf("\nLa cantidad de entradas de la tabla de reducciones locales es: %d\n",
+			list_size(yama->tabla_LR_planificados));
+	int index = 0;
+	for (index = 0; index < list_size(yama->tabla_LR_planificados); index++) {
+		elem_tabla_LR_planificados* planed = list_get(yama->tabla_LR_planificados, index);
+		printf("\nmaster: %d, node: %d, ip: %s, port: %d, TRtemporal: %s, LRtemporal: %s\n",
+				planed->master, planed->data->nodo, planed->data->ip, planed->data->port, planed->data->tr_tmp, planed->data->rl_tmp);
+	}
+}
+
 void addToNodeList(void* fsInfo) {
 	int* size = malloc(sizeof(int));
 	memcpy(size, fsInfo, sizeof(int));
