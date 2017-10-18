@@ -34,28 +34,34 @@ Client acceptMasterConnection(Server* server, fd_set* masterList, int hightSd) {
 	return theClient;
 }
 
-int getSizeToSend(void* masterRS){
+int getSizeToSend(void* masterRS) {
 	char op;
 	memcpy(&op, masterRS, sizeof(char));
 
 	int blocks;
-	memcpy(&blocks, masterRS+sizeof(char), sizeof(int));
+	memcpy(&blocks, masterRS + sizeof(char), sizeof(int));
 
 	int size = 0;
 
-	switch(op){
+	switch (op) {
 	case 'T':
-		size = blocks*sizeof(tr_datos);
+		size = blocks * sizeof(tr_datos);
 		break;
 	case 'L':
-			size = blocks*sizeof(rl_datos);
+		size = blocks * sizeof(rl_datos);
+		break;
+	case 'G':
+			size = blocks * sizeof(rl_datos);
+			viewGlobalReductionResponse(masterRS);
 			break;
 	}
 
-	return size+sizeof(char)+sizeof(int);
+
+	return size + sizeof(char) + sizeof(int);
 }
 
 int sendResponse(int master, void* masterRS) {
+
 	int bytesSent = send(master, masterRS, getSizeToSend(masterRS), 0);
 	if (bytesSent > 0) {
 		char message[30];
@@ -91,7 +97,10 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 		void* response = getResponse(socket, *(char*) request);
 
 		//envio el paquete al master
-		sendResponse(socket, response);
+		char op = *(char*) request;
+		if ((op != 'O') && (op != 'E')) {
+			sendResponse(socket, response);
+		}
 	}
 	return nbytes;
 }

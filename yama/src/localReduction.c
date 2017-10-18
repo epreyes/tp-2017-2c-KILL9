@@ -7,7 +7,7 @@
 
 #include "headers/localReduction.h"
 
-t_list* findPlaned(int master){
+t_list* findTransformationPlaned(int master){
 	t_list* planed_list = list_create();
 	int i = 0;
 	for(i = 0; i < list_size(yama->tabla_planificados); i++){
@@ -44,7 +44,7 @@ void getLocalReductionTmpName(rl_datos* nodeData, int op, int blockId, int maste
 }
 
 void* processLocalReduction(int master){
-	t_list* planed = findPlaned(master);
+	t_list* planed = findTransformationPlaned(master);
 
 	void* localReductionRes = malloc(sizeof(char)+sizeof(int)+sizeof(rl_datos)*list_size(planed));
 	memcpy(localReductionRes, "L", sizeof(char));
@@ -61,6 +61,11 @@ void* processLocalReduction(int master){
 		strcpy(localRedData->tr_tmp, elem->tr_tmp);
 		getLocalReductionTmpName(localRedData, 'L', getBlockId(elem->tr_tmp), master);
 		setInStatusTable(localRedData->tr_tmp, localRedData->nodo, 'L', master);
+		elem_tabla_LR_planificados* elemPlaned = malloc(sizeof(elem_tabla_LR_planificados));
+		elemPlaned->master = master;
+		elemPlaned->data = malloc(sizeof(rl_datos));
+		memcpy(elemPlaned->data, localRedData, sizeof(rl_datos));
+		list_add(yama->tabla_LR_planificados, elemPlaned);
 		memcpy(localReductionRes+sizeof(char)+sizeof(int)+(index*sizeof(rl_datos)), localRedData, sizeof(rl_datos));
 	}
 	return localReductionRes;
