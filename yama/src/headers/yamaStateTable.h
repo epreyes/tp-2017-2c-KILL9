@@ -28,6 +28,6 @@ int findRow(int master, int node_id, int block, char op);
 
 int getBlockId(char* tmpName);
 
-void updateStatusTable(elem_tabla_estados* elem);
+void updateStatusTable(int master, char opCode, int node, int bloque, char status);
 
 #endif /* SRC_HEADERS_YAMASTATETABLE_H_ */

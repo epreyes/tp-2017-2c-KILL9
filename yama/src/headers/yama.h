@@ -56,13 +56,19 @@ typedef struct{
 	int master;
 }elem_tabla_LR_planificados;
 
+typedef struct{
+	rg_datos* data;
+	int master;
+}elem_tabla_GR_planificados;
+
 typedef struct {
 	t_config* config;
 	t_list* tabla_nodos;
 	t_list* tabla_estados;
 	t_list* tabla_info_archivos;
-	t_list* tabla_planificados;
+	t_list* tabla_T_planificados;
 	t_list* tabla_LR_planificados;
+	t_list* tabla_GR_planificados;
 	Server yama_server;
 	Client yama_client;
 	t_log* log;

@@ -40,7 +40,7 @@ void init() {
 	yama->tabla_estados = list_create();
 	yama->tabla_nodos = list_create();
 	yama->tabla_info_archivos = list_create();
-	yama->tabla_planificados = list_create();
+	yama->tabla_T_planificados = list_create();
 	yama->tabla_LR_planificados = list_create();
 
 	/* inicializo el server en el socket configurado */
@@ -80,7 +80,8 @@ void* processOperation(int master, char op) {
 		//response = processError(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
 		break;
 	case 'O':
-		response = processOk(master);
+		processOk(master);
+		viewStateTable();
 		break;
 	}
 

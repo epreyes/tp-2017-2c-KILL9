@@ -7,17 +7,17 @@
 
 #include "headers/yamaStateTable.h"
 
-void setInStatusTable(char* tr_tmp, int nodo, char op, int master) {
+void setInStatusTable(char op, int master, int nodo, int bloque, char* tmpName) {
 	elem_tabla_estados* elemStatus = malloc(sizeof(elem_tabla_estados));
-	elemStatus->block = getBlockId(tr_tmp);
+	elemStatus->block = bloque;
 	elemStatus->job = yama->jobs;
 	elemStatus->master = master;
 	elemStatus->node = nodo;
 	elemStatus->op = op;
 	elemStatus->status = 'P';
-	strcpy(elemStatus->tmp, tr_tmp);
+	strcpy(elemStatus->tmp, tmpName);
 
-	updateStatusTable(elemStatus);
+	addNewRowStatusTable(elemStatus);
 }
 
 int findNode(int node_id) {
@@ -48,10 +48,10 @@ void viewNodeTable() {
 void viewPlannedTable() {
 	printf(
 			"\nLa cantidad de entradas de la tabla de tareas planificadas es: %d\n",
-			list_size(yama->tabla_planificados));
+			list_size(yama->tabla_T_planificados));
 	int index = 0;
-	for (index = 0; index < list_size(yama->tabla_planificados); index++) {
-		elem_tabla_planificados* planed = list_get(yama->tabla_planificados,
+	for (index = 0; index < list_size(yama->tabla_T_planificados); index++) {
+		elem_tabla_planificados* planed = list_get(yama->tabla_T_planificados,
 				index);
 		printf("\nmaster: %d, node: %d, bloque: %d, temporal: %s\n",
 				planed->master, planed->data->nodo, planed->data->bloque,
@@ -167,23 +167,38 @@ int getBlockId(char* tmpName) {
 	return code;
 }
 
-void updateStatusTable(elem_tabla_estados* elem) {
-	int index = findRow(elem->master, elem->node, elem->block, elem->op);
+void addNewRowStatusTable(elem_tabla_estados* elem) {
 	elem_tabla_estados* row;
-	if (index == -1) {
-		row = malloc(sizeof(elem_tabla_estados));
-		row->master = elem->master;
-		row->op = elem->op;
-		row->status = elem->status;
-		row->job = elem->job;
-		row->node = elem->node;
-		row->block = elem->block;
-		strcpy(row->tmp, elem->tmp);
-		list_add(yama->tabla_estados, row);
-	} else {
+
+	row = malloc(sizeof(elem_tabla_estados));
+	row->master = elem->master;
+	row->op = elem->op;
+	row->status = elem->status;
+	row->job = elem->job;
+	row->node = elem->node;
+	row->block = elem->block;
+	strcpy(row->tmp, elem->tmp);
+	list_add(yama->tabla_estados, row);
+}
+
+void updateStatusTable(int master, char opCode, int node, int bloque, char status) {
+	int index = findRow(master, node, bloque, opCode);
+	elem_tabla_estados* row;
+	if (index > -1) {
 		row = list_get(yama->tabla_estados, index);
-		row->op = elem->op;
-		row->status = elem->status;
+		row->op = opCode;
+		row->status = status;
 		list_replace(yama->tabla_estados, index, row);
+	} else {
+		perror("\nTrying to update a row that not exist in status table.\n");
 	}
 }
+
+void addToTransformationPlanedTable(int master, tr_datos* nodeData) {
+	elem_tabla_planificados* planed = malloc(sizeof(elem_tabla_planificados));
+	planed->data = malloc(sizeof(tr_datos));
+	memcpy(planed->data, nodeData, sizeof(tr_datos));
+	planed->master = master;
+	list_add(yama->tabla_T_planificados, planed);
+}
+

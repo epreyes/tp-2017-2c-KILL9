@@ -16,6 +16,8 @@ void* processTransformation(int master) {
 	t_list* nodeList = list_create();
 	nodeList = buildTransformationResponseNodeList(fsInfo, master);
 
+	viewStateTable();
+
 	return sortTransformationResponse(nodeList);
 }
 
@@ -50,13 +52,10 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 		list_add(nodeList, nodeData);
 
 		//creo el elemento para agregar a la tabla de planificados.
-		elem_tabla_planificados* planed = malloc(sizeof(elem_tabla_planificados));
-		planed->data = malloc(sizeof(tr_datos));
-		memcpy(planed->data, nodeData, sizeof(tr_datos));
-		planed->master = master;
-		list_add(yama->tabla_planificados, planed);
-		setInStatusTable(nodeData->tr_tmp, nodeData->nodo, 'T', master);
-		viewNodeTable();
+		addToTransformationPlanedTable(master, nodeData);
+
+		//actualizo la tabla de estados con la informacion del nuevo job.
+		setInStatusTable('T', master, nodeData->nodo, getBlockId(nodeData->tr_tmp), nodeData->tr_tmp);
 
 		free(blockInfo);
 	}

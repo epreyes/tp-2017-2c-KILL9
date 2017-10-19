@@ -10,8 +10,8 @@
 t_list* findTransformationPlaned(int master){
 	t_list* planed_list = list_create();
 	int i = 0;
-	for(i = 0; i < list_size(yama->tabla_planificados); i++){
-		elem_tabla_planificados* elem = list_get(yama->tabla_planificados, i);
+	for(i = 0; i < list_size(yama->tabla_T_planificados); i++){
+		elem_tabla_planificados* elem = list_get(yama->tabla_T_planificados, i);
 		if( elem->master == master){
 			list_add(planed_list, elem->data);
 		}
