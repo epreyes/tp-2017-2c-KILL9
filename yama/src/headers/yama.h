@@ -67,6 +67,8 @@ typedef struct {
 	Client yama_client;
 	t_log* log;
 	int jobs;
+	int clock;
+	int clock_aux;
 } Yama;
 
 Yama* yama;

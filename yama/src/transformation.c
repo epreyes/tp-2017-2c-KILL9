@@ -42,22 +42,17 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 
 	t_list* nodeList = list_create();
 
+	//Se calcularán los valores de disponibilidades para cada Worker
+	updateAvailability();
+
 	int index = 0;
 	for (index = 0; index < fsInfo->blocks; index++) {
 		block_info* blockInfo = malloc(sizeof(block_info));
 		memcpy(blockInfo, info + (index * sizeof(block_info)),
 				sizeof(block_info));
 
-//planificar: me devuelve el nodeData que voy a meter en la lista.
-//agregar nodo a la lista que se va a enviar, y al historial de planificacion.
+		tr_datos* nodeData = doPlanning(blockInfo, master);
 
-		tr_datos* nodeData = malloc(sizeof(tr_datos));
-		nodeData->nodo = blockInfo->node1;
-		strcpy(nodeData->ip, blockInfo->node1_ip);
-		nodeData->port = blockInfo->node1_port;
-		nodeData->bloque = blockInfo->node1_block;
-		nodeData->tamanio = blockInfo->end_block;
-		getTmpName(nodeData, 'T', blockInfo->block_id, master);
 		list_add(nodeList, nodeData);
 		elem_tabla_planificados* planed = malloc(
 				sizeof(elem_tabla_planificados));
@@ -66,23 +61,7 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 		planed->master = master;
 		list_add(yama->tabla_planificados, planed);
 		setInStatusTable(nodeData->tr_tmp, nodeData->nodo, 'T', master);
-		updateNodeList('T', nodeData->nodo);
-
-		tr_datos* nodeData2 = malloc(sizeof(tr_datos));
-		nodeData2->nodo = blockInfo->node2;
-		strcpy(nodeData2->ip, blockInfo->node2_ip);
-		nodeData2->port = blockInfo->node2_port;
-		nodeData2->bloque = blockInfo->node2_block;
-		nodeData2->tamanio = blockInfo->end_block;
-		getTmpName(nodeData2, 'T', blockInfo->block_id, master);
-		list_add(nodeList, nodeData2);
-		elem_tabla_planificados* planed2 = malloc(sizeof(elem_tabla_planificados));
-		planed2->data = malloc(sizeof(tr_datos));
-		memcpy(planed2->data, nodeData2, sizeof(tr_datos));
-		planed2->master = master;
-		list_add(yama->tabla_planificados, planed2);
-		setInStatusTable(nodeData2->tr_tmp, nodeData2->nodo, 'T', master);
-		updateNodeList('T', nodeData2->nodo);
+		viewNodeTable();
 
 		free(blockInfo);
 	}
