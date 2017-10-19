@@ -25,15 +25,17 @@ int main(){
 	char operation = 'T';
 	//-------------
 	generateTempsFolder();
-	regenerateScript("hola mundo",transformScript,"archivo");
+
 	switch(operation){
 		case 'T':
+			regenerateScript("hola mundo",script_transform,"tr.sh");
 			//recorrer y generar un fork por cada bloque
 			//cada transformBlock va a hacer el send a Master
 				transformBlock(position,size,temporal);
 			//}
 			break;
 		case 'L':
+			regenerateScript("hola mundo",script_reduction,"rd.sh");
 			//reduceFile(file[],reductionScript);
 			break;
 		case 'G':

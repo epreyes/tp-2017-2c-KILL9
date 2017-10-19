@@ -17,9 +17,15 @@
 #include <sys/socket.h>
 #include <tplibraries/protocol/master_worker.h>
 #include <unistd.h>
+#include <commons/config.h>
+#include <commons/log.h>
 
-//----GLOBALS--
-FILE* transformScript; 	//lo tomo del pedido de transformación
-FILE* reductionScript;	//lo tomo del pedido de reducción local
+//=========LOGGERS=============//
+t_log* logger;
+//=========CONFIGS============//
+t_config* config;
+//=========FILES============//
+FILE* script_transform; 	//lo tomo del pedido de transformación
+FILE* script_reduction;		//lo tomo del pedido de reducción local
 
 #endif /* HEADERS_WORKER_H_ */

@@ -11,7 +11,7 @@ void loadServer(void){
 	struct sockaddr_in workerAddr;
 	workerAddr.sin_family = AF_INET;
 	workerAddr.sin_addr.s_addr = INADDR_ANY;
-	workerAddr.sin_port = htons(8881);
+	workerAddr.sin_port = htons(config_get_int_value(config,"WORKER_PUERTO"));
 
 	int workerSocket = socket(AF_INET, SOCK_STREAM, 0);
 

@@ -12,5 +12,7 @@
 
 void generateTempsFolder();													//genera directorio de temporales
 void regenerateScript(char* fileContent, FILE* script, char* scriptName); 	//recibo el string y genero el archivo
+void loadConfigs();
+void createLoggers();
 
 #endif /* HEADERS_UTILS_H_ */
