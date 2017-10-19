@@ -68,7 +68,9 @@ void* processOperation(int master, char op) {
 		response = processTransformation(master);
 		break;
 	case 'L':
+		viewPlannedTable();
 		response = processLocalReduction(master);
+		viewPlannedTable();
 		break;
 	case 'G':
 		response = processGlobalReduction(master);
@@ -81,7 +83,6 @@ void* processOperation(int master, char op) {
 		break;
 	case 'O':
 		processOk(master);
-		viewStateTable();
 		break;
 	}
 

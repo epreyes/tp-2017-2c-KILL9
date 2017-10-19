@@ -202,3 +202,11 @@ void addToTransformationPlanedTable(int master, tr_datos* nodeData) {
 	list_add(yama->tabla_T_planificados, planed);
 }
 
+void addToLocalReductionPlanedTable(int master, rl_datos* nodeData) {
+	elem_tabla_LR_planificados* planed = malloc(sizeof(elem_tabla_LR_planificados));
+	planed->data = malloc(sizeof(rl_datos));
+	memcpy(planed->data, nodeData, sizeof(rl_datos));
+	planed->master = master;
+	list_add(yama->tabla_LR_planificados, planed);
+}
+
