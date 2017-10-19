@@ -1,0 +1,146 @@
+[INFO] 11:23:52:103 worker/(3318:3318): conexión de Master 5
+[INFO] 11:27:11:771 worker/(3456:3456): conexión de Master 5 recibida
+[INFO] 11:29:24:296 worker/(3542:3542): conexión de Master 5 recibida
+[WARNING] 11:30:15:183 worker/(3598:3598): conexión de Master 5 recibida
+[INFO] 11:37:04:134 worker/(3834:3834): 5
+[INFO] 11:38:24:304 worker/(3921:3921): conexión de Master 5 recibida
+[INFO] 11:39:14:597 worker/(3983:3983): conexión de Master 5 recibida
+[INFO] 11:41:05:845 worker/(4090:4090): Levantado y a la espera de conexiones de master
+[INFO] 11:41:31:468 worker/(4127:4127): Esperando conexiones de master
+[INFO] 11:41:37:988 worker/(4127:4127): conexión de Master 5 recibida
+[ERROR] 11:42:39:264 worker/(4194:4194): Esperando conexiones de master
+[ERROR] 11:56:17:714 worker/(4483:4483): Esperando conexiones de master
+[INFO] 11:56:41:95 worker/(4518:4518): Esperando conexiones de master
+[INFO] 11:56:50:520 worker/(4518:4518): conexión de Master 5 recibida
+[INFO] 11:59:19:764 worker/(4580:4580): Esperando conexiones de master
+[INFO] 11:59:25:308 worker/(4580:4580): conexión de Master 5 recibida
+[INFO] 12:17:33:634 worker/(4733:4733): Esperando conexiones de master
+[INFO] 12:17:39:89 worker/(4733:4733): conexión de Master -1 recibida
+[ERROR] 12:17:39:89 worker/(4733:4733): el master 1 se encuentra desconectado
+[INFO] 12:18:10:289 worker/(4742:4742): Esperando conexiones de master
+[INFO] 12:18:14:608 worker/(4742:4742): conexión de Master -1 recibida
+[ERROR] 12:18:14:608 worker/(4742:4742): el master 1 se encuentra desconectado
+[INFO] 12:18:27:92 worker/(4748:4748): Esperando conexiones de master
+[INFO] 12:18:29:934 worker/(4748:4748): conexión de Master -1 recibida
+[ERROR] 12:18:29:934 worker/(4748:4748): el master 1 se encuentra desconectado
+[INFO] 12:23:23:925 worker/(4808:4808): Esperando conexiones de master
+[INFO] 12:23:30:53 worker/(4808:4808): conexión de Master -1 recibida
+[ERROR] 12:23:30:53 worker/(4808:4808): el master 1 se encuentra desconectado
+[INFO] 12:27:52:12 worker/(4921:4921): Esperando conexiones de master
+[ERROR] 12:27:54:936 worker/(4921:4921): error al establecer conexión
+[ERROR] 12:27:54:936 worker/(4921:4921): el master 1 se encuentra desconectado
+[INFO] 12:37:50:559 worker/(2287:2287): Esperando conexiones de master
+[ERROR] 12:38:29:282 worker/(2287:2287): error al establecer conexión
+[INFO] 12:38:50:917 worker/(2300:2300): Esperando conexiones de master
+[ERROR] 12:38:53:355 worker/(2300:2300): error al establecer conexión
+[INFO] 12:41:33:927 worker/(2373:2373): Esperando conexiones de master
+[ERROR] 12:41:36:873 worker/(2373:2373): error al establecer conexión
+[INFO] 12:41:42:147 worker/(2379:2379): Esperando conexiones de master
+[ERROR] 12:41:48:353 worker/(2379:2379): error al establecer conexión
+[INFO] 12:41:52:455 worker/(2386:2386): Esperando conexiones de master
+[INFO] 12:42:03:267 worker/(2392:2392): Esperando conexiones de master
+[ERROR] 12:42:06:431 worker/(2392:2392): error al establecer conexión
+[INFO] 12:45:12:754 worker/(2405:2405): Esperando conexiones de master
+[ERROR] 12:45:15:647 worker/(2405:2405): error al establecer conexión
+[INFO] 12:45:19:625 worker/(2411:2411): Esperando conexiones de master
+[ERROR] 12:45:22:332 worker/(2411:2411): error al establecer conexión
+[INFO] 12:46:07:340 worker/(2467:2467): Esperando conexiones de master
+[INFO] 12:46:12:573 worker/(2467:2467): conexión de Master 5 recibida
+[INFO] 12:46:19:355 worker/(2475:2475): Esperando conexiones de master
+[INFO] 12:46:28:721 worker/(2475:2475): conexión de Master 5 recibida
+[INFO] 12:46:36:961 worker/(2498:2498): Esperando conexiones de master
+[INFO] 12:46:39:524 worker/(2498:2498): conexión de Master 5 recibida
+[INFO] 12:47:29:556 worker/(2547:2547): Esperando conexiones de master
+[INFO] 12:47:47:783 worker/(2560:2560): Esperando conexiones de master
+[INFO] 12:47:50:308 worker/(2560:2560): conexión de Master 5 recibida
+[INFO] 12:48:42:204 worker/(2640:2640): Esperando conexiones de master
+[INFO] 12:48:45:857 worker/(2640:2640): conexión de Master 5 recibida
+[ERROR] 12:48:45:860 worker/(2640:2640): el master 1 se encuentra desconectado
+[INFO] 12:50:07:645 worker/(2670:2670): Esperando conexiones de master
+[INFO] 12:50:12:351 worker/(2671:2671): Esperando conexiones de master
+[INFO] 12:50:24:674 worker/(2671:2671): conexión de Master 5 recibida
+[ERROR] 12:50:24:684 worker/(2671:2671): el master 1 se encuentra desconectado
+[INFO] 12:50:43:670 worker/(2709:2709): Esperando conexiones de master
+[INFO] 12:50:47:467 worker/(2709:2709): conexión de Master 5 recibida
+[ERROR] 12:50:47:484 worker/(2709:2709): el master 1 se encuentra desconectado
+[INFO] 12:51:11:554 worker/(2757:2757): Esperando conexiones de master
+[INFO] 12:51:20:653 worker/(2757:2757): conexión de Master 5 recibida
+[ERROR] 12:51:20:662 worker/(2757:2757): el master 1 se encuentra desconectado
+[INFO] 12:54:57:891 worker/(2789:2789): Esperando conexiones de master
+[INFO] 12:56:36:498 worker/(2881:2881): Esperando conexiones de master
+[INFO] 12:56:39:693 worker/(2881:2881): conexión de Master 5 recibida
+[INFO] 12:56:52:289 worker/(2889:2889): Esperando conexiones de master
+[INFO] 12:56:55:204 worker/(2889:2889): conexión de Master 5 recibida
+[INFO] 12:57:27:913 worker/(2936:2936): Esperando conexiones de master
+[ERROR] 12:57:31:47 worker/(2936:2936): error al establecer conexión
+[INFO] 12:58:35:803 worker/(2995:2995): Esperando conexiones de master
+[INFO] 12:58:40:101 worker/(2995:2995): conexión de Master 5 recibida
+[INFO] 12:58:46:285 worker/(3001:3001): Esperando conexiones de master
+[INFO] 12:58:49:513 worker/(3001:3001): conexión de Master 5 recibida
+[INFO] 12:58:52:299 worker/(3006:3006): Esperando conexiones de master
+[INFO] 12:58:55:58 worker/(3006:3006): conexión de Master 5 recibida
+[INFO] 12:59:23:754 worker/(3053:3053): Esperando conexiones de master
+[INFO] 12:59:27:613 worker/(3053:3053): conexión de Master 5 recibida
+[INFO] 12:59:31:705 worker/(3059:3059): Esperando conexiones de master
+[INFO] 12:59:35:428 worker/(3059:3059): conexión de Master 5 recibida
+[INFO] 12:59:39:189 worker/(3064:3064): Esperando conexiones de master
+[INFO] 12:59:41:954 worker/(3064:3064): conexión de Master 5 recibida
+[INFO] 13:00:17:114 worker/(3113:3113): Esperando conexiones de master
+[ERROR] 13:00:19:611 worker/(3113:3113): error al establecer conexión
+[INFO] 13:00:27:311 worker/(3116:3116): Esperando conexiones de master
+[ERROR] 13:00:30:15 worker/(3116:3116): error al establecer conexión
+[INFO] 13:01:08:308 worker/(3169:3169): Esperando conexiones de master
+[ERROR] 13:01:11:586 worker/(3169:3169): error al establecer conexión
+[INFO] 13:01:31:618 worker/(3209:3209): Esperando conexiones de master
+[ERROR] 13:01:34:762 worker/(3209:3209): error al establecer conexión
+[INFO] 13:01:51:498 worker/(3245:3245): Esperando conexiones de master
+[INFO] 13:01:54:225 worker/(3245:3245): conexión de Master 5 recibida
+[INFO] 13:03:17:259 worker/(3307:3307): Esperando conexiones de master
+[ERROR] 13:03:20:106 worker/(3307:3307): error al establecer conexión
+[INFO] 13:03:23:227 worker/(3310:3310): Esperando conexiones de master
+[ERROR] 13:03:25:623 worker/(3310:3310): error al establecer conexión
+[INFO] 13:04:19:887 worker/(3357:3357): Esperando conexiones de master
+[INFO] 13:04:22:454 worker/(3357:3357): conexión de Master 5 recibida
+[INFO] 13:05:27:365 worker/(3427:3427): Esperando conexiones de master
+[ERROR] 13:05:32:251 worker/(3427:3427): error al establecer conexión
+[INFO] 13:05:52:6 worker/(3438:3438): Esperando conexiones de master
+[ERROR] 13:05:54:452 worker/(3438:3438): error al establecer conexión
+[INFO] 13:06:19:311 worker/(3509:3509): Esperando conexiones de master
+[INFO] 13:06:21:858 worker/(3509:3509): conexión de Master 5 recibida
+[INFO] 13:06:47:149 worker/(3555:3555): Esperando conexiones de master
+[INFO] 13:06:49:867 worker/(3555:3555): conexión de Master 5 recibida
+[INFO] 13:07:13:391 worker/(3595:3595): Esperando conexiones de master
+[INFO] 13:07:16:840 worker/(3595:3595): conexión de Master 5 recibida
+[INFO] 13:07:38:244 worker/(3635:3635): Esperando conexiones de master
+[INFO] 13:07:40:932 worker/(3635:3635): conexión de Master 5 recibida
+[INFO] 13:07:59:360 worker/(3677:3677): Esperando conexiones de master
+[INFO] 13:08:01:919 worker/(3677:3677): conexión de Master 5 recibida
+[INFO] 13:08:08:46 worker/(3682:3682): Esperando conexiones de master
+[INFO] 13:08:10:716 worker/(3682:3682): conexión de Master 5 recibida
+[INFO] 13:09:02:720 worker/(3730:3730): Esperando conexiones de master
+[INFO] 13:09:04:875 worker/(3730:3730): conexión de Master 5 recibida
+[INFO] 13:09:08:536 worker/(3735:3735): Esperando conexiones de master
+[INFO] 13:09:11:509 worker/(3735:3735): conexión de Master 5 recibida
+[INFO] 13:09:43:31 worker/(3778:3778): Esperando conexiones de master
+[ERROR] 13:09:45:586 worker/(3778:3778): error al establecer conexión
+[INFO] 13:09:49:94 worker/(3781:3781): Esperando conexiones de master
+[ERROR] 13:09:51:462 worker/(3781:3781): error al establecer conexión
+[INFO] 13:10:15:516 worker/(3819:3819): Esperando conexiones de master
+[INFO] 13:10:17:720 worker/(3819:3819): conexión de Master 5 recibida
+[INFO] 13:10:36:780 worker/(3842:3842): Esperando conexiones de master
+[INFO] 13:10:39:675 worker/(3842:3842): conexión de Master 5 recibida
+[INFO] 13:12:00:854 worker/(3920:3920): Esperando conexiones de master
+[ERROR] 13:12:04:233 worker/(3920:3920): error al establecer conexión
+[INFO] 13:12:46:767 worker/(3949:3949): Esperando conexiones de master
+[ERROR] 13:12:52:84 worker/(3949:3949): error al establecer conexión
+[INFO] 13:13:17:364 worker/(3983:3983): Esperando conexiones de master
+[INFO] 13:13:21:132 worker/(3983:3983): conexión de Master 5 recibida
+[INFO] 13:13:25:773 worker/(3989:3989): Esperando conexiones de master
+[INFO] 13:13:28:464 worker/(3989:3989): conexión de Master 5 recibida
+[INFO] 13:13:33:696 worker/(3996:3996): Esperando conexiones de master
+[INFO] 13:13:36:367 worker/(3996:3996): conexión de Master 5 recibida
+[INFO] 13:13:40:873 worker/(4002:4002): Esperando conexiones de master
+[INFO] 13:13:44:773 worker/(4003:4003): Esperando conexiones de master
+[INFO] 13:13:47:478 worker/(4004:4004): Esperando conexiones de master
+[INFO] 13:13:55:499 worker/(4005:4005): Esperando conexiones de master
+[INFO] 13:13:58:13 worker/(4005:4005): conexión de Master 5 recibida

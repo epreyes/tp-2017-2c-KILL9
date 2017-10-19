@@ -21,8 +21,8 @@
 #include <commons/log.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
-#include "../../protocol/master_yama.h"
-#include "../../protocol/master_worker.h"
+#include <tplibraries/protocol/master_yama.h>
+#include <tplibraries/protocol/master_worker.h>
 #include "utils.h"
 //=========LOGGERS=============//
 

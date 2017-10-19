@@ -6,10 +6,11 @@
  */
 
 #include "headers/localReduction.h"
+#include <tplibraries/protocol/master_yama.h>
 
 //=============YAMA_REQUEST=============================//
 void sendLRequest(){
-
+/*
 //---Preparo Paquete---
 	local_rq* data;
 	data = malloc(sizeof(local_rq));
@@ -24,6 +25,7 @@ void sendLRequest(){
 
 	free(buffer);
 	free(data);
+*/
 }
 
 //=============THREAD_ACTION===================================//
@@ -31,11 +33,11 @@ void sendLRequest(){
 void *runLocalRedThread(void* data){
 	int i;
 	dataThread_LR* datos = (dataThread_LR*) data;
-	printf("hilo iniciado:%d\t servidor:%s\t reduciónFile:%s\n",datos[0].node,datos[0].conector,datos[0].rl_tmp);
+	printf("hilo iniciado:%d\t ip:%s\t port:%d\t reduciónFile:%s\n",datos[0].node,datos[0].ip,datos[0].port,datos[0].rl_tmp);
 	for (i = 0; i <= (datos[0].tmpsCounter); ++i){
 		printf("\t nodo:%d \t local:%s\n", datos[0].node, datos[0].tr_tmps[i]);
 	}
-	//conectarse con WORKER y esperar respuesta.
+	//conectarse con WORKER y esperar respuestas.
 	return NULL;
 }
 
@@ -66,7 +68,8 @@ int runLocalReduction(rl_datos yamaAnswer[], int totalRecords, metrics *masterMe
 		dataThreads[nodeCounter].tr_tmps=(tr_tmp *) malloc(sizeof(tr_tmp)*(tmpsCounter));
 		dataThreads[nodeCounter].tr_tmps=(tr_tmp *) memcpy(dataThreads[nodeCounter].tr_tmps,tr_tmps, sizeof(tr_tmp)*(tmpsCounter));
 		dataThreads[nodeCounter].node=nodo;
-		strcpy(dataThreads[nodeCounter].conector,yamaAnswer[recordCounter-1].direccion);
+		strcpy(dataThreads[nodeCounter].ip,yamaAnswer[recordCounter-1].ip);
+		dataThreads[nodeCounter].port=yamaAnswer[recordCounter-1].port;
 		strcpy(dataThreads[nodeCounter].rl_tmp,yamaAnswer[recordCounter-1].rl_tmp);
 		dataThreads[nodeCounter].tmpsCounter=tmpsCounter-1;
 		nodeCounter++;

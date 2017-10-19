@@ -71,11 +71,11 @@ void *runTransformThread(void* data){
 		memcpy(buffer+counter+4+i*36,&(datos->blocks[i].size),4);
 		memcpy(buffer+counter+4+i*36,(datos->blocks[i].tmp),28);
 	}
-	//openNodeConnection(datos[0].node, datos[0].conector);
+//	openNodeConnection(datos[0].node, datos[0].ip, datos[0].port);
 	counter=1+4+(nodeData->fileSize)+4+(36*(datos->blocksCount));
 
 //---Envío---
-	//send(nodeSockets[datos->node],buffer,counter,0);
+	send(nodeSockets[datos->node],buffer,counter,0);
 
 /*
 //---DES_SERIALIZACIÓN---
@@ -104,10 +104,10 @@ void *runTransformThread(void* data){
 	free(reciv->file);
 	free(reciv);
 
-	for (i = 0; i <= (datos[0].blocksCount); ++i){
+*/
+	for (i = 0; i < (datos[0].blocksCount); ++i){
 		printf("\t nodo:%d \t pos:%d  \t tam:%d\n", datos[0].node, datos[0].blocks[i].pos, datos[0].blocks[i].size);
 	}
-*/
 	free(buffer);
 	free(nodeData->file);
 	free(nodeData);
@@ -146,7 +146,8 @@ int transformFile(tr_datos yamaAnswer[], int totalRecords, metrics *masterMetric
 		dataThreads[nodeCounter].blocks=(block *) memcpy(dataThreads[nodeCounter].blocks,blocks, sizeof(block)*(blockCounter));
 
 		dataThreads[nodeCounter].node=nodo;
-		strcpy(dataThreads[nodeCounter].conector,yamaAnswer[recordCounter-1].direccion);
+		strcpy(dataThreads[nodeCounter].ip,yamaAnswer[recordCounter-1].ip);
+		dataThreads[nodeCounter].port=yamaAnswer[recordCounter-1].port;
 		dataThreads[nodeCounter].blocksCount=blockCounter;
 		nodeCounter++;
 		blockCounter = 0;

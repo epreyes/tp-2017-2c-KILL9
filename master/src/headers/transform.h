@@ -13,7 +13,8 @@
 
 typedef struct dataThread_TR{
 	int		node;
-	char 	conector[21];
+	char 	ip[16];
+	int		port;
 	block* 	blocks;
 	int		blocksCount;
 }dataThread_TR;

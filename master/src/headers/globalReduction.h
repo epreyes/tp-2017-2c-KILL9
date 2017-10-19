@@ -13,13 +13,15 @@
 
 typedef struct dataNodes{
 	int		node;
-	char 	conector[21];
+	char 	ip[16];
+	int		port;
 	char	rl_tmp[28];
 }dataNodes;
 
 typedef struct dataThread_GR{
 	int			leadNode;
-	char 		leadConector[21];
+	char 		leadIp[16];
+	int			leadPort;
 	char		rg_tmp[24];
 	dataNodes* 	brothersData;
 	int			brothersCount;

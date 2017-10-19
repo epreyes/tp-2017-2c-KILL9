@@ -15,7 +15,8 @@ typedef char tr_tmp[28];
 
 typedef struct dataThread_LR{
 	int		node;
-	char 	conector[21];
+	char 	ip[16];
+	int		port;
 	tr_tmp* tr_tmps;
 	char	rl_tmp[28];
 	int 	tmpsCounter;
