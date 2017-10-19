@@ -15,6 +15,7 @@
 #include <string.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <sys/select.h>
 #include <tplibraries/protocol/master_worker.h>
 #include <unistd.h>
 #include <commons/config.h>

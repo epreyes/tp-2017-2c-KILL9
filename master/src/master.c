@@ -42,8 +42,8 @@ int main(int argc, char* argv[]){
 	loadScripts(argv[1],argv[2]);
 
 	transformFile(tr_answer,answerSize_TR,&masterMetrics,argv[3]);	//ordena ejecución de transformacion
-	//runLocalReduction(rl_answer,answerSize_RL,&masterMetrics);	//ordena ejecución de Reductor Local
 	/*
+	runLocalReduction(rl_answer,answerSize_RL,&masterMetrics);		//ordena ejecución de Reductor Local
 	runGlobalReduction(rg_answer,answerSize_RG,&masterMetrics);		//ordena ejecución de Reductor Global
 	saveResult(af_answer,answerSize_AF,&masterMetrics);				//ordena guardado en FileSystem
 

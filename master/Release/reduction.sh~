@@ -1,0 +1,4 @@
+#!/bin/bash
+
+#Este es el script de prueba
+echo "script de reduccion"

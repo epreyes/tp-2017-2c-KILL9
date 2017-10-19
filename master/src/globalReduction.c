@@ -48,11 +48,13 @@ int runGlobalReduction(rg_datos yamaAnswer[], int totalRecords, metrics *masterM
 	while(recordCounter<totalRecords){
 		if(yamaAnswer[recordCounter].encargado==1){
 			dataThread->leadNode = yamaAnswer[recordCounter].nodo;
-			strcpy(dataThread->leadConector, yamaAnswer[recordCounter].direccion);
+			strcpy(dataThread->leadIp, yamaAnswer[recordCounter].ip);
+			dataThread->leadPort = yamaAnswer[recordCounter].port;
 			strcpy(dataThread->rg_tmp, yamaAnswer[recordCounter].rg_tmp);
 		}else{
 			brothersData = (dataNodes*)realloc(brothersData,(sizeof(dataNodes)*(recordCounter+1)));
-			strcpy(brothersData[recordCounter].conector, yamaAnswer[recordCounter].direccion);
+			strcpy(brothersData[recordCounter].ip, yamaAnswer[recordCounter].ip);
+			brothersData[recordCounter].port = yamaAnswer[recordCounter].port;
 			brothersData[recordCounter].node = yamaAnswer[recordCounter].nodo;
 			strcpy(brothersData[recordCounter].rl_tmp, yamaAnswer[recordCounter].rl_tmp);
 		}

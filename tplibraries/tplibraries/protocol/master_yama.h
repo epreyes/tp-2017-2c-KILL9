@@ -19,7 +19,7 @@ typedef struct{
 }transform_rq;
 
 //----Response----//
-typedef struct tr_datos{
+typedef struct{
 	int		nodo;
 	char	ip[16];
 	int 	port;
@@ -44,7 +44,7 @@ typedef struct{
 
 //----Response----//
 
-typedef struct rl_datos{
+typedef struct{
 	int		nodo;
 	char	ip[16];
 	int 	port;
@@ -112,8 +112,8 @@ typedef struct{
 
 /*======= OK ==========*/
 typedef struct{
-	char	code;
-	char	opCode;
+	char	code;		//'e'
+	char	opCode;		//'T','L','G','S'
 	int 	bloque;
 	int		nodo;
 }ok;
