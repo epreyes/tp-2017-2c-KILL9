@@ -74,7 +74,7 @@ void* processOperation(int master, char op) {
 		response = processGlobalReduction(master);
 		break;
 	case 'S':
-		//response = processFinalStore(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
+		response = processFinalStore(master);
 		break;
 	case 'E':
 		//response = processError(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
