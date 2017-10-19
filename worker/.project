@@ -3,6 +3,7 @@
 	<name>worker</name>
 	<comment></comment>
 	<projects>
+		<project>tplibraries</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
