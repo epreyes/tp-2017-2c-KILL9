@@ -19,17 +19,23 @@ int hClockAvail(Yama* yama, elem_tabla_nodos* elem);
 
 int setNewAvailability(elem_tabla_nodos* elem);
 
+int setBaseAvailability();
+
+void addAvailBase();
+
 void updateAvailability();
 
 int getHigerAvailNode(Yama* yama);
 
 int blockExistInClock(block_info* blockRecived, int clock);
 
-void verifyZeroAvail();
-
 tr_datos* buildNodePlaned(block_info* blockRecived, int master, int node_id);
 
+void increseClock(int* clock);
+
 tr_datos* updateNodeInTable(block_info* blockRecived, int master, int clock);
+
+tr_datos* evaluateClock(block_info* blockRecived, int master, int clock);
 
 tr_datos* doPlanning(block_info* blockRecived, int master);
 

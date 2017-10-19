@@ -9,12 +9,6 @@
 
 void processOk(int master) {
 
-	/*typedef struct{
-	 char	code;
-	 char	opCode;
-	 int 	bloque;
-	 int		nodo;
-	 }ok;*/
 	void* buffer = malloc(sizeof(char));
 	recv(master, buffer, sizeof(char), 0);
 	char opCode;

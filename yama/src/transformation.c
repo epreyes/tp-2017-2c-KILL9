@@ -16,12 +16,6 @@ void* processTransformation(int master) {
 	t_list* nodeList = list_create();
 	nodeList = buildTransformationResponseNodeList(fsInfo, master);
 
-	//viewStateTable();
-
-	//viewNodeTable();
-
-	//viewPlannedTable();
-
 	return sortTransformationResponse(nodeList);
 }
 
@@ -48,14 +42,15 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 	int index = 0;
 	for (index = 0; index < fsInfo->blocks; index++) {
 		block_info* blockInfo = malloc(sizeof(block_info));
-		memcpy(blockInfo, info + (index * sizeof(block_info)),
-				sizeof(block_info));
+		memcpy(blockInfo, info + (index * sizeof(block_info)), sizeof(block_info));
 
+		//Planifico
 		tr_datos* nodeData = doPlanning(blockInfo, master);
-
+		//agrego a la lista de respuesta
 		list_add(nodeList, nodeData);
-		elem_tabla_planificados* planed = malloc(
-				sizeof(elem_tabla_planificados));
+
+		//creo el elemento para agregar a la tabla de planificados.
+		elem_tabla_planificados* planed = malloc(sizeof(elem_tabla_planificados));
 		planed->data = malloc(sizeof(tr_datos));
 		memcpy(planed->data, nodeData, sizeof(tr_datos));
 		planed->master = master;
