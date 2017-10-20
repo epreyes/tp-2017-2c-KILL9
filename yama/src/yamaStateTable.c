@@ -94,6 +94,7 @@ void addToNodeList(void* fsInfo) {
 			node->node_id = b->node1;
 			node->tasks_in_progress = 0;
 			node->tasts_done = 0;
+			node->errors = 0;
 			list_add(yama->tabla_nodos, node);
 		}
 
@@ -238,5 +239,17 @@ void addToGlobalReductionPlanedTable(int master, rg_datos* nodeData) {
 	memcpy(planed->data, nodeData, sizeof(rg_datos));
 	planed->master = master;
 	list_add(yama->tabla_GR_planificados, planed);
+}
+
+t_list* getTaskFails(int master, int node){
+	int index = 0;
+	t_list* tasksFails = list_create();
+
+	for(index = 0; index < list_size(yama->tabla_estados); index++){
+		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
+		if( (elem->node == node) && (elem->master == master) && (elem->status == 'P') ){
+			list_add(tasksFails, elem);
+		}
+	}
 }
 

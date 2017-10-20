@@ -182,3 +182,13 @@ tr_datos* doPlanning(block_info* blockRecived, int master) {
 	//Se deberá evaluar si el Bloque a asignar se encuentra en el Worker apuntado por el Clock y el mismo tenga disponibilidad mayor a 0.
 	return evaluateClock(blockRecived, master, yama->clock);
 }
+
+void* getErrorResponse(int master, int node, t_list* taskFails){
+	int index = 0;
+	for(index = 0; index < list_size(taskFails); index++){
+		elem_tabla_estados* elem = list_size(taskFails, index);
+		if( elem->op == 'T'){
+			return
+		}
+	}
+}

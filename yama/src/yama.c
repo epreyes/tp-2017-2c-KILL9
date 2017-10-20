@@ -78,7 +78,7 @@ void* processOperation(int master, char op) {
 		response = processFinalStore(master);
 		break;
 	case 'E':
-		//response = processError(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
+		response = processError(master);
 		break;
 	case 'O':
 		processOk(master);
