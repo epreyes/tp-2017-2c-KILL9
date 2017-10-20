@@ -2,8 +2,8 @@ echo '-------------------------------------------------------'
 echo 'Compilando e instalando tplibraries'
 echo '-------------------------------------------------------'
 cd tplibraries/tplibraries
-make uninstall
-make install 
+sudo make uninstall
+sudo make install 
 cd ..
 cd ..
 echo '-------------------------------------------------------'

@@ -13,6 +13,7 @@
 
 #include <dirent.h>
 #include <commons/collections/list.h>
+#include "datanode.h"
 
 int obtenerUltimoIndiceDirValido();
 int obtenerIndiceDirPadre(char* path);
@@ -40,7 +41,5 @@ void actualizarBitMapBloques(t_list* bloquesInfo);
 bool ordenarPorCarga(t_nodo *nodoConMasCarga, t_nodo *nodoConMenosCarga);
 t_list* decidirNodo(t_list* nodos);
 
-// Pedidos al datanode
-int escribirEnDataNode(int idBloque, char* contenido, int idNodo);
 
 #endif /* FS_CORE_H_ */

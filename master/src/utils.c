@@ -16,12 +16,12 @@ double timediff(struct timeval *a, struct timeval *b){
 void validateArgs(int argc, char* argv[]){
 	int count;
 	if(argc!=5){
-			printf("\x1b[31m" "> Número de argumentos inválido! \n" "\x1b[0m");
+			log_error(logger,"número de argumentos inválido");
 			exit(0);
 	};
 	for(count=3;count<=4;++count){
 		if(strncmp(argv[count],"yamafs:/",8)!=0){
-			printf("\x1b[31m" "El archivo %s debe pertenecer a yamafs, no olvide el prefijo yamafs:\n" "\x1b[0m",argv[count]);
+			log_error(logger, "El archivo %s debe pertenecer a yamafs", argv[count]);
 			exit(0);
 		}
 	}
@@ -53,7 +53,11 @@ void loadScripts(char* transformScript, char* reductionScript){
 	script_reduction=fopen(reductionScript,"r");
 //---valído existencia de los archivos
 	if(script_transform==NULL || script_reduction==NULL){
-		printf("\x1b[31m" "no existe el script solicitado\n" "\x1b[0m");
+		log_error(logger,"no existe el archivo de transformación solicitado");
+		exit(1);
+	}
+	if(script_transform==NULL || script_reduction==NULL){
+		log_error(logger,"no existe el archivo de reduccion solicitado");
 		exit(1);
 	}
 }
@@ -65,7 +69,7 @@ void loadConfigs(){
 	char* CONFIG_PATH = "../properties/master.properties";
 	config = config_create(CONFIG_PATH);
 	if(!(config_has_property(config,"YAMA_IP"))|| !(config_has_property(config,"YAMA_PUERTO"))){
-		printf("\x1b[31m" "Error en archivo de configuraciones\n" "\x1b[0m");
+		log_error(logger,"error en el archivo de configuración");
 		config_destroy(config);
 		exit(0);
 	}

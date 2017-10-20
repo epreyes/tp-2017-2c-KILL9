@@ -47,6 +47,7 @@ typedef struct {
 	int total;
 	int libre;
 	char* direccion; // TODO: Cuando se cambie a archivo, esto debe construirse en un struct aparte
+	int socketNodo; // TODO: Cuando se cambie a archivo, esto debe construirse en un struct aparte
 } t_nodo;
 
 typedef struct {
@@ -63,11 +64,11 @@ typedef struct {
 	t_bitarray* bitMapBloques;
 } t_nodosBitMap;
 
+// Estructura de relacion nodo-bloque para reservar los bloques durante la escritura
 typedef struct {
 	int idNodo;
 	int idBloque;
 } t_idNodoBloque;
-
 
 // Estructura para guardar la informacion de un archivo
 typedef struct {

@@ -8,11 +8,21 @@
 
 
 int transformBlock(int position, int size, char temporal[28] ){
-	int result = 0;
+	log_info(logger,"Bloque %d: Transformando", position);
+	int result;
 	//void* param = getBlockInfo(position, size);
+
+	system("chmod 555 script.sh");					//pasar nombre de archivo a dinámico
 	char command[45];
-	strcpy(command,"./transform.sh > ");
-	strcat(command, temporal);
+	strcpy(command,"./script.sh > ");				//pasar nombre de archivo a dinámico
+	strcat(command, temporal+1);
 	result=system(command);
-	return (result==0)?0:1;		//1:error al procesar el bloque
+	if (result!=0){
+		log_error(logger,"Bloque %d: Falló la transformación", position);
+		return 1;
+	}else{
+		log_info(logger,"Bloque %d: Transformación finalizada", position);
+		return 0;		//1:error al procesar el bloque
+	}
+
 }

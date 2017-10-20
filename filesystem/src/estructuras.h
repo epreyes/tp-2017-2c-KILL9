@@ -22,16 +22,9 @@ typedef struct
 		char* idNodo1;
 		int idBloque0;
 		int idBloque1;
-		int finBytes;
+		long finBytes;
 	// Agregar ip y puerto
 	} t_bloqueInfo;
-
-#define YAMA_HSK 1001
-#define NODO_HSK 1002
-
-#define YAMA_ARCHIVO_INFO 2001
-#define ERROR1 2002
-#define RESPUESTA_OK 2003
 
 // Errores
 

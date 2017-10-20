@@ -45,8 +45,11 @@ void simularEntradaConexionNodo(t_nodos* nodos) {
 	nodo1->libre = 16;
 	nodo1->total = 16;
 	nodo1->direccion="127.0.0.1:6001";
+	nodo1->socketNodo=1;
 
 	nodos->nodos = list_create();
+
+
 
 	list_add(nodos->nodos, nodo1);
 

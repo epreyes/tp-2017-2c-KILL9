@@ -20,6 +20,7 @@
 #include <unistd.h>
 #include <commons/config.h>
 #include <commons/log.h>
+#include "utils.h"
 
 //=========LOGGERS=============//
 t_log* logger;
@@ -28,5 +29,8 @@ t_config* config;
 //=========FILES============//
 FILE* script_transform; 	//lo tomo del pedido de transformación
 FILE* script_reduction;		//lo tomo del pedido de reducción local
+//=========SOCKETS============//
+int socket_worker;
+int socket_master;
 
 #endif /* HEADERS_WORKER_H_ */
