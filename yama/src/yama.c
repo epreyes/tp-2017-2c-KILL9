@@ -42,6 +42,7 @@ void init() {
 	yama->tabla_info_archivos = list_create();
 	yama->tabla_T_planificados = list_create();
 	yama->tabla_LR_planificados = list_create();
+	yama->tabla_GR_planificados = list_create();
 
 	/* inicializo el server en el socket configurado */
 	yama->yama_server = startServer(
@@ -68,9 +69,7 @@ void* processOperation(int master, char op) {
 		response = processTransformation(master);
 		break;
 	case 'L':
-		viewPlannedTable();
 		response = processLocalReduction(master);
-		viewPlannedTable();
 		break;
 	case 'G':
 		response = processGlobalReduction(master);

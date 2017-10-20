@@ -103,7 +103,7 @@ elem_info_archivo* getFileInfo(int master) {
 	else {
 		void* fsInfo = getFileSystemInfo(fileName);
 		elem_info_archivo* fileInfo =  malloc(sizeof(elem_info_archivo));
-		fileInfo->filename = fileName;
+		strcpy(fileInfo->filename,fileName);
 
 		int* size = malloc(sizeof(int));
 		memcpy(size, fsInfo, sizeof(int));
@@ -117,6 +117,7 @@ elem_info_archivo* getFileInfo(int master) {
 		list_add(yama->tabla_info_archivos, fileInfo);
 
 		info = fileInfo;
+		free(fileName);
 	}
 	return info;
 }

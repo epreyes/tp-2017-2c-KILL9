@@ -124,9 +124,7 @@ void increseClock(int* clock) {
 tr_datos* updateNodeInTable(block_info* blockRecived, int master, int clock) {
 	//se deberá reducir en 1 el valor de disponibilidad y avanzar el Clock al siguiente Worker
 	elem_tabla_nodos* nodo = list_get(yama->tabla_nodos, clock);
-	nodo->availability--;
-	nodo->tasks_in_progress++;
-	list_replace(yama->tabla_nodos, clock, nodo);
+	increaseNodeCharge(nodo->node_id);
 
 	//creo la fila que se va a devolver para la transformacion
 	tr_datos* nodePlaned = buildNodePlaned(blockRecived, master, nodo->node_id);

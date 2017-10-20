@@ -16,7 +16,7 @@ void* processTransformation(int master) {
 	t_list* nodeList = list_create();
 	nodeList = buildTransformationResponseNodeList(fsInfo, master);
 
-	return sortTransformationResponse(nodeList);
+	return sortTransformationResponse(nodeList, master);
 }
 
 void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId) {
@@ -42,18 +42,17 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 	int index = 0;
 	for (index = 0; index < fsInfo->blocks; index++) {
 		block_info* blockInfo = malloc(sizeof(block_info));
-		memcpy(blockInfo, info + (index * sizeof(block_info)), sizeof(block_info));
+		memcpy(blockInfo, info + (index * sizeof(block_info)),
+				sizeof(block_info));
 
 		//Planifico
 		tr_datos* nodeData = doPlanning(blockInfo, master);
 		//agrego a la lista de respuesta
 		list_add(nodeList, nodeData);
 
-		//creo el elemento para agregar a la tabla de planificados.
-		addToTransformationPlanedTable(master, nodeData);
-
 		//actualizo la tabla de estados con la informacion del nuevo job.
-		setInStatusTable('T', master, nodeData->nodo, getBlockId(nodeData->tr_tmp), nodeData->tr_tmp);
+		setInStatusTable('T', master, nodeData->nodo,
+				getBlockId(nodeData->tr_tmp), nodeData->tr_tmp);
 
 		free(blockInfo);
 	}
@@ -61,7 +60,7 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 	return nodeList;
 }
 
-void* sortTransformationResponse(t_list* buffer) {
+void* sortTransformationResponse(t_list* buffer, int master) {
 	bool (*comparator)(void*, void*);
 	comparator = &compareTransformationBlocks;
 	list_sort(buffer, comparator);
@@ -78,6 +77,9 @@ void* sortTransformationResponse(t_list* buffer) {
 	int index = 0;
 	for (index = 0; index < *blocks; index++) {
 		tr_datos* data = list_get(buffer, index);
+		//creo el elemento para agregar a la tabla de planificados.
+		addToTransformationPlanedTable(master, data);
+
 		memcpy(
 				sortedBuffer + sizeof(char) + sizeof(int)
 						+ (index * sizeof(tr_datos)), data, sizeof(tr_datos));

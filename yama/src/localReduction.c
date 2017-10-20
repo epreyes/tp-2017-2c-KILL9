@@ -71,6 +71,7 @@ void getLocalReductionTmpName(rl_datos* nodeData, int op, int blockId,
 }
 
 int allTransformProcesFinish(int master) {
+	viewStateTable();
 	int response = 0;
 	int index = 0;
 	for (index = 0; index < list_size(yama->tabla_estados); index++) {
@@ -113,7 +114,7 @@ void* processLocalReduction(int master) {
 
 			//creo el elemento para agregar a la tabla de planificados.
 			addToLocalReductionPlanedTable(master, localRedData);
-
+			increaseNodeCharge(localRedData->nodo);
 			memcpy(
 					localReductionRes + sizeof(char) + sizeof(int)
 							+ (index * sizeof(rl_datos)), localRedData,
@@ -121,6 +122,7 @@ void* processLocalReduction(int master) {
 		}
 		return localReductionRes;
 	} else {
+		perror("\nTODAS LAS TRANSFORMACIONES DEBEN TERMINAR ANTES DE EMPEZAR LAS REDUCCIONES LOCALES.");
 		return NULL;
 	}
 

@@ -39,7 +39,7 @@ void viewNodeTable() {
 	int index = 0;
 	for (index = 0; index < list_size(yama->tabla_nodos); index++) {
 		elem_tabla_nodos* node = list_get(yama->tabla_nodos, index);
-		printf("\nnodo id: %d, avail: %d, in progres: %d, done: %d\n",
+		printf("nodo id: %d, avail: %d, in progres: %d, done: %d\n",
 				node->node_id, node->availability, node->tasks_in_progress,
 				node->tasts_done);
 	}
@@ -111,13 +111,31 @@ void addToNodeList(void* fsInfo) {
 	}
 }
 
+void increaseNodeCharge(int node_id) {
+	int index = findNode(node_id);
+	elem_tabla_nodos* node = list_get(yama->tabla_nodos, index);
+	node->availability--;
+	node->tasks_in_progress++;
+	list_replace(yama->tabla_nodos, index, node);
+}
+
+void decreaseNodeCharge(int node_id) {
+	int index = findNode(node_id);
+	elem_tabla_nodos* node = list_get(yama->tabla_nodos, index);
+	node->availability++;
+	node->tasks_in_progress--;
+	node->tasts_done++;
+	list_replace(yama->tabla_nodos, index, node);
+}
+
 void updateNodeList(char op, int node_id) {
 	int index = findNode(node_id);
 	elem_tabla_nodos* node = list_get(yama->tabla_nodos, index);
 	switch (op) {
 	case 'T':
-		node->availability--;
-		node->tasks_in_progress++;
+		node->availability++;
+		node->tasks_in_progress--;
+		node->tasts_done++;
 		break;
 	case 'L':
 	case 'G':
@@ -139,7 +157,7 @@ void viewStateTable() {
 		elem_tabla_estados* row = list_get(stateTable, i);
 		i++;
 		printf(
-				"\nRow:\nJob=%d - Master=%d - Node=%d - Block=%d - Oper=%c - Temp=%s - Status=%c\n",
+				"Row:\nJob=%d - Master=%d - Node=%d - Block=%d - Oper=%c - Temp=%s - Status=%c\n",
 				row->job, row->master, row->node, row->block, row->op, row->tmp,
 				row->status);
 	}
@@ -181,7 +199,8 @@ void addNewRowStatusTable(elem_tabla_estados* elem) {
 	list_add(yama->tabla_estados, row);
 }
 
-void updateStatusTable(int master, char opCode, int node, int bloque, char status) {
+void updateStatusTable(int master, char opCode, int node, int bloque,
+		char status) {
 	int index = findRow(master, node, bloque, opCode);
 	elem_tabla_estados* row;
 	if (index > -1) {
@@ -203,10 +222,20 @@ void addToTransformationPlanedTable(int master, tr_datos* nodeData) {
 }
 
 void addToLocalReductionPlanedTable(int master, rl_datos* nodeData) {
-	elem_tabla_LR_planificados* planed = malloc(sizeof(elem_tabla_LR_planificados));
+	elem_tabla_LR_planificados* planed = malloc(
+			sizeof(elem_tabla_LR_planificados));
 	planed->data = malloc(sizeof(rl_datos));
 	memcpy(planed->data, nodeData, sizeof(rl_datos));
 	planed->master = master;
 	list_add(yama->tabla_LR_planificados, planed);
+}
+
+void addToGlobalReductionPlanedTable(int master, rg_datos* nodeData) {
+	elem_tabla_GR_planificados* planed = malloc(
+			sizeof(elem_tabla_GR_planificados));
+	planed->data = malloc(sizeof(rg_datos));
+	memcpy(planed->data, nodeData, sizeof(rg_datos));
+	planed->master = master;
+	list_add(yama->tabla_GR_planificados, planed);
 }
 

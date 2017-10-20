@@ -24,7 +24,7 @@ static char* LOG_PATH = "./log/yama.log";
 typedef struct {
 	int blocks;
 	int sizeInfo;
-	char* filename;
+	char filename[28];
 	void* info;
 } elem_info_archivo;
 

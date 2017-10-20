@@ -51,10 +51,12 @@ int getSizeToSend(void* masterRS) {
 		size = blocks * sizeof(rl_datos);
 		break;
 	case 'G':
-			size = blocks * sizeof(rg_datos);
-			break;
+		size = blocks * sizeof(rg_datos);
+		break;
+	case 'S':
+		size = blocks * sizeof(af_datos);
+		break;
 	}
-
 
 	return size + sizeof(char) + sizeof(int);
 }
