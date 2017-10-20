@@ -27,8 +27,6 @@ void processOk(int master) {
 	memcpy(&nodo, buffer, sizeof(int));
 	free(buffer);
 
-	printf("\nActualiza master %d, nodo %d, opCode %c, bloque %d \n", master, nodo, opCode, bloque);
-
 	updateStatusTable(master, opCode, nodo, bloque, 'F');
 	decreaseNodeCharge(nodo);
 

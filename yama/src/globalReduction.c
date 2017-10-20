@@ -128,8 +128,6 @@ void* processGlobalReduction(int master) {
 				getGlobalReductionTmpName(globalRedData, 'G',
 						getBlockId(elem->rl_tmp), master);
 
-				//char op, int master, int nodo, int bloque, char* tmpName
-				printf(" \n VA A METER EN LA RED GLOBAL G, %d, %d, %d, %s\n", master, globalRedData->nodo, 0, globalRedData->rg_tmp);
 				setInStatusTable('G', master, globalRedData->nodo,
 						0, globalRedData->rg_tmp);
 				increaseNodeCharge(globalRedData->nodo);

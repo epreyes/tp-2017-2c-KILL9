@@ -71,7 +71,6 @@ void getLocalReductionTmpName(rl_datos* nodeData, int op, int blockId,
 }
 
 int allTransformProcesFinish(int master) {
-	viewStateTable();
 	int response = 0;
 	int index = 0;
 	for (index = 0; index < list_size(yama->tabla_estados); index++) {

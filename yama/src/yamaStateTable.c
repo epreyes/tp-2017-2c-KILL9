@@ -17,14 +17,6 @@ void setInStatusTable(char op, int master, int nodo, int bloque, char* tmpName) 
 	elemStatus->status = 'P';
 	strcpy(elemStatus->tmp, tmpName);
 
-	if (op == 'G') {
-		printf(
-				"\nLa info a guardar en la tabla de estados es: job=%d, master=%d, node=%d, op=%c, status=%c, bloque=%d, temporal=%s\n",
-				elemStatus->job, elemStatus->master, elemStatus->node,
-				elemStatus->op, elemStatus->status, elemStatus->block,
-				elemStatus->tmp);
-	}
-
 	addNewRowStatusTable(elemStatus);
 }
 
@@ -172,9 +164,6 @@ void viewStateTable() {
 }
 
 int findInProcessTasks(int master, int node_id, int block, char op) {
-	printf(
-			"\n busca la tarea con los siguientes datos: master %d, nodo %d, bloque %d, operacion %c\n",
-			master, node_id, block, op);
 	int index = 0;
 	if (!list_is_empty(yama->tabla_estados)) {
 		for (index = 0; index < list_size(yama->tabla_estados); index++) {
