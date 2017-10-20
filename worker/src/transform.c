@@ -16,7 +16,6 @@ int transformBlock(int position, int size, char temporal[28] ){
 	char command[45];
 	strcpy(command,"./script.sh > ");				//pasar nombre de archivo a dinámico
 	strcat(command, temporal+1);
-	printf("\n\ncommand%s\n\n", command);
 	result=system(command);
 	if (result!=0){
 		log_error(logger,"Bloque %d: Falló la transformación", position);

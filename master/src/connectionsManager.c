@@ -40,7 +40,7 @@ int openNodeConnection(int node, char* ip, int port){
 	nodeSockets[node] = socket(AF_INET, SOCK_STREAM, 0);
 
 	if (connect(nodeSockets[node], (void*) &workerAddr, sizeof(workerAddr)) != 0) {
-		log_error(logger, "no se puede conectar con el nodo:%d", node);
+		log_error(logger, "No se puede conectar con el nodo:%d", node);
 		return 1;
 	}
 	return 0;

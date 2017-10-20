@@ -25,7 +25,7 @@ void sendTRequest(char* fileName){
 	memcpy(buffer+5,(data->fileName),(data->fileNameSize));
 
 //---Envío---
-	log_info(logger, "solicitando datos de transformación a YAMA");
+	log_info(logger, "Solicitando datos de transformación a YAMA");
 	//send(masterSocket,buffer,5+(data->fileNameSize),0);
 
 /*---DES_SERIALIZACIÓN---
@@ -55,10 +55,8 @@ void *runTransformThread(void* data){
 	tr_node* nodeData=malloc(sizeof(tr_node));
 	nodeData->code='T';
 	nodeData->fileSize=strlen(scriptString)+1;
-	printf("\ntamanio:%d\n",nodeData->file);
 	nodeData->file=malloc(nodeData->fileSize);		//ver el +1
 	strcpy(nodeData->file,scriptString);
-	printf("\n\nFile:%s\n\n",nodeData->file);
 	nodeData->blocksSize=datos->blocksCount;
 
 //---Serializo---
@@ -73,7 +71,6 @@ void *runTransformThread(void* data){
 	counter+=sizeof(int);
 
 	for (i = 0; i < (datos->blocksCount); ++i){
-		printf("\nSIZE:%d", datos->blocks[i].size);
 		memcpy(buffer+counter+(i*sizeof(block)),&(datos->blocks[i].pos),sizeof(int));
 		memcpy(buffer+counter+sizeof(int)+i*sizeof(block),&(datos->blocks[i].size),sizeof(int));
 		memcpy(buffer+counter+sizeof(int)+sizeof(int)+i*sizeof(block),(datos->blocks[i].tmp),28);

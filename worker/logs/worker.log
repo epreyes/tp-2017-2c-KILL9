@@ -571,3 +571,69 @@
 [INFO] 02:24:30:247 worker/(7925:7925): Bloque 68: Transformación finalizada
 [INFO] 02:24:30:248 worker/(7925:7925): Bloque 15: Transformando
 [INFO] 02:24:30:395 worker/(7925:7925): Bloque 15: Transformación finalizada
+[INFO] 02:28:36:577 worker/(8123:8123): Esperando conexiones de master
+[INFO] 02:28:41:705 worker/(8123:8123): Conexión de Master 5 recibida
+[INFO] 02:28:41:746 worker/(8123:8123): Solicitud de transformación recibida
+[INFO] 02:28:41:758 worker/(8123:8123): Bloque 68: Transformando
+[INFO] 02:28:41:842 worker/(8123:8123): Bloque 68: Transformación finalizada
+[INFO] 02:28:41:843 worker/(8123:8123): Bloque 15: Transformando
+[INFO] 02:28:41:951 worker/(8123:8123): Bloque 15: Transformación finalizada
+[INFO] 02:29:41:663 worker/(8190:8190): Esperando conexiones de master
+[INFO] 02:29:45:970 worker/(8190:8190): Conexión de Master 5 recibida
+[INFO] 02:29:46:16 worker/(8190:8190): Solicitud de transformación recibida
+[INFO] 02:29:46:24 worker/(8190:8190): Bloque 68: Transformando
+[INFO] 02:29:46:112 worker/(8190:8190): Bloque 68: Transformación finalizada
+[INFO] 02:29:46:113 worker/(8190:8190): Bloque 15: Transformando
+[INFO] 02:29:46:212 worker/(8190:8190): Bloque 15: Transformación finalizada
+[INFO] 02:31:55:548 worker/(8280:8280): Esperando conexiones de master
+[INFO] 02:32:04:62 worker/(8280:8280): Conexión de Master 5 recibida
+[INFO] 02:32:04:109 worker/(8280:8280): Solicitud de transformación recibida
+[INFO] 02:32:04:118 worker/(8280:8280): Bloque 68: Transformando
+[INFO] 02:32:04:201 worker/(8280:8280): Bloque 68: Transformación finalizada
+[INFO] 02:32:04:202 worker/(8280:8280): Bloque 15: Transformando
+[INFO] 02:32:04:310 worker/(8280:8280): Bloque 15: Transformación finalizada
+[INFO] 02:35:30:39 worker/(8436:8436): Esperando conexiones de master
+[INFO] 02:35:33:888 worker/(8436:8436): Conexión de Master 5 recibida
+[INFO] 02:35:33:934 worker/(8436:8436): Solicitud de transformación recibida
+[INFO] 02:35:33:935 worker/(8436:8436): Obteniendo datos para la transformación
+[INFO] 02:35:33:938 worker/(8436:8436): Bloque 68: Transformando
+[INFO] 02:35:34:15 worker/(8436:8436): Bloque 68: Transformación finalizada
+[INFO] 02:35:34:17 worker/(8436:8436): Bloque 15: Transformando
+[INFO] 02:35:34:90 worker/(8436:8436): Bloque 15: Transformación finalizada
+[INFO] 02:35:34:122 worker/(8436:8436): tarea de transformación finalizada
+[INFO] 02:37:11:260 worker/(8535:8535): Esperando conexiones de master
+[INFO] 02:37:15:96 worker/(8535:8535): Conexión de Master 5 recibida
+[INFO] 02:37:15:97 worker/(8535:8535): Solicitud de transformación recibida
+[INFO] 02:37:15:97 worker/(8535:8535): Obteniendo datos para la transformación
+[INFO] 02:37:15:98 worker/(8535:8535): Bloque 68: Transformando
+[ERROR] 02:37:15:129 worker/(8535:8535): Bloque 68: Falló la transformación
+[INFO] 02:37:15:130 worker/(8535:8535): Bloque 15: Transformando
+[ERROR] 02:37:15:155 worker/(8535:8535): Bloque 15: Falló la transformación
+[INFO] 02:37:15:171 worker/(8535:8535): tarea de transformación finalizada
+[INFO] 02:38:15:188 worker/(8554:8554): Esperando conexiones de master
+[INFO] 02:38:18:267 worker/(8554:8554): Conexión de Master 5 recibida
+[INFO] 02:38:18:268 worker/(8554:8554): Solicitud de transformación recibida
+[INFO] 02:38:18:268 worker/(8554:8554): Obteniendo datos para la transformación
+[INFO] 02:38:18:269 worker/(8554:8554): Bloque 68: Transformando
+[ERROR] 02:38:18:335 worker/(8554:8554): Bloque 68: Falló la transformación
+[INFO] 02:38:18:339 worker/(8554:8554): Bloque 15: Transformando
+[ERROR] 02:38:18:385 worker/(8554:8554): Bloque 15: Falló la transformación
+[INFO] 02:38:18:416 worker/(8554:8554): tarea de transformación finalizada
+[INFO] 02:38:30:933 worker/(8574:8574): Esperando conexiones de master
+[INFO] 02:38:34:509 worker/(8574:8574): Conexión de Master 5 recibida
+[INFO] 02:38:34:510 worker/(8574:8574): Solicitud de transformación recibida
+[INFO] 02:38:34:510 worker/(8574:8574): Obteniendo datos para la transformación
+[INFO] 02:38:34:510 worker/(8574:8574): Bloque 68: Transformando
+[ERROR] 02:38:34:578 worker/(8574:8574): Bloque 68: Falló la transformación
+[INFO] 02:38:34:579 worker/(8574:8574): Bloque 15: Transformando
+[ERROR] 02:38:34:623 worker/(8574:8574): Bloque 15: Falló la transformación
+[INFO] 02:38:34:656 worker/(8574:8574): tarea de transformación finalizada
+[INFO] 02:39:07:689 worker/(8636:8636): Esperando conexiones de master
+[INFO] 02:39:13:720 worker/(8636:8636): Conexión de Master 5 recibida
+[INFO] 02:39:13:776 worker/(8636:8636): Solicitud de transformación recibida
+[INFO] 02:39:13:778 worker/(8636:8636): Obteniendo datos para la transformación
+[INFO] 02:39:13:779 worker/(8636:8636): Bloque 68: Transformando
+[INFO] 02:39:13:849 worker/(8636:8636): Bloque 68: Transformación finalizada
+[INFO] 02:39:13:850 worker/(8636:8636): Bloque 15: Transformando
+[INFO] 02:39:13:917 worker/(8636:8636): Bloque 15: Transformación finalizada
+[INFO] 02:39:13:948 worker/(8636:8636): tarea de transformación finalizada
