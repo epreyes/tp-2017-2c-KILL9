@@ -44,7 +44,7 @@ void loadServer(void){
 void readBuffer(){
 		void* buffer = malloc(1);
 		char operation;
-		int bytesRecibidos = recv(socket_master, buffer, 1,0);
+		int bytesRecibidos = recv(socket_master, buffer, 1,MSG_WAITALL);
 		if (bytesRecibidos <= 0) {
 			log_error(logger,"el master %d se encuentra desconectado");
 			exit(1);
@@ -58,14 +58,49 @@ void readBuffer(){
 		int position = 68;
 		int size = 100000;
 
+		//--------
+		tr_node datos;
+
 		switch(operation){
 			case 'T':
+				log_info(logger,"Solicitud de transformación recibida");
+			//tamanio del archivo
+				free(buffer);
+				buffer = malloc(4);
+				recv(socket_master, buffer, 4,0);
+				memcpy(&(datos.fileSize),buffer,4);
+				printf("\n\ntamanio:%d\n\n",datos.fileSize);
+			//Archivo
+				free(buffer);
+				buffer = malloc(datos.fileSize);
+				datos.file=malloc(datos.fileSize);
+				recv(socket_master, buffer, datos.fileSize,0);
+				strcpy(datos.file, buffer);
+				printf("\n\nFile:%s\n\n",datos.file);
+			//cant bloques
+				free(buffer);
+				buffer = malloc(sizeof(int));
+				recv(socket_master, buffer, sizeof(int),0);
+				memcpy(&(datos.blocksSize), buffer, sizeof(int));
+				printf("\n\nFile:%d\n\n",datos.blocksSize);
+			//bloques
+				free(buffer);
+				buffer = malloc(sizeof(block)*datos.blocksSize);
+				datos.blocks=malloc(sizeof(block)*datos.blocksSize);
+				recv(socket_master, buffer, sizeof(block)*datos.blocksSize,0);
+				memcpy(datos.blocks, buffer,sizeof(block)*datos.blocksSize);
+			//print_test
+				int i;
+				for (i = 0; i < (datos.blocksSize); ++i){
+						printf("\t pos:%d  \t tam:%d \t tmp:%s\n", datos.blocks[i].pos, datos.blocks[i].size, datos.blocks[i].tmp);
+				}
+
 				//recorrer y generar un fork por cada bloque
 				//cada transformBlock va a hacer el send a Master
 
-				log_info(logger,"Solicitud de transformación recibida");
 				transformBlock(position,size,temporal);
 				//}
+				free(datos.file);
 				break;
 			case 'L':
 				log_info(logger,"Solicitud de reducción local recibida");

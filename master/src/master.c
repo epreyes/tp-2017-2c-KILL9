@@ -13,7 +13,6 @@
 #include "headers/master.h"
 #include "headers/metrics.h"
 #include "headers/answers.h"
-#include "headers/connectionsManager.h"
 
 #include "headers/transform.h"
 #include "headers/localReduction.h"
@@ -35,9 +34,9 @@ int main(int argc, char* argv[]){
 	int answerSize_RG = sizeof(rg_answer)/sizeof(rg_answer[0]);
 	int answerSize_AF = sizeof(af_answer)/sizeof(af_answer[0]);
 
+	createLoggers();
 	loadConfigs();
 	openYamaConnection();
-	createLoggers();
 	validateArgs(argc, argv);										//valido argumentos
 	loadScripts(argv[1],argv[2]);
 

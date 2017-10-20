@@ -9,7 +9,7 @@
 
 //=============YAMA_REQUEST=============================//
 void sendGRequest(){
-
+/*
 //---Preparo Paquete---
 	global_rq* data;
 	data = malloc(sizeof(global_rq));
@@ -24,6 +24,7 @@ void sendGRequest(){
 
 	free(buffer);
 	free(data);
+*/
 }
 
 //=============THREAD_ACTION===================================//

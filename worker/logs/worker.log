@@ -294,3 +294,119 @@
 [INFO] 22:55:35:192 worker/(2296:2296): Solicitud de transformación recibida
 [INFO] 22:55:35:194 worker/(2296:2296): Bloque 68: Transformando
 [INFO] 22:55:35:242 worker/(2296:2296): Bloque 68: Transformación finalizada
+[INFO] 23:06:10:952 worker/(2679:2679): Esperando conexiones de master
+[INFO] 23:06:13:865 worker/(2679:2679): Conexión de Master 5 recibida
+[INFO] 23:06:13:919 worker/(2679:2679): Solicitud de transformación recibida
+[INFO] 23:06:13:921 worker/(2679:2679): Bloque 68: Transformando
+[INFO] 23:06:13:966 worker/(2679:2679): Bloque 68: Transformación finalizada
+[INFO] 23:07:18:202 worker/(2729:2729): Esperando conexiones de master
+[INFO] 23:07:20:814 worker/(2729:2729): Conexión de Master 5 recibida
+[INFO] 23:07:20:865 worker/(2729:2729): Solicitud de transformación recibida
+[INFO] 23:07:20:867 worker/(2729:2729): Bloque 68: Transformando
+[INFO] 23:07:20:910 worker/(2729:2729): Bloque 68: Transformación finalizada
+[INFO] 23:10:19:331 worker/(2807:2807): Esperando conexiones de master
+[INFO] 23:10:23:643 worker/(2807:2807): Conexión de Master 5 recibida
+[INFO] 23:10:23:692 worker/(2807:2807): Solicitud de transformación recibida
+[INFO] 23:10:23:695 worker/(2807:2807): Bloque 68: Transformando
+[INFO] 23:10:23:741 worker/(2807:2807): Bloque 68: Transformación finalizada
+[INFO] 23:13:26:485 worker/(2956:2956): Esperando conexiones de master
+[INFO] 23:13:30:891 worker/(2956:2956): Conexión de Master 5 recibida
+[INFO] 23:14:25:680 worker/(3005:3005): Esperando conexiones de master
+[INFO] 23:14:28:358 worker/(3005:3005): Conexión de Master 5 recibida
+[INFO] 23:15:22:464 worker/(3029:3029): Esperando conexiones de master
+[INFO] 23:15:30:30 worker/(3029:3029): Conexión de Master 5 recibida
+[INFO] 23:15:30:337 worker/(3029:3029): Solicitud de transformación recibida
+[INFO] 23:15:30:343 worker/(3029:3029): Bloque 68: Transformando
+[ERROR] 23:15:30:546 worker/(3029:3029): Bloque 10: Falló la transformación
+[INFO] 23:19:26:179 worker/(3325:3325): Esperando conexiones de master
+[INFO] 23:19:38:319 worker/(3326:3326): Esperando conexiones de master
+[INFO] 23:19:41:260 worker/(3326:3326): Conexión de Master 5 recibida
+[INFO] 23:22:38:148 worker/(3492:3492): Esperando conexiones de master
+[INFO] 23:22:41:590 worker/(3492:3492): Conexión de Master 5 recibida
+[INFO] 23:23:38:829 worker/(3547:3547): Esperando conexiones de master
+[INFO] 23:23:41:608 worker/(3547:3547): Conexión de Master 5 recibida
+[INFO] 23:24:37:267 worker/(3599:3599): Esperando conexiones de master
+[INFO] 23:24:40:364 worker/(3599:3599): Conexión de Master 5 recibida
+[INFO] 23:32:28:57 worker/(3824:3824): Esperando conexiones de master
+[INFO] 23:32:31:450 worker/(3824:3824): Conexión de Master 5 recibida
+[INFO] 23:44:52:42 worker/(4001:4001): Esperando conexiones de master
+[INFO] 23:44:55:199 worker/(4001:4001): Conexión de Master 5 recibida
+[INFO] 00:47:25:890 worker/(4589:4589): Esperando conexiones de master
+[INFO] 00:47:29:837 worker/(4589:4589): Conexión de Master 5 recibida
+[INFO] 00:48:06:302 worker/(4637:4637): Esperando conexiones de master
+[INFO] 00:48:11:605 worker/(4637:4637): Conexión de Master 5 recibida
+[INFO] 00:50:07:682 worker/(4727:4727): Esperando conexiones de master
+[INFO] 00:50:10:956 worker/(4727:4727): Conexión de Master 5 recibida
+[INFO] 00:51:04:686 worker/(4777:4777): Esperando conexiones de master
+[INFO] 00:51:06:856 worker/(4777:4777): Conexión de Master 5 recibida
+[INFO] 00:52:06:565 worker/(4819:4819): Esperando conexiones de master
+[INFO] 00:52:09:284 worker/(4819:4819): Conexión de Master 5 recibida
+[INFO] 00:57:16:410 worker/(4960:4960): Esperando conexiones de master
+[INFO] 00:57:19:217 worker/(4960:4960): Conexión de Master 5 recibida
+[INFO] 00:57:19:287 worker/(4960:4960): Solicitud de transformación recibida
+[INFO] 00:57:19:290 worker/(4960:4960): Bloque 68: Transformando
+[INFO] 00:57:19:374 worker/(4960:4960): Bloque 68: Transformación finalizada
+[INFO] 01:04:36:274 worker/(5168:5168): Esperando conexiones de master
+[INFO] 01:04:40:759 worker/(5168:5168): Conexión de Master 5 recibida
+[INFO] 01:04:40:831 worker/(5168:5168): Solicitud de transformación recibida
+[INFO] 01:04:40:837 worker/(5168:5168): Bloque 68: Transformando
+[INFO] 01:04:40:918 worker/(5168:5168): Bloque 68: Transformación finalizada
+[INFO] 01:05:06:299 worker/(5213:5213): Esperando conexiones de master
+[INFO] 01:05:10:265 worker/(5213:5213): Conexión de Master 5 recibida
+[INFO] 01:05:10:339 worker/(5213:5213): Solicitud de transformación recibida
+[INFO] 01:05:10:352 worker/(5213:5213): Bloque 68: Transformando
+[INFO] 01:05:10:431 worker/(5213:5213): Bloque 68: Transformación finalizada
+[INFO] 01:07:01:746 worker/(5301:5301): Esperando conexiones de master
+[INFO] 01:07:04:782 worker/(5301:5301): Conexión de Master 5 recibida
+[INFO] 01:07:04:816 worker/(5301:5301): Solicitud de transformación recibida
+[INFO] 01:07:04:819 worker/(5301:5301): Bloque 68: Transformando
+[INFO] 01:07:04:857 worker/(5301:5301): Bloque 68: Transformación finalizada
+[INFO] 01:07:33:953 worker/(5346:5346): Esperando conexiones de master
+[INFO] 01:07:37:708 worker/(5346:5346): Conexión de Master 5 recibida
+[INFO] 01:07:37:739 worker/(5346:5346): Solicitud de transformación recibida
+[INFO] 01:07:37:743 worker/(5346:5346): Bloque 68: Transformando
+[INFO] 01:07:37:780 worker/(5346:5346): Bloque 68: Transformación finalizada
+[INFO] 01:08:15:388 worker/(5392:5392): Esperando conexiones de master
+[INFO] 01:08:20:474 worker/(5392:5392): Conexión de Master 5 recibida
+[INFO] 01:08:20:531 worker/(5392:5392): Solicitud de transformación recibida
+[INFO] 01:08:20:543 worker/(5392:5392): Bloque 68: Transformando
+[INFO] 01:08:20:587 worker/(5392:5392): Bloque 68: Transformación finalizada
+[INFO] 01:10:40:430 worker/(5468:5468): Esperando conexiones de master
+[INFO] 01:10:43:578 worker/(5468:5468): Conexión de Master 5 recibida
+[INFO] 01:10:43:633 worker/(5468:5468): Solicitud de transformación recibida
+[INFO] 01:10:43:644 worker/(5468:5468): Bloque 68: Transformando
+[INFO] 01:10:43:711 worker/(5468:5468): Bloque 68: Transformación finalizada
+[INFO] 01:11:27:522 worker/(5518:5518): Esperando conexiones de master
+[INFO] 01:11:30:762 worker/(5518:5518): Conexión de Master 5 recibida
+[INFO] 01:11:30:830 worker/(5518:5518): Solicitud de transformación recibida
+[INFO] 01:11:30:844 worker/(5518:5518): Bloque 68: Transformando
+[INFO] 01:11:30:935 worker/(5518:5518): Bloque 68: Transformación finalizada
+[INFO] 01:14:08:961 worker/(5610:5610): Esperando conexiones de master
+[INFO] 01:14:12:188 worker/(5610:5610): Conexión de Master 5 recibida
+[INFO] 01:14:12:246 worker/(5610:5610): Solicitud de transformación recibida
+[INFO] 01:14:12:254 worker/(5610:5610): Bloque 68: Transformando
+[INFO] 01:14:12:338 worker/(5610:5610): Bloque 68: Transformación finalizada
+[INFO] 01:14:22:35 worker/(5617:5617): Esperando conexiones de master
+[INFO] 01:14:24:670 worker/(5617:5617): Conexión de Master 5 recibida
+[INFO] 01:14:24:732 worker/(5617:5617): Solicitud de transformación recibida
+[INFO] 01:14:24:737 worker/(5617:5617): Bloque 68: Transformando
+[INFO] 01:14:24:827 worker/(5617:5617): Bloque 68: Transformación finalizada
+[INFO] 01:21:01:820 worker/(5835:5835): Esperando conexiones de master
+[INFO] 01:21:04:460 worker/(5835:5835): Conexión de Master 5 recibida
+[INFO] 01:21:04:520 worker/(5835:5835): Solicitud de transformación recibida
+[INFO] 01:21:04:530 worker/(5835:5835): Bloque 68: Transformando
+[INFO] 01:21:04:629 worker/(5835:5835): Bloque 68: Transformación finalizada
+[INFO] 01:21:42:908 worker/(5878:5878): Esperando conexiones de master
+[INFO] 01:21:46:260 worker/(5878:5878): Conexión de Master 5 recibida
+[INFO] 01:21:46:331 worker/(5878:5878): Solicitud de transformación recibida
+[INFO] 01:24:59:749 worker/(5944:5944): Esperando conexiones de master
+[INFO] 01:25:03:138 worker/(5944:5944): Conexión de Master 5 recibida
+[INFO] 01:25:03:210 worker/(5944:5944): Solicitud de transformación recibida
+[INFO] 01:33:40:600 worker/(6187:6187): Esperando conexiones de master
+[INFO] 01:33:44:70 worker/(6187:6187): Conexión de Master 5 recibida
+[INFO] 01:33:44:138 worker/(6187:6187): Solicitud de transformación recibida
+[INFO] 01:34:58:480 worker/(6273:6273): Esperando conexiones de master
+[INFO] 01:35:01:54 worker/(6273:6273): Conexión de Master 5 recibida
+[INFO] 01:35:01:106 worker/(6273:6273): Solicitud de transformación recibida
+[INFO] 01:35:01:119 worker/(6273:6273): Bloque 68: Transformando
+[INFO] 01:35:01:199 worker/(6273:6273): Bloque 68: Transformación finalizada

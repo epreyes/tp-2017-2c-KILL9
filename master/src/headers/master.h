@@ -24,6 +24,7 @@
 #include <tplibraries/protocol/master_yama.h>
 #include <tplibraries/protocol/master_worker.h>
 #include "utils.h"
+#include "connectionsManager.h"
 //=========LOGGERS=============//
 
 t_log* logger;
