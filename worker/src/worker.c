@@ -9,12 +9,7 @@
  */
 
 #include "headers/worker.h"
-#include "headers/utils.h"
 #include "headers/connectionsManager.h"
-#include "headers/transform.h"
-#include "headers/localReduction.h"
-#include "headers/globalReduction.h"
-#include "headers/finalStore.h"
 
 
 int main(){
@@ -23,8 +18,9 @@ int main(){
 	loadServer();
 	//-------------
 	generateTempsFolder();
+	readBuffer();
 
-
+	//-------------
 	log_destroy(logger);
 	config_destroy(config);
 	return EXIT_SUCCESS;
