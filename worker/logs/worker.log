@@ -637,3 +637,244 @@
 [INFO] 02:39:13:850 worker/(8636:8636): Bloque 15: Transformando
 [INFO] 02:39:13:917 worker/(8636:8636): Bloque 15: Transformación finalizada
 [INFO] 02:39:13:948 worker/(8636:8636): tarea de transformación finalizada
+[INFO] 02:53:56:160 worker/(9144:9144): Esperando conexiones de master
+[INFO] 02:54:04:11 worker/(9144:9144): Conexión de Master 5 recibida
+[INFO] 02:54:04:59 worker/(9144:9144): Solicitud de transformación recibida
+[INFO] 02:54:04:60 worker/(9144:9144): Obteniendo datos para la transformación
+[INFO] 02:54:04:61 worker/(9144:9144): Bloque 68: Transformando
+[INFO] 02:54:04:130 worker/(9144:9144): Bloque 68: Transformación finalizada
+[INFO] 02:54:04:131 worker/(9144:9144): Bloque 15: Transformando
+[INFO] 02:54:04:199 worker/(9144:9144): Bloque 15: Transformación finalizada
+[INFO] 02:54:04:230 worker/(9144:9144): tarea de transformación finalizada
+[INFO] 02:54:40:114 worker/(9194:9194): Esperando conexiones de master
+[INFO] 02:54:46:718 worker/(9194:9194): Conexión de Master 5 recibida
+[INFO] 02:54:46:764 worker/(9194:9194): Solicitud de transformación recibida
+[INFO] 02:54:46:766 worker/(9194:9194): Obteniendo datos para la transformación
+[INFO] 02:54:46:767 worker/(9194:9194): Bloque 68: Transformando
+[INFO] 02:54:46:836 worker/(9194:9194): Bloque 68: Transformación finalizada
+[INFO] 02:54:46:837 worker/(9194:9194): Bloque 15: Transformando
+[INFO] 02:54:46:905 worker/(9194:9194): Bloque 15: Transformación finalizada
+[INFO] 02:54:46:936 worker/(9194:9194): Tarea de transformación finalizada
+[INFO] 08:13:27:988 worker/(9213:9213): Esperando conexiones de master
+[INFO] 08:13:31:625 worker/(9213:9213): Conexión de Master 5 recibida
+[INFO] 08:13:31:647 worker/(9213:9213): Solicitud de transformación recibida
+[INFO] 08:13:31:648 worker/(9213:9213): Obteniendo datos para la transformación
+[INFO] 08:13:31:649 worker/(9213:9213): Bloque 68: Transformando
+[INFO] 08:13:31:686 worker/(9213:9213): Bloque 68: Transformación finalizada
+[INFO] 08:13:31:688 worker/(9213:9213): Bloque 15: Transformando
+[INFO] 08:13:31:717 worker/(9213:9213): Bloque 15: Transformación finalizada
+[INFO] 08:13:31:727 worker/(9213:9213): Tarea de transformación finalizada
+[INFO] 08:20:32:388 worker/(9514:9514): Esperando conexiones de master
+[INFO] 08:20:44:350 worker/(9516:9516): Esperando conexiones de master
+[INFO] 08:21:33:480 worker/(9579:9579): Esperando conexiones de master
+[TRACE] 08:27:02:880 worker/(9754:9754): Archivo de configuraciones cargado.
+[INFO] 08:27:02:882 worker/(9754:9754): Esperando conexiones de master
+[INFO] 08:28:00:417 worker/(9803:9803): Logger generado
+[INFO] 08:28:00:418 worker/(9803:9803): Archivo de configuraciones cargado.
+[INFO] 08:28:00:420 worker/(9803:9803): Esperando conexiones de master
+[INFO] 08:32:42:0 worker/(9858:9858): Logger generado
+[INFO] 08:32:42:2 worker/(9858:9858): Archivo de configuraciones cargado
+[INFO] 08:32:42:3 worker/(9858:9858): Esperando conexiones de master
+[INFO] 08:36:11:34 worker/(9942:9942): Logger generado
+[INFO] 08:36:11:38 worker/(9942:9942): Archivo de configuraciones cargado
+[INFO] 08:36:11:39 worker/(9942:9942): Esperando conexiones de master
+[TRACE] 08:36:14:762 worker/(9942:9942): Conexión de Master 5 recibida
+[INFO] 08:36:14:834 worker/(9942:9942): Solicitud de transformación recibida
+[INFO] 08:36:14:835 worker/(9942:9942): Obteniendo datos para la transformación
+[TRACE] 08:36:14:838 worker/(9942:9942): Bloque 68: Transformando
+[TRACE] 08:36:14:940 worker/(9942:9942): Bloque 68: Transformación finalizada
+[TRACE] 08:36:14:941 worker/(9942:9942): Bloque 15: Transformando
+[TRACE] 08:36:15:8 worker/(9942:9942): Bloque 15: Transformación finalizada
+[TRACE] 08:36:15:38 worker/(9942:9942): Tarea de transformación finalizada
+[INFO] 08:37:29:419 worker/(10007:10007): Logger generado
+[INFO] 08:37:29:423 worker/(10007:10007): Archivo de configuraciones cargado
+[INFO] 08:37:29:424 worker/(10007:10007): Esperando conexiones de master
+[TRACE] 08:37:35:254 worker/(10007:10007): Conexión de Master 5 recibida
+[INFO] 08:37:35:295 worker/(10007:10007): Solicitud de transformación recibida
+[INFO] 08:37:35:296 worker/(10007:10007): Obteniendo datos para la transformación
+[INFO] 08:37:35:298 worker/(10007:10007): Bloque 68: Transformando
+[INFO] 08:37:35:373 worker/(10007:10007): Bloque 68: Transformación finalizada
+[INFO] 08:37:35:374 worker/(10007:10007): Bloque 15: Transformando
+[INFO] 08:37:35:447 worker/(10007:10007): Bloque 15: Transformación finalizada
+[TRACE] 08:37:35:478 worker/(10007:10007): Tarea de transformación finalizada
+[INFO] 08:52:41:247 worker/(10518:10518): Logger generado
+[INFO] 08:52:41:255 worker/(10518:10518): Archivo de configuraciones cargado
+[INFO] 08:52:41:256 worker/(10518:10518): Esperando conexiones de master
+[TRACE] 08:52:47:140 worker/(10518:10518): Conexión de Master 5 recibida
+[INFO] 08:53:28:790 worker/(10562:10562): Logger generado
+[INFO] 08:53:28:794 worker/(10562:10562): Archivo de configuraciones cargado
+[INFO] 08:53:28:796 worker/(10562:10562): Esperando conexiones de master
+[TRACE] 08:53:32:309 worker/(10562:10562): Conexión de Master 5 recibida
+[INFO] 08:57:29:250 worker/(10792:10792): Logger generado
+[INFO] 08:57:29:253 worker/(10792:10792): Archivo de configuraciones cargado
+[INFO] 08:57:29:254 worker/(10792:10792): Esperando conexiones de master
+[TRACE] 08:57:33:645 worker/(10792:10792): Conexión de Master 5 recibida
+[INFO] 08:57:33:692 worker/(10792:10792): Solicitud de transformación recibida
+[INFO] 08:57:33:694 worker/(10792:10792): Obteniendo datos para la transformación
+[INFO] 09:00:18:993 worker/(10969:10969): Logger generado
+[INFO] 09:00:18:995 worker/(10969:10969): Archivo de configuraciones cargado
+[INFO] 09:00:18:996 worker/(10969:10969): Esperando conexiones de master
+[TRACE] 09:00:22:480 worker/(10969:10969): Conexión de Master 5 recibida
+[INFO] 09:00:22:526 worker/(10969:10969): Solicitud de transformación recibida
+[INFO] 09:00:22:527 worker/(10969:10969): Obteniendo datos para la transformación
+[INFO] 09:01:57:389 worker/(11032:11032): Logger generado
+[INFO] 09:01:57:391 worker/(11032:11032): Archivo de configuraciones cargado
+[INFO] 09:01:57:399 worker/(11032:11032): Esperando conexiones de master
+[TRACE] 09:02:01:540 worker/(11032:11032): Conexión de Master 5 recibida
+[INFO] 09:02:01:596 worker/(11032:11032): Solicitud de transformación recibida
+[INFO] 09:02:01:598 worker/(11032:11032): Obteniendo datos para la transformación
+[INFO] 09:02:45:618 worker/(11080:11080): Logger generado
+[INFO] 09:02:45:627 worker/(11080:11080): Archivo de configuraciones cargado
+[INFO] 09:02:45:629 worker/(11080:11080): Esperando conexiones de master
+[TRACE] 09:02:48:541 worker/(11080:11080): Conexión de Master 5 recibida
+[INFO] 09:02:48:588 worker/(11080:11080): Solicitud de transformación recibida
+[INFO] 09:02:48:589 worker/(11080:11080): Obteniendo datos para la transformación
+[INFO] 09:03:43:913 worker/(11090:11090): Logger generado
+[INFO] 09:03:43:915 worker/(11090:11090): Archivo de configuraciones cargado
+[INFO] 09:03:43:916 worker/(11090:11090): Esperando conexiones de master
+[TRACE] 09:03:47:210 worker/(11090:11090): Conexión de Master 5 recibida
+[INFO] 09:03:47:255 worker/(11090:11090): Solicitud de transformación recibida
+[INFO] 09:03:47:256 worker/(11090:11090): Obteniendo datos para la transformación
+[INFO] 09:04:39:761 worker/(11145:11145): Logger generado
+[INFO] 09:04:39:764 worker/(11145:11145): Archivo de configuraciones cargado
+[INFO] 09:04:39:766 worker/(11145:11145): Esperando conexiones de master
+[TRACE] 09:04:46:112 worker/(11145:11145): Conexión de Master 5 recibida
+[INFO] 09:04:46:153 worker/(11145:11145): Solicitud de transformación recibida
+[INFO] 09:04:46:154 worker/(11145:11145): Obteniendo datos para la transformación
+[INFO] 09:05:08:769 worker/(11186:11186): Logger generado
+[INFO] 09:05:08:770 worker/(11186:11186): Archivo de configuraciones cargado
+[INFO] 09:05:08:771 worker/(11186:11186): Esperando conexiones de master
+[TRACE] 09:05:11:514 worker/(11186:11186): Conexión de Master 5 recibida
+[INFO] 09:05:11:561 worker/(11186:11186): Solicitud de transformación recibida
+[INFO] 09:05:11:563 worker/(11186:11186): Obteniendo datos para la transformación
+[INFO] 09:07:35:108 worker/(11282:11282): Logger generado
+[INFO] 09:07:35:110 worker/(11282:11282): Archivo de configuraciones cargado
+[INFO] 09:07:35:111 worker/(11282:11282): Esperando conexiones de master
+[TRACE] 09:07:39:373 worker/(11282:11282): Conexión de Master 5 recibida
+[INFO] 09:07:39:426 worker/(11282:11282): Solicitud de transformación recibida
+[INFO] 09:07:39:427 worker/(11282:11282): Obteniendo datos para la transformación
+[INFO] 09:08:17:992 worker/(11332:11332): Logger generado
+[INFO] 09:08:17:994 worker/(11332:11332): Archivo de configuraciones cargado
+[INFO] 09:08:17:995 worker/(11332:11332): Esperando conexiones de master
+[TRACE] 09:08:21:201 worker/(11332:11332): Conexión de Master 5 recibida
+[INFO] 09:08:21:247 worker/(11332:11332): Solicitud de transformación recibida
+[INFO] 09:08:21:248 worker/(11332:11332): Obteniendo datos para la transformación
+[INFO] 09:12:22:693 worker/(11471:11471): Logger generado
+[INFO] 09:12:22:700 worker/(11471:11471): Archivo de configuraciones cargado
+[INFO] 09:12:22:701 worker/(11471:11471): Esperando conexiones de master
+[TRACE] 09:12:25:378 worker/(11471:11471): Conexión de Master 5 recibida
+[INFO] 09:12:25:410 worker/(11471:11471): Solicitud de transformación recibida
+[INFO] 09:12:25:412 worker/(11471:11471): Obteniendo datos para la transformación
+[INFO] 09:13:26:321 worker/(11492:11492): Logger generado
+[INFO] 09:13:26:332 worker/(11492:11492): Archivo de configuraciones cargado
+[INFO] 09:13:26:335 worker/(11492:11492): Esperando conexiones de master
+[TRACE] 09:13:29:227 worker/(11492:11492): Conexión de Master 5 recibida
+[INFO] 09:13:29:239 worker/(11492:11492): Solicitud de transformación recibida
+[INFO] 09:13:29:240 worker/(11492:11492): Obteniendo datos para la transformación
+[INFO] 09:14:20:642 worker/(11565:11565): Logger generado
+[INFO] 09:14:20:644 worker/(11565:11565): Archivo de configuraciones cargado
+[INFO] 09:14:20:646 worker/(11565:11565): Esperando conexiones de master
+[TRACE] 09:14:25:14 worker/(11565:11565): Conexión de Master 5 recibida
+[INFO] 09:14:25:59 worker/(11565:11565): Solicitud de transformación recibida
+[INFO] 09:14:25:60 worker/(11565:11565): Obteniendo datos para la transformación
+[INFO] 09:16:39:321 worker/(11623:11623): Logger generado
+[INFO] 09:16:39:324 worker/(11623:11623): Archivo de configuraciones cargado
+[INFO] 09:16:39:325 worker/(11623:11623): Esperando conexiones de master
+[TRACE] 09:16:42:394 worker/(11623:11623): Conexión de Master 5 recibida
+[INFO] 09:16:42:441 worker/(11623:11623): Solicitud de transformación recibida
+[INFO] 09:16:42:442 worker/(11623:11623): Obteniendo datos para la transformación
+[INFO] 09:17:56:42 worker/(11746:11746): Logger generado
+[INFO] 09:17:56:44 worker/(11746:11746): Archivo de configuraciones cargado
+[INFO] 09:17:56:45 worker/(11746:11746): Esperando conexiones de master
+[TRACE] 09:17:59:648 worker/(11746:11746): Conexión de Master 5 recibida
+[INFO] 09:17:59:695 worker/(11746:11746): Solicitud de transformación recibida
+[INFO] 09:17:59:696 worker/(11746:11746): Obteniendo datos para la transformación
+[TRACE] 09:17:59:733 worker/(11746:11746): Transformación finalizada
+[INFO] 09:20:00:811 worker/(11849:11849): Logger generado
+[INFO] 09:20:00:819 worker/(11849:11849): Archivo de configuraciones cargado
+[INFO] 09:20:00:821 worker/(11849:11849): Esperando conexiones de master
+[TRACE] 09:20:04:697 worker/(11849:11849): Conexión de Master 5 recibida
+[INFO] 09:20:04:744 worker/(11849:11849): Solicitud de transformación recibida
+[INFO] 09:20:04:746 worker/(11849:11849): Obteniendo datos para la transformación
+[INFO] 09:20:44:993 worker/(11901:11901): Logger generado
+[INFO] 09:20:44:996 worker/(11901:11901): Archivo de configuraciones cargado
+[INFO] 09:20:45:4 worker/(11901:11901): Esperando conexiones de master
+[TRACE] 09:20:48:310 worker/(11901:11901): Conexión de Master 5 recibida
+[INFO] 09:20:48:360 worker/(11901:11901): Solicitud de transformación recibida
+[INFO] 09:20:48:361 worker/(11901:11901): Obteniendo datos para la transformación
+[INFO] 09:21:41:357 worker/(11955:11955): Logger generado
+[INFO] 09:21:41:362 worker/(11955:11955): Archivo de configuraciones cargado
+[INFO] 09:21:41:363 worker/(11955:11955): Esperando conexiones de master
+[TRACE] 09:21:44:212 worker/(11955:11955): Conexión de Master 5 recibida
+[INFO] 09:21:44:234 worker/(11955:11955): Solicitud de transformación recibida
+[INFO] 09:21:44:236 worker/(11955:11955): Obteniendo datos para la transformación
+[INFO] 09:21:44:241 worker/(11955:11955): Bloque 68: Transformando
+[INFO] 09:21:44:280 worker/(11955:11955): Bloque 68: Transformación finalizada
+[INFO] 09:21:44:281 worker/(11955:11955): Bloque 15: Transformando
+[INFO] 09:21:44:306 worker/(11955:11955): Bloque 15: Transformación finalizada
+[TRACE] 09:21:44:321 worker/(11955:11955): Transformación finalizada
+[INFO] 09:26:04:449 worker/(12107:12107): Logger generado
+[INFO] 09:26:04:452 worker/(12107:12107): Archivo de configuraciones cargado
+[INFO] 09:26:04:453 worker/(12107:12107): Esperando conexiones de master
+[TRACE] 09:26:08:534 worker/(12107:12107): Conexión de Master 5 recibida
+[INFO] 09:26:08:581 worker/(12107:12107): Solicitud de transformación recibida
+[INFO] 09:26:08:582 worker/(12107:12107): Obteniendo datos para la transformación
+[INFO] 09:26:08:583 worker/(12107:12107): Datos de transformación obtenidos
+[INFO] 09:26:08:585 worker/(12107:12107): Script almacenado en "script.sh"
+[INFO] 09:26:08:586 worker/(12107:12107): Bloque 68: Transformando
+[INFO] 09:26:08:655 worker/(12107:12107): Bloque 68: Transformación finalizada
+[INFO] 09:26:08:656 worker/(12107:12107): Bloque 15: Transformando
+[INFO] 09:26:08:723 worker/(12107:12107): Bloque 15: Transformación finalizada
+[TRACE] 09:26:08:755 worker/(12107:12107): Transformación finalizada
+[INFO] 09:27:25:760 worker/(12169:12169): Logger generado
+[INFO] 09:27:25:762 worker/(12169:12169): Archivo de configuraciones cargado
+[INFO] 09:27:25:763 worker/(12169:12169): Esperando conexiones de master
+[TRACE] 09:27:30:463 worker/(12169:12169): Conexión de Master 5 recibida
+[TRACE] 09:27:30:512 worker/(12169:12169): Solicitud de transformación recibida
+[INFO] 09:27:30:513 worker/(12169:12169): Obteniendo datos para la transformación
+[INFO] 09:27:30:514 worker/(12169:12169): Datos de transformación obtenidos
+[INFO] 09:27:30:516 worker/(12169:12169): Script almacenado en "script.sh"
+[INFO] 09:27:30:517 worker/(12169:12169): Bloque 68: Transformando
+[INFO] 09:27:30:585 worker/(12169:12169): Bloque 68: Transformación finalizada
+[INFO] 09:27:30:587 worker/(12169:12169): Bloque 15: Transformando
+[INFO] 09:27:30:657 worker/(12169:12169): Bloque 15: Transformación finalizada
+[TRACE] 09:27:30:689 worker/(12169:12169): Transformación finalizada
+[INFO] 09:32:04:453 worker/(12298:12298): Logger generado
+[INFO] 09:32:04:455 worker/(12298:12298): Archivo de configuraciones cargado
+[INFO] 09:32:04:457 worker/(12298:12298): Esperando conexiones de master
+[TRACE] 09:32:11:770 worker/(12298:12298): Conexión de Master 5 recibida
+[TRACE] 09:32:11:826 worker/(12298:12298): Master 5: Solicitud de transformación recibida
+[INFO] 09:32:11:828 worker/(12298:12298): Master 5: Obteniendo datos para la transformación
+[INFO] 09:32:11:829 worker/(12298:12298): Master 5: Datos de transformación obtenidos
+[INFO] 09:32:11:830 worker/(12298:12298): Script almacenado en "script.sh"
+[INFO] 09:32:11:831 worker/(12298:12298): Bloque 68: Transformando
+[INFO] 09:32:11:901 worker/(12298:12298): Bloque 68: Transformación finalizada
+[INFO] 09:32:11:902 worker/(12298:12298): Bloque 15: Transformando
+[INFO] 09:32:11:970 worker/(12298:12298): Bloque 15: Transformación finalizada
+[TRACE] 09:32:11:2 worker/(12298:12298): Master 5: Transformación finalizada
+[INFO] 09:33:27:509 worker/(12360:12360): Logger generado
+[INFO] 09:33:27:512 worker/(12360:12360): Archivo de configuraciones cargado
+[INFO] 09:33:27:513 worker/(12360:12360): Esperando conexiones de master
+[TRACE] 09:33:31:712 worker/(12360:12360): Master 5: Conectado
+[TRACE] 09:33:31:763 worker/(12360:12360): Master 5: Solicitud de transformación recibida
+[INFO] 09:33:31:764 worker/(12360:12360): Master 5: Obteniendo datos de transformación
+[INFO] 09:33:31:765 worker/(12360:12360): Master 5: Datos de transformación obtenidos
+[INFO] 09:33:31:767 worker/(12360:12360): Script almacenado en "script.sh"
+[INFO] 09:33:31:768 worker/(12360:12360): Bloque 68: Transformando
+[INFO] 09:33:31:836 worker/(12360:12360): Bloque 68: Transformación finalizada
+[INFO] 09:33:31:837 worker/(12360:12360): Bloque 15: Transformando
+[INFO] 09:33:31:906 worker/(12360:12360): Bloque 15: Transformación finalizada
+[TRACE] 09:33:31:949 worker/(12360:12360): Master 5: Transformación finalizada
+[INFO] 09:34:33:658 worker/(12379:12379): Logger generado
+[INFO] 09:34:33:662 worker/(12379:12379): Archivo de configuraciones cargado
+[INFO] 09:34:33:663 worker/(12379:12379): Esperando conexiones de master
+[TRACE] 09:34:36:750 worker/(12379:12379): Master 5: Conectado
+[TRACE] 09:34:36:796 worker/(12379:12379): Master 5: Solicitud de transformación recibida
+[INFO] 09:34:36:798 worker/(12379:12379): Master 5: Obteniendo datos de transformación
+[INFO] 09:34:36:799 worker/(12379:12379): Master 5: Datos de transformación obtenidos
+[INFO] 09:34:36:800 worker/(12379:12379): Script almacenado en "script.sh"
+[INFO] 09:34:36:802 worker/(12379:12379): Bloque 68: Transformando
+[INFO] 09:34:36:868 worker/(12379:12379): Bloque 68: Transformación finalizada
+[INFO] 09:34:36:869 worker/(12379:12379): Bloque 15: Transformando
+[INFO] 09:34:36:902 worker/(12379:12379): Bloque 15: Transformación finalizada
+[TRACE] 09:34:36:914 worker/(12379:12379): Master 5: Transformación finalizada
