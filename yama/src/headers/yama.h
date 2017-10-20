@@ -42,8 +42,8 @@ typedef struct {
 	int node;
 	int block;
 	char op;
-	char tmp[28];
 	char status;
+	char tmp[28];
 } elem_tabla_estados;
 
 typedef struct{

@@ -34,12 +34,12 @@ void* getFileSystemInfo(char* name) {
 
 		buffer = malloc(sizeof(int));
 
-		int recved = recv(fs_client.socket_server_id, buffer, sizeof(int), 0);
+		int recved = recv(fs_client.socket_server_id, buffer, sizeof(int), MSG_WAITALL);
 		if (recved > 0) {
 			infoSize = *(int*) buffer;
 			free(buffer);
 			buffer = malloc(infoSize);
-			if( recv(fs_client.socket_server_id, buffer, infoSize, 0) > 0){
+			if( recv(fs_client.socket_server_id, buffer, infoSize, MSG_WAITALL) > 0){
 				fsInfo = malloc(sizeof(int)+infoSize);
 				memcpy(fsInfo, &infoSize, sizeof(int));
 				memcpy(fsInfo+sizeof(int), buffer, infoSize);
@@ -86,10 +86,11 @@ elem_info_archivo* getFileInfo(int master) {
 
 	/*recivo los bytes correspondientes al tamanio del nombre del archivo*/
 	buff = malloc(nameSize);
-	recv(master, buff, nameSize, 0);
+	recv(master, buff, nameSize, MSG_WAITALL);
 
-	char* fileName = malloc(nameSize);
-	memcpy(fileName, buff, nameSize);
+	char fileName[28];
+	strncpy(fileName, buff, nameSize);
+	fileName[27] = '\0';
 	free(buff);
 
 	int fileIndex = findFile(fileName);
@@ -117,7 +118,6 @@ elem_info_archivo* getFileInfo(int master) {
 		list_add(yama->tabla_info_archivos, fileInfo);
 
 		info = fileInfo;
-		free(fileName);
 	}
 	return info;
 }

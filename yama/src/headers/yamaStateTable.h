@@ -24,7 +24,7 @@ void viewStateTable();
 
 void viewLRPlannedTable();
 
-int findRow(int master, int node_id, int block, char op);
+int findInProcessTasks(int master, int node_id, int block, char op);
 
 int getBlockId(char* tmpName);
 

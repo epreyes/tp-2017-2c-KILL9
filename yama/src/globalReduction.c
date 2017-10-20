@@ -63,7 +63,7 @@ void getGlobalReductionTmpName(rg_datos* nodeData, int op, int blockId,
 		int masterId) {
 	char* name;
 	long timestamp = current_timestamp();
-	asprintf(&name, "%s%ld-%c-M%03d-B%03d-final", "/tmp/", timestamp, op,
+	asprintf(&name, "%s%ld-%c-M%03d-B%03d", "/tmp/", timestamp, op,
 			masterId, blockId);
 
 	strcpy(nodeData->rg_tmp, name);
@@ -129,8 +129,9 @@ void* processGlobalReduction(int master) {
 						getBlockId(elem->rl_tmp), master);
 
 				//char op, int master, int nodo, int bloque, char* tmpName
+				printf(" \n VA A METER EN LA RED GLOBAL G, %d, %d, %d, %s\n", master, globalRedData->nodo, 0, globalRedData->rg_tmp);
 				setInStatusTable('G', master, globalRedData->nodo,
-						getBlockId(elem->rl_tmp), globalRedData->rg_tmp);
+						0, globalRedData->rg_tmp);
 				increaseNodeCharge(globalRedData->nodo);
 				addToGlobalReductionPlanedTable(master, globalRedData);
 				enchargeSeted = 1;

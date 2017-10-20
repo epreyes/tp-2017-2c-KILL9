@@ -77,7 +77,7 @@ int sendResponse(int master, void* masterRS) {
 
 int getMasterMessage(int socket, fd_set* mastersList) {
 	void* request = malloc(sizeof(char));
-	int nbytes = recv(socket, request, sizeof(char), 0);
+	int nbytes = recv(socket, request, sizeof(char), MSG_WAITALL);
 	/* Si recibo -1 o 0, el cliente se desconecto o hubo un error */
 	if (nbytes <= 0) {
 		if (nbytes == 0) {

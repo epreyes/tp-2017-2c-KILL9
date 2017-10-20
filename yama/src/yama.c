@@ -81,7 +81,11 @@ void* processOperation(int master, char op) {
 		//response = processError(yama, &fsInfoHeader,(fsInfo + sizeof(t_header)), master);
 		break;
 	case 'O':
+		printf("\nANTES DEL OK\n");
+		viewStateTable();
 		processOk(master);
+		printf("\nDESPUES DEL OK\n");
+		viewStateTable();
 		break;
 	}
 
