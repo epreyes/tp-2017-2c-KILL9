@@ -16,7 +16,7 @@ void lanzarHiloServidor() {
 	int sin_size;
 	int yes = 1;
 
-	uint16_t codigoHandshake;
+	uint16_t codigoHandshake = 0;
 
 	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 		perror("socket");
@@ -64,7 +64,7 @@ void lanzarHiloServidor() {
 
 		log_debug(logger, "Se recibio handshake %d", d.idMensaje);
 
-		if (codigoHandshake != YAMA_HSK || codigoHandshake != NODO_HSK) {
+		if (codigoHandshake != YAMA_HSK || codigoHandshake != NODE_HSK) {
 			log_error(logger, "Codigo incorrecto de Handshake.");
 			exit(1);
 		}
@@ -73,8 +73,7 @@ void lanzarHiloServidor() {
 
 		pthread_t hilo_cliente;
 
-
-		if (codigoHandshake == NODO_HSK) {
+		if (codigoHandshake == NODE_HSK) {
 
 			log_info(logger, "Nuevo nodo conectado");
 
@@ -83,9 +82,40 @@ void lanzarHiloServidor() {
 				perror("Error creando thread cliente nodo");
 				exit(1);
 			}
+
+			// Agrego el nodo en memoria
+
+			t_nodo* nodo = malloc(sizeof(t_nodo));
+			nodo->id = new_fd;
+			nodo->libre = 8;  // inicialmente es el total
+			nodo->total = 8; // TODO: debe venir del nodo
+			nodo->direccion = "127.0.0.2:6003"; // TODO: sacar hardcode
+			nodo->socketNodo = new_fd;
+
+			list_add(nodos->nodos, nodo);
+
+			crearBitMapBloquesNodo(nodo);
+
+			// Prueba escritura
+
+			log_info(logger, "---escribirArchivo('pruebaEscritura') test---");
+
+			char* contenido = "12345\nA\n";
+			int escribir = escribirArchivo("pruebaEscritura", contenido,
+			TEXTO);
+
+			if (escribir == 0)
+				log_info(logger, "Escritura de prueba realizada con exito");
+			else
+				log_error(logger,
+						"No se pudo escribir el archivo prueba (error %d)",
+						escribir);
+
+			// Fin prueba escritura
+
 		}
 
-
+		// TODO: controlar que no lleguen dos yamas
 		if (codigoHandshake == YAMA_HSK) {
 
 			log_info(logger, "Yama conectado");
@@ -111,7 +141,7 @@ void *connection_handler_nodo(void *socket_desc) {
 	while (1) {
 
 		log_info(logger, "Esperando mensaje del cliente %d...", socketCliente);
-		bytes = recv(socketCliente, &header, sizeof(t_header), 0);
+		bytes = recv(socketCliente, &header, sizeof(int), 0);
 
 		if (bytes <= 0) {
 			log_info(logger, "Error: el cliente %d cerro la conexion",
@@ -133,7 +163,7 @@ void *connection_handler_yama(void *socket_desc) {
 	while (1) {
 
 		log_info(logger, "Esperando mensaje del cliente %d...", socketCliente);
-		bytes = recv(socketCliente, &header, sizeof(t_header), 0);
+		bytes = recv(socketCliente, &header, sizeof(int), 0);
 
 		if (bytes <= 0) {
 			log_info(logger, "Error: el cliente %d cerro la conexion",
@@ -157,13 +187,13 @@ void procesarPedidoYama(t_header pedido, int socket) {
 
 	switch (pedido.idMensaje) {
 
-	case YAMA_ARCHIVO_INFO:
+	case 1:
 
 		resultado = obtenerArchivoInfo(buffer);
 
-		if (resultado == ERROR1) {
+		if (resultado == 2) {
 
-			memcpy(respuesta,"",0);
+			memcpy(respuesta, "", 0);
 
 			if (send(socket, &respuesta, sizeof(t_header), 0) < 0) {
 				log_error(logger,
@@ -173,7 +203,7 @@ void procesarPedidoYama(t_header pedido, int socket) {
 
 		} else {
 
-			memcpy(respuesta,"",0);
+			memcpy(respuesta, "", 0);
 
 			if (send(socket, &respuesta, sizeof(t_header), 0) < 0) {
 				log_error(logger,
@@ -195,51 +225,6 @@ void procesarPedidoYama(t_header pedido, int socket) {
 
 void procesarPedidoNodo(t_header pedido, int socket) {
 
-	t_header respuesta;
-	char* buffer;
-	buffer = malloc(pedido.size);
-
-	int resultado;
-
-	switch (pedido.idMensaje) {
-
-	case YAMA_ARCHIVO_INFO:
-
-		// TODO: debe hacerse un recvall
-		if (recv(socket, buffer, pedido.size, 0) < 0) {
-			log_error(logger, "Error en la recepcion del buffer");
-			exit(1);
-		}
-
-		resultado = 0;
-
-		if (resultado != 0) {
-
-			respuesta.idMensaje = -1;
-
-			if (send(socket, &respuesta, sizeof(t_header), 0) < 0) {
-				log_error(logger,
-						"Error en el envio de respuesta de error de escritura a cliente");
-				exit(1);
-			}
-
-		} else {
-			respuesta.idMensaje = RESPUESTA_OK; // Ok
-
-			if (send(socket, &respuesta, sizeof(t_header), 0) < 0) {
-				log_error(logger,
-						"Error en el envio de respuesta de RESPUESTA_OK a cliente");
-				exit(1);
-			}
-		}
-
-		break;
-
-	default:
-		// Si es invalido->no hago nada y cierro el socket
-		log_error("Pedido %d invalido", pedido.idMensaje);
-		//close(socket);
-		break;
-	}
-
+	// Por ahora no tenemos mensajes que vengan aparte desde el nodo
+	;
 }

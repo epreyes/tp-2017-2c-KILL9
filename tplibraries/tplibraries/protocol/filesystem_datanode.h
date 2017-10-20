@@ -11,14 +11,14 @@
 typedef struct __attribute__((packed)){
 	int idOperacion;
 	int idBloque;
-    int finByte;
+	long finByte;
 	char* contenido;
 } t_escribirBloque;
 
 typedef struct __attribute__((packed)){
 	int idOperacion;
 	int idBloque;
-    int finByte;
+	long finByte;
 	char* contenido;
 } t_leerBloque;
 
@@ -26,11 +26,13 @@ typedef struct __attribute__((packed)){
 #define	SUCCESS	    	1
 #define GET_BLOQUE  	2
 #define SET_BLOQUE  	3
-#define ACCESOAPROBADO  3
-#define ACCESODENEGADO  1
+#define ACCESOAPROBADO  4
+#define ACCESODENEGADO  5
 
-#define NODE_HSK 		1		//Envio DataNode
-#define HSK_OK   		1		//Respuesta FS
-#define SET_BLOQUE_OK 	1
+#define NODE_HSK 	6		//Envio DataNode
+#define HSK_OK   	7		//Respuesta FS
+#define SET_BLOQUE_OK 	8
+#define GET_BLOQUE_OK   9
+#define YAMA_HSK       10
 
 #endif /* TPLIBRARIES_PROTOCOL_FILESYSTEM_DATANODE_H_ */

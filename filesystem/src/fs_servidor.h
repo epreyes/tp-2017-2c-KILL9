@@ -11,7 +11,7 @@
 
 #include <arpa/inet.h>
 #include <commons/log.h>
-#include "estructuras.h"
+#include "estructuras.h" // esto debe ser deprecado
 #include "fs.h"
 
 #define MYPORT 5000    // Puerto al que conectarán los usuarios

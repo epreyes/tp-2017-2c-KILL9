@@ -445,6 +445,8 @@ t_archivoInfo* obtenerArchivoInfo(char* path) {
 	t_config * metadata = config_create(dirMetadata);
 
 	if (metadata == NULL) {
+		log_error(logger, "No se pudo abrir la metadata de archivo %s",
+				dirMetadata);
 		return NULL;
 	}
 
@@ -679,11 +681,13 @@ int escribirArchivo(char* path, char* contenido, int tipo) {
 					log_debug(logger, "Contenido: %s", bloque);
 
 					int dataNode = escribirEnDataNode(bloqueAModificar, bloque,
-							idnodo);
+							nodo->socketNodo, finbytes, logger);
 
 					t_bloqueInfo* bi = malloc(sizeof(t_bloqueInfo));
 
-					if (dataNode == RESULTADO_OK) {
+					int bFinBytes = finbytes;
+
+					if (dataNode == 0) {
 						log_info(logger,
 								"Escritura en el datanode realizada con exito");
 
@@ -730,7 +734,7 @@ int escribirArchivo(char* path, char* contenido, int tipo) {
 					log_debug(logger, "Contenido (copia): %s", bloque);
 
 					dataNode = escribirEnDataNode(bloqueAModificar, bloque,
-							idnodo);
+							nodo->socketNodo, bFinBytes, logger);
 
 					if (dataNode == RESULTADO_OK) {
 						log_info(logger,
@@ -802,11 +806,12 @@ int escribirArchivo(char* path, char* contenido, int tipo) {
 
 		log_debug(logger, "Contenido: %s", bloque);
 
-		int dataNode = escribirEnDataNode(bloqueAModificar, bloque, idnodo);
+		int dataNode = escribirEnDataNode(bloqueAModificar, bloque,
+				nodo->socketNodo, finbytes, logger);
 
 		t_bloqueInfo* bi = malloc(sizeof(t_bloqueInfo));
 
-		if (dataNode == RESULTADO_OK) {
+		if (dataNode == 0) {
 			log_info(logger, "Escritura en el datanode realizada con exito");
 
 			nodo->libre -= 1;
@@ -850,7 +855,8 @@ int escribirArchivo(char* path, char* contenido, int tipo) {
 
 		log_debug(logger, "Contenido (copia): %s", bloque);
 
-		dataNode = escribirEnDataNode(bloqueAModificar, bloque, idnodo);
+		dataNode = escribirEnDataNode(bloqueAModificar, bloque,
+				nodo->socketNodo, finbytes, logger);
 
 		if (dataNode == RESULTADO_OK) {
 			log_info(logger, "Escritura en el datanode realizada con exito");
@@ -1299,16 +1305,6 @@ int leerArchivo(char* path) {
 
 }
 
-// Pedidos al datanode
-
-// Dado un id de bloque y un contenido, escribe el mismo en el datanode
-int escribirEnDataNode(int idBloque, char* contenido, int idNodo) {
-	log_info(logger, "Enviando peticion a datanode %d - bloque: %d...", idNodo,
-			idBloque);
-
-	log_info(logger, "Peticion a datanode enviado ok...");
-	return RESULTADO_OK;
-}
 
 // Funciones auxiliares
 
