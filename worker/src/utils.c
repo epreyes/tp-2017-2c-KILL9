@@ -11,14 +11,14 @@ void generateTempsFolder(){
 	system("mkdir -p tmp");
 };
 
-void regenerateScript(char fileContent[11], FILE* script, char* scriptName){
-	FILE* test = fopen("banana","w"); //ver si es necesario que le pase el nombre por el .sh en el socket
-	if(test == NULL){
+void regenerateScript(char* fileContent, FILE* script, char* scriptName){
+	script = fopen(scriptName,"w"); //ver si es necesario que le pase el nombre por el .sh en el socket
+	if(script == NULL){
 		log_error(logger,"Error al guardar el script");
 		//abortar y comunicar a Master
 	}
-	fputs("hola mundo",test);
-	fclose(test);
+	fputs(fileContent,script);
+	fclose(script);
 };
 
 

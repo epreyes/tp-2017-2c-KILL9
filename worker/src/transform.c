@@ -8,12 +8,13 @@
 
 
 int transformBlock(int position, int size, char temporal[28] ){
-	regenerateScript("hola mundo",script_transform,"temporalFile");
 	log_info(logger,"Bloque %d: Transformando", position);
 	int result;
 	//void* param = getBlockInfo(position, size);
+
+	system("chmod 555 script.sh");
 	char command[45];
-	strcpy(command,"./transform.sh > ");
+	strcpy(command,"./script.sh > ");
 	strcat(command, temporal);
 	result=system(command);
 	if (result!=0){

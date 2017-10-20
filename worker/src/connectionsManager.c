@@ -97,9 +97,12 @@ void readBuffer(){
 
 				//recorrer y generar un fork por cada bloque
 				//cada transformBlock va a hacer el send a Master
+				regenerateScript(datos.file,script_transform,"script.sh");
+				for (i = 0; i < (datos.blocksSize); ++i){
+					transformBlock(datos.blocks[i].pos,datos.blocks[i].size,datos.blocks[i].tmp);
+				}
 
-				transformBlock(position,size,temporal);
-				//}
+				free(datos.blocks);
 				free(datos.file);
 				break;
 			case 'L':
