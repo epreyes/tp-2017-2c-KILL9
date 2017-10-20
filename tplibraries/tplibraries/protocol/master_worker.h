@@ -28,7 +28,6 @@ typedef struct{
 
 //-----Response---//
 typedef struct{
-	char 	opcode;
 	int		block;
 	int		runtime;	//ver de pasar a real
 	char	result;		//'E': error / 'O':"ok"
