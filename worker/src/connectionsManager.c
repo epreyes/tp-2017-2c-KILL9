@@ -104,6 +104,7 @@ void readBuffer(){
 
 				free(datos.blocks);
 				free(datos.file);
+				system("rm -f script.sh");			//borra el script temporal
 				break;
 			case 'L':
 				log_info(logger,"Solicitud de reducción local recibida");

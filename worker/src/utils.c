@@ -9,6 +9,7 @@
 
 void generateTempsFolder(){
 	system("mkdir -p tmp");
+	//system("chmod 754 tmp");
 };
 
 void regenerateScript(char* fileContent, FILE* script, char* scriptName){
