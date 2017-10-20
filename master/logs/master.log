@@ -915,3 +915,390 @@
 [INFO] 09:34:36:740 master/(12380:12380): Transformación iniciada
 [INFO] 09:34:36:742 master/(12380:12381): Estableciendo conexión con nodo 1
 [INFO] 09:34:36:917 master/(12380:12380): Tranformación finalizada
+[INFO] 10:23:30:707 master/(13253:13253): conexión con Yama establecida
+[INFO] 10:23:30:709 master/(13253:13253): Solicitando datos de transformación a YAMA
+[INFO] 10:23:30:710 master/(13253:13253): Transformación iniciada
+[INFO] 10:23:30:717 master/(13253:13254): Estableciendo conexión con nodo 1
+[INFO] 10:23:30:844 master/(13253:13253): Tranformación finalizada
+[INFO] 10:27:13:10 master/(13299:13299): conexión con Yama establecida
+[INFO] 10:27:13:18 master/(13299:13299): Solicitando datos de transformación a YAMA
+[INFO] 10:27:13:19 master/(13299:13299): Transformación iniciada
+[INFO] 10:27:13:21 master/(13299:13300): Estableciendo conexión con nodo 1
+[INFO] 10:27:13:145 master/(13299:13299): Tranformación finalizada
+[INFO] 10:27:54:362 master/(13357:13357): conexión con Yama establecida
+[INFO] 10:27:54:366 master/(13357:13357): Solicitando datos de transformación a YAMA
+[INFO] 10:27:54:369 master/(13357:13357): Transformación iniciada
+[INFO] 10:27:54:372 master/(13357:13358): Estableciendo conexión con nodo 1
+[INFO] 10:27:54:598 master/(13357:13357): Tranformación finalizada
+[INFO] 10:32:30:378 master/(13443:13443): conexión con Yama establecida
+[INFO] 10:32:30:380 master/(13443:13443): Solicitando datos de transformación a YAMA
+[INFO] 10:32:30:381 master/(13443:13443): Transformación iniciada
+[INFO] 10:32:30:383 master/(13443:13444): Estableciendo conexión con nodo 1
+[INFO] 10:32:30:395 master/(13443:13443): Tranformación finalizada
+[INFO] 10:36:08:223 master/(13644:13644): conexión con Yama establecida
+[INFO] 10:36:08:231 master/(13644:13644): Solicitando datos de transformación a YAMA
+[INFO] 10:36:08:232 master/(13644:13644): Transformación iniciada
+[INFO] 10:36:08:235 master/(13644:13645): Estableciendo conexión con nodo 1
+[INFO] 10:36:08:244 master/(13644:13644): Tranformación finalizada
+[INFO] 10:40:20:434 master/(13877:13877): conexión con Yama establecida
+[INFO] 10:40:20:436 master/(13877:13877): Solicitando datos de transformación a YAMA
+[INFO] 10:40:20:443 master/(13877:13877): Transformación iniciada
+[INFO] 10:40:20:445 master/(13877:13878): Estableciendo conexión con nodo 1
+[INFO] 10:40:20:458 master/(13877:13877): Tranformación finalizada
+[INFO] 10:40:35:424 master/(13883:13883): conexión con Yama establecida
+[INFO] 10:40:35:428 master/(13883:13883): Solicitando datos de transformación a YAMA
+[INFO] 10:40:35:429 master/(13883:13883): Transformación iniciada
+[INFO] 10:40:35:431 master/(13883:13884): Estableciendo conexión con nodo 1
+[INFO] 10:40:35:445 master/(13883:13883): Tranformación finalizada
+[INFO] 10:41:01:721 master/(13924:13924): conexión con Yama establecida
+[INFO] 10:41:01:724 master/(13924:13924): Solicitando datos de transformación a YAMA
+[INFO] 10:41:01:725 master/(13924:13924): Transformación iniciada
+[INFO] 10:41:01:732 master/(13924:13925): Estableciendo conexión con nodo 1
+[INFO] 10:41:01:743 master/(13924:13924): Tranformación finalizada
+[INFO] 10:42:11:286 master/(13951:13951): conexión con Yama establecida
+[INFO] 10:42:11:288 master/(13951:13951): Solicitando datos de transformación a YAMA
+[INFO] 10:42:11:296 master/(13951:13951): Transformación iniciada
+[INFO] 10:42:11:298 master/(13951:13952): Estableciendo conexión con nodo 1
+[INFO] 10:42:11:305 master/(13951:13951): Tranformación finalizada
+[INFO] 10:42:18:813 master/(13968:13968): conexión con Yama establecida
+[INFO] 10:42:18:815 master/(13968:13968): Solicitando datos de transformación a YAMA
+[INFO] 10:42:18:816 master/(13968:13968): Transformación iniciada
+[INFO] 10:42:18:824 master/(13968:13969): Estableciendo conexión con nodo 1
+[INFO] 10:42:18:832 master/(13968:13968): Tranformación finalizada
+[INFO] 10:44:50:922 master/(14034:14034): conexión con Yama establecida
+[INFO] 10:44:50:924 master/(14034:14034): Solicitando datos de transformación a YAMA
+[INFO] 10:44:50:932 master/(14034:14034): Transformación iniciada
+[INFO] 10:44:50:934 master/(14034:14035): Estableciendo conexión con nodo 1
+[INFO] 10:44:50:944 master/(14034:14034): Tranformación finalizada
+[INFO] 10:45:29:344 master/(14099:14099): conexión con Yama establecida
+[INFO] 10:45:29:348 master/(14099:14099): Solicitando datos de transformación a YAMA
+[INFO] 10:45:29:349 master/(14099:14099): Transformación iniciada
+[INFO] 10:45:29:350 master/(14099:14100): Estableciendo conexión con nodo 1
+[INFO] 10:45:29:360 master/(14099:14099): Tranformación finalizada
+[INFO] 10:47:10:152 master/(14162:14162): conexión con Yama establecida
+[INFO] 10:47:10:156 master/(14162:14162): Solicitando datos de transformación a YAMA
+[INFO] 10:47:10:158 master/(14162:14162): Transformación iniciada
+[INFO] 10:47:10:160 master/(14162:14163): Estableciendo conexión con nodo 1
+[INFO] 10:47:10:176 master/(14162:14162): Tranformación finalizada
+[INFO] 10:47:20:965 master/(14172:14172): conexión con Yama establecida
+[INFO] 10:47:20:967 master/(14172:14172): Solicitando datos de transformación a YAMA
+[INFO] 10:47:20:979 master/(14172:14172): Transformación iniciada
+[INFO] 10:47:20:981 master/(14172:14173): Estableciendo conexión con nodo 1
+[INFO] 10:47:20:996 master/(14172:14172): Tranformación finalizada
+[INFO] 10:47:28:498 master/(14188:14188): conexión con Yama establecida
+[INFO] 10:47:28:504 master/(14188:14188): Solicitando datos de transformación a YAMA
+[INFO] 10:47:28:511 master/(14188:14188): Transformación iniciada
+[INFO] 10:47:28:513 master/(14188:14189): Estableciendo conexión con nodo 1
+[INFO] 10:47:28:520 master/(14188:14188): Tranformación finalizada
+[INFO] 10:54:45:645 master/(14326:14326): conexión con Yama establecida
+[INFO] 10:54:45:653 master/(14326:14326): Solicitando datos de transformación a YAMA
+[INFO] 10:54:45:654 master/(14326:14326): Transformación iniciada
+[INFO] 10:54:45:655 master/(14326:14327): Estableciendo conexión con nodo 1
+[INFO] 10:54:45:667 master/(14326:14326): Tranformación finalizada
+[INFO] 10:58:26:804 master/(14508:14508): conexión con Yama establecida
+[INFO] 10:58:26:813 master/(14508:14508): Solicitando datos de transformación a YAMA
+[INFO] 10:58:26:814 master/(14508:14508): Transformación iniciada
+[INFO] 10:58:26:816 master/(14508:14509): Estableciendo conexión con nodo 1
+[INFO] 10:58:26:832 master/(14508:14508): Tranformación finalizada
+[INFO] 10:58:41:446 master/(14521:14521): conexión con Yama establecida
+[INFO] 10:58:41:453 master/(14521:14521): Solicitando datos de transformación a YAMA
+[INFO] 10:58:41:454 master/(14521:14521): Transformación iniciada
+[INFO] 10:58:41:456 master/(14521:14522): Estableciendo conexión con nodo 1
+[INFO] 10:58:41:471 master/(14521:14521): Tranformación finalizada
+[INFO] 11:02:12:521 master/(14675:14675): conexión con Yama establecida
+[INFO] 11:02:12:527 master/(14675:14675): Solicitando datos de transformación a YAMA
+[INFO] 11:02:12:528 master/(14675:14675): Transformación iniciada
+[INFO] 11:02:12:530 master/(14675:14676): Estableciendo conexión con nodo 1
+[INFO] 11:02:12:543 master/(14675:14675): Tranformación finalizada
+[INFO] 11:02:25:300 master/(14684:14684): conexión con Yama establecida
+[INFO] 11:02:25:307 master/(14684:14684): Solicitando datos de transformación a YAMA
+[INFO] 11:02:25:309 master/(14684:14684): Transformación iniciada
+[INFO] 11:02:25:315 master/(14684:14685): Estableciendo conexión con nodo 1
+[INFO] 11:02:25:323 master/(14684:14684): Tranformación finalizada
+[INFO] 11:03:45:590 master/(14739:14739): conexión con Yama establecida
+[INFO] 11:03:45:592 master/(14739:14739): Solicitando datos de transformación a YAMA
+[INFO] 11:03:45:593 master/(14739:14739): Transformación iniciada
+[INFO] 11:03:45:594 master/(14739:14740): Estableciendo conexión con nodo 1
+[INFO] 11:03:45:610 master/(14739:14739): Tranformación finalizada
+[INFO] 11:03:56:681 master/(14748:14748): conexión con Yama establecida
+[INFO] 11:03:56:699 master/(14748:14748): Solicitando datos de transformación a YAMA
+[INFO] 11:03:56:700 master/(14748:14748): Transformación iniciada
+[INFO] 11:03:56:702 master/(14748:14749): Estableciendo conexión con nodo 1
+[INFO] 11:03:56:708 master/(14748:14748): Tranformación finalizada
+[INFO] 11:04:48:96 master/(14815:14815): conexión con Yama establecida
+[INFO] 11:04:48:100 master/(14815:14815): Solicitando datos de transformación a YAMA
+[INFO] 11:04:48:103 master/(14815:14815): Transformación iniciada
+[INFO] 11:04:48:105 master/(14815:14816): Estableciendo conexión con nodo 1
+[INFO] 11:04:48:115 master/(14815:14815): Tranformación finalizada
+[INFO] 11:04:58:632 master/(14824:14824): conexión con Yama establecida
+[INFO] 11:04:58:640 master/(14824:14824): Solicitando datos de transformación a YAMA
+[INFO] 11:04:58:641 master/(14824:14824): Transformación iniciada
+[INFO] 11:04:58:643 master/(14824:14825): Estableciendo conexión con nodo 1
+[INFO] 11:04:58:656 master/(14824:14824): Tranformación finalizada
+[INFO] 11:11:42:636 master/(15049:15049): conexión con Yama establecida
+[INFO] 11:11:42:638 master/(15049:15049): Solicitando datos de transformación a YAMA
+[INFO] 11:11:42:639 master/(15049:15049): Transformación iniciada
+[INFO] 11:11:42:641 master/(15049:15050): Estableciendo conexión con nodo 1
+[INFO] 11:11:42:651 master/(15049:15049): Tranformación finalizada
+[INFO] 11:11:53:214 master/(15058:15058): conexión con Yama establecida
+[INFO] 11:11:53:227 master/(15058:15058): Solicitando datos de transformación a YAMA
+[INFO] 11:11:53:235 master/(15058:15058): Transformación iniciada
+[INFO] 11:11:53:237 master/(15058:15059): Estableciendo conexión con nodo 1
+[INFO] 11:11:53:244 master/(15058:15058): Tranformación finalizada
+[INFO] 11:15:31:558 master/(15178:15178): conexión con Yama establecida
+[INFO] 11:15:31:560 master/(15178:15178): Solicitando datos de transformación a YAMA
+[INFO] 11:15:31:561 master/(15178:15178): Transformación iniciada
+[INFO] 11:15:31:564 master/(15178:15179): Estableciendo conexión con nodo 1
+[INFO] 11:15:43:457 master/(15188:15188): conexión con Yama establecida
+[INFO] 11:15:43:466 master/(15188:15188): Solicitando datos de transformación a YAMA
+[INFO] 11:15:43:468 master/(15188:15188): Transformación iniciada
+[INFO] 11:15:43:470 master/(15188:15189): Estableciendo conexión con nodo 1
+[INFO] 11:17:32:655 master/(15263:15263): conexión con Yama establecida
+[INFO] 11:17:32:661 master/(15263:15263): Solicitando datos de transformación a YAMA
+[INFO] 11:17:32:662 master/(15263:15263): Transformación iniciada
+[INFO] 11:17:32:668 master/(15263:15264): Estableciendo conexión con nodo 1
+[INFO] 11:17:32:679 master/(15263:15263): Tranformación finalizada
+[INFO] 11:17:57:556 master/(15273:15273): conexión con Yama establecida
+[INFO] 11:17:57:560 master/(15273:15273): Solicitando datos de transformación a YAMA
+[INFO] 11:17:57:561 master/(15273:15273): Transformación iniciada
+[INFO] 11:17:57:562 master/(15273:15274): Estableciendo conexión con nodo 1
+[INFO] 11:17:57:571 master/(15273:15273): Tranformación finalizada
+[INFO] 11:19:17:683 master/(15339:15339): conexión con Yama establecida
+[INFO] 11:19:17:685 master/(15339:15339): Solicitando datos de transformación a YAMA
+[INFO] 11:19:17:693 master/(15339:15339): Transformación iniciada
+[INFO] 11:19:17:694 master/(15339:15340): Estableciendo conexión con nodo 1
+[INFO] 11:19:17:824 master/(15339:15339): Tranformación finalizada
+[INFO] 11:20:58:677 master/(15412:15412): conexión con Yama establecida
+[INFO] 11:20:58:679 master/(15412:15412): Solicitando datos de transformación a YAMA
+[INFO] 11:20:58:680 master/(15412:15412): Transformación iniciada
+[INFO] 11:20:58:689 master/(15412:15413): Estableciendo conexión con nodo 1
+[INFO] 11:20:59:39 master/(15412:15412): Tranformación finalizada
+[INFO] 11:21:20:495 master/(15423:15423): conexión con Yama establecida
+[INFO] 11:21:20:500 master/(15423:15423): Solicitando datos de transformación a YAMA
+[INFO] 11:21:20:501 master/(15423:15423): Transformación iniciada
+[INFO] 11:21:20:504 master/(15423:15424): Estableciendo conexión con nodo 1
+[INFO] 11:21:20:634 master/(15423:15423): Tranformación finalizada
+[INFO] 11:21:52:178 master/(15478:15478): conexión con Yama establecida
+[INFO] 11:21:52:180 master/(15478:15478): Solicitando datos de transformación a YAMA
+[INFO] 11:21:52:187 master/(15478:15478): Transformación iniciada
+[INFO] 11:21:52:189 master/(15478:15479): Estableciendo conexión con nodo 1
+[INFO] 11:21:52:195 master/(15478:15478): Tranformación finalizada
+[INFO] 11:22:38:451 master/(15502:15502): conexión con Yama establecida
+[INFO] 11:22:38:453 master/(15502:15502): Solicitando datos de transformación a YAMA
+[INFO] 11:22:38:454 master/(15502:15502): Transformación iniciada
+[INFO] 11:22:38:456 master/(15502:15503): Estableciendo conexión con nodo 1
+[INFO] 11:22:38:467 master/(15502:15502): Tranformación finalizada
+[INFO] 11:22:54:265 master/(15513:15513): conexión con Yama establecida
+[INFO] 11:22:54:267 master/(15513:15513): Solicitando datos de transformación a YAMA
+[INFO] 11:22:54:268 master/(15513:15513): Transformación iniciada
+[INFO] 11:22:54:270 master/(15513:15514): Estableciendo conexión con nodo 1
+[INFO] 11:22:54:280 master/(15513:15513): Tranformación finalizada
+[INFO] 11:23:14:43 master/(15529:15529): conexión con Yama establecida
+[INFO] 11:23:14:45 master/(15529:15529): Solicitando datos de transformación a YAMA
+[INFO] 11:23:14:53 master/(15529:15529): Transformación iniciada
+[INFO] 11:23:14:54 master/(15529:15530): Estableciendo conexión con nodo 1
+[INFO] 11:23:14:63 master/(15529:15529): Tranformación finalizada
+[INFO] 11:25:23:808 master/(15611:15611): conexión con Yama establecida
+[INFO] 11:25:23:810 master/(15611:15611): Solicitando datos de transformación a YAMA
+[INFO] 11:25:23:811 master/(15611:15611): Transformación iniciada
+[INFO] 11:25:23:813 master/(15611:15612): Estableciendo conexión con nodo 1
+[INFO] 11:25:23:828 master/(15611:15611): Tranformación finalizada
+[INFO] 11:26:24:528 master/(15673:15673): conexión con Yama establecida
+[INFO] 11:26:24:530 master/(15673:15673): Solicitando datos de transformación a YAMA
+[INFO] 11:26:24:531 master/(15673:15673): Transformación iniciada
+[INFO] 11:26:24:532 master/(15673:15674): Estableciendo conexión con nodo 1
+[INFO] 11:26:24:545 master/(15673:15673): Tranformación finalizada
+[INFO] 11:26:38:170 master/(15685:15685): conexión con Yama establecida
+[INFO] 11:26:38:171 master/(15685:15685): Solicitando datos de transformación a YAMA
+[INFO] 11:26:38:172 master/(15685:15685): Transformación iniciada
+[INFO] 11:26:38:174 master/(15685:15686): Estableciendo conexión con nodo 1
+[INFO] 11:26:38:193 master/(15685:15685): Tranformación finalizada
+[INFO] 11:28:16:885 master/(15788:15788): conexión con Yama establecida
+[INFO] 11:28:16:887 master/(15788:15788): Solicitando datos de transformación a YAMA
+[INFO] 11:28:16:888 master/(15788:15788): Transformación iniciada
+[INFO] 11:28:16:890 master/(15788:15789): Estableciendo conexión con nodo 1
+[INFO] 11:28:16:899 master/(15788:15788): Tranformación finalizada
+[INFO] 11:28:24:755 master/(15801:15801): conexión con Yama establecida
+[INFO] 11:28:24:757 master/(15801:15801): Solicitando datos de transformación a YAMA
+[INFO] 11:28:24:759 master/(15801:15801): Transformación iniciada
+[INFO] 11:28:24:761 master/(15801:15802): Estableciendo conexión con nodo 1
+[INFO] 11:28:24:771 master/(15801:15801): Tranformación finalizada
+[INFO] 11:30:09:374 master/(15901:15901): conexión con Yama establecida
+[INFO] 11:30:09:382 master/(15901:15901): Solicitando datos de transformación a YAMA
+[INFO] 11:30:09:383 master/(15901:15901): Transformación iniciada
+[INFO] 11:30:09:385 master/(15901:15902): Estableciendo conexión con nodo 1
+[INFO] 11:30:09:393 master/(15901:15901): Tranformación finalizada
+[INFO] 11:31:11:670 master/(15979:15979): conexión con Yama establecida
+[INFO] 11:31:11:674 master/(15979:15979): Solicitando datos de transformación a YAMA
+[INFO] 11:31:11:675 master/(15979:15979): Transformación iniciada
+[INFO] 11:31:11:683 master/(15979:15980): Estableciendo conexión con nodo 1
+[INFO] 11:31:11:692 master/(15979:15979): Tranformación finalizada
+[INFO] 11:31:53:552 master/(16036:16036): conexión con Yama establecida
+[INFO] 11:31:53:554 master/(16036:16036): Solicitando datos de transformación a YAMA
+[INFO] 11:31:53:555 master/(16036:16036): Transformación iniciada
+[INFO] 11:31:53:557 master/(16036:16037): Estableciendo conexión con nodo 1
+[INFO] 11:31:53:572 master/(16036:16036): Tranformación finalizada
+[INFO] 11:32:26:893 master/(16131:16131): conexión con Yama establecida
+[INFO] 11:32:26:895 master/(16131:16131): Solicitando datos de transformación a YAMA
+[INFO] 11:32:26:896 master/(16131:16131): Transformación iniciada
+[INFO] 11:32:26:897 master/(16131:16132): Estableciendo conexión con nodo 1
+[INFO] 11:32:26:912 master/(16131:16131): Tranformación finalizada
+[INFO] 11:34:05:87 master/(16205:16205): conexión con Yama establecida
+[INFO] 11:34:05:88 master/(16205:16205): Solicitando datos de transformación a YAMA
+[INFO] 11:34:05:89 master/(16205:16205): Transformación iniciada
+[INFO] 11:34:05:98 master/(16205:16206): Estableciendo conexión con nodo 1
+[INFO] 11:34:05:104 master/(16205:16205): Tranformación finalizada
+[INFO] 12:02:08:899 master/(17073:17073): conexión con Yama establecida
+[INFO] 12:02:08:902 master/(17073:17073): Solicitando datos de transformación a YAMA
+[INFO] 12:02:08:903 master/(17073:17073): Transformación iniciada
+[INFO] 12:02:08:905 master/(17073:17074): Estableciendo conexión con nodo 1
+[INFO] 12:02:08:914 master/(17073:17073): Tranformación finalizada
+[INFO] 12:04:13:559 master/(17090:17090): conexión con Yama establecida
+[INFO] 12:04:13:568 master/(17090:17090): Solicitando datos de transformación a YAMA
+[INFO] 12:04:13:569 master/(17090:17090): Transformación iniciada
+[INFO] 12:04:13:573 master/(17090:17091): Estableciendo conexión con nodo 1
+[INFO] 12:04:13:582 master/(17090:17090): Tranformación finalizada
+[INFO] 12:06:27:810 master/(17203:17203): conexión con Yama establecida
+[INFO] 12:06:27:812 master/(17203:17203): Solicitando datos de transformación a YAMA
+[INFO] 12:06:27:813 master/(17203:17203): Transformación iniciada
+[INFO] 12:06:27:823 master/(17203:17204): Estableciendo conexión con nodo 1
+[INFO] 12:06:27:840 master/(17203:17203): Tranformación finalizada
+[INFO] 12:07:07:660 master/(17265:17265): conexión con Yama establecida
+[INFO] 12:07:07:661 master/(17265:17265): Solicitando datos de transformación a YAMA
+[INFO] 12:07:07:663 master/(17265:17265): Transformación iniciada
+[INFO] 12:07:07:665 master/(17265:17266): Estableciendo conexión con nodo 1
+[INFO] 12:07:07:675 master/(17265:17265): Tranformación finalizada
+[INFO] 12:14:47:763 master/(17357:17357): conexión con Yama establecida
+[INFO] 12:14:47:771 master/(17357:17357): Solicitando datos de transformación a YAMA
+[INFO] 12:14:47:772 master/(17357:17357): Transformación iniciada
+[INFO] 12:14:47:775 master/(17357:17358): Estableciendo conexión con nodo 1
+[INFO] 12:14:47:787 master/(17357:17357): Tranformación finalizada
+[INFO] 12:15:55:274 master/(17420:17420): conexión con Yama establecida
+[INFO] 12:15:55:277 master/(17420:17420): Solicitando datos de transformación a YAMA
+[INFO] 12:15:55:278 master/(17420:17420): Transformación iniciada
+[INFO] 12:15:55:280 master/(17420:17421): Estableciendo conexión con nodo 1
+[INFO] 12:15:55:498 master/(17420:17420): Tranformación finalizada
+[INFO] 12:27:09:812 master/(17675:17675): conexión con Yama establecida
+[INFO] 12:27:09:820 master/(17675:17675): Solicitando datos de transformación a YAMA
+[INFO] 12:27:09:821 master/(17675:17675): Transformación iniciada
+[INFO] 12:27:09:823 master/(17675:17676): Estableciendo conexión con nodo 1
+[INFO] 12:27:10:51 master/(17675:17675): Tranformación finalizada
+[INFO] 12:30:12:128 master/(17852:17852): conexión con Yama establecida
+[INFO] 12:30:12:130 master/(17852:17852): Solicitando datos de transformación a YAMA
+[INFO] 12:30:12:131 master/(17852:17852): Transformación iniciada
+[INFO] 12:30:12:132 master/(17852:17853): Estableciendo conexión con nodo 1
+[ERROR] 12:30:12:140 master/(17852:17853): No se puede conectar con el nodo:1
+[WARNING] 12:30:12:141 master/(17852:17853): Reportado a YAMA, a la espera de replanificación
+[INFO] 12:30:19:722 master/(17856:17856): conexión con Yama establecida
+[INFO] 12:30:19:726 master/(17856:17856): Solicitando datos de transformación a YAMA
+[INFO] 12:30:19:727 master/(17856:17856): Transformación iniciada
+[INFO] 12:30:19:729 master/(17856:17857): Estableciendo conexión con nodo 1
+[INFO] 12:30:19:886 master/(17856:17856): Tranformación finalizada
+[INFO] 12:30:54:229 master/(17906:17906): conexión con Yama establecida
+[INFO] 12:30:54:230 master/(17906:17906): Solicitando datos de transformación a YAMA
+[INFO] 12:30:54:232 master/(17906:17906): Transformación iniciada
+[INFO] 12:30:54:240 master/(17906:17907): Estableciendo conexión con nodo 1
+[INFO] 12:30:54:368 master/(17906:17906): Tranformación finalizada
+[INFO] 12:33:57:35 master/(18018:18018): conexión con Yama establecida
+[INFO] 12:33:57:43 master/(18018:18018): Solicitando datos de transformación a YAMA
+[INFO] 12:33:57:44 master/(18018:18018): Transformación iniciada
+[INFO] 12:33:57:47 master/(18018:18019): Estableciendo conexión con nodo 1
+[INFO] 12:33:57:173 master/(18018:18019): bloque 0 del nodo 1 transformado
+[INFO] 12:33:57:174 master/(18018:18018): Tranformación finalizada
+[INFO] 12:34:45:339 master/(18080:18080): conexión con Yama establecida
+[INFO] 12:34:45:347 master/(18080:18080): Solicitando datos de transformación a YAMA
+[INFO] 12:34:45:349 master/(18080:18080): Transformación iniciada
+[INFO] 12:34:45:350 master/(18080:18081): Estableciendo conexión con nodo 1
+[INFO] 12:34:45:480 master/(18080:18081): bloque 68 del nodo 1 transformado
+[INFO] 12:34:45:481 master/(18080:18080): Tranformación finalizada
+[INFO] 12:38:57:594 master/(18234:18234): conexión con Yama establecida
+[INFO] 12:38:57:596 master/(18234:18234): Solicitando datos de transformación a YAMA
+[INFO] 12:38:57:604 master/(18234:18234): Transformación iniciada
+[INFO] 12:38:57:605 master/(18234:18235): Estableciendo conexión con nodo 1
+[INFO] 12:38:57:732 master/(18234:18235): bloque 68 del nodo 1 transformado
+[TRACE] 12:38:57:732 master/(18234:18235): transformación del nodo 1 finalizada
+[INFO] 12:38:57:733 master/(18234:18234): Tranformación finalizada
+[INFO] 12:42:20:155 master/(18305:18305): conexión con Yama establecida
+[INFO] 12:42:20:157 master/(18305:18305): Solicitando datos de transformación a YAMA
+[INFO] 12:42:20:158 master/(18305:18305): Transformación iniciada
+[INFO] 12:42:20:159 master/(18305:18306): Estableciendo conexión con nodo 1
+[ERROR] 12:42:20:166 master/(18305:18306): No se puede conectar con el nodo:1
+[WARNING] 12:42:20:168 master/(18305:18306): Reportado a YAMA, a la espera de replanificación
+[INFO] 12:42:30:808 master/(18309:18309): conexión con Yama establecida
+[INFO] 12:42:30:812 master/(18309:18309): Solicitando datos de transformación a YAMA
+[INFO] 12:42:30:813 master/(18309:18309): Transformación iniciada
+[INFO] 12:42:30:815 master/(18309:18310): Estableciendo conexión con nodo 1
+[TRACE] 12:42:30:827 master/(18309:18310): transformación en nodo 1 iniciada
+[INFO] 12:42:31:3 master/(18309:18310): bloque 68 del nodo 1 transformado
+[TRACE] 12:42:31:3 master/(18309:18310): transformación en nodo 1 finalizada
+[INFO] 12:42:31:4 master/(18309:18309): Tranformación finalizada
+[INFO] 12:43:16:991 master/(18359:18359): conexión con Yama establecida
+[INFO] 12:43:16:994 master/(18359:18359): Solicitando datos de transformación a YAMA
+[INFO] 12:43:16:995 master/(18359:18359): Transformación iniciada
+[INFO] 12:43:16:997 master/(18359:18360): Estableciendo conexión con nodo 1
+[TRACE] 12:43:17:7 master/(18359:18360): transformación en nodo 1 iniciada
+[INFO] 12:43:17:132 master/(18359:18360): bloque 68 del nodo 1 transformado
+[TRACE] 12:43:17:132 master/(18359:18360): transformación en nodo 1 finalizada
+[INFO] 12:43:17:217 master/(18359:18360): bloque 15 del nodo 1 transformado
+[TRACE] 12:43:17:217 master/(18359:18360): transformación en nodo 1 finalizada
+[INFO] 12:43:17:218 master/(18359:18359): Tranformación finalizada
+[INFO] 12:44:41:521 master/(18426:18426): conexión con Yama establecida
+[INFO] 12:44:41:523 master/(18426:18426): Solicitando datos de transformación a YAMA
+[INFO] 12:44:41:524 master/(18426:18426): Transformación iniciada
+[INFO] 12:44:41:532 master/(18426:18427): Estableciendo conexión con nodo 1
+[TRACE] 12:44:41:539 master/(18426:18427): transformación en nodo 1 iniciada
+[INFO] 12:44:41:661 master/(18426:18427): bloque 68 del nodo 1 transformado
+[INFO] 12:44:41:741 master/(18426:18427): bloque 15 del nodo 1 transformado
+[TRACE] 12:44:41:741 master/(18426:18427): transformación en nodo 1 finalizada
+[INFO] 12:44:41:741 master/(18426:18426): Tranformación finalizada
+[INFO] 12:48:55:404 master/(18582:18582): conexión con Yama establecida
+[INFO] 12:48:55:406 master/(18582:18582): Solicitando datos de transformación a YAMA
+[INFO] 12:48:55:414 master/(18582:18582): Transformación iniciada
+[INFO] 12:48:55:416 master/(18582:18583): Estableciendo conexión con nodo 1
+[TRACE] 12:48:55:423 master/(18582:18583): transformación en nodo 1 iniciada
+[INFO] 12:48:55:547 master/(18582:18583): bloque 68 del nodo 1 transformado
+[INFO] 12:48:55:625 master/(18582:18583): bloque 15 del nodo 1 transformado
+[TRACE] 12:48:55:625 master/(18582:18583): transformación en nodo 1 finalizada
+[INFO] 12:48:55:625 master/(18582:18582): Tranformación finalizada
+[INFO] 12:49:40:88 master/(18638:18638): conexión con Yama establecida
+[INFO] 12:49:40:90 master/(18638:18638): Solicitando datos de transformación a YAMA
+[INFO] 12:49:40:91 master/(18638:18638): Transformación iniciada
+[INFO] 12:49:40:93 master/(18638:18639): Estableciendo conexión con nodo 1
+[TRACE] 12:49:40:107 master/(18638:18639): transformación en nodo 1 iniciada
+[INFO] 12:49:40:226 master/(18638:18639): bloque 68 del nodo 1 transformado
+[INFO] 12:49:40:304 master/(18638:18639): bloque 15 del nodo 1 transformado
+[TRACE] 12:49:40:304 master/(18638:18639): transformación en nodo 1 finalizada
+[INFO] 12:49:40:304 master/(18638:18638): Tranformación finalizada
+[INFO] 12:51:18:241 master/(18720:18720): conexión con Yama establecida
+[INFO] 12:51:18:249 master/(18720:18720): Solicitando datos de transformación a YAMA
+[INFO] 12:51:18:250 master/(18720:18720): Transformación iniciada
+[INFO] 12:51:18:252 master/(18720:18721): Estableciendo conexión con nodo 1
+[TRACE] 12:51:18:261 master/(18720:18721): Nodo 1: Transformación iniciada
+[INFO] 12:51:18:393 master/(18720:18721): bloque 68 del nodo 1 transformado
+[INFO] 12:51:18:474 master/(18720:18721): bloque 15 del nodo 1 transformado
+[TRACE] 12:51:18:474 master/(18720:18721): Nodo 1: Transformación finalizada
+[INFO] 12:51:18:475 master/(18720:18720): Tranformación finalizada
+[INFO] 12:51:28:268 master/(18737:18737): conexión con Yama establecida
+[INFO] 12:51:28:271 master/(18737:18737): Solicitando datos de transformación a YAMA
+[INFO] 12:51:28:272 master/(18737:18737): Transformación iniciada
+[INFO] 12:51:28:274 master/(18737:18738): Estableciendo conexión con nodo 1
+[ERROR] 12:51:28:275 master/(18737:18738): No se puede conectar con el nodo:1
+[WARNING] 12:51:28:277 master/(18737:18738): Reportado a YAMA, a la espera de replanificación
+[INFO] 12:51:38:382 master/(18741:18741): conexión con Yama establecida
+[INFO] 12:51:38:384 master/(18741:18741): Solicitando datos de transformación a YAMA
+[INFO] 12:51:38:385 master/(18741:18741): Transformación iniciada
+[INFO] 12:51:38:387 master/(18741:18742): Estableciendo conexión con nodo 1
+[TRACE] 12:51:38:395 master/(18741:18742): Nodo 1: Transformación iniciada
+[INFO] 12:51:38:514 master/(18741:18742): bloque 68 del nodo 1 transformado
+[INFO] 12:51:38:590 master/(18741:18742): bloque 15 del nodo 1 transformado
+[TRACE] 12:51:38:590 master/(18741:18742): Nodo 1: Transformación finalizada
+[INFO] 12:51:38:591 master/(18741:18741): Tranformación finalizada
+[INFO] 12:56:24:976 master/(18765:18765): conexión con Yama establecida
+[INFO] 12:56:24:978 master/(18765:18765): Solicitando datos de transformación a YAMA
+[INFO] 12:56:24:979 master/(18765:18765): Transformación iniciada
+[INFO] 12:56:24:981 master/(18765:18766): Estableciendo conexión con nodo 1
+[TRACE] 12:56:24:987 master/(18765:18766): Nodo 1: Transformación iniciada
+[INFO] 12:56:25:114 master/(18765:18766): bloque 68 del nodo 1 transformado
+[INFO] 12:56:25:197 master/(18765:18766): bloque 15 del nodo 1 transformado
+[TRACE] 12:56:25:197 master/(18765:18766): Nodo 1: Transformación finalizada
+[INFO] 12:56:25:198 master/(18765:18765): Tranformación finalizada

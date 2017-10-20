@@ -55,20 +55,8 @@ void readSocketBuffer(int socket,int size,void* destiny){
 void readBuffer(){
 	char operation;
 	readSocketBuffer(socket_master,sizeof(char),&operation);
-	/*
-		void* buffer = malloc(1);
-		char operation;
-		int bytesRecibidos = recv(socket_master, buffer, 1,MSG_WAITALL);
-		if (bytesRecibidos <= 0) {
-			log_warning(logger,"El master %d se desconectó");
-			exit(1);
-		}
-		memcpy(&operation,buffer,1);
-	*/
-
 		//--------
 		tr_node datos;
-
 
 		switch(operation){
 			case 'T':
@@ -86,16 +74,29 @@ void readBuffer(){
 				readSocketBuffer(socket_master,sizeof(block)*datos.blocksSize,datos.blocks);
 				log_info(logger,"Master %d: Datos de transformación obtenidos",socket_master);
 
-
-			//recorrer y generar un fork por cada bloque
-			//cada transformBlock va a hacer el send a Master
 				regenerateScript(datos.file,script_transform,"script.sh");
 
+				//------------
+				tr_node_rs* answer = malloc(sizeof(tr_node_rs));
+				void* buff = malloc(sizeof(int)+sizeof(char)+sizeof(int));
 				int i;
-				for (i = 0; i < (datos.blocksSize); ++i){
-					transformBlock(datos.blocks[i].pos,datos.blocks[i].size,datos.blocks[i].tmp);
+				for (i = 0; i < (datos.blocksSize); ++i){ //REEMPLAZAR POR FORKS
+					answer->block = datos.blocks[i].pos;
+					answer->result=transformBlock(datos.blocks[i].pos,datos.blocks[i].size,datos.blocks[i].tmp);
+					answer->runtime=12;
+					//serializo
+					memcpy(buff,&(answer->block),sizeof(int));
+						//printf("\BLOQUE:%d\n", answer->block);
+					memcpy(buff+sizeof(int),&(answer->result),sizeof(char));
+						//printf("\RESULT:%c\n", answer->result);
+					memcpy(buff+sizeof(int)+sizeof(char),&(answer->runtime),sizeof(int));
+						//printf("\METRIC:%d\n", answer->runtime);
+					send(socket_master,buff,sizeof(int)+sizeof(char)+sizeof(int),0);
 				}
+				free(buff);
+				free(answer);
 
+				//------------
 				free(datos.blocks);
 				free(datos.file);
 				system("rm -f script.sh");			//borra el script temporal

@@ -79,11 +79,42 @@ void *runTransformThread(void* data){
 	openNodeConnection(datos[0].node, datos[0].ip, datos[0].port);
 	counter=1+4+(nodeData->fileSize)+4+(36*(datos->blocksCount));
 
-//---Envío---
-	send(nodeSockets[datos->node],buffer,counter,0);		//envío y espero resultado
-	recv(nodeSockets[datos->node],buffer, 1,0);				//recibo resultado de operación
-/*
+//--Envío---
+	send(nodeSockets[datos->node],buffer,counter,0);
+	log_trace(logger,"Nodo %d: Transformación iniciada", datos->node);
+//--Espero respuesta
 
+	tr_node_rs* answer = malloc(sizeof(tr_node_rs));
+
+	void readBuffer(int socket,int size,void* destiny){
+		void* buffer = malloc(size);
+		int bytesReaded = recv(socket, buffer, size, MSG_WAITALL);
+		if (bytesReaded <= 0) {
+			log_warning(logger,"Nodo %d: desconectado",socket);
+			exit(1);
+		}
+		memcpy(destiny, buffer, size);
+		free(buffer);
+	}
+
+	for(i=0;i < (datos->blocksCount); ++i){
+		//-----
+		readBuffer(nodeSockets[datos->node], sizeof(int), &(answer->block));
+			//printf("BLOQUE:%d\n",answer->block);
+		readBuffer(nodeSockets[datos->node], sizeof(char), &(answer->result));
+			//printf("RESULT:%c\n",answer->result);
+		readBuffer(nodeSockets[datos->node], sizeof(int), &(answer->runtime));
+			//printf("METRIC:%d\n",answer->runtime);
+		if(answer->result == 'O'){
+			log_info(logger,"bloque %d del nodo %d transformado",datos->blocks[i].pos,datos->node);
+		}else{
+			log_info(logger,"bloque %d del nodo %d no se pudo transformar",datos->blocks[i].pos,datos->node);
+		}
+			//ENVIAR A YAMA
+		//send(masterSocket,buffer,5+(data->fileNameSize),0);
+	}
+	log_trace(logger,"Nodo %d: Transformación finalizada", datos->node);
+	free(answer);
 /*
 	for (i = 0; i < (datos[0].blocksCount); ++i){
 		printf("\t nodo:%d \t pos:%d  \t tam:%d\n", datos[0].node, datos[0].blocks[i].pos, datos[0].blocks[i].size);

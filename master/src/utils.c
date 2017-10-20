@@ -78,5 +78,5 @@ void loadConfigs(){
 
 void createLoggers(){
 	char* LOG_PATH = "../logs/master.log";
-	logger = log_create(LOG_PATH,"master",1,LOG_LEVEL_INFO);
+	logger = log_create(LOG_PATH,"master",1,LOG_LEVEL_TRACE);
 }

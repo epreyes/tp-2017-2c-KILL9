@@ -10,6 +10,6 @@
 
 #include "worker.h"
 
-int transformBlock(int position, int size, char temporal[28]);
+char transformBlock(int position, int size, char temporal[28]);
 
 #endif /* HEADERS_TRANSFORM_H_ */
