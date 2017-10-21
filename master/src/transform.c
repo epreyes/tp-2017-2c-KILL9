@@ -26,7 +26,7 @@ void sendTRequest(char* fileName){
 
 //---Envío---
 	log_info(logger, "Solicitando datos de transformación a YAMA");
-	//send(masterSocket,buffer,5+(data->fileNameSize),0);
+	send(masterSocket,buffer,5+(data->fileNameSize),0);
 
 /*---DES_SERIALIZACIÓN---
 	transform_rq *reciv = malloc(sizeof(transform_rq));
