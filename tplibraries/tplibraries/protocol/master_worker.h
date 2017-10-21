@@ -15,7 +15,7 @@
 typedef struct{
 	int 	pos;
 	int 	size;
-	char	tmp[28];
+	char	tmp[27];
 }block;
 
 typedef struct{
