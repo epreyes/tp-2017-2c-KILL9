@@ -22,4 +22,6 @@ void loadConfigs(void);
 
 void createLoggers(void);
 
+void readBuffer(int socket,int size,void* destiny);
+
 #endif /* HEADERS_UTILS_H_ */

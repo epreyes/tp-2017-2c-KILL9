@@ -11,13 +11,12 @@
 void sendSRequest(){
 
 //---Preparo Paquete---
-	store_rq* data;
-	data = malloc(sizeof(store_rq));
+	store_rq* data = malloc(sizeof(store_rq));
 	data->code='S';
 
 //---Serializo---
 	void* buffer = malloc(sizeof(char));
-	memcpy(buffer,&(data->code),1);
+	memcpy(buffer,&(data->code),sizeof(char));
 
 //---Envío---
 	send(masterSocket,buffer,sizeof(char),0);

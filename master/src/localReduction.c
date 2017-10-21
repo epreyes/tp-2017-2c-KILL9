@@ -10,14 +10,12 @@
 
 //=============YAMA_REQUEST=============================//
 void sendLRequest(){
-/*
 //---Preparo Paquete---
-	local_rq* data;
-	data = malloc(sizeof(local_rq));
-	data->code='L';
+	local_rq* data = malloc(sizeof(local_rq));
+	void* buffer = malloc(sizeof(char));
 
 //---Serializo---
-	void* buffer = malloc(sizeof(char));
+	data->code='L';
 	memcpy(buffer,&(data->code),1);
 
 //---Envío---
@@ -25,7 +23,6 @@ void sendLRequest(){
 
 	free(buffer);
 	free(data);
-*/
 }
 
 //=============THREAD_ACTION===================================//

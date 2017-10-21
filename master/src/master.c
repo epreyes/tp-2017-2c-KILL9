@@ -40,7 +40,7 @@ int main(int argc, char* argv[]){
 	validateArgs(argc, argv);										//valido argumentos
 	loadScripts(argv[1],argv[2]);
 
-	transformFile(tr_answer,answerSize_TR,&masterMetrics,argv[3]);	//ordena ejecución de transformacion
+	transformFile(/*tr_answer,answerSize_TR,*/&masterMetrics,argv[3]);	//ordena ejecución de transformacion
 	/*
 	runLocalReduction(rl_answer,answerSize_RL,&masterMetrics);		//ordena ejecución de Reductor Local
 	runGlobalReduction(rg_answer,answerSize_RG,&masterMetrics);		//ordena ejecución de Reductor Global

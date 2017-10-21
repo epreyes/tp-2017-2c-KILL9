@@ -9,22 +9,16 @@
 
 //=============YAMA_REQUEST=============================//
 void sendGRequest(){
-/*
 //---Preparo Paquete---
-	global_rq* data;
-	data = malloc(sizeof(global_rq));
+	global_rq* data = malloc(sizeof(global_rq));
 	data->code='G';
-
 //---Serializo---
 	void* buffer = malloc(sizeof(char));
 	memcpy(buffer,&(data->code),1);
-
 //---Envío---
 	send(masterSocket,buffer,sizeof(char),0);
-
 	free(buffer);
 	free(data);
-*/
 }
 
 //=============THREAD_ACTION===================================//
