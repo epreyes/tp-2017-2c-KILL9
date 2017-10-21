@@ -18,8 +18,8 @@ void process_request_file_system(int client_socket);
 
 void connectionToFileSystem();
 
-void get_block(int client_socket);
+void get_block(int client_socket,t_leerBloque* t_bloque);
 
-void set_block(int client_socket);
+void set_block(int client_socket,t_leerBloque* t_bloque);
 
 #endif /* HEADERS_CONNECTIONDATANODEFILESYSTEM_H_ */

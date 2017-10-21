@@ -65,7 +65,7 @@ void* processFinalStore(int master) {
 		void* finalStoreRes = malloc(
 				sizeof(char) + sizeof(int)
 						+ sizeof(af_datos) * list_size(planed));
-		memcpy(finalStoreRes, "G", sizeof(char));
+		memcpy(finalStoreRes, "S", sizeof(char));
 		int size = list_size(planed);
 		memcpy(finalStoreRes + sizeof(char), &size, sizeof(int));
 
@@ -85,8 +85,8 @@ void* processFinalStore(int master) {
 
 			memcpy(
 					finalStoreRes + sizeof(char) + sizeof(int)
-							+ (index * sizeof(rg_datos)), finalStoreData,
-					sizeof(rg_datos));
+							+ (index * sizeof(af_datos)), finalStoreData,
+					sizeof(af_datos));
 		}
 		return finalStoreRes;
 	} else {

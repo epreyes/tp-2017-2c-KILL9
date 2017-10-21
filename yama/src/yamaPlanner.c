@@ -182,3 +182,26 @@ tr_datos* doPlanning(block_info* blockRecived, int master) {
 	//Se deberá evaluar si el Bloque a asignar se encuentra en el Worker apuntado por el Clock y el mismo tenga disponibilidad mayor a 0.
 	return evaluateClock(blockRecived, master, yama->clock);
 }
+
+void* replanTask(int master, int node) {
+	t_list* taskFailed = getTaskFailed(master, node);
+	t_list* replanedTasks = list_create();
+
+	int index = 0;
+	for (index = 0; index < list_size(taskFailed); index++) {
+		elem_tabla_estados* elem = list_get(taskFailed, index);
+		block_info* blockInfo = findBlock(elem->block);
+		int node = elem->node;
+		if (elem->node == blockInfo->node1) {
+			node = blockInfo->node2;
+		} else {
+			node = blockInfo->node1;
+		}
+		tr_datos* dataNode = buildNodePlaned(blockInfo, master, node);
+		setInStatusTable('T', master, dataNode->nodo,
+				getBlockId(dataNode->tr_tmp), dataNode->tr_tmp);
+		list_add(replanedTasks, dataNode);
+	}
+
+	return sortTransformationResponse(replanedTasks, master);
+}

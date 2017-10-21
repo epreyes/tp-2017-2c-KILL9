@@ -45,20 +45,23 @@ int getSizeToSend(void* masterRS) {
 
 	switch (op) {
 	case 'T':
-		size = blocks * sizeof(tr_datos);
+		size = (blocks * sizeof(tr_datos))+ sizeof(char) + sizeof(int);
 		break;
 	case 'L':
-		size = blocks * sizeof(rl_datos);
+		size = (blocks * sizeof(rl_datos))+ sizeof(char) + sizeof(int);
 		break;
 	case 'G':
-		size = blocks * sizeof(rg_datos);
+		size = (blocks * sizeof(rg_datos))+ sizeof(char) + sizeof(int);
 		break;
 	case 'S':
-		size = blocks * sizeof(af_datos);
+		size = (blocks * sizeof(af_datos))+ sizeof(char) + sizeof(int);
+		break;
+	case 'A':
+		size = sizeof(error_rq);
 		break;
 	}
 
-	return size + sizeof(char) + sizeof(int);
+	return size;
 }
 
 int sendResponse(int master, void* masterRS) {
@@ -77,7 +80,7 @@ int sendResponse(int master, void* masterRS) {
 
 int getMasterMessage(int socket, fd_set* mastersList) {
 	void* request = malloc(sizeof(char));
-	int nbytes = recv(socket, request, sizeof(char), 0);
+	int nbytes = recv(socket, request, sizeof(char), MSG_WAITALL);
 	/* Si recibo -1 o 0, el cliente se desconecto o hubo un error */
 	if (nbytes <= 0) {
 		if (nbytes == 0) {
@@ -99,7 +102,7 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 
 		//envio el paquete al master
 		char op = *(char*) request;
-		if ((op != 'O') && (op != 'E')) {
+		if ((op != 'O')) {
 			sendResponse(socket, response);
 		}
 	}

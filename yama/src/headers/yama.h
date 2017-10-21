@@ -34,6 +34,7 @@ typedef struct {
 	int tasts_done;
 	int considered;
 	int availability;
+	int errors;
 } elem_tabla_nodos;
 
 typedef struct {
@@ -42,8 +43,8 @@ typedef struct {
 	int node;
 	int block;
 	char op;
-	char tmp[28];
 	char status;
+	char tmp[28];
 } elem_tabla_estados;
 
 typedef struct{

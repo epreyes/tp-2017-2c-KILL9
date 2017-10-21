@@ -16,6 +16,7 @@
 #include <commons/string.h>
 #include <tplibraries/sockets/socket.h>
 #include <tplibraries/struct/struct.h>
+#include <tplibraries/protocol/filesystem_datanode.h>
 #include "header/connectionDataNodeFileSystem.h"
 #include "header/const.h"
 
@@ -28,3 +29,4 @@ int main(void) {
 	return EXIT_SUCCESS;
 }
 
+/// ftruncate(fd, sizeof(t_directorio) * MAX_DIR_FS); ver despues

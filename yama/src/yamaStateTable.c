@@ -94,6 +94,7 @@ void addToNodeList(void* fsInfo) {
 			node->node_id = b->node1;
 			node->tasks_in_progress = 0;
 			node->tasts_done = 0;
+			node->errors = 0;
 			list_add(yama->tabla_nodos, node);
 		}
 
@@ -163,13 +164,14 @@ void viewStateTable() {
 	}
 }
 
-int findRow(int master, int node_id, int block, char op) {
+int findInProcessTasks(int master, int node_id, int block, char op) {
 	int index = 0;
 	if (!list_is_empty(yama->tabla_estados)) {
 		for (index = 0; index < list_size(yama->tabla_estados); index++) {
 			elem_tabla_estados* node = list_get(yama->tabla_estados, index);
 			if ((node->node == node_id) && (master == node->master)
-					&& (block == node->block) && (op == node->op)) {
+					&& (block == node->block) && (op == node->op)
+					&& (node->status == 'P')) {
 				return index;
 			}
 		}
@@ -201,7 +203,7 @@ void addNewRowStatusTable(elem_tabla_estados* elem) {
 
 void updateStatusTable(int master, char opCode, int node, int bloque,
 		char status) {
-	int index = findRow(master, node, bloque, opCode);
+	int index = findInProcessTasks(master, node, bloque, opCode);
 	elem_tabla_estados* row;
 	if (index > -1) {
 		row = list_get(yama->tabla_estados, index);
@@ -237,5 +239,44 @@ void addToGlobalReductionPlanedTable(int master, rg_datos* nodeData) {
 	memcpy(planed->data, nodeData, sizeof(rg_datos));
 	planed->master = master;
 	list_add(yama->tabla_GR_planificados, planed);
+}
+
+void updateTasksAborted(int master, int node, int codeOp) {
+	int index = 0;
+	for (index = 0; index < list_size(yama->tabla_estados); index++) {
+		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
+		if ((elem->node == node) && (elem->master == master)
+				&& (elem->op == codeOp) && (elem->status == 'P')) {
+			updateStatusTable(master, codeOp, node, elem->block, 'A');
+		}
+	}
+}
+
+t_list* getTaskFailed(int master, int node, int code) {
+	int index = 0;
+	t_list* tasksFails = list_create();
+	for (index = 0; index < list_size(yama->tabla_estados); index++) {
+		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
+		if ((elem->node == node) && (elem->master == master)
+				&& (elem->op == 'T') && (elem->status == 'P')) {
+			list_add(tasksFails, elem);
+			updateStatusTable(master, 'T', node, elem->block, 'E');
+		}
+	}
+	return tasksFails;
+}
+
+block_info* findBlock(int block) {
+	int index = 0;
+	for (index = 0; index < list_size(yama->tabla_info_archivos); index++) {
+		elem_info_archivo* elem = list_get(yama->tabla_info_archivos, index);
+		void* info = malloc(elem->sizeInfo);
+		memcpy(info, elem->info, elem->sizeInfo);
+		if (((block_info*) info)->block_id == block) {
+			return (block_info*) info;
+		}
+	}
+
+	return NULL;
 }
 
