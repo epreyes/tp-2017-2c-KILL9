@@ -1,5 +1,5 @@
 install:
-	gcc -Wall sockets/*.c protocol/*.h utils/*.c struct/*.h -shared -o "libtplibraries.so" -lcommons
+	gcc -Wall sockets/*.c protocol/*.h protocol/*.c utils/*.c struct/*.h -shared -o "libtplibraries.so" -lcommons
 	sudo cp -u libtplibraries.so /usr/lib
 	sudo mkdir /usr/include/tplibraries -p
 	sudo cp protocol -r /usr/include/tplibraries/
