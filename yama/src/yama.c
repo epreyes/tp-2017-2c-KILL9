@@ -81,7 +81,11 @@ void* processOperation(int master, char op) {
 		response = processError(master);
 		break;
 	case 'O':
+		printf("\nEstados antes del ok\n");
+		viewStateTable();
 		processOk(master);
+		printf("\nEstados despues del ok\n");
+				viewStateTable();
 		break;
 	}
 

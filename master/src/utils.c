@@ -66,7 +66,7 @@ void loadScripts(char* transformScript, char* reductionScript){
 
 
 void loadConfigs(){
-	char* CONFIG_PATH = "properties/master.properties";
+	char* CONFIG_PATH = "../properties/master.properties";
 	config = config_create(CONFIG_PATH);
 	if(!(config_has_property(config,"YAMA_IP"))|| !(config_has_property(config,"YAMA_PUERTO"))){
 		log_error(logger,"error en el archivo de configuración");
@@ -77,14 +77,13 @@ void loadConfigs(){
 
 
 void createLoggers(){
-	char* LOG_PATH = "logs/master.log";
+	char* LOG_PATH = "../logs/master.log";
 	logger = log_create(LOG_PATH,"master",1,LOG_LEVEL_TRACE);
 }
 
 void readBuffer(int socket,int size,void* destiny){
 	void* buffer = malloc(size);
 	int bytesReaded = recv(socket, buffer, size, MSG_WAITALL);
-	printf("\n recivi %d bytes\n", bytesReaded);
 	if (bytesReaded <= 0){
 		log_warning(logger,"Socket %d: desconectado",socket);
 		exit(1);

@@ -118,11 +118,11 @@ void *runTransformThread(void* data){
 	for(i=0;i < (datos->blocksCount); ++i){
 		//-----
 		readBuffer(nodeSockets[datos->node], sizeof(int), &(answer->block));
-			//printf("BLOQUE:%d\n",answer->block);
+			printf("BLOQUE:%d\n",answer->block);
 		readBuffer(nodeSockets[datos->node], sizeof(char), &(answer->result));
-			//printf("RESULT:%c\n",answer->result);
+			printf("RESULT:%c\n",answer->result);
 		readBuffer(nodeSockets[datos->node], sizeof(int), &(answer->runtime));
-			//printf("METRIC:%d\n",answer->runtime);
+			printf("METRIC:%d\n",answer->runtime);
 
 		//respuesta a YAMA
 		ok* answerToYama = malloc(sizeof(ok));
@@ -139,7 +139,7 @@ void *runTransformThread(void* data){
 
 		if(answer->result == 'O'){
 			log_info(logger,"bloque %d del nodo %d transformado",datos->blocks[i].pos,datos->node);
-			//send(masterSocket,buffYama,2*sizeof(char)+2*sizeof(int),0);
+			send(masterSocket,buffYama,2*sizeof(char)+2*sizeof(int),0);
 		}else{
 			log_info(logger,"bloque %d del nodo %d no se pudo transformar",datos->blocks[i].pos,datos->node);
 			//VER COMO MANEJAR ESTE ERROR EN YAMA
