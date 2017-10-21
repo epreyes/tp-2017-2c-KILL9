@@ -14,6 +14,7 @@
 #include <commons/config.h>
 #include <commons/log.h>
 #include <tplibraries/struct/struct.h>
+#include <tplibraries/protocol/filesystem_datanode.h>
 
 // Definiciones
 #define LOG_INFO "logInfo"

@@ -13,7 +13,7 @@
 #include <sys/mman.h>
 #include <errno.h>
 #include <stdarg.h>
-
+#include <commons/string.h>
 
 static void
 check (int test, const char * message, ...)
@@ -38,11 +38,10 @@ void map_data_node() {
 	int status;
 	size_t size;
 
-	//Nombre del archivo a abrir
 	char * file_name = data_node_config->path_data_bin;
 
-	/*Abrir el archivo para leer*/
-	fd = open(file_name, O_RDONLY);
+	/*Abrir el archivo para leer e escribir*/
+	fd = open(file_name, O_RDWR);
 	if(fd < 0){
 		log_error(logError,"Error al abrir el archivo\n");
 	}
@@ -57,7 +56,7 @@ void map_data_node() {
 	 size = stat_data.st_size;
 
 	 /* Memory-map del archivo. */
-	 mapped_data_node = mmap ((caddr_t) 0, size, PROT_READ, MAP_SHARED, fd, 0);
+	 mapped_data_node = mmap ((caddr_t) 0, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 	 if(mapped_data_node == MAP_FAILED){
 		 log_error(logError,"Error al mapear el archivo en memoria\n");
 	 }

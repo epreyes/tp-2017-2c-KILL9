@@ -35,4 +35,7 @@ typedef struct __attribute__((packed)){
 #define GET_BLOQUE_OK   9
 #define YAMA_HSK       10
 
+/**GET BLOQUE **/
+t_leerBloque* recibirPaquete(int fd);
+
 #endif /* TPLIBRARIES_PROTOCOL_FILESYSTEM_DATANODE_H_ */
