@@ -183,12 +183,25 @@ tr_datos* doPlanning(block_info* blockRecived, int master) {
 	return evaluateClock(blockRecived, master, yama->clock);
 }
 
-void* getErrorResponse(int master, int node, t_list* taskFails){
+void* replanTask(int master, int node) {
+	t_list* taskFailed = getTaskFailed(master, node);
+	t_list* replanedTasks = list_create();
+
 	int index = 0;
-	for(index = 0; index < list_size(taskFails); index++){
-		elem_tabla_estados* elem = list_size(taskFails, index);
-		if( elem->op == 'T'){
-			return
+	for (index = 0; index < list_size(taskFailed); index++) {
+		elem_tabla_estados* elem = list_get(taskFailed, index);
+		block_info* blockInfo = findBlock(elem->block);
+		int node = elem->node;
+		if (elem->node == blockInfo->node1) {
+			node = blockInfo->node2;
+		} else {
+			node = blockInfo->node1;
 		}
+		tr_datos* dataNode = buildNodePlaned(blockInfo, master, node);
+		setInStatusTable('T', master, dataNode->nodo,
+				getBlockId(dataNode->tr_tmp), dataNode->tr_tmp);
+		list_add(replanedTasks, dataNode);
 	}
+
+	return sortTransformationResponse(replanedTasks, master);
 }

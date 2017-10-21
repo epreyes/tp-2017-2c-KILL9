@@ -241,15 +241,42 @@ void addToGlobalReductionPlanedTable(int master, rg_datos* nodeData) {
 	list_add(yama->tabla_GR_planificados, planed);
 }
 
-t_list* getTaskFails(int master, int node){
+void updateTasksAborted(int master, int node, int codeOp) {
 	int index = 0;
-	t_list* tasksFails = list_create();
-
-	for(index = 0; index < list_size(yama->tabla_estados); index++){
+	for (index = 0; index < list_size(yama->tabla_estados); index++) {
 		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
-		if( (elem->node == node) && (elem->master == master) && (elem->status == 'P') ){
-			list_add(tasksFails, elem);
+		if ((elem->node == node) && (elem->master == master)
+				&& (elem->op == codeOp) && (elem->status == 'P')) {
+			updateStatusTable(master, codeOp, node, elem->block, 'A');
 		}
 	}
+}
+
+t_list* getTaskFailed(int master, int node, int code) {
+	int index = 0;
+	t_list* tasksFails = list_create();
+	for (index = 0; index < list_size(yama->tabla_estados); index++) {
+		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
+		if ((elem->node == node) && (elem->master == master)
+				&& (elem->op == 'T') && (elem->status == 'P')) {
+			list_add(tasksFails, elem);
+			updateStatusTable(master, 'T', node, elem->block, 'E');
+		}
+	}
+	return tasksFails;
+}
+
+block_info* findBlock(int block) {
+	int index = 0;
+	for (index = 0; index < list_size(yama->tabla_info_archivos); index++) {
+		elem_info_archivo* elem = list_get(yama->tabla_info_archivos, index);
+		void* info = malloc(elem->sizeInfo);
+		memcpy(info, elem->info, elem->sizeInfo);
+		if (((block_info*) info)->block_id == block) {
+			return (block_info*) info;
+		}
+	}
+
+	return NULL;
 }
 
