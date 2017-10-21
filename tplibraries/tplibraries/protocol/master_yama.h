@@ -107,6 +107,7 @@ typedef struct af_datos{
 /*=======ERRORS==========*/
 typedef struct{
 	char	code;
+	char	opCode;
 	int		nodo;
 }error_rq;
 
