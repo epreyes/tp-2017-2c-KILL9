@@ -59,17 +59,16 @@ void viewPlannedTable() {
 	}
 }
 
-void viewFileInfo(){
+void viewFileInfo() {
 	printf(
-				"\nLa cantidad de entradas de la tabla de informacion de archivos: %d\n",
-				list_size(yama->tabla_info_archivos));
-		int index = 0;
-		for (index = 0; index < list_size(yama->tabla_info_archivos); index++) {
-			elem_info_archivo* info = list_get(
-					yama->tabla_info_archivos, index);
-			printf(
-					"\nBloques=%d - Filename=%s - Sizeinfo=%d\n", info->blocks, info->filename, info->sizeInfo);
-		}
+			"\nLa cantidad de entradas de la tabla de informacion de archivos: %d\n",
+			list_size(yama->tabla_info_archivos));
+	int index = 0;
+	for (index = 0; index < list_size(yama->tabla_info_archivos); index++) {
+		elem_info_archivo* info = list_get(yama->tabla_info_archivos, index);
+		printf("\nBloques=%d - Filename=%s - Sizeinfo=%d\n", info->blocks,
+				info->filename, info->sizeInfo);
+	}
 }
 
 void viewLRPlannedTable() {
@@ -220,13 +219,17 @@ void updateStatusTable(int master, char opCode, int node, int bloque,
 	int index = findInProcessTasks(master, node, bloque, opCode);
 	elem_tabla_estados* row;
 	if (index > -1) {
-		printf("\nVa a actualizar master %d, opCode %c, nodo %d, bloque %d, estado %c", master, opCode, node, bloque, status);
+		printf(
+				"\nVa a actualizar master %d, opCode %c, nodo %d, bloque %d, estado %c",
+				master, opCode, node, bloque, status);
 		row = list_get(yama->tabla_estados, index);
 		row->op = opCode;
 		row->status = status;
 		list_replace(yama->tabla_estados, index, row);
 	} else {
-		printf("\n--->>>>NO PUEDE actualizar master %d, opCode %c, nodo %d, bloque %d, estado %c", master, opCode, node, bloque, status);
+		printf(
+				"\n--->>>>NO PUEDE actualizar master %d, opCode %c, nodo %d, bloque %d, estado %c",
+				master, opCode, node, bloque, status);
 	}
 }
 
@@ -287,8 +290,14 @@ block_info* findBlock(int block) {
 		elem_info_archivo* elem = list_get(yama->tabla_info_archivos, index);
 		void* info = malloc(elem->sizeInfo);
 		memcpy(info, elem->info, elem->sizeInfo);
-		if (((block_info*) info)->block_id == block) {
-			return (block_info*) info;
+		int j = 0;
+		for (j = 0; j < elem->blocks; j++) {
+			block_info* blockInfo = malloc(sizeof(block_info));
+			memcpy(blockInfo, info + (j * sizeof(block_info)),
+					sizeof(block_info));
+			if (blockInfo->block_id == block) {
+				return blockInfo;
+			}
 		}
 	}
 
@@ -304,11 +313,15 @@ int getBlockOfFilie( nodo, bloque) {
 		memcpy(info, elem->info, elem->sizeInfo);
 
 		int j = 0;
-		for(j = 0; j < elem->blocks; j++){
+		for (j = 0; j < elem->blocks; j++) {
 			block_info* blockInfo = malloc(sizeof(block_info));
-			printf("\nbusca el bloque que este en el bloque %d, del nodo %d\n", bloque, nodo);
-			memcpy(blockInfo, info+(j*sizeof(block_info)), sizeof(block_info));
-			if( (blockInfo->node1 == nodo && blockInfo->node1_block == bloque) || (blockInfo->node2 == nodo && blockInfo->node2_block == bloque) ){
+			printf("\nbusca el bloque que este en el bloque %d, del nodo %d\n",
+					bloque, nodo);
+			memcpy(blockInfo, info + (j * sizeof(block_info)),
+					sizeof(block_info));
+			if ((blockInfo->node1 == nodo && blockInfo->node1_block == bloque)
+					|| (blockInfo->node2 == nodo
+							&& blockInfo->node2_block == bloque)) {
 				return blockInfo->block_id;
 			}
 		}
