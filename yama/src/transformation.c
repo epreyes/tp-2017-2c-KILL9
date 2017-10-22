@@ -24,7 +24,7 @@ void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId) {
 	long timestamp = current_timestamp();
 	asprintf(&name, "%s%ld-%c-M%03d-B%03d", "/tmp/", timestamp, op, masterId,
 			blockId);
-printf("\nName %s - size %d\n", name, strlen(name));
+
 	strcpy(nodeData->tr_tmp, name);
 }
 
