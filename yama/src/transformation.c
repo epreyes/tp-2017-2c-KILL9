@@ -67,7 +67,7 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 
 		//actualizo la tabla de estados con la informacion del nuevo job.
 		setInStatusTable('T', master, nodeData->nodo,
-				getBlockId(nodeData->tr_tmp), nodeData->tr_tmp);
+				blockInfo->block_id, nodeData->tr_tmp, nodeData->bloque);
 
 		free(blockInfo);
 	}

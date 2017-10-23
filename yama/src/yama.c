@@ -68,7 +68,7 @@ void* processOperation(int master, char op) {
 	case 'T':
 		response = processTransformation(master);
 		//viewTransformationResponse(response);
-		viewNodeTable();
+
 		break;
 	case 'L':
 		response = processLocalReduction(master);
@@ -83,7 +83,11 @@ void* processOperation(int master, char op) {
 		response = processError(master);
 		break;
 	case 'O':
+		//printf("\nAntes del ok:\n");
+		//viewStateTable();
 		processOk(master);
+		//printf("\nDESPUES del ok:\n");
+		//viewStateTable();
 		break;
 	}
 

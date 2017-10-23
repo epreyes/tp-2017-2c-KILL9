@@ -7,12 +7,13 @@
 
 #include "headers/yamaStateTable.h"
 
-void setInStatusTable(char op, int master, int nodo, int bloque, char* tmpName) {
+void setInStatusTable(char op, int master, int nodo, int bloque, char* tmpName, int nodeBlock) {
 	elem_tabla_estados* elemStatus = malloc(sizeof(elem_tabla_estados));
 	elemStatus->block = bloque;
 	elemStatus->job = yama->jobs;
 	elemStatus->master = master;
 	elemStatus->node = nodo;
+	elemStatus->node_block = nodeBlock;
 	elemStatus->op = op;
 	elemStatus->status = 'P';
 	strcpy(elemStatus->tmp, tmpName);
@@ -170,8 +171,8 @@ void viewStateTable() {
 		elem_tabla_estados* row = list_get(stateTable, i);
 		i++;
 		printf(
-				"Row:\nJob=%d - Master=%d - Node=%d - Block=%d - Oper=%c - Temp=%s - Status=%c\n",
-				row->job, row->master, row->node, row->block, row->op, row->tmp,
+				"Row:\nJob=%d - Master=%d - Block=%d - Node=%d - Node_block=%d - Oper=%c - Temp=%s - Status=%c\n",
+				row->job, row->master, row->block, row->node, row->node_block, row->op, row->tmp,
 				row->status);
 	}
 }
@@ -182,7 +183,7 @@ int findInProcessTasks(int master, int node_id, int block, char op) {
 		for (index = 0; index < list_size(yama->tabla_estados); index++) {
 			elem_tabla_estados* node = list_get(yama->tabla_estados, index);
 			if ((node->node == node_id) && (master == node->master)
-					&& (block == node->block) && (op == node->op)
+					&& (block == node->node_block) && (op == node->op)
 					&& (node->status == 'P')) {
 				return index;
 			}
@@ -208,6 +209,7 @@ void addNewRowStatusTable(elem_tabla_estados* elem) {
 	row->status = elem->status;
 	row->job = elem->job;
 	row->node = elem->node;
+	row->node_block = elem->node_block;
 	row->block = elem->block;
 	strcpy(row->tmp, elem->tmp);
 	list_add(yama->tabla_estados, row);
@@ -219,16 +221,13 @@ void updateStatusTable(int master, char opCode, int node, int bloque,
 	int index = findInProcessTasks(master, node, bloque, opCode);
 	elem_tabla_estados* row;
 	if (index > -1) {
-		printf(
-				"\nVa a actualizar master %d, opCode %c, nodo %d, bloque %d, estado %c\n",
-				master, opCode, node, bloque, status);
 		row = list_get(yama->tabla_estados, index);
 		row->op = opCode;
 		row->status = status;
 		list_replace(yama->tabla_estados, index, row);
 	} else {
 		printf(
-				"\n--->>>>NO PUEDE actualizar master %d, opCode %c, nodo %d, bloque %d, estado %c",
+				"\nNO PUEDE actualizar master %d, opCode %c, nodo %d, bloque %d, estado %c\n",
 				master, opCode, node, bloque, status);
 	}
 }
@@ -306,7 +305,6 @@ block_info* findBlock(int block) {
 
 int getBlockOfFilie( nodo, bloque) {
 	int index = 0;
-	viewFileInfo();
 	for (index = 0; index < list_size(yama->tabla_info_archivos); index++) {
 		elem_info_archivo* elem = list_get(yama->tabla_info_archivos, index);
 		void* info = malloc(elem->sizeInfo);
@@ -315,8 +313,6 @@ int getBlockOfFilie( nodo, bloque) {
 		int j = 0;
 		for (j = 0; j < elem->blocks; j++) {
 			block_info* blockInfo = malloc(sizeof(block_info));
-			printf("\nbusca el bloque que este en el bloque %d, del nodo %d\n",
-					bloque, nodo);
 			memcpy(blockInfo, info + (j * sizeof(block_info)),
 					sizeof(block_info));
 			if ((blockInfo->node1 == nodo && blockInfo->node1_block == bloque)
