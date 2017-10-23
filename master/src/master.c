@@ -27,17 +27,10 @@ int main(int argc, char* argv[]){
 	struct timeval start,end;
 	gettimeofday(&start,NULL);
 
-
-//--recibo respuestas de Yama
-	int answerSize_TR = sizeof(tr_answer)/sizeof(tr_answer[0]);
-	int answerSize_RL = sizeof(rl_answer)/sizeof(rl_answer[0]);
-	int answerSize_RG = sizeof(rg_answer)/sizeof(rg_answer[0]);
-	int answerSize_AF = sizeof(af_answer)/sizeof(af_answer[0]);
-
 	createLoggers();
 	loadConfigs();
-	openYamaConnection();
 	validateArgs(argc, argv);										//valido argumentos
+	openYamaConnection();
 	loadScripts(argv[1],argv[2]);
 
 	transformFile(/*tr_answer,answerSize_TR,*/&masterMetrics,argv[3]);	//ordena ejecución de transformacion
