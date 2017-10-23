@@ -67,6 +67,8 @@ void* processOperation(int master, char op) {
 	switch (op) {
 	case 'T':
 		response = processTransformation(master);
+		//viewTransformationResponse(response);
+		viewNodeTable();
 		break;
 	case 'L':
 		response = processLocalReduction(master);

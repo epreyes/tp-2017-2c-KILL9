@@ -220,7 +220,7 @@ void updateStatusTable(int master, char opCode, int node, int bloque,
 	elem_tabla_estados* row;
 	if (index > -1) {
 		printf(
-				"\nVa a actualizar master %d, opCode %c, nodo %d, bloque %d, estado %c",
+				"\nVa a actualizar master %d, opCode %c, nodo %d, bloque %d, estado %c\n",
 				master, opCode, node, bloque, status);
 		row = list_get(yama->tabla_estados, index);
 		row->op = opCode;
