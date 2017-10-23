@@ -1,0 +1,54 @@
+[INFO] 18:48:40:925 FileSystem/(6797:6797): ######## INICIO DATA NODE ########
+
+[INFO] 18:48:40:953 FileSystem/(6797:6797): CONFIGURACION INICIAL DATA_NODE IP_FILESYSTEM:127.0.0.1
+PORT_FILESYSTEM:5003
+PATH_DATABIN:/home/utnso/data.bin
+
+[INFO] 18:48:40:956 FileSystem/(6797:6797):  Inicio map_data_node 
+
+[INFO] 18:48:40:958 FileSystem/(6797:6797): Fin map_data_node
+
+[INFO] 18:48:40:966 FileSystem/(6797:6797):  Inicio map_data_node 
+
+[INFO] 18:48:40:967 FileSystem/(6797:6797): Fin map_data_node
+
+[INFO] 19:39:06:40 DATA_NODE/(7927:7927): ######## INICIO DATA NODE ########
+
+[INFO] 19:39:06:55 DATA_NODE/(7927:7927): CONFIGURACION INICIAL DATA_NODE IP_FILESYSTEM:127.0.0.1
+PORT_FILESYSTEM:5003
+PATH_DATABIN:/home/utnso/data.bin
+
+[INFO] 19:39:06:68 DATA_NODE/(7927:7927): INICIANDO CONEXION CON FILESYSTEM ...
+
+[INFO] 19:39:06:70 DATA_NODE/(7927:7927):  Inicio map_data_node 
+
+[INFO] 19:39:06:80 DATA_NODE/(7927:7927): Fin map_data_node
+
+[INFO] 19:39:06:87 DATA_NODE/(7927:7927): Accesso aprobado : se conecto al FILESYSTEM
+[INFO] 19:39:06:87 DATA_NODE/(7927:7927):  Inicio map_data_node 
+
+[INFO] 19:39:06:90 DATA_NODE/(7927:7927): Fin map_data_node
+
+[INFO] 20:12:24:906 DATA_NODE/(8428:8428): ######## INICIO DATA NODE ########
+
+[INFO] 20:12:24:924 DATA_NODE/(8428:8428): CONFIGURACION INICIAL DATA_NODE IP_FILESYSTEM:127.0.0.1
+PORT_FILESYSTEM:5003
+PATH_DATABIN:/home/utnso/data.bin
+
+[INFO] 20:12:24:928 DATA_NODE/(8428:8428): INICIANDO CONEXION CON FILESYSTEM ...
+
+[INFO] 20:12:24:931 DATA_NODE/(8428:8428):  Inicio map_data_node 
+
+[INFO] 20:12:24:932 DATA_NODE/(8428:8428): Fin map_data_node
+
+[INFO] 20:12:24:940 DATA_NODE/(8428:8428): Accesso aprobado : se conecto al FILESYSTEM
+
+[INFO] 20:12:24:941 DATA_NODE/(8428:8428): procesando request del fileSystem .. 
+
+[INFO] 20:12:24:941 DATA_NODE/(8428:8428): Codigo operacion GET_BLOQUE
+[INFO] 20:12:24:941 DATA_NODE/(8428:8428): Iniciando lectura  bloque archivo 
+[INFO] 20:12:24:962 DATA_NODE/(8428:8428): Envio los datos del bloque
+[INFO] 20:12:24:967 DATA_NODE/(8428:8428): Fin envio datos del bloque
+[INFO] 20:12:24:968 DATA_NODE/(8428:8428): Fin lectura bloque archivo 
+[INFO] 20:12:24:969 DATA_NODE/(8428:8428): Codigo operacion GET_BLOQUE
+[INFO] 20:12:24:970 DATA_NODE/(8428:8428): Iniciando lectura  bloque archivo 

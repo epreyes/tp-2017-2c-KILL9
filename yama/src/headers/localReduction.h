@@ -1,0 +1,21 @@
+/*
+ * localReduction.h
+ *
+ *  Created on: 12/10/2017
+ *      Author: utnso
+ */
+
+#ifndef SRC_HEADERS_LOCALREDUCTION_H_
+#define SRC_HEADERS_LOCALREDUCTION_H_
+
+#include "yama.h"
+
+t_list* findPlaned(int master);
+
+void viewLocalReductionResponse(void* response);
+
+void getLocalReductionTmpName(rl_datos* nodeData, int op, int blockId, int masterId);
+
+void* processLocalReduction(int master);
+
+#endif /* SRC_HEADERS_LOCALREDUCTION_H_ */

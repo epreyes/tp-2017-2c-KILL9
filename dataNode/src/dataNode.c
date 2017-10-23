@@ -1,24 +1,32 @@
 /*
  ============================================================================
  Name        : dataNode.c
- Author      : 
+ Author      :
  Version     :
  Copyright   : Your copyright notice
  Description : Hello World in C, Ansi-style
  ============================================================================
  */
 
+#include "header/dataNode.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <commons/config.h>
-#include "dataNode.h"
+#include <commons/string.h>
+#include <tplibraries/sockets/socket.h>
+#include <tplibraries/struct/struct.h>
+#include <tplibraries/protocol/filesystem_datanode.h>
+#include "header/connectionDataNodeFileSystem.h"
+#include "header/const.h"
+
+int fd_server_socket;
 
 int main(void) {
-	load_properties_files();
+	load_data_node_properties_files();
 
+	connectionToFileSystem();
 	return EXIT_SUCCESS;
 }
 
-void  load_properties_files(){
-	t_data_node_config = config_create(DATA_NODE_PATH);
-}
+/// ftruncate(fd, sizeof(t_directorio) * MAX_DIR_FS); ver despues
