@@ -14,6 +14,17 @@
 // Dado un id de bloque y un contenido, escribe el mismo en el datanode
 int escribirEnDataNode(int idBloque, char* contenido, int socketNodo,
 		long finBytes, t_log* logger) {
+
+	if (DATANODE_DUMMY == 1) {
+		log_info(logger,
+				"Enviando peticion a datanode %d - bloque: %d - finBytes: %d...",
+				socketNodo, idBloque, finBytes);
+
+		log_info(logger, "Peticion a datanode ok...");
+
+		return 0;
+	}
+
 	log_info(logger,
 			"Enviando peticion a datanode %d - bloque: %d - finBytes: %d...",
 			socketNodo, idBloque, finBytes);
@@ -23,34 +34,18 @@ int escribirEnDataNode(int idBloque, char* contenido, int socketNodo,
 	peticion.idBloque = idBloque;
 	peticion.finByte = finBytes;
 
-	char* cont = malloc(sizeof(char) * finBytes);
-
 	// Envio header
 
-	if (send(socketNodo, &peticion, sizeof(t_escribirBloque), 0) < 0) {
+	if (send(socketNodo, &peticion, sizeof(int) * 3, 0) < 0) {
 		log_error(logger, "Error en el envio de escritura (header) a cliente");
-		return NULL;
+		return -1;
 	}
 
 	// TODO: hacer sendall
-	if (send(socketNodo, cont, peticion.finByte, 0) < 0) {
+	if (send(socketNodo, contenido, finBytes, 0) < 0) {
 		log_error(logger, "Error en el envio a cliente");
-		return NULL;
-	}
-
-	// Espero respuesta
-	int resp = 0;
-
-	if (recv(socketNodo, resp, sizeof(int), 0) < 0) {
-		log_error(logger, "Error en la recepcion de info del nodo");
-		return NULL;
-	}
-
-	if (resp == SET_BLOQUE_OK) {
-		log_info(logger, "Peticion a datanode ok...");
-		return 0;
-	} else
 		return -1;
+	}
 
 }
 
@@ -61,7 +56,7 @@ char* leerDeDataNode(int idBloque, int socketNodo, long finBytes, t_log* logger)
 			"Enviando peticion a datanode %d - bloque: %d - finBytes: %d...",
 			socketNodo, idBloque, finBytes);
 
-	t_escribirBloque peticion;
+	t_leerBloque peticion;
 	peticion.idOperacion = GET_BLOQUE;
 	peticion.idBloque = idBloque;
 	peticion.finByte = finBytes;
@@ -95,6 +90,4 @@ char* leerDeDataNode(int idBloque, int socketNodo, long finBytes, t_log* logger)
 		return NULL;
 
 }
-
-
 

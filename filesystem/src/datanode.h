@@ -12,6 +12,8 @@
 #include <commons/log.h>
 #include <tplibraries/protocol/filesystem_datanode.h>
 
+#define DATANODE_DUMMY 0
+
 // Pedidos al datanode
 int escribirEnDataNode(int idBloque, char* contenido, int socketNodo,
 		long finBytes, t_log* logger);

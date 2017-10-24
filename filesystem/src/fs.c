@@ -14,31 +14,56 @@
 char* directoriosDat = "metadata/directorios.dat";
 char* nodosBin = "metadata/nodos.bin";
 
-int debug;
-
 int main(void) {
 
-	debug = 1;
+	sem_init(&semEscritura, 0, 1);
 
-	logger = log_create("yamafs.log", "YAMA_FS", 1, LOG_LEVEL_DEBUG);
+	logger = log_create("yamafs.log", "YAMA_FS", 0, LOG_LEVEL_DEBUG);
+
+	fs=malloc(sizeof(t_fs));
+
+	cargarArchivoDeConfiguracion(fs, "yamafs.cfg");
 
 	iniciarFS();
 
-	// Formateo el fs (luego debe sacarse este formateo inicial)
-	formatear();
-
 	nodos = malloc(sizeof(t_nodos));
-	nodos->tamanio = 100;
+	nodos->tamanio = 100; // TODO: esta info debe venir de los nodos (una vez que se coenctan)
 	nodos->libre = 100;
 	nodos->nodos = list_create();
 
 	nodosBitMap = list_create();
 
-	lanzarHiloServidor();
+	pthread_t hilo_servidor;
+
+	if (pthread_create(&hilo_servidor, NULL, lanzarHiloServidor, (void*) 0)
+			< 0) {
+		perror("Error creando thread servidor");
+		exit(1);
+	}
+
+	ejecutarConsola();
 
 	log_destroy(logger);
 
 	return EXIT_SUCCESS;
+}
+
+void cargarArchivoDeConfiguracion(t_fs *fs, char *configPath) {
+	fs->config = NULL;
+	fs->config = config_create(configPath);
+
+	if (fs->config == NULL ) {
+		printf("No existe el archivo de configuracion\n");
+		exit(1);
+	}
+
+	if (config_has_property(fs->config, "PUERTO")) {
+		fs->puerto = config_get_int_value(fs->config, "PUERTO");
+	} else {
+		printf("Error leyendo archivo de configuracion\n");
+		exit(1);
+	}
+
 }
 
 void iniciarFS() {
@@ -66,9 +91,9 @@ void iniciarFS() {
 	}
 
 	inicioTablaDirectorios = mmap((caddr_t) 0, sbuf.st_size,
-	PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+			PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
-	if (inicioTablaDirectorios == NULL) {
+	if (inicioTablaDirectorios == NULL ) {
 		perror("error en map\n");
 		exit(1);
 	}
@@ -97,7 +122,7 @@ void iniciarFS() {
 	nodos = mmap((caddr_t) 0, sbuf.st_size, PROT_READ | PROT_WRITE, MAP_SHARED,
 			fd, 0);
 
-	if (nodos == NULL) {
+	if (nodos == NULL ) {
 		perror("error en map\n");
 		exit(1);
 	}

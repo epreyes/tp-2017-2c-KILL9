@@ -8,7 +8,7 @@
 
 #include "fs_servidor.h"
 
-void lanzarHiloServidor() {
+void* lanzarHiloServidor() {
 
 	int sockfd, new_fd; // Escuchar sobre sock_fd, nuevas conexiones sobre new_fd
 	struct sockaddr_in my_addr;    // información sobre mi dirección
@@ -29,7 +29,7 @@ void lanzarHiloServidor() {
 	}
 
 	my_addr.sin_family = AF_INET;         // Ordenación de bytes de la máquina
-	my_addr.sin_port = htons(5002); // short, Ordenación de bytes de la red
+	my_addr.sin_port = htons(fs->puerto); // short, Ordenación de bytes de la red
 	my_addr.sin_addr.s_addr = INADDR_ANY; // Rellenar con mi dirección IP
 	memset(&(my_addr.sin_zero), '\0', 8); // Poner a cero el resto de la estructura
 
@@ -44,7 +44,7 @@ void lanzarHiloServidor() {
 		exit(1);
 	}
 
-	log_info(logger, "YamaFS inicializado y esperando conexiones");
+	log_info(logger, "YamaFS inicializado y esperando conexiones en el puerto %d", fs->puerto);
 	while (1) {  // main accept() loop
 		sin_size = sizeof(struct sockaddr_in);
 		if ((new_fd = accept(sockfd, (struct sockaddr *) &their_addr, &sin_size))
@@ -63,10 +63,11 @@ void lanzarHiloServidor() {
 		}
 
 		log_debug(logger, "Se recibio handshake %d", d.idMensaje);
+		codigoHandshake = d.idMensaje;
 
-		if (codigoHandshake != YAMA_HSK || codigoHandshake != NODE_HSK) {
+		if (codigoHandshake != YAMA_HSK && codigoHandshake != NODE_HSK) {
 			log_error(logger, "Codigo incorrecto de Handshake.");
-			exit(1);
+			return;
 		}
 
 		// Creo thread cliente
@@ -74,6 +75,13 @@ void lanzarHiloServidor() {
 		pthread_t hilo_cliente;
 
 		if (codigoHandshake == NODE_HSK) {
+
+			int hsk_ok = HSK_OK;
+
+			if (send(new_fd, &hsk_ok, sizeof(int), 0) < 0) {
+				log_error(logger, "Error en el envio de hsk ok");
+				exit(1);
+			}
 
 			log_info(logger, "Nuevo nodo conectado");
 
@@ -83,35 +91,18 @@ void lanzarHiloServidor() {
 				exit(1);
 			}
 
-			// Agrego el nodo en memoria
+			// Agrego el nodo en memoria TODO: debe agregarse al archivo en disco
 
 			t_nodo* nodo = malloc(sizeof(t_nodo));
 			nodo->id = new_fd;
-			nodo->libre = 8;  // inicialmente es el total
-			nodo->total = 8; // TODO: debe venir del nodo
+			nodo->libre = 5500;  // inicialmente es el total
+			nodo->total = 5500; // TODO: debe venir del nodo
 			nodo->direccion = "127.0.0.2:6003"; // TODO: sacar hardcode
 			nodo->socketNodo = new_fd;
 
 			list_add(nodos->nodos, nodo);
 
 			crearBitMapBloquesNodo(nodo);
-
-			// Prueba escritura
-
-			log_info(logger, "---escribirArchivo('pruebaEscritura') test---");
-
-			char* contenido = "12345\nA\n";
-			int escribir = escribirArchivo("pruebaEscritura", contenido,
-			TEXTO);
-
-			if (escribir == 0)
-				log_info(logger, "Escritura de prueba realizada con exito");
-			else
-				log_error(logger,
-						"No se pudo escribir el archivo prueba (error %d)",
-						escribir);
-
-			// Fin prueba escritura
 
 		}
 
@@ -225,6 +216,25 @@ void procesarPedidoYama(t_header pedido, int socket) {
 
 void procesarPedidoNodo(t_header pedido, int socket) {
 
-	// Por ahora no tenemos mensajes que vengan aparte desde el nodo
-	;
+
+
+	char* resultado=malloc(sizeof(char)*pedido.size);
+
+	switch (pedido.idMensaje) {
+
+	case SET_BLOQUE_OK:
+
+		sem_post(&semEscritura);
+
+		log_info(logger, "Escritura en nodo ok");
+
+		break;
+
+	default:
+		// Si es invalido->no hago nada y cierro el socket
+		log_error("Pedido %d invalido", pedido.idMensaje);
+		close(socket);
+		break;
+	}
+
 }

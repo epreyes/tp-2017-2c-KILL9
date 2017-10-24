@@ -30,9 +30,11 @@
 #include <errno.h>
 #include <time.h>
 
+#include <semaphore.h>
+
 // Estructuras administrativas del FS
 
-#define TAMANIO_BLOQUE 6 // Tamanio del bloque en bytes 1MB (1048576 bytes). TODO: Por ahora uso un tamanio chico para pruebas
+#define TAMANIO_BLOQUE 256 // Tamanio del bloque en bytes 1MB (1048576 bytes). TODO: Por ahora uso un tamanio chico para pruebas
 #define MAX_DIR_FS 100
 
 typedef struct {
@@ -91,12 +93,19 @@ t_list* nodosBitMap;
 
 t_log *logger;
 
+typedef struct {
+        t_config * config;
+        int32_t puerto;
+} t_fs;
+
+t_fs *fs;
+
 // Includes propios
 
 #include "utils.h"
-#include "fs_core.h"
+//#include "fs_core.h" // es necesario?
 #include "fs_servidor.h"
-
+#include "fs_consola.h"
 
 // Tipo de archivo
 #define BINARIO 0
@@ -105,5 +114,8 @@ t_log *logger;
 #define RESULTADO_OK 1000
 
 void iniciarFS();
+void cargarArchivoDeConfiguracion(t_fs *fs, char *configPath);
+
+sem_t semEscritura;
 
 #endif /* FS_H_ */

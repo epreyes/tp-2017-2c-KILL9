@@ -14,11 +14,13 @@
 #include "estructuras.h" // esto debe ser deprecado
 #include "fs.h"
 
+#include <tplibraries/protocol/filesystem_datanode.h>
+
 #define MYPORT 5000    // Puerto al que conectarán los usuarios
 #define BACKLOG 100     // Cuántas conexiones pendientes se mantienen en cola
 
 
-void lanzarHiloServidor();
+void *lanzarHiloServidor();
 void *connection_handler_nodo(void *socket_desc);
 void *connection_handler_yama(void *socket_desc);
 void procesarPedidoYama(t_header pedido, int socket);
