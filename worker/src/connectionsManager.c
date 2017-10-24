@@ -19,7 +19,7 @@ void loadServer(void){
 	setsockopt(workerSocket, SOL_SOCKET, SO_REUSEADDR, &activado, sizeof(activado));
 
 	if (bind(workerSocket, (void*) &workerAddr, sizeof(workerAddr)) != 0) {
-		log_error(logger,"No se pudo realizar el bind");
+		log_error(logger,"No se pudo realizar el bind en puerto %d",config_get_int_value(config,"WORKER_PUERTO"));
 		exit(1);
 	}
 	log_trace(logger, "Worker iniciado en puerto %d", config_get_int_value(config,"WORKER_PUERTO"));
@@ -54,6 +54,7 @@ void readSocketBuffer(int socket,int size,void* destiny){
 
 void readBuffer(){
 	char operation;
+	int i=0;
 	readSocketBuffer(socket_master,sizeof(char),&operation);
 		//--------
 		tr_node datos;
@@ -72,7 +73,12 @@ void readBuffer(){
 				//Obteniendo Blocks INFO
 				readSocketBuffer(socket_master,sizeof(int),&(datos.blocksSize));
 				datos.blocks=malloc(sizeof(block)*datos.blocksSize);
-				readSocketBuffer(socket_master,sizeof(block)*datos.blocksSize,datos.blocks);
+				for(i=0; i<datos.blocksSize; ++i){
+					readSocketBuffer(socket_master,sizeof(int),&(datos.blocks[i].pos));
+					readSocketBuffer(socket_master,sizeof(int),&(datos.blocks[i].size));
+					readSocketBuffer(socket_master,sizeof(char)*28,&(datos.blocks[i].tmp));
+					printf("\tpos:%d\tsize:%d\ttmp:%s\n", datos.blocks[i].pos,datos.blocks[i].size,datos.blocks[i].tmp);
+				}
 				log_info(logger,"Master %d: Datos de transformación obtenidos",socket_master);
 
 				char* scriptName = regenerateScript(datos.file,script_transform,operation,socket_master);
@@ -80,7 +86,7 @@ void readBuffer(){
 				//------------
 				tr_node_rs* answer = malloc(sizeof(tr_node_rs));
 				void* buff = malloc(sizeof(int)+sizeof(char)+sizeof(int));
-				int i;
+
 				for (i = 0; i < (datos.blocksSize); ++i){ //REEMPLAZAR POR FORKS
 					answer->block = datos.blocks[i].pos;
 					answer->result=transformBlock(datos.blocks[i].pos,datos.blocks[i].size,datos.blocks[i].tmp, scriptName);

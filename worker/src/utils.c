@@ -27,7 +27,7 @@ char* regenerateScript(char* fileContent, FILE* script, char operation, int sock
 	strcpy(command,"chmod 555 ");				//pasar nombre de archivo a dinámico
 	strcat(command, scriptName);
 
-	printf("%s",command);
+	//printf("%s",command);
 	system(command);							//pasar nombre de archivo a dinámico
 	log_info(logger,"Permisos de ejecución de %s concedidos", scriptName);
 	return scriptName;
