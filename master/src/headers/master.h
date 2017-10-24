@@ -61,5 +61,8 @@ typedef struct metrics{
 	procMetrics finalStorage;
 }metrics;
 
+//==========OTHERS===========//
+char replanification;
+//===========================//
 
 #endif /* MASTER_H_ */

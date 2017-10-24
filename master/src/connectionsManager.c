@@ -9,19 +9,23 @@
 
 void openYamaConnection(void) {
 	struct sockaddr_in yamaAddr;
+	char* yama_ip = config_get_string_value(config,"YAMA_IP");
+	int yama_port = config_get_int_value(config,"YAMA_PUERTO");
+
+
 	yamaAddr.sin_family = AF_INET;
-	yamaAddr.sin_addr.s_addr = inet_addr(config_get_string_value(config,"YAMA_IP"));
-	yamaAddr.sin_port = htons(config_get_int_value(config,"YAMA_PUERTO"));
+	yamaAddr.sin_addr.s_addr = inet_addr(yama_ip);
+	yamaAddr.sin_port = htons(yama_port);
 
 
 	masterSocket = socket(AF_INET, SOCK_STREAM, 0);
 
 	if (connect(masterSocket, (void*) &yamaAddr, sizeof(yamaAddr)) != 0) {
-		log_error(logger,"No se pudo conectar con Yama");
+		log_error(logger,"No se pudo conectar con Yama (%s:%d)",yama_ip,yama_port);
 		exit(1);
 	};
 
-	log_info(logger,"conexión con Yama establecida");
+	log_info(logger,"conexión con Yama establecida (%s:%d)",yama_ip,yama_port);
 }
 
 int openNodeConnection(int node, char* ip, int port){
@@ -39,7 +43,10 @@ int openNodeConnection(int node, char* ip, int port){
 	nodeSockets[node] = socket(AF_INET, SOCK_STREAM, 0);
 
 	if (connect(nodeSockets[node], (void*) &workerAddr, sizeof(workerAddr)) != 0) {
-		log_error(logger, "No se puede conectar con el nodo:%d", node);
+		log_error(logger, "No se puede conectar con el nodo:%d (%s:%d)", node, ip, port);
 		return 1;
-	}else return 0;
+	}else{
+		log_info(logger, "Conexión con nodo %d establecida (puerto:%d-socket:%d)", node, port, nodeSockets[node]);
+		return 0;
+	}
 }
