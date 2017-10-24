@@ -12,7 +12,7 @@ char transformBlock(int position, int size, char temporal[28], char* scriptName)
 	char* blockContent;
 	//blockContent = getBlockInfo(position, size);
 
-	char command[47];
+	char command[59];
 	strcpy(command, "./");
 	strcat(command, scriptName);
 	strcat(command, " > ");

@@ -41,17 +41,6 @@ void loadServer(void){
 }
 //==========================================================================
 
-void readSocketBuffer(int socket,int size,void* destiny){
-	void* buffer = malloc(size);
-	int bytesReaded = recv(socket, buffer, size, MSG_WAITALL);
-	if (bytesReaded <= 0) {
-		log_warning(logger,"Master %d: desconectado",socket);
-		exit(1);
-	}
-	memcpy(destiny, buffer, size);
-	free(buffer);
-}
-
 void readBuffer(){
 	char operation;
 	int i=0;

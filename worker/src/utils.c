@@ -9,11 +9,12 @@
 
 void generateTempsFolder(){
 	system("mkdir -p tmp");
+	system("mkdir -p tmp_scripts");
 };
 
 char* regenerateScript(char* fileContent, FILE* script, char operation, int socket){
 	char* scriptName = generateScriptName(operation, socket);
-	char command[25];
+	char command[37];
 	script = fopen(scriptName,"w");
 	if(script == NULL){
 		log_error(logger,"Error al guardar el script %s", scriptName);
@@ -61,6 +62,17 @@ long current_timestamp() {
 char* generateScriptName(char operation, int master){
 	char* name;
 	long timestamp = current_timestamp();
-	asprintf(&name, "%c%d-%ld",operation,master,timestamp);
+	asprintf(&name, "tmp_scripts/%c%d-%ld",operation,master,timestamp);
 	return name;
+}
+
+void readSocketBuffer(int socket,int size,void* destiny){
+	void* buffer = malloc(size);
+	int bytesReaded = recv(socket, buffer, size, MSG_WAITALL);
+	if (bytesReaded <= 0) {
+		log_warning(logger,"Master %d: desconectado",socket);
+		exit(1);
+	}
+	memcpy(destiny, buffer, size);
+	free(buffer);
 }
