@@ -10,9 +10,10 @@
 
 #include "worker.h"
 
-void generateTempsFolder();													//genera directorio de temporales
-void regenerateScript(char* fileContent, FILE* script, char* scriptName); 	//recibo el string y genero el archivo
+void generateTempsFolder();																//genera directorio de temporales
+char* regenerateScript(char* fileContent, FILE* script, char operation, int socket); 	//recibo el string y genero el archivo
 void loadConfigs();
 void createLoggers();
+char* generateScriptName(char operation, int master);
 
 #endif /* HEADERS_UTILS_H_ */

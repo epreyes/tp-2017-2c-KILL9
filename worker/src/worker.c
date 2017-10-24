@@ -19,7 +19,6 @@ int main(){
 	//-------------
 	generateTempsFolder();
 	readBuffer();
-
 	//-------------
 	log_destroy(logger);
 	config_destroy(config);

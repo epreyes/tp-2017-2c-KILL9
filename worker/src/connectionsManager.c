@@ -22,7 +22,7 @@ void loadServer(void){
 		log_error(logger,"No se pudo realizar el bind");
 		exit(1);
 	}
-
+	log_trace(logger, "Worker iniciado en puerto %d", config_get_int_value(config,"WORKER_PUERTO"));
 	log_info(logger,"Esperando conexiones de master");
 	listen(workerSocket, 100);
 
@@ -33,11 +33,11 @@ void loadServer(void){
 	if(masterSocket!=-1){
 		log_trace(logger,"Master %d: Conectado",masterSocket);
 	}else{
-		log_error(logger,"Error al establecer conexión");
+		log_error(logger,"Error al establecer conexión con Master");
 		exit(1);
 	}
-	socket_worker=workerSocket;		//sacar
-	socket_master=masterSocket;		//sacar
+	socket_worker=workerSocket;
+	socket_master=masterSocket;
 }
 //==========================================================================
 
@@ -63,6 +63,7 @@ void readBuffer(){
 			//tamanio del archivo
 				log_trace(logger,"Master %d: Solicitud de transformación recibida",socket_master);
 				log_info(logger,"Master %d: Obteniendo datos de transformación",socket_master);
+
 				//Obteniendo Script INFO
 				readSocketBuffer(socket_master,sizeof(int),&(datos.fileSize));
 				datos.file=malloc(datos.fileSize);
@@ -74,7 +75,7 @@ void readBuffer(){
 				readSocketBuffer(socket_master,sizeof(block)*datos.blocksSize,datos.blocks);
 				log_info(logger,"Master %d: Datos de transformación obtenidos",socket_master);
 
-				regenerateScript(datos.file,script_transform,"script.sh");
+				char* scriptName = regenerateScript(datos.file,script_transform,operation,socket_master);
 
 				//------------
 				tr_node_rs* answer = malloc(sizeof(tr_node_rs));
@@ -82,7 +83,7 @@ void readBuffer(){
 				int i;
 				for (i = 0; i < (datos.blocksSize); ++i){ //REEMPLAZAR POR FORKS
 					answer->block = datos.blocks[i].pos;
-					answer->result=transformBlock(datos.blocks[i].pos,datos.blocks[i].size,datos.blocks[i].tmp);
+					answer->result=transformBlock(datos.blocks[i].pos,datos.blocks[i].size,datos.blocks[i].tmp, scriptName);
 					answer->runtime=12;
 					//serializo
 					memcpy(buff,&(answer->block),sizeof(int));
@@ -103,20 +104,19 @@ void readBuffer(){
 				log_trace(logger, "Master %d: Transformación finalizada", socket_master);
 				break;
 			case 'L':
-				log_info(logger,"Solicitud de reducción local recibida");
-				regenerateScript("hola mundo",script_reduction,"rd.sh");
+				log_info(logger,"Master %d: Solicitud de Reducción Local recibida");
 				//reduceFile(file[],reductionScript);
 				break;
 			case 'G':
-				log_info(logger,"Solicitud de reducción global recibida");
+				log_info(logger,"Master %d: Solicitud de Reducción Global recibida");
 				//globalReduction(files[],reductionScript);
 				break;
 			case 'S':
-				log_info(logger,"Solicitud de almacenadoFinal recibida");
+				log_info(logger,"Master %d: Solicitud de Almacenado Final recibida");
 				//finalStorage(???,???);
 				break;
 			default:
-				log_error(logger,"No existe la operación solicita");
+				log_error(logger,"No existe la operación Solicitada");
 				close(socket_master);
 				break;
 				//cerrar conexion y devolver error

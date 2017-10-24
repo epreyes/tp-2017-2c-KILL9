@@ -1,4 +1,7 @@
 /Debug/
 /Release/
+/Node1/
+/Node2/
+/logs/
 *.log
 *.properties

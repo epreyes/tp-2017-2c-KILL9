@@ -6,15 +6,18 @@
  */
 #include "headers/transform.h"
 
-char transformBlock(int position, int size, char temporal[28] ){
+char transformBlock(int position, int size, char temporal[28], char* scriptName){
 	log_info(logger,"Bloque %d: Transformando", position);
 
-	//void* param = getBlockInfo(position, size);
+	char* blockContent;
+	//blockContent = getBlockInfo(position, size);
 
-	system("chmod 555 script.sh");					//pasar nombre de archivo a dinámico
-	char command[45];
-	strcpy(command,"./script.sh > ");				//pasar nombre de archivo a dinámico
+	char command[47];
+	strcpy(command, "./");
+	strcat(command, scriptName);
+	strcat(command, " > ");
 	strcat(command, temporal+1);
+
 	if (system(command)!=0){
 		log_error(logger,"Bloque %d: Falló la transformación", position);
 		return 'E';
