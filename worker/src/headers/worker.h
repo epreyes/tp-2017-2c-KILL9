@@ -27,8 +27,8 @@ t_log* logger;
 //=========CONFIGS============//
 t_config* config;
 //=========FILES============//
-FILE* script_transform; 	//lo tomo del pedido de transformación
-FILE* script_reduction;		//lo tomo del pedido de reducción local
+FILE* script_transform;
+FILE* script_reduction;
 //=========SOCKETS============//
 int socket_worker;
 int socket_master;

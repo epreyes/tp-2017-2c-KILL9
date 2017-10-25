@@ -12,4 +12,6 @@
 
 char transformBlock(int position, int size, char temporal[28], char* fileName);
 
+void transformation();
+
 #endif /* HEADERS_TRANSFORM_H_ */
