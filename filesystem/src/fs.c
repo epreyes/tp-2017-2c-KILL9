@@ -22,7 +22,7 @@ int main(void) {
 
 	fs=malloc(sizeof(t_fs));
 
-	cargarArchivoDeConfiguracion(fs, "/home/utnso/SO/fs/bin/yamafs.cfg");
+	cargarArchivoDeConfiguracion(fs, "yamafs.cfg");
 
 	iniciarFS();
 
