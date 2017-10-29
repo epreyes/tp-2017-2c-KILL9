@@ -24,4 +24,8 @@ void createLoggers(void);
 
 void readBuffer(int socket,int size,void* destiny);
 
+int sendOkToYama(char opCode, int block, int node);
+
+int sendErrorToYama(char opCode, int node);
+
 #endif /* HEADERS_UTILS_H_ */

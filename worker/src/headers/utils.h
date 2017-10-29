@@ -15,6 +15,8 @@ char* regenerateScript(char* fileContent, FILE* script, char operation, int sock
 void loadConfigs();
 void createLoggers();
 char* generateScriptName(char operation, int master);
-void readSocketBuffer(int socket,int size,void* destiny);
+void readBuffer(int socket,int size,void* destiny);
+char* serializeFile(char* fileName);
+
 
 #endif /* HEADERS_UTILS_H_ */

@@ -11,6 +11,6 @@
 #include "master.h"
 #include "utils.h"
 
-int saveResult(af_datos yamaAnswer[], int totalRecords, metrics *masterMetrics);
+int saveResult(metrics *masterMetrics, char* fileName);
 
 #endif /* HEADERS_FINALSTORAGE_H_ */

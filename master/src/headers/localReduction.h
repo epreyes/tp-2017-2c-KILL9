@@ -22,9 +22,10 @@ typedef struct dataThread_LR{
 	int 	tmpsCounter;
 }dataThread_LR;
 
+local_rs* sendLRequest();
 
 void *runLocalRedThread(void* data);
 
-int runLocalReduction(rl_datos yamaAnswer[], int totalRecords, metrics *masterMetrics);
+int runLocalReduction(metrics *masterMetrics);
 
 #endif /* HEADERS_LOCALREDUCTION_H_ */

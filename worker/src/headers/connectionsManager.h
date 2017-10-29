@@ -17,6 +17,6 @@
 #include "finalStore.h"
 
 void loadServer(void);
-void readBuffer(void);
+void readMasterBuffer(void);
 
 #endif /* HEADERS_CONNECTIONSMANAGER_H_ */
