@@ -54,18 +54,20 @@ typedef struct{
 
 
 /*========GLOBAL_REDUCTION==========*/
-//----Request----//
 typedef struct{
+	int		node;
 	char	ip[16];
 	int		port;
-	tmp		rl_tmp;
+	char	rl_tmp[28];
 }rg_node;
 
+//----Request----//
 typedef struct{
-	char	code;			//'G'
-	tmp		rl_tmp;		//tmp del nodo maestro
-	tmp		rg_tmp;
-	rg_node	brother;
+	char		code;			//'G'
+	char		rl_tmp[28];		//tmp del nodo maestro
+	char		rg_tmp[24];		//nombre del archivo de salida
+	int			nodesQuantity;
+	rg_node*	nodes;			//datos de los nodos hermanos
 }rg_node_rq;
 
 //-----Response---//

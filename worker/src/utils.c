@@ -102,3 +102,18 @@ char* serializeFile(char* fileName){
 	stringFile[charCounter] = '\0';
 	return stringFile;
 }
+
+char* generateFile(char* fileContent, char operation, int socket){
+	char* fileName = generateScriptName(operation, socket);
+	FILE* file = fopen(fileName,"w");
+	if(file == NULL){
+		log_error(logger,"Error al crear el archivo %s", fileName);
+		//abortar y comunicar a Master
+	}
+	fputs(fileContent,file);
+	fclose(file);
+
+	log_info(logger,"Archivo almacenado en \"%s\"", fileName);
+	return fileName;
+};
+

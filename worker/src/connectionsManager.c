@@ -60,6 +60,25 @@ void openFileSystemConnection(void) {
 }
 
 
+//=======================NODE=============================================
+int openNodeConnection(int node, char* ip, int port){
+
+	struct sockaddr_in workerAddr;
+	workerAddr.sin_family = AF_INET;
+	workerAddr.sin_addr.s_addr = inet_addr(ip);
+	workerAddr.sin_port = htons(port);
+
+	socket_nodes[node] = socket(AF_INET, SOCK_STREAM, 0);
+
+	if (connect(socket_nodes[node], (void*) &workerAddr, sizeof(workerAddr)) != 0) {
+		log_error(logger, "No se puede conectar con el nodo:%d (%s:%d)", node, ip, port);
+		return 1;
+	}else{
+		log_info(logger, "Conexión con nodo %d establecida (puerto:%d-socket:%d)", node, port, socket_nodes[node]);
+		return 0;
+	}
+}
+
 //==========================================================================
 
 void readMasterBuffer(){
@@ -77,15 +96,15 @@ void readMasterBuffer(){
 				break;
 			case 'G':
 				log_info(logger,"Master %d: Solicitud de Reducción Global recibida",socket_master);
-				//globalReduction();
+				globalReduction();
 				break;
 			case 'S':
 				log_info(logger,"Master %d: Solicitud de Almacenado Final recibida",socket_master);
 				finalStorage();
 				break;
 			default:
-				log_warning(logger,"No existe la operación Solicitada");
-				close(socket_master);
+				log_warning(logger,"Master %d: No existe la operación Solicitada");
+				//close(socket_master);
 				break;
 				//cerrar conexion y devolver error
 		}

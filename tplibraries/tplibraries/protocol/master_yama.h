@@ -70,7 +70,7 @@ typedef struct rg_datos{				//es un record por nodo
 	char	ip[16];
 	int 	port;
 	char	rl_tmp[28];
-	char	rg_tmp[28];
+	char	rg_tmp[24];
 	char	encargado;
 }rg_datos;
 

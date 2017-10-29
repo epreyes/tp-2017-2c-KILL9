@@ -12,7 +12,7 @@
 
 typedef struct{
 	char	code;			//'P'	Indica que es un hermano pidiendo RG
-	tmp		rl_tmp;			//		Nombre del archivo solicitado
+	char	rl_tmp[28];			//		Nombre del archivo solicitado
 }nodeData_rq;
 
 

@@ -8,6 +8,10 @@
 #ifndef HEADERS_GLOBALREDUCTION_H_
 #define HEADERS_GLOBALREDUCTION_H_
 
+#include "localReduction.h"
+#include "worker.h"
+#include "connectionsManager.h"
 
+void globalReduction();
 
 #endif /* HEADERS_GLOBALREDUCTION_H_ */
