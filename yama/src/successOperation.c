@@ -27,10 +27,10 @@ void processOk(int master) {
 	memcpy(&nodo, buffer, sizeof(int));
 	free(buffer);
 
-	//printf("\nLe llego el ok del master %d, operacion %d, nodo %d, bloque de nodo %d\n", master, opCode, nodo, bloque);
+//	printf("\nLe llego el ok del master %d, operacion %d, nodo %d, bloque de nodo %d\n", master, opCode, nodo, bloque);
 
-	int bloquebloque = getBlockOfFilie(nodo, bloque);
-//printf("\n OP=%c master=%d nodo=%d bloque=%d (%d)\n", opCode, master, nodo, bloque, bloquebloque);
+	viewStateTable();
+
 	updateStatusTable(master, opCode, nodo, bloque, 'F');
 	decreaseNodeCharge(nodo);
 

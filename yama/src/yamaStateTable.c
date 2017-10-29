@@ -7,7 +7,8 @@
 
 #include "headers/yamaStateTable.h"
 
-void setInStatusTable(char op, int master, int nodo, int bloque, char* tmpName, int nodeBlock) {
+void setInStatusTable(char op, int master, int nodo, int bloque, char* tmpName,
+		int nodeBlock) {
 	elem_tabla_estados* elemStatus = malloc(sizeof(elem_tabla_estados));
 	elemStatus->block = bloque;
 	elemStatus->job = yama->jobs;
@@ -172,8 +173,8 @@ void viewStateTable() {
 		i++;
 		printf(
 				"Row:\nJob=%d - Master=%d - Block=%d - Node=%d - Node_block=%d - Oper=%c - Temp=%s - Status=%c\n",
-				row->job, row->master, row->block, row->node, row->node_block, row->op, row->tmp,
-				row->status);
+				row->job, row->master, row->block, row->node, row->node_block,
+				row->op, row->tmp, row->status);
 	}
 }
 
@@ -182,11 +183,21 @@ int findInProcessTasks(int master, int node_id, int block, char op) {
 	if (!list_is_empty(yama->tabla_estados)) {
 		for (index = 0; index < list_size(yama->tabla_estados); index++) {
 			elem_tabla_estados* node = list_get(yama->tabla_estados, index);
-			if ((node->node == node_id) && (master == node->master)
-					&& (block == node->node_block) && (op == node->op)
-					&& (node->status == 'P')) {
-				return index;
+
+			if (op == 'T') {
+				if ((node->node == node_id) && (master == node->master)
+						&& (block == node->node_block) && (op == node->op)
+						&& (node->status == 'P')) {
+					return index;
+				}
 			}
+			else {
+				if ((node->node == node_id) && (master == node->master)
+						&& (op == node->op) && (node->status == 'P')) {
+					return index;
+				}
+			}
+
 		}
 	}
 	return -1;

@@ -129,7 +129,7 @@ void* processGlobalReduction(int master) {
 						getBlockId(elem->rl_tmp), master);
 
 				setInStatusTable('G', master, globalRedData->nodo,
-						0, globalRedData->rg_tmp);
+						0, globalRedData->rg_tmp, 0);
 				increaseNodeCharge(globalRedData->nodo);
 				addToGlobalReductionPlanedTable(master, globalRedData);
 				enchargeSeted = 1;

@@ -107,7 +107,7 @@ void* processLocalReduction(int master) {
 			getLocalReductionTmpName(localRedData, 'L',
 					getBlockId(elem->tr_tmp), master);
 			setInStatusTable('L', master, localRedData->nodo,
-					getBlockId(localRedData->rl_tmp), localRedData->rl_tmp);
+					getBlockId(localRedData->rl_tmp), localRedData->rl_tmp, 0);
 
 			//creo el elemento para agregar a la tabla de planificados.
 			addToLocalReductionPlanedTable(master, localRedData);
