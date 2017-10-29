@@ -15,6 +15,7 @@
 #include "fs.h"
 
 #include <tplibraries/protocol/filesystem_datanode.h>
+#include <tplibraries/protocol/filesystem_yama.h>
 
 #define MYPORT 5000    // Puerto al que conectarán los usuarios
 #define BACKLOG 100     // Cuántas conexiones pendientes se mantienen en cola
@@ -26,5 +27,6 @@ void *connection_handler_yama(void *socket_desc);
 void procesarPedidoYama(t_header pedido, int socket);
 void procesarPedidoNodo(t_header pedido, int socket);
 
+void guardarConfigNodoEnBin();
 
 #endif /* FS_SERVIDOR_H_ */

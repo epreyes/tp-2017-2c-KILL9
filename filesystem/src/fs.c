@@ -22,7 +22,7 @@ int main(void) {
 
 	fs=malloc(sizeof(t_fs));
 
-	cargarArchivoDeConfiguracion(fs, "yamafs.cfg");
+	cargarArchivoDeConfiguracion(fs, "/home/utnso/SO/fs/bin/yamafs.cfg");
 
 	iniciarFS();
 
@@ -81,6 +81,7 @@ void iniciarFS() {
 	if ((fd = open(archivo, O_RDWR)) == -1) {
 
 		log_error(logger, "No se pudo abrir el archivo: %s", archivo);
+		printf("No se encontro el archivo de directorios, ejecute dformat\n");
 		exit(1);
 
 	}
@@ -106,11 +107,11 @@ void iniciarFS() {
 
 	// TODO: el archivo debe generarse con truncate! sino no puede escribir
 
-	log_info(logger, "Abriendo archivo de nodos %s...", archivo);
+	/*log_info(logger, "Abriendo archivo de nodos %s...", archivo);
 
 	if ((fd = open(archivo, O_RDWR)) == -1) {
 		log_error(logger, "No existe el archivo %s", archivo);
-
+		printf("No se encontro el archivo de nodos, ejecute dformat\n");
 		exit(1);
 	}
 
@@ -127,7 +128,7 @@ void iniciarFS() {
 		exit(1);
 	}
 
-	log_info(logger, "Archivo de nodos abierto correctamente");
+	log_info(logger, "Archivo de nodos abierto correctamente");*/
 
 	log_info(logger, "YamaFS iniciado", archivo);
 

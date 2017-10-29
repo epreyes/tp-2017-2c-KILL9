@@ -21,7 +21,7 @@ int obtenerUltimoIndiceDirValido() {
 	t_directorio* dir = inicioTablaDirectorios;
 	dir++; // Salteo raiz
 
-	while (dir != NULL ) {
+	while (dir != NULL) {
 		if (dir->padre == -1)
 			return dir->indice;
 
@@ -172,9 +172,9 @@ void formatear() {
 	}
 
 	inicioTablaDirectorios = mmap((caddr_t) 0, sbuf.st_size,
-			PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+	PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
-	if (inicioTablaDirectorios == NULL ) {
+	if (inicioTablaDirectorios == NULL) {
 		perror("error en map\n");
 		exit(1);
 	}
@@ -335,7 +335,7 @@ t_list* listarArchivos(char* path) {
 	int indiceDir = obtenerIndiceDir(path);
 
 	if (indiceDir == -1)
-		return NULL ;
+		return NULL;
 
 	t_list* tablaArchivos = list_create();
 	DIR *d;
@@ -354,6 +354,8 @@ t_list* listarArchivos(char* path) {
 
 				char *dest = malloc(strlen(dir->d_name));
 				strncpy(dest, dir->d_name, strlen(dir->d_name));
+				dest[strlen(dir->d_name)] = '\0';
+
 				list_add(tablaArchivos, dest);
 
 			}
@@ -403,9 +405,9 @@ void crearBitMapBloquesNodo(t_nodo* nodo) {
 	}
 
 	bloquesBitMap = mmap((caddr_t) 0, sbuf.st_size, PROT_READ | PROT_WRITE,
-			MAP_SHARED, fd, 0);
+	MAP_SHARED, fd, 0);
 
-	if (bloquesBitMap == NULL ) {
+	if (bloquesBitMap == NULL) {
 		perror("error en map\n");
 		exit(1);
 	}
@@ -453,7 +455,7 @@ t_bitarray* obtenerBitMapBloquesNodo(t_nodo* nodo) {
 	bloquesBitMap = mmap((caddr_t) 0, sbuf.st_size, PROT_READ, MAP_SHARED, fd,
 			0);
 
-	if (bloquesBitMap == NULL ) {
+	if (bloquesBitMap == NULL) {
 		perror("error en map\n");
 		exit(1);
 	}
@@ -490,6 +492,8 @@ int existeArchivo(char* path) {
 	for (j = 0; j < list_size(archivos); j++) {
 
 		int t = string_length((char*) list_get(archivos, j));
+		log_debug(logger, "Comparando %s con %s (%d)", archivosDir,
+				(char*) list_get(archivos, j), t);
 
 		if (strncmp(archivosDir, (char*) list_get(archivos, j), t - 5) == 0)
 			return 0;
@@ -504,10 +508,15 @@ int existeArchivo(char* path) {
 
 t_archivoInfo* obtenerArchivoInfo(char* path) {
 
+	if (!estaFormateado())
+		return NULL;
+
 	t_archivoInfo* tInfo = malloc(sizeof(t_archivoInfo));
 
-	if (existeArchivo(path) == -1)
-		return NULL ;
+	if (existeArchivo(path) == -1) {
+		log_debug(logger, "No existe el archivo %s", path);
+		return NULL;
+	}
 
 	char* dirArchivo = obtenerDirArchivo(path);
 	int indiceDir = obtenerIndiceDir(dirArchivo);
@@ -522,10 +531,10 @@ t_archivoInfo* obtenerArchivoInfo(char* path) {
 
 	t_config * metadata = config_create(dirMetadata);
 
-	if (metadata == NULL ) {
+	if (metadata == NULL) {
 		log_error(logger, "No se pudo abrir la metadata de archivo %s",
 				dirMetadata);
-		return NULL ;
+		return NULL;
 	}
 
 	if (config_has_property(metadata, "TAMANIO")) {
@@ -558,7 +567,7 @@ t_archivoInfo* obtenerArchivoInfo(char* path) {
 
 	char* arch = mmap((caddr_t) 0, sbuf.st_size, PROT_READ, MAP_SHARED, fd, 0);
 
-	if (arch == NULL ) {
+	if (arch == NULL) {
 		perror("error en map\n");
 		exit(1);
 	}
@@ -876,9 +885,9 @@ int crearArchivoMetadata(t_list* bloquesInfo, char* path, int tipo, int tamanio)
 
 // mapeo a memoria
 	archivoMetadata = mmap((caddr_t) 0, sbuf.st_size, PROT_READ | PROT_WRITE,
-			MAP_SHARED, fd, 0);
+	MAP_SHARED, fd, 0);
 
-	if (archivoMetadata == NULL ) {
+	if (archivoMetadata == NULL) {
 		perror("error en map\n");
 		exit(1);
 	}
@@ -904,8 +913,8 @@ int obtenerBloquesNecesarios(char* contenido, int tipo) {
 	char* p = contenido;
 	int i = 0; // Comienzo desde el bloque 0
 
-	if (contenido == NULL )
-		return NULL ;
+	if (contenido == NULL)
+		return -1;
 
 	if (tipo == TEXTO) {
 
@@ -976,7 +985,7 @@ t_list* obtenerBloquesLibres(int cantBloques) {
 // TODO: reemplazar esta linea con la busqueda en nodosBitMap
 		t_bitarray* bitMapBloque = obtenerBitMapBloquesNodo(nodo);
 
-		if (bitMapBloque == NULL ) {
+		if (bitMapBloque == NULL) {
 			log_error(logger, "No se pudo abrir el bitmap de bloques");
 			exit(1);
 		}
@@ -992,7 +1001,7 @@ t_list* obtenerBloquesLibres(int cantBloques) {
 
 			t_idNodoBloque* registro = list_find(res, (void*) estaEnAuxiliar);
 
-			if (!bitarray_test_bit(bitMapBloque, i) && registro == NULL ) {
+			if (!bitarray_test_bit(bitMapBloque, i) && registro == NULL) {
 
 				nb = malloc(sizeof(t_idNodoBloque));
 				nb->idBloque = i;
@@ -1026,7 +1035,7 @@ t_list* obtenerBloquesLibres(int cantBloques) {
 			}
 		}
 
-		return NULL ;
+		return NULL;
 	}
 
 	return res;

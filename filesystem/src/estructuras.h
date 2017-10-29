@@ -14,7 +14,7 @@
 typedef struct
 	__attribute__((packed)) {
 		char idMensaje;
-		long size;
+		int size;
 	} t_header;
 
 	typedef struct {
