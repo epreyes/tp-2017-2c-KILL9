@@ -66,7 +66,7 @@ char* generateScriptName(char operation, int master){
 	return name;
 }
 
-void readSocketBuffer(int socket,int size,void* destiny){
+void readBuffer(int socket,int size,void* destiny){
 	void* buffer = malloc(size);
 	int bytesReaded = recv(socket, buffer, size, MSG_WAITALL);
 	if (bytesReaded <= 0) {
@@ -75,4 +75,30 @@ void readSocketBuffer(int socket,int size,void* destiny){
 	}
 	memcpy(destiny, buffer, size);
 	free(buffer);
+}
+
+char* serializeFile(char* fileName){
+	int caracter, fileSize, charCounter=0;
+	char* stringFile;
+
+	FILE* file;
+	file = fopen(fileName,"r");
+	if(file==NULL){
+		log_warning(logger,"El archivo %s no existe",fileName);
+	}
+
+//---obtengo el tamaño del archivo
+	fseek(file,0,SEEK_END);
+	fileSize = ftell(file)+1;
+	stringFile=malloc(fileSize);
+
+//---paso contenido a string
+
+	rewind(file);
+	while((caracter = fgetc(file))!= EOF){
+		stringFile[charCounter] = caracter;
+		charCounter++;
+	}
+	stringFile[charCounter] = '\0';
+	return stringFile;
 }

@@ -54,8 +54,8 @@ typedef struct{
 
 typedef struct{
 	char		code;
-	int			bocksQuantity;
-	rl_datos*	blocksData;
+	int			blocksQuantity;
+	rl_datos*	blockData;
 }local_rs;
 
 /*=======GLOBAL_RED==========*/
@@ -97,7 +97,7 @@ typedef struct{
 	char	rg_tmp[24];
 }store_rs;
 
-typedef struct af_datos{
+typedef struct {
 	int		nodo;
 	char	ip[16];
 	int 	port;
@@ -113,9 +113,9 @@ typedef struct{
 
 /*======= OK ==========*/
 typedef struct{
-	char	code;		//'e'
+	char	code;		//'O'
 	char	opCode;		//'T','L','G','S'
-	int 	bloque;
+	int 	bloque;		// 0 si es opCode != 'T'
 	int		nodo;
 }ok;
 

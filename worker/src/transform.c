@@ -12,17 +12,17 @@ void transformation(){
 	log_info(logger,"Master %d: Obteniendo datos de transformación",socket_master);
 
 	//Obteniendo Script INFO
-	readSocketBuffer(socket_master,sizeof(int),&(datos.fileSize));
+	readBuffer(socket_master,sizeof(int),&(datos.fileSize));
 	datos.file=malloc(datos.fileSize);
-	readSocketBuffer(socket_master,datos.fileSize,datos.file);
+	readBuffer(socket_master,datos.fileSize,datos.file);
 
 	//Obteniendo Blocks INFO
-	readSocketBuffer(socket_master,sizeof(int),&(datos.blocksSize));
+	readBuffer(socket_master,sizeof(int),&(datos.blocksSize));
 	datos.blocks=malloc(sizeof(block)*datos.blocksSize);
 	for(i=0; i<datos.blocksSize; ++i){
-		readSocketBuffer(socket_master,sizeof(int),&(datos.blocks[i].pos));
-		readSocketBuffer(socket_master,sizeof(int),&(datos.blocks[i].size));
-		readSocketBuffer(socket_master,sizeof(char)*28,&(datos.blocks[i].tmp));
+		readBuffer(socket_master,sizeof(int),&(datos.blocks[i].pos));
+		readBuffer(socket_master,sizeof(int),&(datos.blocks[i].size));
+		readBuffer(socket_master,sizeof(char)*28,&(datos.blocks[i].tmp));
 		printf("\tpos:%d\tsize:%d\ttmp:%s\n", datos.blocks[i].pos,datos.blocks[i].size,datos.blocks[i].tmp);
 	}
 
@@ -53,7 +53,6 @@ void transformation(){
 	free(datos.file);
 	log_trace(logger, "Master %d: Transformación finalizada", socket_master);
 }
-
 
 //================================================================================
 

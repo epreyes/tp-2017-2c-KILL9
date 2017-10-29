@@ -40,11 +40,31 @@ void loadServer(void){
 	socket_master=masterSocket;
 }
 
+//=======================FILESYSTEM=============================================
+
+void openFileSystemConnection(void) {
+	struct sockaddr_in fileSystemAddr;
+	char* fileSystem_ip = config_get_string_value(config,"IP_FILESYSTEM");
+	int fileSystem_port = config_get_int_value(config,"PUERTO_FILESYSTEM");
+
+	fileSystemAddr.sin_family = AF_INET;
+	fileSystemAddr.sin_addr.s_addr = inet_addr(fileSystem_ip);
+	fileSystemAddr.sin_port = htons(fileSystem_port);
+
+	socket_filesystem = socket(AF_INET, SOCK_STREAM, 0);
+	if (connect(socket_filesystem, (void*) &fileSystemAddr, sizeof(fileSystemAddr)) != 0) {
+		log_warning(logger,"No se pudo conectar con Filesystem (%s:%d)",fileSystem_ip,fileSystem_port);
+		error(1);	//ver como manejar
+	};
+	log_info(logger,"conexión con Filesystem establecida (%s:%d)",fileSystem_ip,fileSystem_port);
+}
+
+
 //==========================================================================
 
-void readBuffer(){
+void readMasterBuffer(){
 	char operation;
-	readSocketBuffer(socket_master,sizeof(char),&operation);
+	readBuffer(socket_master,sizeof(char),&operation);
 		//--------
 		switch(operation){
 			case 'T':
@@ -53,7 +73,7 @@ void readBuffer(){
 				break;
 			case 'L':
 				log_info(logger,"Master %d: Solicitud de Reducción Local recibida",socket_master);
-				//localRedcution();
+				localReduction();
 				break;
 			case 'G':
 				log_info(logger,"Master %d: Solicitud de Reducción Global recibida",socket_master);
@@ -61,10 +81,10 @@ void readBuffer(){
 				break;
 			case 'S':
 				log_info(logger,"Master %d: Solicitud de Almacenado Final recibida",socket_master);
-				//finalStorage();
+				finalStorage();
 				break;
 			default:
-				log_error(logger,"No existe la operación Solicitada");
+				log_warning(logger,"No existe la operación Solicitada");
 				close(socket_master);
 				break;
 				//cerrar conexion y devolver error

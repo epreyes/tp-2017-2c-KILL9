@@ -17,6 +17,7 @@
 #include <sys/socket.h>
 #include <sys/select.h>
 #include <tplibraries/protocol/master_worker.h>
+#include <tplibraries/protocol/worker_filesystem.h>
 #include <unistd.h>
 #include <commons/config.h>
 #include <commons/log.h>
@@ -32,5 +33,6 @@ FILE* script_reduction;
 //=========SOCKETS============//
 int socket_worker;
 int socket_master;
+int socket_filesystem;
 
 #endif /* HEADERS_WORKER_H_ */

@@ -33,11 +33,11 @@ int main(int argc, char* argv[]){
 	openYamaConnection();
 	loadScripts(argv[1],argv[2]);
 
-	transformFile(/*tr_answer,answerSize_TR,*/&masterMetrics,argv[3]);	//ordena ejecución de transformacion
+	transformFile(&masterMetrics,argv[3]);	//ordena ejecución de transformacion
 	/*
-	runLocalReduction(rl_answer,answerSize_RL,&masterMetrics);		//ordena ejecución de Reductor Local
-	runGlobalReduction(rg_answer,answerSize_RG,&masterMetrics);		//ordena ejecución de Reductor Global
-	saveResult(af_answer,answerSize_AF,&masterMetrics);				//ordena guardado en FileSystem
+	runLocalReduction(&masterMetrics);		//ordena ejecución de Reductor Local
+	runGlobalReduction(&masterMetrics);		//ordena ejecución de Reductor Global
+	saveResult(&masterMetrics, argv[4]);				//ordena guardado en FileSystem
 
 	gettimeofday(&end,NULL);
 	masterMetrics.runTime = timediff(&end,&start);
@@ -50,5 +50,6 @@ int main(int argc, char* argv[]){
 	log_destroy(logger);
 	config_destroy(config);
 
+	log_trace(logger,"JOB FINALIZADO - SE FINALIZA PROCESO MASTER");
 	return EXIT_SUCCESS;
 };

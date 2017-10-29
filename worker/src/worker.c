@@ -17,8 +17,9 @@ int main(){
 	loadConfigs();
 	loadServer();
 	//-------------
+	//openFileSystemConnection();
 	generateTempsFolder();
-	readBuffer();
+	readMasterBuffer();
 	//-------------
 	log_destroy(logger);
 	config_destroy(config);
