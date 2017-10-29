@@ -19,16 +19,17 @@ transform_rs* sendTRequest(char* fileName){
 	strcpy(data->fileName,fileName);
 
 //SERIALIZO
-	void* buffer = malloc(5+(data->fileNameSize));
+	int bufferSize = sizeof(char)+sizeof(int)+(data->fileNameSize);
+	void* buffer = malloc(bufferSize);
 	memcpy(buffer,&(data->code),1);
-	memcpy(buffer+1,&(data->fileNameSize),4);
-	memcpy(buffer+5,(data->fileName),(data->fileNameSize));
+	memcpy(buffer+sizeof(char),&(data->fileNameSize),sizeof(int));
+	memcpy(buffer+sizeof(char)+sizeof(int),(data->fileName),(data->fileNameSize));
 	free(data->fileName);
 	free(data);
 
 //ENVIANDO SOLICITUD A YAMA
 	log_info(logger, "Solicitando datos de transformación a YAMA");
-	send(masterSocket,buffer,5+(data->fileNameSize),0);
+	send(masterSocket,buffer,bufferSize,0);
 	free(buffer);
 
 //ESPERANDO RESPUESTA DE YAMA
