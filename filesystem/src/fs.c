@@ -1,18 +1,14 @@
 /*
  ============================================================================
  Name        : fs.c
- Author      :
+ Author      : epreyes
  Version     :
- Copyright   : Your copyright notice
- Description : Hello World in C, Ansi-style
+ Copyright   :
+ Description : Yama Filesystem
  ============================================================================
  */
 
 #include "fs.h"
-
-// TODO: parametrizar esto
-char* directoriosDat = "metadata/directorios.dat";
-char* nodosBin = "metadata/nodos.bin";
 
 int main(void) {
 
@@ -20,7 +16,7 @@ int main(void) {
 
 	logger = log_create("yamafs.log", "YAMA_FS", 0, LOG_LEVEL_DEBUG);
 
-	fs=malloc(sizeof(t_fs));
+	fs = malloc(sizeof(t_fs));
 
 	cargarArchivoDeConfiguracion(fs, "yamafs.cfg");
 
@@ -64,6 +60,35 @@ void cargarArchivoDeConfiguracion(t_fs *fs, char *configPath) {
 		exit(1);
 	}
 
+	if (config_has_property(fs->config, "M_DIRECTORIOS")) {
+		fs->m_directorios = config_get_string_value(fs->config,
+				"M_DIRECTORIOS");
+	} else {
+		printf("Error leyendo archivo de configuracion\n");
+		exit(1);
+	}
+
+	if (config_has_property(fs->config, "M_NODOS")) {
+		fs->m_nodos = config_get_string_value(fs->config, "M_NODOS");
+	} else {
+		printf("Error leyendo archivo de configuracion\n");
+		exit(1);
+	}
+
+	if (config_has_property(fs->config, "M_BITMAP")) {
+		fs->m_bitmap = config_get_string_value(fs->config, "M_BITMAP");
+	} else {
+		printf("Error leyendo archivo de configuracion\n");
+		exit(1);
+	}
+
+	if (config_has_property(fs->config, "M_ARCHIVOS")) {
+		fs->m_archivos = config_get_string_value(fs->config, "M_ARCHIVOS");
+	} else {
+		printf("Error leyendo archivo de configuracion\n");
+		exit(1);
+	}
+
 }
 
 void iniciarFS() {
@@ -72,7 +97,7 @@ void iniciarFS() {
 	struct stat sbuf;
 	char* archivo;
 
-	archivo = directoriosDat;
+	archivo = fs->m_directorios;
 
 	log_info(logger, "Inicializando YamaFS", archivo);
 
@@ -81,7 +106,8 @@ void iniciarFS() {
 	if ((fd = open(archivo, O_RDWR)) == -1) {
 
 		log_error(logger, "No se pudo abrir el archivo: %s", archivo);
-		printf("No se encontro el archivo de directorios, ejecute dformat\n");
+		printf(
+				"No se encontro el archivo de directorios, ejecute dformat o revise la configuracion\n");
 		exit(1);
 
 	}
@@ -100,35 +126,6 @@ void iniciarFS() {
 	}
 
 	log_info(logger, "Archivo de directorios abierto correctamente");
-
-	/// **** TODO: el archivo debe ser de formato que indica el enunciado (no de registros)
-
-	archivo = nodosBin;
-
-	// TODO: el archivo debe generarse con truncate! sino no puede escribir
-
-	/*log_info(logger, "Abriendo archivo de nodos %s...", archivo);
-
-	if ((fd = open(archivo, O_RDWR)) == -1) {
-		log_error(logger, "No existe el archivo %s", archivo);
-		printf("No se encontro el archivo de nodos, ejecute dformat\n");
-		exit(1);
-	}
-
-	if (stat(archivo, &sbuf) == -1) {
-		perror("stat");
-		exit(1);
-	}
-
-	nodos = mmap((caddr_t) 0, sbuf.st_size, PROT_READ | PROT_WRITE, MAP_SHARED,
-			fd, 0);
-
-	if (nodos == NULL ) {
-		perror("error en map\n");
-		exit(1);
-	}
-
-	log_info(logger, "Archivo de nodos abierto correctamente");*/
 
 	log_info(logger, "YamaFS iniciado", archivo);
 

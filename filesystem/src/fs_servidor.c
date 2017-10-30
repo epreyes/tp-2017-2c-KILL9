@@ -172,7 +172,7 @@ void *connection_handler_yama(void *socket_desc) {
 		}
 
 		t_header header;
-		header.idMensaje=cod_op;
+		header.idMensaje = cod_op;
 
 		procesarPedidoYama(header, socketCliente);
 	}
@@ -184,7 +184,6 @@ void procesarPedidoYama(t_header pedido, int socketCliente) {
 
 	void* respuesta;
 	char* buffer;
-
 
 	t_archivoInfo* info;
 
@@ -198,14 +197,15 @@ void procesarPedidoYama(t_header pedido, int socketCliente) {
 
 		recv(socketCliente, buffer, pedido.size, 0);
 
-		log_info(logger, "Pidiendo informacion del archivo: %s (long: %d)", buffer, pedido.size);
+		log_info(logger, "Pidiendo informacion del archivo: %s (long: %d)",
+				buffer, pedido.size);
 
 		info = obtenerArchivoInfo(buffer);
 
 		int i = 0;
 		int offset = 0;
 		int cantReg = 0;
-		if (info == NULL) {
+		if (info == NULL ) {
 			log_error(logger, "No se pudo obtener la info de archivo: %s",
 					buffer);
 			t_header resp;
@@ -311,13 +311,12 @@ void procesarPedidoNodo(t_header pedido, int socket) {
 void guardarConfigNodoEnBin() {
 
 	t_config* nodoConfig = malloc(sizeof(t_config));
-	nodoConfig = config_create("/home/utnso/SO/fs/bin/metadata/nodos.bin");
+	nodoConfig = config_create(fs->m_nodos);
 
 	// Si no hay estado anterior, se guarda el nodo en nodos.bin
 
-	if (nodoConfig == NULL) {
-		int conf = config_save_in_file(nodoConfig,
-				"/home/utnso/SO/fs/bin/metadata/nodos.bin");
+	if (nodoConfig == NULL ) {
+		int conf = config_save_in_file(nodoConfig, fs->m_nodos);
 	}
 
 	// Recorro la lista nodos y refresco la config

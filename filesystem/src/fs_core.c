@@ -7,12 +7,6 @@
 
 #include "fs_core.h"
 
-// TODO: parametrizar esto
-char* direccionBitMap = "metadata/bitmaps/nodo";
-char* direccionArchivos = "metadata/archivos/";
-char* direccionNodos = "metadata/nodos.bin";
-char* directoriosDat2 = "metadata/directorios.dat";
-
 t_directorio* inicioTablaDirectorios;
 
 // Obtiene el ultimo indice de directorio valido
@@ -155,7 +149,7 @@ void formatear() {
 	struct stat sbuf;
 	char* archivo;
 
-	archivo = directoriosDat2;
+	archivo = fs->m_directorios;
 
 	log_info(logger, "Formateando archivo de directorios %s...", archivo);
 
@@ -343,7 +337,7 @@ t_list* listarArchivos(char* path) {
 
 	char *dpath = string_new();
 
-	string_append(&dpath, direccionArchivos);
+	string_append(&dpath, fs->m_archivos);
 	string_append(&dpath, string_itoa(indiceDir));
 
 	d = opendir(dpath);
@@ -381,7 +375,7 @@ void crearBitMapBloquesNodo(t_nodo* nodo) {
 	struct stat sbuf;
 	char* archivo = string_new();
 
-	string_append(&archivo, direccionBitMap);
+	string_append(&archivo, fs->m_bitmap);
 	string_append(&archivo, string_itoa(nodo->id));
 	string_append(&archivo, ".dat");
 
@@ -433,7 +427,7 @@ t_bitarray* obtenerBitMapBloquesNodo(t_nodo* nodo) {
 	struct stat sbuf;
 	char* archivo = string_new();
 
-	string_append(&archivo, direccionBitMap);
+	string_append(&archivo, fs->m_bitmap);
 
 	string_append(&archivo, string_itoa(nodo->id));
 	string_append(&archivo, ".dat");
@@ -523,7 +517,7 @@ t_archivoInfo* obtenerArchivoInfo(char* path) {
 
 	char *dirMetadata = string_new();
 
-	string_append(&dirMetadata, direccionArchivos);
+	string_append(&dirMetadata, fs->m_archivos);
 	string_append(&dirMetadata, string_itoa(indiceDir));
 	string_append(&dirMetadata, "/");
 	string_append(&dirMetadata, obtenerNombreArchivo(path));
@@ -852,7 +846,7 @@ int crearArchivoMetadata(t_list* bloquesInfo, char* path, int tipo, int tamanio)
 
 	char* farchivo = string_new();
 
-	string_append(&farchivo, direccionArchivos);
+	string_append(&farchivo, fs->m_archivos);
 
 	char* dirArchivo = obtenerDirArchivo(path);
 

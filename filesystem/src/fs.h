@@ -96,6 +96,10 @@ t_log *logger;
 typedef struct {
         t_config * config;
         int32_t puerto;
+        char* m_directorios; // path a archivo directorios.dat
+        char* m_nodos;		 // path a archivo nodos.bin
+        char* m_bitmap;      // path a directorio donde guardar los bitmaps
+        char* m_archivos;    // path a directorio donde guardar la metadata de los archivos generados
 } t_fs;
 
 t_fs *fs;
@@ -115,6 +119,7 @@ t_fs *fs;
 
 void iniciarFS();
 void cargarArchivoDeConfiguracion(t_fs *fs, char *configPath);
+int inicializacionConNodos();
 
 sem_t semEscritura;
 
