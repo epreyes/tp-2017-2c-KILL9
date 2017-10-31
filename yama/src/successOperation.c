@@ -27,6 +27,10 @@ void processOk(int master) {
 	memcpy(&nodo, buffer, sizeof(int));
 	free(buffer);
 
+//	printf("\nLe llego el ok del master %d, operacion %d, nodo %d, bloque de nodo %d\n", master, opCode, nodo, bloque);
+
+	viewStateTable();
+
 	updateStatusTable(master, opCode, nodo, bloque, 'F');
 	decreaseNodeCharge(nodo);
 

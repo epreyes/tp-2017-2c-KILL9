@@ -1,4 +1,4 @@
 #!/bin/bash
 
-#Este es el script de prueba
-echo "Hello UTNSO"
+read BLOCK_CONTENT
+echo "$BLOCK_CONTENT procesado"

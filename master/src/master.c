@@ -22,29 +22,21 @@
 ///////////MAIN PROGRAM///////////
 
 int main(int argc, char* argv[]){
-
 //--preparo metricas---------
 	struct timeval start,end;
 	gettimeofday(&start,NULL);
 
-
-//--recibo respuestas de Yama
-	int answerSize_TR = sizeof(tr_answer)/sizeof(tr_answer[0]);
-	int answerSize_RL = sizeof(rl_answer)/sizeof(rl_answer[0]);
-	int answerSize_RG = sizeof(rg_answer)/sizeof(rg_answer[0]);
-	int answerSize_AF = sizeof(af_answer)/sizeof(af_answer[0]);
-
 	createLoggers();
 	loadConfigs();
-	openYamaConnection();
 	validateArgs(argc, argv);										//valido argumentos
+	openYamaConnection();
 	loadScripts(argv[1],argv[2]);
 
-	transformFile(tr_answer,answerSize_TR,&masterMetrics,argv[3]);	//ordena ejecución de transformacion
+	transformFile(&masterMetrics,argv[3]);	//ordena ejecución de transformacion
+	runLocalReduction(&masterMetrics);		//ordena ejecución de Reductor Local
 	/*
-	runLocalReduction(rl_answer,answerSize_RL,&masterMetrics);		//ordena ejecución de Reductor Local
-	runGlobalReduction(rg_answer,answerSize_RG,&masterMetrics);		//ordena ejecución de Reductor Global
-	saveResult(af_answer,answerSize_AF,&masterMetrics);				//ordena guardado en FileSystem
+	runGlobalReduction(&masterMetrics);		//ordena ejecución de Reductor Global
+	saveResult(&masterMetrics, argv[4]);				//ordena guardado en FileSystem
 
 	gettimeofday(&end,NULL);
 	masterMetrics.runTime = timediff(&end,&start);
@@ -54,6 +46,8 @@ int main(int argc, char* argv[]){
 //--cierro todo lo grobal
 	fclose(script_transform);
 	fclose(script_reduction);
+
+	log_trace(logger,"JOB FINALIZADO");
 	log_destroy(logger);
 	config_destroy(config);
 

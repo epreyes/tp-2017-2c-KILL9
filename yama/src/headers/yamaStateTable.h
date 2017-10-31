@@ -30,4 +30,6 @@ int getBlockId(char* tmpName);
 
 void updateStatusTable(int master, char opCode, int node, int bloque, char status);
 
+void addNewRowStatusTable(elem_tabla_estados* elem);
+
 #endif /* SRC_HEADERS_YAMASTATETABLE_H_ */

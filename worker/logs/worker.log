@@ -1595,3 +1595,195 @@
 [INFO] 12:56:25:116 worker/(18763:18763): Bloque 15: Transformando
 [INFO] 12:56:25:195 worker/(18763:18763): Bloque 15: Transformación finalizada
 [TRACE] 12:56:25:265 worker/(18763:18763): Master 5: Transformación finalizada
+[INFO] 17:51:27:248 worker/(3258:3258): Logger generado
+[INFO] 18:00:02:464 worker/(3720:3720): Logger generado
+[INFO] 18:00:02:466 worker/(3720:3720): Archivo de configuraciones cargado
+[INFO] 18:00:02:467 worker/(3720:3720): Esperando conexiones de master
+[INFO] 18:00:06:65 worker/(3721:3721): Logger generado
+[INFO] 18:00:06:67 worker/(3721:3721): Archivo de configuraciones cargado
+[ERROR] 18:00:06:68 worker/(3721:3721): No se pudo realizar el bind
+[INFO] 18:01:22:315 worker/(3760:3760): Logger generado
+[INFO] 18:01:22:318 worker/(3760:3760): Archivo de configuraciones cargado
+[ERROR] 18:01:22:319 worker/(3760:3760): No se pudo realizar el bind
+[INFO] 19:37:22:280 worker/(3777:3777): Logger generado
+[INFO] 19:37:22:282 worker/(3777:3777): Archivo de configuraciones cargado
+[INFO] 19:37:22:289 worker/(3777:3777): Esperando conexiones de master
+[INFO] 19:37:27:61 worker/(3778:3778): Logger generado
+[INFO] 19:37:27:63 worker/(3778:3778): Archivo de configuraciones cargado
+[INFO] 19:37:27:64 worker/(3778:3778): Esperando conexiones de master
+[INFO] 20:48:46:532 worker/(4723:4723): Logger generado
+[INFO] 20:48:46:534 worker/(4723:4723): Archivo de configuraciones cargado
+[TRACE] 20:48:46:535 worker/(4723:4723): Worker iniciado en puerto 8883
+[INFO] 20:48:46:546 worker/(4723:4723): Esperando conexiones de master
+[INFO] 20:50:40:869 worker/(4863:4863): Logger generado
+[INFO] 20:50:40:871 worker/(4863:4863): Archivo de configuraciones cargado
+[TRACE] 20:50:40:872 worker/(4863:4863): Worker iniciado en puerto 8882
+[INFO] 20:50:40:880 worker/(4863:4863): Esperando conexiones de master
+[TRACE] 20:57:23:381 worker/(4863:4863): Master 5: Conectado
+[TRACE] 20:57:23:431 worker/(4863:4863): Master 5: Solicitud de transformación recibida
+[INFO] 20:57:23:432 worker/(4863:4863): Master 5: Obteniendo datos de transformación
+[INFO] 20:57:23:433 worker/(4863:4863): Master 5: Datos de transformación obtenidos
+[INFO] 20:57:23:443 worker/(4863:4863): Script almacenado en "T5-1509245512"
+[INFO] 20:57:23:444 worker/(4863:4863): Bloque 10: Transformando
+[ERROR] 20:57:23:587 worker/(4863:4863): Bloque 10: Falló la transformación
+[TRACE] 20:57:23:659 worker/(4863:4863): Master 5: Transformación finalizada
+[INFO] 21:10:23:850 worker/(5296:5296): Logger generado
+[INFO] 21:10:23:852 worker/(5296:5296): Archivo de configuraciones cargado
+[TRACE] 21:10:23:853 worker/(5296:5296): Worker iniciado en puerto 8882
+[INFO] 21:10:23:854 worker/(5296:5296): Esperando conexiones de master
+[INFO] 21:10:29:878 worker/(5299:5299): Logger generado
+[INFO] 21:10:29:880 worker/(5299:5299): Archivo de configuraciones cargado
+[TRACE] 21:10:29:881 worker/(5299:5299): Worker iniciado en puerto 8883
+[INFO] 21:10:29:888 worker/(5299:5299): Esperando conexiones de master
+[TRACE] 21:10:52:699 worker/(5296:5296): Master 5: Conectado
+[TRACE] 21:10:52:776 worker/(5296:5296): Master 5: Solicitud de transformación recibida
+[INFO] 21:10:52:778 worker/(5296:5296): Master 5: Obteniendo datos de transformación
+[INFO] 21:10:52:779 worker/(5296:5296): Master 5: Datos de transformación obtenidos
+[INFO] 21:10:52:781 worker/(5296:5296): Script almacenado en "T5-1509584120"
+[INFO] 21:15:47:496 worker/(5434:5434): Logger generado
+[INFO] 21:15:47:500 worker/(5434:5434): Archivo de configuraciones cargado
+[TRACE] 21:15:47:501 worker/(5434:5434): Worker iniciado en puerto 8882
+[INFO] 21:15:47:502 worker/(5434:5434): Esperando conexiones de master
+[TRACE] 21:16:14:810 worker/(5434:5434): Master 5: Conectado
+[TRACE] 21:16:14:891 worker/(5434:5434): Master 5: Solicitud de transformación recibida
+[INFO] 21:16:14:895 worker/(5434:5434): Master 5: Obteniendo datos de transformación
+[INFO] 21:16:14:898 worker/(5434:5434): Master 5: Datos de transformación obtenidos
+[INFO] 21:16:14:903 worker/(5434:5434): Script almacenado en "�����"
+[INFO] 21:16:14:945 worker/(5434:5434): Permisos de ejecución de ����p���d��h�� concedidos
+[INFO] 21:16:14:946 worker/(5434:5434): Bloque 7: Transformando
+[ERROR] 21:16:14:982 worker/(5434:5434): Bloque 7: Falló la transformación
+[TRACE] 21:16:15:51 worker/(5434:5434): Master 5: Transformación finalizada
+[INFO] 21:18:58:645 worker/(5568:5568): Logger generado
+[INFO] 21:18:58:654 worker/(5568:5568): Archivo de configuraciones cargado
+[TRACE] 21:18:58:659 worker/(5568:5568): Worker iniciado en puerto 8882
+[INFO] 21:18:58:661 worker/(5568:5568): Esperando conexiones de master
+[TRACE] 21:19:23:181 worker/(5568:5568): Master 5: Conectado
+[TRACE] 21:19:23:209 worker/(5568:5568): Master 5: Solicitud de transformación recibida
+[INFO] 21:19:23:217 worker/(5568:5568): Master 5: Obteniendo datos de transformación
+[INFO] 21:19:23:219 worker/(5568:5568): Master 5: Datos de transformación obtenidos
+[INFO] 21:19:23:223 worker/(5568:5568): Script almacenado en "T5-1509026597"
+[INFO] 21:19:23:256 worker/(5568:5568): Permisos de ejecución de T5-1509026597 concedidos
+[INFO] 21:19:23:257 worker/(5568:5568): Bloque 10: Transformando
+[ERROR] 21:19:23:273 worker/(5568:5568): Bloque 10: Falló la transformación
+[TRACE] 21:19:23:354 worker/(5568:5568): Master 5: Transformación finalizada
+[INFO] 21:26:46:145 worker/(5885:5885): Logger generado
+[INFO] 21:26:46:148 worker/(5885:5885): Archivo de configuraciones cargado
+[TRACE] 21:26:46:155 worker/(5885:5885): Worker iniciado en puerto 8882
+[INFO] 21:26:46:156 worker/(5885:5885): Esperando conexiones de master
+[TRACE] 21:27:14:635 worker/(5885:5885): Master 5: Conectado
+[TRACE] 21:27:14:680 worker/(5885:5885): Master 5: Solicitud de transformación recibida
+[INFO] 21:27:14:681 worker/(5885:5885): Master 5: Obteniendo datos de transformación
+[INFO] 21:27:14:682 worker/(5885:5885): Master 5: Datos de transformación obtenidos
+[INFO] 21:27:14:692 worker/(5885:5885): Script almacenado en "T5-1509495879"
+[INFO] 21:27:14:753 worker/(5885:5885): Permisos de ejecución de T5-1509495879 concedidos
+[INFO] 21:27:14:755 worker/(5885:5885): Bloque 7: Transformando
+[ERROR] 21:27:14:777 worker/(5885:5885): Bloque 7: Falló la transformación
+[TRACE] 21:27:14:848 worker/(5885:5885): Master 5: Transformación finalizada
+[INFO] 21:29:06:977 worker/(5958:5958): Logger generado
+[INFO] 21:29:06:984 worker/(5958:5958): Archivo de configuraciones cargado
+[TRACE] 21:29:06:986 worker/(5958:5958): Worker iniciado en puerto 8882
+[INFO] 21:29:06:987 worker/(5958:5958): Esperando conexiones de master
+[TRACE] 21:29:10:63 worker/(5958:5958): Master 5: Conectado
+[TRACE] 21:29:10:101 worker/(5958:5958): Master 5: Solicitud de transformación recibida
+[INFO] 21:29:10:103 worker/(5958:5958): Master 5: Obteniendo datos de transformación
+[INFO] 21:29:10:106 worker/(5958:5958): Master 5: Datos de transformación obtenidos
+[INFO] 21:29:10:107 worker/(5958:5958): Script almacenado en "T5-1508911624"
+[INFO] 21:29:10:145 worker/(5958:5958): Permisos de ejecución de T5-1508911624 concedidos
+[INFO] 21:29:10:147 worker/(5958:5958): Bloque 7: Transformando
+[ERROR] 21:29:10:184 worker/(5958:5958): Bloque 7: Falló la transformación
+[TRACE] 21:29:10:252 worker/(5958:5958): Master 5: Transformación finalizada
+[INFO] 21:30:02:426 worker/(6019:6019): Logger generado
+[INFO] 21:30:02:435 worker/(6019:6019): Archivo de configuraciones cargado
+[TRACE] 21:30:02:437 worker/(6019:6019): Worker iniciado en puerto 8882
+[INFO] 21:30:02:438 worker/(6019:6019): Esperando conexiones de master
+[TRACE] 21:30:13:134 worker/(6019:6019): Master 5: Conectado
+[TRACE] 21:30:13:211 worker/(6019:6019): Master 5: Solicitud de transformación recibida
+[INFO] 21:30:13:213 worker/(6019:6019): Master 5: Obteniendo datos de transformación
+[INFO] 21:30:13:214 worker/(6019:6019): Master 5: Datos de transformación obtenidos
+[INFO] 21:30:13:222 worker/(6019:6019): Script almacenado en "T5-1509026184"
+[INFO] 21:30:13:291 worker/(6019:6019): Permisos de ejecución de T5-1509026184 concedidos
+[INFO] 21:30:13:293 worker/(6019:6019): Bloque 7: Transformando
+[ERROR] 21:30:13:337 worker/(6019:6019): Bloque 7: Falló la transformación
+[TRACE] 21:30:13:409 worker/(6019:6019): Master 5: Transformación finalizada
+[INFO] 21:31:05:272 worker/(6039:6039): Logger generado
+[INFO] 21:31:05:281 worker/(6039:6039): Archivo de configuraciones cargado
+[TRACE] 21:31:05:282 worker/(6039:6039): Worker iniciado en puerto 8882
+[INFO] 21:31:05:288 worker/(6039:6039): Esperando conexiones de master
+[TRACE] 21:31:53:656 worker/(6039:6039): Master 5: Conectado
+[TRACE] 21:31:53:722 worker/(6039:6039): Master 5: Solicitud de transformación recibida
+[INFO] 21:31:53:730 worker/(6039:6039): Master 5: Obteniendo datos de transformación
+[INFO] 21:31:53:731 worker/(6039:6039): Master 5: Datos de transformación obtenidos
+[INFO] 21:31:53:735 worker/(6039:6039): Script almacenado en "T5-1509539509"
+[INFO] 21:31:53:760 worker/(6039:6039): Permisos de ejecución de T5-1509539509 concedidos
+[INFO] 21:31:53:761 worker/(6039:6039): Bloque 7: Transformando
+[ERROR] 21:31:53:777 worker/(6039:6039): Bloque 7: Falló la transformación
+[TRACE] 21:31:53:808 worker/(6039:6039): Master 5: Transformación finalizada
+[INFO] 21:34:19:453 worker/(6168:6168): Logger generado
+[INFO] 21:34:19:460 worker/(6168:6168): Archivo de configuraciones cargado
+[TRACE] 21:34:19:462 worker/(6168:6168): Worker iniciado en puerto 8882
+[INFO] 21:34:19:464 worker/(6168:6168): Esperando conexiones de master
+[TRACE] 21:34:26:271 worker/(6168:6168): Master 5: Conectado
+[TRACE] 21:34:26:338 worker/(6168:6168): Master 5: Solicitud de transformación recibida
+[INFO] 21:34:26:340 worker/(6168:6168): Master 5: Obteniendo datos de transformación
+[INFO] 21:34:26:341 worker/(6168:6168): Master 5: Datos de transformación obtenidos
+[INFO] 21:34:26:349 worker/(6168:6168): Script almacenado en "T5-1509153945"
+[INFO] 21:34:26:439 worker/(6168:6168): Permisos de ejecución de T5-1509153945 concedidos
+[INFO] 21:34:26:440 worker/(6168:6168): Bloque 7: Transformando
+[INFO] 21:34:26:521 worker/(6168:6168): Bloque 7: Transformación finalizada
+[TRACE] 21:34:26:590 worker/(6168:6168): Master 5: Transformación finalizada
+[INFO] 21:36:04:498 worker/(6235:6235): Logger generado
+[INFO] 21:36:04:500 worker/(6235:6235): Archivo de configuraciones cargado
+[TRACE] 21:36:04:509 worker/(6235:6235): Worker iniciado en puerto 8882
+[INFO] 21:36:04:510 worker/(6235:6235): Esperando conexiones de master
+[INFO] 21:37:04:197 worker/(6257:6257): Logger generado
+[INFO] 21:37:04:203 worker/(6257:6257): Archivo de configuraciones cargado
+[TRACE] 21:37:04:207 worker/(6257:6257): Worker iniciado en puerto 8882
+[INFO] 21:37:04:208 worker/(6257:6257): Esperando conexiones de master
+[TRACE] 21:37:07:87 worker/(6257:6257): Master 5: Conectado
+[TRACE] 21:37:07:192 worker/(6257:6257): Master 5: Solicitud de transformación recibida
+[INFO] 21:37:07:193 worker/(6257:6257): Master 5: Obteniendo datos de transformación
+[INFO] 21:37:07:193 worker/(6257:6257): Master 5: Datos de transformación obtenidos
+[INFO] 21:37:07:194 worker/(6257:6257): Script almacenado en "T5-1508998586"
+[INFO] 21:37:07:266 worker/(6257:6257): Permisos de ejecución de T5-1508998586 concedidos
+[INFO] 21:37:07:266 worker/(6257:6257): Bloque 7: Transformando
+[INFO] 21:37:07:355 worker/(6257:6257): Bloque 7: Transformación finalizada
+[TRACE] 21:37:07:445 worker/(6257:6257): Master 5: Transformación finalizada
+[INFO] 21:39:05:189 worker/(6341:6341): Logger generado
+[INFO] 21:39:05:192 worker/(6341:6341): Archivo de configuraciones cargado
+[TRACE] 21:39:05:193 worker/(6341:6341): Worker iniciado en puerto 8882
+[INFO] 21:39:05:201 worker/(6341:6341): Esperando conexiones de master
+[TRACE] 21:39:08:357 worker/(6341:6341): Master 5: Conectado
+[TRACE] 21:39:08:401 worker/(6341:6341): Master 5: Solicitud de transformación recibida
+[INFO] 21:39:08:403 worker/(6341:6341): Master 5: Obteniendo datos de transformación
+[INFO] 21:39:08:403 worker/(6341:6341): Master 5: Datos de transformación obtenidos
+[INFO] 21:39:08:405 worker/(6341:6341): Script almacenado en "T5-1509210395"
+[INFO] 21:39:08:433 worker/(6341:6341): Permisos de ejecución de T5-1509210395 concedidos
+[INFO] 21:39:08:434 worker/(6341:6341): Bloque 7: Transformando
+[INFO] 21:39:08:447 worker/(6341:6341): Bloque 7: Transformación finalizada
+[TRACE] 21:39:08:468 worker/(6341:6341): Master 5: Transformación finalizada
+[INFO] 21:39:15:295 worker/(6353:6353): Logger generado
+[INFO] 21:39:15:297 worker/(6353:6353): Archivo de configuraciones cargado
+[TRACE] 21:39:15:298 worker/(6353:6353): Worker iniciado en puerto 8882
+[INFO] 21:39:15:308 worker/(6353:6353): Esperando conexiones de master
+[TRACE] 21:39:18:99 worker/(6353:6353): Master 5: Conectado
+[TRACE] 21:39:18:195 worker/(6353:6353): Master 5: Solicitud de transformación recibida
+[INFO] 21:39:18:197 worker/(6353:6353): Master 5: Obteniendo datos de transformación
+[INFO] 21:39:18:198 worker/(6353:6353): Master 5: Datos de transformación obtenidos
+[INFO] 21:39:18:200 worker/(6353:6353): Script almacenado en "T5-1509004578"
+[INFO] 21:39:18:240 worker/(6353:6353): Permisos de ejecución de T5-1509004578 concedidos
+[INFO] 21:39:18:241 worker/(6353:6353): Bloque 7: Transformando
+[INFO] 21:39:18:289 worker/(6353:6353): Bloque 7: Transformación finalizada
+[TRACE] 21:39:18:354 worker/(6353:6353): Master 5: Transformación finalizada
+[INFO] 21:47:02:88 worker/(6490:6490): Logger generado
+[INFO] 21:47:02:161 worker/(6490:6490): Archivo de configuraciones cargado
+[TRACE] 21:47:02:172 worker/(6490:6490): Worker iniciado en puerto 8882
+[INFO] 21:47:02:173 worker/(6490:6490): Esperando conexiones de master
+[TRACE] 21:47:10:208 worker/(6490:6490): Master 5: Conectado
+[TRACE] 21:47:10:387 worker/(6490:6490): Master 5: Solicitud de transformación recibida
+[INFO] 21:47:10:389 worker/(6490:6490): Master 5: Obteniendo datos de transformación
+[INFO] 21:47:10:394 worker/(6490:6490): Master 5: Datos de transformación obtenidos
+[INFO] 21:47:10:407 worker/(6490:6490): Script almacenado en "T5-1509202243"
+[INFO] 21:47:10:544 worker/(6490:6490): Permisos de ejecución de T5-1509202243 concedidos
+[INFO] 21:47:10:548 worker/(6490:6490): Bloque 7: Transformando
+[INFO] 21:47:10:671 worker/(6490:6490): Bloque 7: Transformación finalizada
+[TRACE] 21:47:10:837 worker/(6490:6490): Master 5: Transformación finalizada

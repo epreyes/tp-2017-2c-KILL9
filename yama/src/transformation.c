@@ -8,6 +8,21 @@
 #include "headers/transformation.h"
 #include "headers/yamaFS.h"
 
+void viewTransformationResponse(void* response){
+	char op;
+	memcpy(&op, response, sizeof(char));
+
+	int blocks;
+	memcpy(&blocks, response+sizeof(char), sizeof(int));
+
+	int i = 0;
+	for(i=0; i < blocks; i++){
+		tr_datos* data = malloc(sizeof(tr_datos));
+		memcpy(data, response+sizeof(char)+sizeof(int)+(i*sizeof(tr_datos)), sizeof(tr_datos));
+		printf("\n%d - %d - %s - %d\n", data->bloque, data->nodo, data->ip, data->port);
+	}
+}
+
 void* processTransformation(int master) {
 	/*me traigo la informacion del archivo.*/
 	elem_info_archivo* fsInfo = getFileInfo(master);
@@ -52,7 +67,7 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 
 		//actualizo la tabla de estados con la informacion del nuevo job.
 		setInStatusTable('T', master, nodeData->nodo,
-				getBlockId(nodeData->tr_tmp), nodeData->tr_tmp);
+				blockInfo->block_id, nodeData->tr_tmp, nodeData->bloque);
 
 		free(blockInfo);
 	}

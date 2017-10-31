@@ -114,11 +114,12 @@ tr_datos* buildNodePlaned(block_info* blockRecived, int master, int node_id) {
 	return nodeData;
 }
 
-void increseClock(int* clock) {
-	(*clock)++;
-	if ((*clock) >= list_size(yama->tabla_nodos)) {
-		(*clock) = 0;
+int increseClock(int clock) {
+	clock++;
+	if ( clock >= list_size(yama->tabla_nodos)) {
+		clock = 0;
 	}
+	return clock;
 }
 
 tr_datos* updateNodeInTable(block_info* blockRecived, int master, int clock) {
@@ -130,7 +131,7 @@ tr_datos* updateNodeInTable(block_info* blockRecived, int master, int clock) {
 	tr_datos* nodePlaned = buildNodePlaned(blockRecived, master, nodo->node_id);
 
 	//avanzo el clock al siguiente nodo.
-	increseClock(&(yama->clock));
+	yama->clock = increseClock( yama->clock );
 
 	//devuelvo el nodo planificado.
 	return nodePlaned;
@@ -151,18 +152,17 @@ tr_datos* evaluateClock(block_info* blockRecived, int master, int clock) {
 			//avanzar el clock al siguiente Worker, repitiendo el paso 2.
 			node->availability = setBaseAvailability(node);
 			list_replace(yama->tabla_nodos, clock, node);
-			increseClock(&(yama->clock));
+			yama->clock = increseClock(yama->clock);
 			return evaluateClock(blockRecived, master, yama->clock);
 		}
 	} else {
 		//En el caso de que no se encuentre, se deberá utilizar el siguiente Worker que posea una disponibilidad mayor a 0.
 		//Para este caso, no se deberá modificar el Worker apuntado por el Clock.
-		yama->clock_aux = yama->clock;
-		increseClock(&(yama->clock_aux));
+		yama->clock_aux = increseClock( yama->clock_aux );
 		elem_tabla_nodos* nodeAux = list_get(yama->tabla_nodos,
 				yama->clock_aux);
 		while (nodeAux->availability == 0) {
-			increseClock(&(yama->clock_aux));
+			yama->clock_aux = increseClock( yama->clock_aux );
 			nodeAux = list_get(yama->tabla_nodos, yama->clock_aux);
 		}
 		if (yama->clock == yama->clock_aux) {
@@ -178,7 +178,7 @@ tr_datos* doPlanning(block_info* blockRecived, int master) {
 
 	//Se posicionará el Clock en el Worker de mayor disponibilidad, desempatando por el primer worker que tenga menor cantidad de tareas realizadas históricamente.
 	yama->clock = getHigerAvailNode(yama);
-
+	yama->clock_aux = yama->clock;
 	//Se deberá evaluar si el Bloque a asignar se encuentra en el Worker apuntado por el Clock y el mismo tenga disponibilidad mayor a 0.
 	return evaluateClock(blockRecived, master, yama->clock);
 }

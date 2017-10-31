@@ -31,7 +31,7 @@ int blockExistInClock(block_info* blockRecived, int clock);
 
 tr_datos* buildNodePlaned(block_info* blockRecived, int master, int node_id);
 
-void increseClock(int* clock);
+int increseClock(int clock);
 
 tr_datos* updateNodeInTable(block_info* blockRecived, int master, int clock);
 

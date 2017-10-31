@@ -17,9 +17,11 @@ int main(){
 	loadConfigs();
 	loadServer();
 	//-------------
+	//openFileSystemConnection();
 	generateTempsFolder();
-	readBuffer();
-
+	readMasterBuffer();
+	printf("\nREDUCCION LOCAL\n");
+	readMasterBuffer();
 	//-------------
 	log_destroy(logger);
 	config_destroy(config);

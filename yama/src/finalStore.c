@@ -78,9 +78,8 @@ void* processFinalStore(int master) {
 			finalStoreData->port = elem->port;
 			strcpy(finalStoreData->rg_tmp, elem->rg_tmp);
 
-			//char op, int master, int nodo, int bloque, char* tmpName
 			setInStatusTable('S', master, finalStoreData->nodo, 0,
-					finalStoreData->rg_tmp);
+					finalStoreData->rg_tmp, 0);
 			increaseNodeCharge(finalStoreData->nodo);
 
 			memcpy(

@@ -20,13 +20,15 @@ void* getFileSystemInfo(char* name) {
 	void* fsInfo = NULL;
 
 	/*creo el buffer que contendra la solicitud al filesystem*/
-	int buffersize = sizeof(char)+sizeof(int)+strlen(name);
+	int buffersize = sizeof(int)+sizeof(char)+sizeof(int)+strlen(name);
 	int sizename = strlen(name);
 
 	void* buffer = malloc( buffersize );
-	memcpy(buffer, "T", sizeof(char));
-	memcpy(buffer+sizeof(char), &sizename, sizeof(int));
-	memcpy(buffer+sizeof(char)+sizeof(int), name, sizename);
+	int handShake = 10;
+	memcpy(buffer, &handShake, sizeof(int));
+	memcpy(buffer+sizeof(int), "T", sizeof(char));
+	memcpy(buffer+sizeof(int)+sizeof(char), &sizename, sizeof(int));
+	memcpy(buffer+sizeof(int)+sizeof(char)+sizeof(int), name, sizename);
 
 	int infoSize = 0;
 	if (send(fs_client.socket_server_id, buffer, buffersize, 0) > 0) {
