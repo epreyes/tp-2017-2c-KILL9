@@ -67,8 +67,8 @@ char transformBlock(int position, int size, char temporal[28], char* scriptName)
 	//--------------------------------------------------------------
 	//sizeBlock+temp[26]+command[12]+temp[28]+\0[1]
 	char* command = NULL;
-	command = malloc(size+26+12+28+1);
-	asprintf(&command, "echo %s | %s > %s",blockContent, scriptName, temporal+1);
+	command = malloc(size+26+12+28+1+3);
+	asprintf(&command, "echo -n %s | %s > %s",blockContent, scriptName, temporal+1);
 
 	free(blockContent);
 

@@ -28,7 +28,7 @@ typedef struct dataThread_GR{
 }dataThread_GR;
 
 
-int runGlobalReduction(rg_datos yamaAnswer[], int totalRecords, metrics *masterMetrics);
+int runGlobalReduction(metrics *masterMetrics);
 
 
 #endif /* HEADERS_GLOBALREDUCTION_H_ */
