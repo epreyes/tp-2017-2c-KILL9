@@ -22,7 +22,6 @@
 ///////////MAIN PROGRAM///////////
 
 int main(int argc, char* argv[]){
-
 //--preparo metricas---------
 	struct timeval start,end;
 	gettimeofday(&start,NULL);
@@ -34,8 +33,8 @@ int main(int argc, char* argv[]){
 	loadScripts(argv[1],argv[2]);
 
 	transformFile(&masterMetrics,argv[3]);	//ordena ejecución de transformacion
-	/*
 	runLocalReduction(&masterMetrics);		//ordena ejecución de Reductor Local
+	/*
 	runGlobalReduction(&masterMetrics);		//ordena ejecución de Reductor Global
 	saveResult(&masterMetrics, argv[4]);				//ordena guardado en FileSystem
 
@@ -47,9 +46,10 @@ int main(int argc, char* argv[]){
 //--cierro todo lo grobal
 	fclose(script_transform);
 	fclose(script_reduction);
+
+	log_trace(logger,"JOB FINALIZADO");
 	log_destroy(logger);
 	config_destroy(config);
 
-	log_trace(logger,"JOB FINALIZADO - SE FINALIZA PROCESO MASTER");
 	return EXIT_SUCCESS;
 };

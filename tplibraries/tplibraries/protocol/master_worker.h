@@ -35,15 +35,15 @@ typedef struct{
 
 /*========LOCRED==========*/
 //----Request----//
-typedef char tmp[28];
+typedef char tmp_tr[28];
 
 typedef struct{
 	char		code;				//red loc 'L'
 	size_t		fileSize;			//tamaño del script
 	char*		file;				//script
-	tmp			rl_tmp;				//nombre del archivo de salida
+	char		rl_tmp[28];			//nombre del archivo de salida
 	size_t		tmpsQuantity;		//cantidad de temporales a reducir
-	tmp*		tr_tmp;				//nombre de temporales a reducir
+	tmp_tr*		tr_tmp;				//nombre de temporales a reducir
 }rl_node;
 
 //-----Response---//

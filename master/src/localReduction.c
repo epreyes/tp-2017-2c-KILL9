@@ -18,12 +18,14 @@ local_rs* sendLRequest(){
 //SERIALIZO
 	data->code='L';
 	memcpy(buffer,&(data->code),1);
+	free(data);
 
 //ENVIO REQUEST
 	log_info(logger,"Envio solicitud de Reducción Local a YAMA");
-	send(masterSocket,buffer,sizeof(char),0);
+	if(send(masterSocket,buffer,sizeof(char),0)<0){
+		log_error(logger,"No se pudo conectar a YAMA");
+	};
 	free(buffer);
-	free(data);
 
 //RECIBO RESPONSE
 	int i=0;
@@ -31,7 +33,7 @@ local_rs* sendLRequest(){
 
 	readBuffer(masterSocket, sizeof(char), &(yamaAnswer->code));
 	readBuffer(masterSocket, sizeof(int), &(yamaAnswer->blocksQuantity));
-	yamaAnswer->blockData = malloc(sizeof(tr_datos)*(yamaAnswer->blocksQuantity));
+	yamaAnswer->blockData = malloc(sizeof(rl_datos)*(yamaAnswer->blocksQuantity));
 
 	for(i=0;i<(yamaAnswer->blocksQuantity);++i){
 		readBuffer(masterSocket, sizeof(int), &(yamaAnswer->blockData[i].nodo));
@@ -40,7 +42,8 @@ local_rs* sendLRequest(){
 		readBuffer(masterSocket, 28, &(yamaAnswer->blockData[i].tr_tmp));
 		readBuffer(masterSocket, 28, &(yamaAnswer->blockData[i].rl_tmp));
 		printf("\tnodo:%d\ttr_tmp:%s\trl_tmp:%s\tip:%s\t:port:%d\n", yamaAnswer->blockData[i].nodo, yamaAnswer->blockData[i].tr_tmp, yamaAnswer->blockData[i].rl_tmp,yamaAnswer->blockData[i].ip,yamaAnswer->blockData[i].port);
-	}
+	};
+	log_info(logger, "Datos de reducción local obtenidos de YAMA");
 	return yamaAnswer;
 }
 
@@ -64,8 +67,9 @@ void *runLocalRedThread(void* data){
 	strcpy(nodeData->rl_tmp, datos->rl_tmp);
 	nodeData->tmpsQuantity = datos->tmpsCounter;
 
+
 //SERIALIZO---
-	int bufferSize = sizeof(char)+sizeof(int)+nodeData->fileSize+sizeof(tmp)+nodeData->tmpsQuantity*sizeof(tmp);
+	int bufferSize = sizeof(char)+sizeof(int)*2+(nodeData->fileSize)+28+(nodeData->tmpsQuantity)*28;
 	void* buffer = malloc(bufferSize);
 
 	memcpy(buffer,&(nodeData->code),sizeof(char));									//Codigo de operación
@@ -74,36 +78,41 @@ void *runLocalRedThread(void* data){
 		counter+=sizeof(int);
 	memcpy(buffer+counter,(nodeData->file),nodeData->fileSize);						//Contenido delscript de Reduccion
 		counter+=nodeData->fileSize;
-	memcpy(buffer+counter,nodeData->rl_tmp,sizeof(tmp));							//nombre el TMP de reducción
-		counter+=sizeof(tmp);
+	memcpy(buffer+counter,nodeData->rl_tmp,28);							//nombre el TMP de reducción
+		counter+=28;
 	memcpy(buffer+counter,&(nodeData->tmpsQuantity),sizeof(int));					//cantidad de TMPs a procesar
 		counter+=sizeof(int);
 	for(i = 0; i < (datos->tmpsCounter); ++i){
-		memcpy(buffer+counter+(i*sizeof(tmp)),&(datos->tr_tmps[i]),sizeof(tmp));	//TMPs de transformación
+		memcpy(buffer+counter+(i*28),&(datos->tr_tmps[i]),28);	//TMPs de transformación
+		printf("\nTMPSEND:%s NODE:%d\n",(char*)buffer+counter+(i*28), datos->node);
 	}
-	counter+=(datos->tmpsCounter)*sizeof(tmp);
+	counter+=(datos->tmpsCounter)*28;
 
 //ENVÍO A WORKER (Transform ya abrió el socket)
 
 	log_info(logger,"Estableciendo conexión con nodo %d",datos->node);
-	if(send(nodeSockets[datos->node],buffer,counter,0)<0){
+	if(send(nodeSockets[datos->node],buffer,bufferSize,0)<0){
+		log_error(logger,"No se pudo conectar con nodo %d (%s:%d)", datos->node, datos->ip, datos->port);
 		sendErrorToYama('L',datos->node);
 		exit(1); //Ver como hacer para liberar memoria y cerrar hilos
 	};
+
+	log_info(logger,"Datos enviados a Nodo %d", datos->node);
 	free(nodeData);
 	free(buffer);
-	free(datos);
 
 //ESPERO RESPUESTA
+	log_info(logger,"Esperando respuesta de nodo %d",datos->node);
 	rl_node_rs* answer = malloc(sizeof(rl_node_rs));
-	readBuffer(nodeSockets[datos->node], sizeof(int), &(answer->runTime));
 	readBuffer(nodeSockets[datos->node], sizeof(char), &(answer->result));
-
+	readBuffer(nodeSockets[datos->node], sizeof(int), &(answer->runTime));
+	printf("RESULT:%cRUNTIME:%d\n",answer->result,answer->runTime);
 //RESPONDO A YAMA
 	log_trace(logger,"Nodo %d: Reducción Local Finalizada", datos->node);
 	if(answer->result == 'O'){
 		log_info(logger,"Comunicando a YAMA finalización de Reducción Local en nodo %d",datos->node);
-		if(sendOkToYama('L',0,datos->node));
+		sendOkToYama('L',0,datos->node);
+		printf("\n\nHOLA!!!!\n\n");
 	}else{
 		log_error(logger,"No fue posible realizar la Reducción Local en el nodo %d",datos->node);
 		log_info(logger, "Se informa el error a YAMA");
@@ -134,16 +143,23 @@ int runLocalReduction(metrics* masterMetrics){
 	totalRecords = yamaAnswer->blocksQuantity;
 
 	//Obtengo datos de los bloques
-	int itemsSize = sizeof(rl_datos)*yamaAnswer->blocksQuantity;
-	rl_datos* items = NULL;
-	items = malloc(itemsSize);
+	int itemsSize = sizeof(rl_datos)*(yamaAnswer->blocksQuantity);
+	rl_datos* items = malloc(itemsSize);
 	memcpy(items,yamaAnswer->blockData,itemsSize);
+
+	int i=0;
+	for(i=0;i<(yamaAnswer->blocksQuantity);++i)
+
+	printf("nodo:%d\ttr_tmp:%s\tip:%s\t:port:%d\n", items[i].nodo, items[i].tr_tmp,items[i].ip,items[i].port);
+	/*
+	*/
 
 	while(recordCounter<totalRecords){
 		nodo = items[recordCounter].nodo;	//init first key
 		while(items[recordCounter].nodo==nodo && recordCounter<totalRecords){
 			tr_tmps=(tr_tmp *) realloc(tr_tmps,(sizeof(tr_tmp)*(tmpsCounter+1)));
-			strcpy(tr_tmps[tmpsCounter],items[tmpsCounter].tr_tmp);
+			strcpy(tr_tmps[tmpsCounter],items[recordCounter].tr_tmp);
+			//printf("TMP:%s\n",items[recordCounter].tr_tmp);
 			tmpsCounter++;
 			recordCounter++;
 		};
@@ -158,14 +174,17 @@ int runLocalReduction(metrics* masterMetrics){
 		strcpy(dataThreads[nodeCounter].ip,items[recordCounter-1].ip);
 		dataThreads[nodeCounter].port=items[recordCounter-1].port;
 		strcpy(dataThreads[nodeCounter].rl_tmp,items[recordCounter-1].rl_tmp);
-		dataThreads[nodeCounter].tmpsCounter=tmpsCounter-1;
+
+		dataThreads[nodeCounter].tmpsCounter=tmpsCounter;
 		nodeCounter++;
 		tmpsCounter = 0;
 	}
 
 //EJECUTO HILOS DE WORKERS
-	for(threadIndex=0;threadIndex<nodeCounter;++threadIndex)
+	for(threadIndex=0;threadIndex<nodeCounter;++threadIndex){
+		usleep(10000);
 		pthread_create(&threads[threadIndex],NULL,(void*) runLocalRedThread, (void*) &dataThreads[threadIndex]);
+	}
 
 //JOINEO LOS HILOS
 	for(threadIndex=0;threadIndex<nodeCounter;++threadIndex)

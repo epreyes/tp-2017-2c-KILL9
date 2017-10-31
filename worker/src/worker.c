@@ -20,6 +20,8 @@ int main(){
 	//openFileSystemConnection();
 	generateTempsFolder();
 	readMasterBuffer();
+	printf("\nREDUCCION LOCAL\n");
+	readMasterBuffer();
 	//-------------
 	log_destroy(logger);
 	config_destroy(config);

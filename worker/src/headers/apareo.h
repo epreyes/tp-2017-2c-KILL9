@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "worker.h"
 
 
 char *minorWord(char* word1, char* word2);

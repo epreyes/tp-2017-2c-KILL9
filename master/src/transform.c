@@ -142,7 +142,7 @@ void *runTransformThread(void* data){
 	free(nodeData->file);
 	free(nodeData);
 	free(scriptString);
-	close(nodeSockets[datos->node]);
+	//close(nodeSockets[datos->node]);
 	return NULL;
 }
 

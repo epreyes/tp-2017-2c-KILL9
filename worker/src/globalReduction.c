@@ -24,7 +24,7 @@ rg_node_rq getData(){
 		readBuffer(socket_master,sizeof(int),&(datos.nodes[i].node));
 		readBuffer(socket_master,16,&(datos.nodes[i].ip));
 		readBuffer(socket_master,sizeof(int),&(datos.nodes[i].port));
-		readBuffer(socket_master,sizeof(tmp),&(datos.nodes[i].rl_tmp));
+		readBuffer(socket_master,28,&(datos.nodes[i].rl_tmp));
 	}
 	log_info(logger,"Master %d: Datos de Reducción Global obtenidos",socket_master);
 

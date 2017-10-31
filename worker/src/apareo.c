@@ -32,15 +32,18 @@ void readWord(char *word, FILE *file, int* endFile){
 }
 
 
-void mergeFiles(char* Aname,char* Bname, char *Cname){
+void mergeFiles(char* Aname, char* Bname, char *Cname){
 	char word1[128], word2[128];
 	int endFile1=0, endFile2=0;
 
 	FILE *A,*B,*C;
 
-	A=fopen(Aname,"r");
-	B=fopen(Bname,"r");
-	C=fopen(Cname,"w");
+	if((A=fopen(Aname+1,"r"))==NULL)log_info(logger,"No se encuentra el archivo %s", Aname);
+	if((B=fopen(Bname+1,"r"))==NULL)log_info(logger,"No se encuentra el archivo %s", Bname);
+	if((C=fopen(Cname,"w"))==NULL)log_info(logger,"No se pudo crear el archivo %s", Cname);
+
+
+	log_info(logger,"Archivos Abiertos");
 
 	readWord(&word1[0], A, &endFile1);
 	readWord(&word2[0], B, &endFile2);
@@ -54,6 +57,7 @@ void mergeFiles(char* Aname,char* Bname, char *Cname){
 			readWord(&word2[0], B, &endFile2);
 		}
 	}
+	log_info(logger,"Apareo finalizado");
 	fclose(A);
 	fclose(B);
 	fclose(C);
