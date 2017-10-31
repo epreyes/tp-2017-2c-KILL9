@@ -13,12 +13,12 @@
 
 #include <dirent.h>
 #include <commons/collections/list.h>
-#include "datanode.h"
 
 int obtenerUltimoIndiceDirValido();
 int obtenerIndiceDirPadre(char* path);
 int obtenerIndiceDir(char* path);
 int crearDirectorio(char* nombreDir);
+bool existeDirectorio(char* path);
 
 void formatear();
 
@@ -33,7 +33,6 @@ t_archivoInfo* obtenerArchivoInfo(char* path);
 char* obtenerDirArchivo(char* path);
 char* obtenerNombreArchivo(char* path);
 int existeArchivo(char* path);
-int escribirArchivo(char* path, char* contenido, int tipo);
 int crearArchivoMetadata(t_list* bloquesInfo, char* path, int tipo, int tamanio);
 int leerArchivo(char* path);
 void actualizarBitMapBloques(t_list* bloquesInfo);
@@ -41,5 +40,6 @@ void actualizarBitMapBloques(t_list* bloquesInfo);
 bool ordenarPorCarga(t_nodo *nodoConMasCarga, t_nodo *nodoConMenosCarga);
 t_list* decidirNodo(t_list* nodos);
 
+bool estaFormateado();
 
 #endif /* FS_CORE_H_ */
