@@ -59,12 +59,12 @@ char reduceFiles(int filesQuantity, tmp_tr* filesNames, char* script){
 //OBTENGO EL PRIMERO
 	strcpy(file1,filesNames[i]);
 	strcpy(mergedFile,file1);//VALIDO POR SI SOLO HAY UNO
-		printf("\nFILE1:%s\n",file1);
 
 //MERGEO TODOS LOS TEMPORALES
 	for (i = 1; i < filesQuantity; ++i){
 		strcpy(file2,filesNames[i]);
 		strcpy(mergedFile, generateScriptName('X',i));
+		printf("\nFILE1:%s\n",file1);
 		printf("\nFILE2:%s\n",file2);
 		mergeFiles(file1,file2,mergedFile);
 		printf("\nMERGEDFILE:%s\n",mergedFile);

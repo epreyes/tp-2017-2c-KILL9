@@ -19,9 +19,9 @@ int main(){
 	//-------------
 	//openFileSystemConnection();
 	generateTempsFolder();
-	readMasterBuffer();
-	printf("\nREDUCCION LOCAL\n");
-	readMasterBuffer();
+	while(1){
+		readMasterBuffer();
+	}
 	//-------------
 	log_destroy(logger);
 	config_destroy(config);
