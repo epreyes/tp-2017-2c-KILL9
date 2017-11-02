@@ -51,6 +51,7 @@ int getSizeToSend(void* masterRS) {
 		size = (blocks * sizeof(rl_datos))+ sizeof(char) + sizeof(int);
 		break;
 	case 'G':
+		viewGlobalReductionResponse(masterRS);
 		size = (blocks * sizeof(rg_datos))+ sizeof(char) + sizeof(int);
 		break;
 	case 'S':

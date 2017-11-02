@@ -32,8 +32,8 @@ void deleteOfLocalReductionPlanedList(int items, int master) {
 	for (i = 0; i < items; i++) {
 		int j = 0;
 		for (j = 0; j < list_size(yama->tabla_LR_planificados); j++) {
-			elem_tabla_LR_planificados* elem = list_get(yama->tabla_LR_planificados,
-					j);
+			elem_tabla_LR_planificados* elem = list_get(
+					yama->tabla_LR_planificados, j);
 			if (elem->master == master) {
 				list_remove(yama->tabla_LR_planificados, j);
 				break;
@@ -63,8 +63,9 @@ void getGlobalReductionTmpName(rg_datos* nodeData, int op, int blockId,
 		int masterId) {
 	char* name;
 	long timestamp = current_timestamp();
-	asprintf(&name, "%s%ld-%c-M%03d-B%03d", "/tmp/", timestamp, op,
-			masterId, blockId);
+	asprintf(&name, "%s%ld-%c-M%03d-B%03d", "/tmp/", timestamp, op, masterId,
+			blockId);
+	//printf("\nEl nbombre creado es: %s (%d)\n", name, sizeof(name));
 
 	strcpy(nodeData->rg_tmp, name);
 }
@@ -87,6 +88,7 @@ int allLocalReductionProcesFinish(int master) {
 }
 
 rl_datos* getLastChargedNode() {
+	viewNodeTable();
 	int min = 10000;
 	rl_datos* minNode = list_get(yama->tabla_nodos, 0);
 	int index = 0;
@@ -101,12 +103,15 @@ rl_datos* getLastChargedNode() {
 }
 
 void* processGlobalReduction(int master) {
+
+	void* globalReductionRes;
+
 	if (allLocalReductionProcesFinish(master)) {
 		t_list* planed = findLocalReductionPlaned(master);
 
-		void* globalReductionRes = malloc(
-				sizeof(char) + sizeof(int)
-						+ sizeof(rg_datos) * list_size(planed));
+		globalReductionRes = malloc(
+					sizeof(char) + sizeof(int) + sizeof(rg_datos) * list_size(planed));
+
 		memcpy(globalReductionRes, "G", sizeof(char));
 		int size = list_size(planed);
 		memcpy(globalReductionRes + sizeof(char), &size, sizeof(int));
@@ -123,21 +128,24 @@ void* processGlobalReduction(int master) {
 			strcpy(globalRedData->ip, elem->ip);
 			strcpy(globalRedData->rl_tmp, elem->rl_tmp);
 
-			if (!enchargeSeted && globalRedData->nodo == enchargeNode->nodo) {
-				globalRedData->encargado = 'Y';
-				getGlobalReductionTmpName(globalRedData, 'G',
-						getBlockId(elem->rl_tmp), master);
+			if ( enchargeSeted == 0 && globalRedData->nodo == enchargeNode->nodo) {
+				printf("\nMetiendo como encargado al nodo %d (%d) \n", enchargeNode->nodo, globalRedData->nodo);
 
-				setInStatusTable('G', master, globalRedData->nodo,
-						0, globalRedData->rg_tmp, 0);
+				getGlobalReductionTmpName(globalRedData, 'G',
+						0, master);
+				globalRedData->encargado = 'T';
+				setInStatusTable('G', master, globalRedData->nodo, 0,
+						globalRedData->rg_tmp, 0);
 				increaseNodeCharge(globalRedData->nodo);
 				addToGlobalReductionPlanedTable(master, globalRedData);
 				enchargeSeted = 1;
 			} else {
 				strncpy(globalRedData->rg_tmp, "",
 						sizeof(globalRedData->rg_tmp));
-				globalRedData->encargado = 'N';
+				globalRedData->encargado = 'F';
 			}
+
+			printf("\nVa a copiar en el buffer: Encargado %c, tmp: %s\n", globalRedData->encargado, globalRedData->rg_tmp);
 
 			memcpy(
 					globalReductionRes + sizeof(char) + sizeof(int)
@@ -148,6 +156,8 @@ void* processGlobalReduction(int master) {
 	} else {
 		perror(
 				"\nTODAS LAS REDUCCIONES LOCALES DEBEN TERMINAR ANTES DE EMPEZAR LA REDUCCION GLOBAL.");
-		return NULL;
+		globalReductionRes = malloc(sizeof(char));
+		memcpy(globalReductionRes, "X", sizeof(char));
+		return globalReductionRes;
 	}
 }
