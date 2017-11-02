@@ -9,11 +9,12 @@
 
 void deleteOfPlanedList(int items, int master) {
 	int i = 0;
-	for(i = 0; i < items; i++){
+	for (i = 0; i < items; i++) {
 		int j = 0;
-		for(j = 0; j < list_size(yama->tabla_T_planificados); j++){
-			elem_tabla_planificados* elem = list_get(yama->tabla_T_planificados, j);
-			if( elem->master == master){
+		for (j = 0; j < list_size(yama->tabla_T_planificados); j++) {
+			elem_tabla_planificados* elem = list_get(yama->tabla_T_planificados,
+					j);
+			if (elem->master == master) {
 				list_remove(yama->tabla_T_planificados, j);
 				break;
 			}
@@ -106,12 +107,17 @@ void* processLocalReduction(int master) {
 			strcpy(localRedData->tr_tmp, elem->tr_tmp);
 			getLocalReductionTmpName(localRedData, 'L',
 					getBlockId(elem->tr_tmp), master);
-			setInStatusTable('L', master, localRedData->nodo,
-					getBlockId(localRedData->rl_tmp), localRedData->rl_tmp, 0);
+			if (!existInStatusTable(yama->jobs + master, 'L',
+					localRedData->nodo)) {
+				setInStatusTable('L', master, localRedData->nodo,
+						getBlockId(localRedData->rl_tmp), localRedData->rl_tmp,
+						0);
 
-			//creo el elemento para agregar a la tabla de planificados.
-			addToLocalReductionPlanedTable(master, localRedData);
-			increaseNodeCharge(localRedData->nodo);
+				//creo el elemento para agregar a la tabla de planificados.
+				addToLocalReductionPlanedTable(master, localRedData);
+				increaseNodeCharge(localRedData->nodo);
+			}
+
 			memcpy(
 					localReductionRes + sizeof(char) + sizeof(int)
 							+ (index * sizeof(rl_datos)), localRedData,
@@ -119,7 +125,8 @@ void* processLocalReduction(int master) {
 		}
 		return localReductionRes;
 	} else {
-		perror("\nTODAS LAS TRANSFORMACIONES DEBEN TERMINAR ANTES DE EMPEZAR LAS REDUCCIONES LOCALES.");
+		perror(
+				"\nTODAS LAS TRANSFORMACIONES DEBEN TERMINAR ANTES DE EMPEZAR LAS REDUCCIONES LOCALES.");
 		return NULL;
 	}
 

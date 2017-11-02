@@ -7,11 +7,27 @@
 
 #include "headers/yamaStateTable.h"
 
+int existInStatusTable(int job, char op, int node){
+	if (!list_is_empty(yama->tabla_estados)) {
+		int index = 0;
+			for (index = 0; index < list_size(yama->tabla_estados); index++) {
+				elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
+				if ( elem->job == job && elem->node == node && elem->op == op && elem->status == 'P' ) {
+					return 1;
+				}
+			}
+			return 0;
+		}
+	else{
+		return 0;
+	}
+}
+
 void setInStatusTable(char op, int master, int nodo, int bloque, char* tmpName,
 		int nodeBlock) {
 	elem_tabla_estados* elemStatus = malloc(sizeof(elem_tabla_estados));
 	elemStatus->block = bloque;
-	elemStatus->job = yama->jobs;
+	elemStatus->job = yama->jobs + master;
 	elemStatus->master = master;
 	elemStatus->node = nodo;
 	elemStatus->node_block = nodeBlock;
