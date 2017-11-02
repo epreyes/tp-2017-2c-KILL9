@@ -140,8 +140,8 @@ void* processGlobalReduction(int master) {
 				addToGlobalReductionPlanedTable(master, globalRedData);
 				enchargeSeted = 1;
 			} else {
-				strncpy(globalRedData->rg_tmp, "",
-						sizeof(globalRedData->rg_tmp));
+				getGlobalReductionTmpName(globalRedData, 'G',
+										0, master);
 				globalRedData->encargado = 'F';
 			}
 

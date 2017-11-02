@@ -32,5 +32,6 @@ void processOk(int master) {
 	updateStatusTable(master, opCode, nodo, bloque, 'F');
 	decreaseNodeCharge(nodo);
 	viewStateTable();
-
+	buffer = malloc(sizeof(char));
+	memcpy(buffer, "O", sizeof(char));
 }

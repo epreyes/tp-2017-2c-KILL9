@@ -45,17 +45,16 @@ int getSizeToSend(void* masterRS) {
 
 	switch (op) {
 	case 'T':
-		size = (blocks * sizeof(tr_datos))+ sizeof(char) + sizeof(int);
+		size = (blocks * sizeof(tr_datos)) + sizeof(char) + sizeof(int);
 		break;
 	case 'L':
-		size = (blocks * sizeof(rl_datos))+ sizeof(char) + sizeof(int);
+		size = (blocks * sizeof(rl_datos)) + sizeof(char) + sizeof(int);
 		break;
 	case 'G':
-		viewGlobalReductionResponse(masterRS);
-		size = (blocks * sizeof(rg_datos))+ sizeof(char) + sizeof(int);
+		size = (blocks * sizeof(rg_datos)) + sizeof(char) + sizeof(int);
 		break;
 	case 'S':
-		size = (blocks * sizeof(af_datos))+ sizeof(char) + sizeof(int);
+		size = (blocks * sizeof(af_datos)) + sizeof(char) + sizeof(int);
 		break;
 	case 'A':
 		size = sizeof(error_rq);
@@ -101,11 +100,21 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 		//proceso el request y obtengo la respuesta
 		void* response = getResponse(socket, *(char*) request);
 
-		//envio el paquete al master
-		char op = *(char*) request;
-		if ((op != 'O')) {
+		char responseCode;
+		memcpy(&responseCode, response, sizeof(char));
+
+		if ((responseCode == 'T')
+				|| (responseCode == 'L')
+				|| (responseCode == 'G')
+				|| (responseCode == 'S')
+				|| (responseCode == 'E')){
 			sendResponse(socket, response);
+		}else{
+			if( responseCode != 'O'){
+				showErrorMessage(response);
+			}
 		}
+
 	}
 	free(request);
 	return nbytes;
