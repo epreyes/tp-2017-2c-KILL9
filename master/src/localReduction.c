@@ -67,7 +67,6 @@ void *runLocalRedThread(void* data){
 	strcpy(nodeData->rl_tmp, datos->rl_tmp);
 	nodeData->tmpsQuantity = datos->tmpsCounter;
 
-
 //SERIALIZO---
 	int bufferSize = sizeof(char)+sizeof(int)*2+(nodeData->fileSize)+28+(nodeData->tmpsQuantity)*28;
 	void* buffer = malloc(bufferSize);
@@ -84,7 +83,7 @@ void *runLocalRedThread(void* data){
 		counter+=sizeof(int);
 	for(i = 0; i < (datos->tmpsCounter); ++i){
 		memcpy(buffer+counter+(i*28),&(datos->tr_tmps[i]),28);	//TMPs de transformación
-		printf("\nTMPSEND:%s NODE:%d\n",(char*)buffer+counter+(i*28), datos->node);
+		//printf("\nTMPSEND:%s NODE:%d\n",(char*)buffer+counter+(i*28), datos->node);
 	}
 	counter+=(datos->tmpsCounter)*28;
 
@@ -98,6 +97,7 @@ void *runLocalRedThread(void* data){
 	};
 
 	log_info(logger,"Datos enviados a Nodo %d", datos->node);
+	free(nodeData->file);
 	free(nodeData);
 	free(buffer);
 
@@ -106,13 +106,12 @@ void *runLocalRedThread(void* data){
 	rl_node_rs* answer = malloc(sizeof(rl_node_rs));
 	readBuffer(nodeSockets[datos->node], sizeof(char), &(answer->result));
 	readBuffer(nodeSockets[datos->node], sizeof(int), &(answer->runTime));
-	printf("RESULT:%cRUNTIME:%d\n",answer->result,answer->runTime);
+	//printf("RESULT:%cRUNTIME:%d\n",answer->result,answer->runTime);
 //RESPONDO A YAMA
 	log_trace(logger,"Nodo %d: Reducción Local Finalizada", datos->node);
 	if(answer->result == 'O'){
 		log_info(logger,"Comunicando a YAMA finalización de Reducción Local en nodo %d",datos->node);
 		sendOkToYama('L',0,datos->node);
-		printf("\n\nHOLA!!!!\n\n");
 	}else{
 		log_error(logger,"No fue posible realizar la Reducción Local en el nodo %d",datos->node);
 		log_info(logger, "Se informa el error a YAMA");
@@ -149,7 +148,6 @@ int runLocalReduction(metrics* masterMetrics){
 
 	int i=0;
 	for(i=0;i<(yamaAnswer->blocksQuantity);++i)
-
 	printf("nodo:%d\ttr_tmp:%s\tip:%s\t:port:%d\n", items[i].nodo, items[i].tr_tmp,items[i].ip,items[i].port);
 	/*
 	*/
@@ -159,7 +157,6 @@ int runLocalReduction(metrics* masterMetrics){
 		while(items[recordCounter].nodo==nodo && recordCounter<totalRecords){
 			tr_tmps=(tr_tmp *) realloc(tr_tmps,(sizeof(tr_tmp)*(tmpsCounter+1)));
 			strcpy(tr_tmps[tmpsCounter],items[recordCounter].tr_tmp);
-			//printf("TMP:%s\n",items[recordCounter].tr_tmp);
 			tmpsCounter++;
 			recordCounter++;
 		};
@@ -202,7 +199,6 @@ int runLocalReduction(metrics* masterMetrics){
 	free(items);
 	log_trace(logger,"REDUCCION LOCAL FINALIZADA");
 	free(yamaAnswer);
-
 	gettimeofday(&lr_end,NULL);
 	masterMetrics->localReduction.runTime = timediff(&lr_end,&lr_start);
 	return EXIT_SUCCESS;

@@ -38,7 +38,7 @@ char* regenerateScript(char* fileContent, FILE* script, char operation, int sock
 void loadConfigs(){
 	char* CONFIG_PATH = "properties/worker.properties";
 	config = config_create(CONFIG_PATH);
-	if(!(config_has_property(config,"TMP_FOLDER"))|| !(config_has_property(config,"WORKER_PUERTO"))){
+	if(!(config_has_property(config,"WORKER_PUERTO"))){
 		log_error(logger, "Error al cargar archivos de configuración");
 		config_destroy(config);
 		exit(0);

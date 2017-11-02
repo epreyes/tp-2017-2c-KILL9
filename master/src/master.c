@@ -34,8 +34,9 @@ int main(int argc, char* argv[]){
 
 	transformFile(&masterMetrics,argv[3]);	//ordena ejecución de transformacion
 	runLocalReduction(&masterMetrics);		//ordena ejecución de Reductor Local
-	/*
+
 	runGlobalReduction(&masterMetrics);		//ordena ejecución de Reductor Global
+	/*
 	saveResult(&masterMetrics, argv[4]);				//ordena guardado en FileSystem
 
 	gettimeofday(&end,NULL);

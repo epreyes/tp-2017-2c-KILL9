@@ -64,6 +64,8 @@ typedef struct{
 //----Request----//
 typedef struct{
 	char		code;			//'G'
+	size_t		fileSize;			//tamaño del script
+	char*		file;				//script
 	char		rl_tmp[28];		//tmp del nodo maestro
 	char		rg_tmp[24];		//nombre del archivo de salida
 	int			nodesQuantity;

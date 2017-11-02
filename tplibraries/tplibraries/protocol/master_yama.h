@@ -76,8 +76,8 @@ typedef struct rg_datos{				//es un record por nodo
 
 typedef struct{
 	char		code;
-	int			bocksQuantity;
-	rl_datos*	blocksData;
+	int			blocksQuantity;
+	rg_datos*	blocksData;
 }global_rs;
 
 /*=======FINAL_STORAGE==========*/
