@@ -58,16 +58,48 @@ t_list* findGlobalReductionPlaned(int master) {
 	return planed_list;
 }
 
+void viewFinalStoreResponse( void* response ){
+	char op;
+	memcpy(&op, response, sizeof(char));
+
+	int blocks;
+	memcpy(&blocks, response+sizeof(char), sizeof(int));
+
+	void* data = malloc(sizeof(af_datos)*blocks);
+	memcpy(data, response+sizeof(char)+sizeof(int), sizeof(af_datos)*blocks);
+
+	int index = 0;
+	printf("\nOperacion %c, Bloques %d\n", op, blocks);
+	for(index = 0; index < blocks; index++){
+		af_datos* afdata = malloc(sizeof(af_datos));
+		memcpy(afdata, data+(index*sizeof(af_datos)), sizeof(af_datos));
+
+		printf( "\nnodo=%d, ip=%s, puerto=%d, rgtmp=%s\n", afdata->nodo, afdata->ip, afdata->port, afdata->rg_tmp);
+	}
+}
+
+/*typedef struct {
+	int		nodo;
+	char	ip[16];
+	int 	port;
+	char	rg_tmp[24];
+}af_datos;*/
 void* processFinalStore(int master) {
 	if (allGlobalReductionProcesFinish(master)) {
 		t_list* planed = findGlobalReductionPlaned(master);
 
+		int fsSize = sizeof(char)*41+sizeof(int)*2;
+
 		void* finalStoreRes = malloc(
 				sizeof(char) + sizeof(int)
-						+ sizeof(af_datos) * list_size(planed));
+						+ fsSize * list_size(planed));
+
 		memcpy(finalStoreRes, "S", sizeof(char));
 		int size = list_size(planed);
+
 		memcpy(finalStoreRes + sizeof(char), &size, sizeof(int));
+
+		void* fsdata = malloc(fsSize * list_size(planed));
 
 		int index = 0;
 		for (index = 0; index < list_size(planed); index++) {
@@ -82,11 +114,16 @@ void* processFinalStore(int master) {
 					finalStoreData->rg_tmp, 0);
 			increaseNodeCharge(finalStoreData->nodo);
 
-			memcpy(
+			/*memcpy(
 					finalStoreRes + sizeof(char) + sizeof(int)
 							+ (index * sizeof(af_datos)), finalStoreData,
-					sizeof(af_datos));
+					sizeof(af_datos));*/
+			memcpy(fsdata+(index*fsSize), &(finalStoreData->nodo), sizeof(int));
+			memcpy(fsdata+(index*fsSize)+sizeof(int), finalStoreData->ip, sizeof(char)*16);
+			memcpy(fsdata+(index*fsSize)+sizeof(int)+sizeof(char)*16, &(finalStoreData->port), sizeof(int));
+			memcpy(fsdata+(index*fsSize)+sizeof(int)+sizeof(char)*16+sizeof(int), finalStoreData->rg_tmp, 24*sizeof(char));
 		}
+		memcpy(finalStoreRes+sizeof(char)+sizeof(int), fsdata, fsSize * list_size(planed));
 		return finalStoreRes;
 	} else {
 		perror(

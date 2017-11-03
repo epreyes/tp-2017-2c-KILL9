@@ -34,6 +34,21 @@ Client acceptMasterConnection(Server* server, fd_set* masterList, int hightSd) {
 	return theClient;
 }
 
+/*typedef struct rg_datos{				//es un record por nodo
+ int		nodo;
+ char	ip[16];
+ int 	port;
+ char	rl_tmp[28];
+ char	rg_tmp[24];
+ char	encargado;
+ }rg_datos;
+
+ typedef struct {
+ int		nodo;
+ char	ip[16];
+ int 	port;
+ char	rg_tmp[24];
+ }af_datos;*/
 int getSizeToSend(void* masterRS) {
 	char op;
 	memcpy(&op, masterRS, sizeof(char));
@@ -42,6 +57,8 @@ int getSizeToSend(void* masterRS) {
 	memcpy(&blocks, masterRS + sizeof(char), sizeof(int));
 
 	int size = 0;
+	int grSize = sizeof(char) * 69 + sizeof(int) * 2;
+	int fsSize = sizeof(char) * 40 + sizeof(int) * 2;
 
 	switch (op) {
 	case 'T':
@@ -51,10 +68,13 @@ int getSizeToSend(void* masterRS) {
 		size = (blocks * sizeof(rl_datos)) + sizeof(char) + sizeof(int);
 		break;
 	case 'G':
-		size = (blocks * sizeof(rg_datos)) + sizeof(char) + sizeof(int);
+
+		size = (blocks * grSize) + sizeof(char) + sizeof(int);
 		break;
 	case 'S':
-		size = (blocks * sizeof(af_datos)) + sizeof(char) + sizeof(int);
+
+		size = (blocks * fsSize) + sizeof(char) + sizeof(int);
+		viewFinalStoreResponse(masterRS);
 		break;
 	case 'A':
 		size = sizeof(error_rq);
@@ -72,6 +92,7 @@ int sendResponse(int master, void* masterRS) {
 		snprintf(message, sizeof(message), "%d bytes sent to master id %d",
 				bytesSent, master);
 		log_trace(yama->log, message);
+		free(masterRS);
 	} else {
 		perror("Send response to master.");
 	}
@@ -103,14 +124,12 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 		char responseCode;
 		memcpy(&responseCode, response, sizeof(char));
 
-		if ((responseCode == 'T')
-				|| (responseCode == 'L')
-				|| (responseCode == 'G')
-				|| (responseCode == 'S')
-				|| (responseCode == 'E')){
+		if ((responseCode == 'T') || (responseCode == 'L')
+				|| (responseCode == 'G') || (responseCode == 'S')
+				|| (responseCode == 'E')) {
 			sendResponse(socket, response);
-		}else{
-			if( responseCode != 'O'){
+		} else {
+			if (responseCode != 'O') {
 				showErrorMessage(response);
 			}
 		}

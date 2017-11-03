@@ -14,12 +14,28 @@ void viewGlobalReductionResponse(void* response) {
 	memcpy(bloques, response + sizeof(char), sizeof(int));
 	printf("\nLa respuesta de la reduccion GLOBAL es (%c, %d, %d): ", *op,
 			*bloques, (*bloques) * sizeof(rg_datos));
+
+
+	int totalPlus = sizeof(int)+sizeof(char)*16+sizeof(int)+sizeof(char)*28+sizeof(char)*24+sizeof(char);
+
+
 	int plus = sizeof(int) + sizeof(char);
 	int i = 0;
 	for (i = 0; i < *bloques; i++) {
 		rg_datos* data = malloc(sizeof(rg_datos));
-		memcpy(data, response + plus + (i * sizeof(rg_datos)),
-				sizeof(rg_datos));
+		memcpy(&(data->nodo), response +(totalPlus*i) +plus, sizeof(int));
+
+		strncpy( data->ip, response+(totalPlus*i) +plus+sizeof(int), sizeof(char)*16);
+
+		memcpy(&(data->port), response+(totalPlus*i) +plus+sizeof(int)+sizeof(char)*16, sizeof(int));
+
+		strncpy( data->rl_tmp, response+(totalPlus*i) +plus+sizeof(int)+sizeof(char)*16+sizeof(int), sizeof(char)*28);
+
+		strncpy( data->rg_tmp, response+(totalPlus*i) +plus+sizeof(int)+sizeof(char)*16+sizeof(int)+sizeof(char)*28, sizeof(char)*24);
+
+		memcpy( &(data->encargado), response+(totalPlus*i) +plus+sizeof(int)+sizeof(char)*16+sizeof(int)+sizeof(char)*28+sizeof(char)*24, sizeof(char));
+
+
 		printf(
 				"\nNodo=%d - Ip=%s - Puerto=%d - RL_TMP=%s - RG_TMP=%s, Encargado=%c\n",
 				data->nodo, data->ip, data->port, data->rl_tmp, data->rg_tmp,
@@ -108,8 +124,13 @@ void* processGlobalReduction(int master) {
 	if (allLocalReductionProcesFinish(master)) {
 		t_list* planed = findLocalReductionPlaned(master);
 
+		int tamData = sizeof(int) * 2 + (sizeof(char) * 69);
+
 		globalReductionRes = malloc(
-					sizeof(char) + sizeof(int) + sizeof(rg_datos) * list_size(planed));
+				sizeof(char) + sizeof(int)
+						+ tamData*list_size(planed));
+
+		void* dataGR = malloc(tamData*list_size(planed));
 
 		memcpy(globalReductionRes, "G", sizeof(char));
 		int size = list_size(planed);
@@ -117,6 +138,16 @@ void* processGlobalReduction(int master) {
 
 		rl_datos* enchargeNode = getLastChargedNode();
 		int enchargeSeted = 0;
+
+		/*
+		 * typedef struct rg_datos{				//es un record por nodo
+		 int		nodo;
+		 char	ip[16];
+		 int 	port;
+		 char	rl_tmp[28];
+		 char	rg_tmp[24];
+		 char	encargado;
+		 }rg_datos;*/
 
 		int index = 0;
 		for (index = 0; index < list_size(planed); index++) {
@@ -127,11 +158,12 @@ void* processGlobalReduction(int master) {
 			strcpy(globalRedData->ip, elem->ip);
 			strcpy(globalRedData->rl_tmp, elem->rl_tmp);
 
-			if ( enchargeSeted == 0 && globalRedData->nodo == enchargeNode->nodo) {
-				printf("\nMetiendo como encargado al nodo %d (%d) \n", enchargeNode->nodo, globalRedData->nodo);
+			if (enchargeSeted == 0
+					&& globalRedData->nodo == enchargeNode->nodo) {
+				printf("\nMetiendo como encargado al nodo %d (%d) \n",
+						enchargeNode->nodo, globalRedData->nodo);
 
-				getGlobalReductionTmpName(globalRedData, 'G',
-						0, master);
+				getGlobalReductionTmpName(globalRedData, 'G', 0, master);
 				globalRedData->encargado = 'T';
 				setInStatusTable('G', master, globalRedData->nodo, 0,
 						globalRedData->rg_tmp, 0);
@@ -139,18 +171,43 @@ void* processGlobalReduction(int master) {
 				addToGlobalReductionPlanedTable(master, globalRedData);
 				enchargeSeted = 1;
 			} else {
-				getGlobalReductionTmpName(globalRedData, 'G',
-										0, master);
+				getGlobalReductionTmpName(globalRedData, 'G', 0, master);
 				globalRedData->encargado = 'F';
 			}
 
-			printf("\nVa a copiar en el buffer: Encargado %c, tmp: %s\n", globalRedData->encargado, globalRedData->rg_tmp);
+			printf("\nVa a copiar en el buffer: Encargado %c, tmp: %s\n",
+					globalRedData->encargado, globalRedData->rg_tmp);
 
+			/*memcpy(
+			 globalReductionRes + sizeof(char) + sizeof(int)
+			 + (index * sizeof(rg_datos)), globalRedData,
+			 sizeof(rg_datos));*/
+
+			memcpy(dataGR + (index * tamData), &(globalRedData->nodo),
+					sizeof(int));
+			memcpy(dataGR + (index * tamData) + sizeof(int),
+					globalRedData->ip, 16 * sizeof(char));
 			memcpy(
-					globalReductionRes + sizeof(char) + sizeof(int)
-							+ (index * sizeof(rg_datos)), globalRedData,
-					sizeof(rg_datos));
+					dataGR +  (index * tamData) + sizeof(int)
+							+ 16 * sizeof(char), &(globalRedData->port),
+					sizeof(int));
+			memcpy(
+					dataGR +  (index * tamData) + sizeof(int)
+							+ 16 * sizeof(char) + sizeof(int),
+					globalRedData->rl_tmp, 28 * sizeof(char));
+			memcpy(
+					dataGR +  (index * tamData) + sizeof(int)
+							+ 16 * sizeof(char) + sizeof(int)
+							+ 28 * sizeof(char), globalRedData->rg_tmp,
+					24 * sizeof(char));
+			memcpy(
+					dataGR +  (index * tamData) + sizeof(int)
+							+ 16 * sizeof(char) + sizeof(int)
+							+ 28 * sizeof(char) + 24 * sizeof(char),
+					&(globalRedData->encargado), sizeof(char));
+
 		}
+		memcpy( globalReductionRes + sizeof(char) + sizeof(int), dataGR, tamData*list_size(planed));
 		return globalReductionRes;
 	} else {
 		perror(
