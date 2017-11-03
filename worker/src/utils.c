@@ -14,7 +14,7 @@ void generateTempsFolder(){
 
 char* regenerateScript(char* fileContent, FILE* script, char operation, int socket){
 	char* scriptName = generateScriptName(operation, socket);
-	char command[37];
+	char command[36];
 	script = fopen(scriptName,"w");
 	if(script == NULL){
 		log_error(logger,"Error al guardar el script %s", scriptName);
@@ -25,7 +25,7 @@ char* regenerateScript(char* fileContent, FILE* script, char operation, int sock
 	log_info(logger,"Script almacenado en \"%s\"", scriptName);
 
 	//---doy permisos de ejecución---//
-	strcpy(command,"chmod 555 ");				//pasar nombre de archivo a dinámico
+	strcpy(command,"chmod +x ");				//pasar nombre de archivo a dinámico
 	strcat(command, scriptName);
 
 	//printf("%s",command);

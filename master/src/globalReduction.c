@@ -45,6 +45,7 @@ typedef struct rg_datos{				//es un record por nodo
 	readBuffer(masterSocket, sizeof(char), &(yamaAnswer->code));
 	readBuffer(masterSocket, sizeof(int), &(yamaAnswer->blocksQuantity));
 	yamaAnswer->blocksData = malloc(sizeof(rg_datos)*(yamaAnswer->blocksQuantity));
+	//printf("code:%c blocks:%d",yamaAnswer->code,yamaAnswer->blocksQuantity);
 
 	for(i=0;i<(yamaAnswer->blocksQuantity);++i){
 		readBuffer(masterSocket, sizeof(int), &(yamaAnswer->blocksData[i].nodo));
@@ -53,9 +54,9 @@ typedef struct rg_datos{				//es un record por nodo
 		readBuffer(masterSocket, 28, &(yamaAnswer->blocksData[i].rl_tmp));
 		readBuffer(masterSocket, 24, &(yamaAnswer->blocksData[i].rg_tmp));
 		readBuffer(masterSocket, sizeof(char),&(yamaAnswer->blocksData[i].encargado));
-		printf("\tnodo:%d\ttr_tmp:%s\trl_tmp:%s\tip:%s\t:port:%d\n", yamaAnswer->blocksData[i].nodo, yamaAnswer->blocksData[i].rg_tmp, yamaAnswer->blocksData[i].rl_tmp,yamaAnswer->blocksData[i].ip,yamaAnswer->blocksData[i].port);
+		printf("\nN:%d(%s:%d) RL:%s RG:%s E:%c\n\n", yamaAnswer->blocksData[i].nodo, yamaAnswer->blocksData[i].ip,yamaAnswer->blocksData[i].port,yamaAnswer->blocksData[i].rl_tmp,yamaAnswer->blocksData[i].rg_tmp,yamaAnswer->blocksData[i].encargado);
 	};
-	log_info(logger, "Datos de Reducción local obtenidos de YAMA");
+	log_info(logger, "Datos de Reducción Global obtenidos de YAMA");
 	return yamaAnswer;
 }
 
