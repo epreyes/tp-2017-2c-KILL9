@@ -6,37 +6,21 @@
  */
 
 #include "headers/globalReduction.h"
-
 //=============YAMA_REQUEST=============================//
 global_rs* sendGRequest(){
 //EMPAQUETO
 	global_rq* data = malloc(sizeof(global_rq));
 	data->code='G';
-
 //SERIALIZO
 	void* buffer = malloc(sizeof(char));
 	memcpy(buffer,&(data->code),1);
 	free(data);
-
 //ENVIO
 	if(send(masterSocket,buffer,sizeof(char),0)<0){
 		log_error(logger,"No se pudo conectar a YAMA");
+		exit(1);
 	};
 	free(buffer);
-/* typedef struct{
-	char		code;
-	int			blocksQuantity;
-	rg_datos*	blocksData;
-}global_rs;
-
-typedef struct rg_datos{				//es un record por nodo
-	int		nodo;
-	char	ip[16];
-	int 	port;
-	char	rl_tmp[28];
-	char	rg_tmp[24];
-	char	encargado;
-}rg_datos; */
 
 //RECIBO RESPONSE
 	int i=0;
@@ -54,7 +38,7 @@ typedef struct rg_datos{				//es un record por nodo
 		readBuffer(masterSocket, 28, &(yamaAnswer->blocksData[i].rl_tmp));
 		readBuffer(masterSocket, 24, &(yamaAnswer->blocksData[i].rg_tmp));
 		readBuffer(masterSocket, sizeof(char),&(yamaAnswer->blocksData[i].encargado));
-		printf("\nN:%d(%s:%d) RL:%s RG:%s E:%c\n\n", yamaAnswer->blocksData[i].nodo, yamaAnswer->blocksData[i].ip,yamaAnswer->blocksData[i].port,yamaAnswer->blocksData[i].rl_tmp,yamaAnswer->blocksData[i].rg_tmp,yamaAnswer->blocksData[i].encargado);
+		printf("N:%d(%s:%d) RL:%s RG:%s E:%c\n\n", yamaAnswer->blocksData[i].nodo, yamaAnswer->blocksData[i].ip,yamaAnswer->blocksData[i].port,yamaAnswer->blocksData[i].rl_tmp,yamaAnswer->blocksData[i].rg_tmp,yamaAnswer->blocksData[i].encargado);
 	};
 	log_info(logger, "Datos de Reducción Global obtenidos de YAMA");
 	return yamaAnswer;
@@ -77,42 +61,38 @@ int sendNodeRequest(dataThread_GR* datos){
 	strcpy(nodeData->rl_tmp, datos->rl_tmp);
 	strcpy(nodeData->rg_tmp, datos->rg_tmp);
 	nodeData->nodesQuantity = datos->brothersCount;
+	//printf("RL:%s RG:%s\n",datos->rl_tmp,datos->rg_tmp);
 
-	for(i=0;i<nodeData->nodesQuantity;++i){
-		nodeData->nodes[i].node = datos->brothersData->node;
-		strcpy(nodeData->nodes[i].ip,datos->brothersData[i].ip);
-		nodeData->nodes[i].port = datos->brothersData[i].port;
-		strcpy(nodeData->nodes[i].rl_tmp,datos->brothersData[i].rl_tmp);
-	};
 //SERIALIZO---
-	int bufferSize = sizeof(char)+sizeof(int)*2+(nodeData->fileSize)+28+24+(nodeData->nodesQuantity)*sizeof(rg_node);
+	int bufferSize = sizeof(char)+sizeof(int)*2+(nodeData->fileSize)+28+24+((nodeData->nodesQuantity)*sizeof(rg_node));
 	void* buffer = malloc(bufferSize);
 
-	memcpy(buffer,&(nodeData->code),sizeof(char));									//Codigo de operación
+	memcpy(buffer,&(nodeData->code),sizeof(char));						//Codigo de operación
 		counter=sizeof(char);
-	memcpy(buffer+counter,&(nodeData->fileSize),sizeof(int));						//Tamaño del script de Reduccion
+	memcpy(buffer+counter,&(nodeData->fileSize),sizeof(int));			//Tamaño del script de Reduccion
 		counter+=sizeof(int);
-	memcpy(buffer+counter,(nodeData->file),nodeData->fileSize);						//Contenido delscript de Reduccion
+	memcpy(buffer+counter,(nodeData->file),nodeData->fileSize);			//Contenido delscript de Reduccion
 		counter+=nodeData->fileSize;
 	memcpy(buffer+counter,nodeData->rl_tmp,28);							//nombre el TMP de reducción
 		counter+=28;
 	memcpy(buffer+counter,nodeData->rg_tmp,24);							//nombre el TMP de reducción
 		counter+=24;
-	memcpy(buffer+counter,&(nodeData->nodesQuantity),sizeof(int));					//cantidad de TMPs a procesar
+	memcpy(buffer+counter,&(nodeData->nodesQuantity),sizeof(int));		//cantidad de TMPs a procesar
 		counter+=sizeof(int);
-	for(i = 0; i < (nodeData->nodesQuantity); ++i){
-		memcpy(buffer+counter,&(nodeData->nodes[i].node),sizeof(int));
+	for(i = 0; i < (datos->brothersCount); ++i){
+		memcpy(buffer+counter,&(datos->brothersData[i].node),sizeof(int));
 		counter+=sizeof(int);
-		memcpy(buffer+counter,&(nodeData->nodes[i].ip),16);
+		memcpy(buffer+counter,&(datos->brothersData[i].ip),16);
 		counter+=16;
-		memcpy(buffer+counter,&(nodeData->nodes[i].port),sizeof(int));
+		memcpy(buffer+counter,&(datos->brothersData[i].port),sizeof(int));
 		counter+=sizeof(int);
-		memcpy(buffer+counter,(nodeData->nodes[i].rl_tmp),28);
+		memcpy(buffer+counter,(datos->brothersData[i].rl_tmp),28);
 		counter+=28;
+		//printf("DATOS:%d %s %d %s\n",datos->brothersData[i].node,datos->brothersData[i].ip,datos->brothersData[i].port,datos->brothersData[i].rl_tmp);
 	}
 
-//ENVÍO A WORKER (Transform ya abrió el socket)
 
+//ENVÍO A WORKER
 	log_info(logger,"Estableciendo conexión con nodo %d",datos->leadNode);
 	if(send(nodeSockets[datos->leadNode],buffer,bufferSize,0)<0){
 		log_error(logger,"No se pudo conectar con nodo %d (%s:%d)", datos->leadNode, datos->leadIp, datos->leadPort);
@@ -122,9 +102,7 @@ int sendNodeRequest(dataThread_GR* datos){
 
 	log_info(logger,"Datos enviados a Nodo %d", datos->leadNode);
 
-
 	free(buffer);
-	free(nodeData->nodes);
 	free(nodeData->file);
 	free(nodeData);
 
@@ -133,9 +111,9 @@ int sendNodeRequest(dataThread_GR* datos){
 	rg_node_rs* answer = malloc(sizeof(rg_node_rs));
 	readBuffer(nodeSockets[datos->leadNode], sizeof(char), &(answer->result));
 	readBuffer(nodeSockets[datos->leadNode], sizeof(int), &(answer->runTime));
-	//printf("RESULT:%cRUNTIME:%d\n",answer->result,answer->runTime);
+
 //RESPONDO A YAMA
-	log_trace(logger,"Nodo %d: Reducción Local Finalizada", datos->leadNode);
+	log_trace(logger,"Nodo %d: Reducción Global Finalizada", datos->leadNode);
 	if(answer->result == 'O'){
 		log_info(logger,"Comunicando a YAMA finalización de Reducción Local en nodo %d",datos->leadNode);
 		sendOkToYama('G',0,datos->leadNode);
@@ -145,12 +123,7 @@ int sendNodeRequest(dataThread_GR* datos){
 		sendErrorToYama('G',datos->leadNode);
 	}
 
-	printf("RG iniciada:%d\t ip:%s:%d\t RL:%s\t RG:%s\n",datos->leadNode,datos->leadIp,datos->leadPort,datos->rl_tmp,datos->rg_tmp);
-	for (i = 0; i <= (datos->brothersCount); ++i) printf("\t nodo:%d \t local:%s\n", datos->brothersData[i].node, datos->brothersData[i].rl_tmp);
-
-/*
-*/
-
+	free(answer);
 	return 0;
 };
 
@@ -159,13 +132,14 @@ int sendNodeRequest(dataThread_GR* datos){
 int runGlobalReduction(metrics *masterMetrics){
 	struct timeval gr_start,gr_end;
 	gettimeofday(&gr_start,NULL);
-	int totalRecords, recordCounter=0;
-	dataNodes *brothersData = NULL;
-	brothersData = (dataNodes*) malloc(sizeof(dataNodes));
+	int totalRecords=0, recordCounter=0, brothersCounter=0;
 
 	dataThread_GR* dataThread = NULL;
 	dataThread = (dataThread_GR*) malloc(sizeof(dataThread_GR));
+	dataThread->brothersData = (dataNodes*) malloc(sizeof(dataNodes));
+
 	global_rs* yamaAnswer;
+
 	yamaAnswer = sendGRequest();
 	totalRecords = yamaAnswer->blocksQuantity;
 
@@ -182,21 +156,23 @@ int runGlobalReduction(metrics *masterMetrics){
 			dataThread->leadPort = items[recordCounter].port;
 			strcpy(dataThread->rg_tmp, items[recordCounter].rg_tmp);
 			strcpy(dataThread->rl_tmp, items[recordCounter].rl_tmp);
+			printf("n:%d (%s:%d) %s %s", dataThread->leadNode, dataThread->leadIp,dataThread->leadPort, dataThread->rg_tmp, dataThread->rl_tmp);
 		}else{
-			dataThread->brothersData = realloc(dataThread->brothersData,(sizeof(dataNodes)*(recordCounter+1)));
-			strcpy(dataThread->brothersData[recordCounter].ip, items[recordCounter].ip);
-			dataThread->brothersData[recordCounter].port = items[recordCounter].port;
-			dataThread->brothersData[recordCounter].node = items[recordCounter].nodo;
-			strcpy(brothersData[recordCounter].rl_tmp, items[recordCounter].rl_tmp);
+			dataThread->brothersData = realloc(dataThread->brothersData,(sizeof(dataNodes)*(brothersCounter+1)));
+			strcpy(dataThread->brothersData[brothersCounter].ip, items[recordCounter].ip);
+			dataThread->brothersData[brothersCounter].port = items[recordCounter].port;
+			dataThread->brothersData[brothersCounter].node = items[recordCounter].nodo;
+			strcpy(dataThread->brothersData[brothersCounter].rl_tmp, items[recordCounter].rl_tmp);
+			brothersCounter++;
 		}
 		recordCounter++;
 	};
+		//printf("\nDATOS:%d %s %d %s\n",dataThread->brothersData[0].node,dataThread->brothersData[0].ip,dataThread->brothersData[0].port,dataThread->brothersData[0].rl_tmp);
 
-	dataThread->brothersCount = recordCounter;
+	dataThread->brothersCount = brothersCounter;
 
 	sendNodeRequest(dataThread);
 
-	free(brothersData);
 	free(dataThread->brothersData);
 	free(dataThread);
 
@@ -207,5 +183,6 @@ int runGlobalReduction(metrics *masterMetrics){
 	gettimeofday(&gr_end,NULL);
 	masterMetrics->globalReduction.runTime = timediff(&gr_end,&gr_start);
 
+	log_trace(logger,"Reducción global Finalizada");
 	return EXIT_SUCCESS;
 }

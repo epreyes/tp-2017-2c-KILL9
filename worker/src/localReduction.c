@@ -12,7 +12,7 @@ void localReduction(){
 	int i=0;
 	log_info(logger,"Master %d: Obteniendo datos de reducción local",socket_master);
 
-//OBTENIENDO SCRIPT REDUCCTOR
+//OBTENIENDO SCRIPT REDUCTOR
 	readBuffer(socket_master,sizeof(int),&(datos.fileSize));
 	datos.file=malloc(datos.fileSize);
 	readBuffer(socket_master,datos.fileSize,datos.file);
@@ -25,9 +25,9 @@ void localReduction(){
 	datos.tr_tmp = malloc(28*(datos.tmpsQuantity));
 	for(i=0; i<datos.tmpsQuantity; ++i){
 		readBuffer(socket_master,sizeof(tmp_tr),&(datos.tr_tmp[i]));
-		printf("\nFILE:%s\n", datos.tr_tmp[i]);
+		//printf("FILE:%s\n", datos.tr_tmp[i]);
 	}
-	printf("\nCANTIDAD:%d\n", datos.tmpsQuantity);
+	//printf("\nCANTIDAD:%d\n", datos.tmpsQuantity);
 	log_info(logger,"Master %d: Datos de Reducción Local Obtenidos",socket_master);
 
 //GENERO RESPUESTA
@@ -64,17 +64,17 @@ char reduceFiles(int filesQuantity, tmp_tr* filesNames, char* script){
 	for (i = 1; i < filesQuantity; ++i){
 		strcpy(file2,filesNames[i]);
 		strcpy(mergedFile, generateScriptName('X',i));
-		printf("\nFILE1:%s\n",file1);
-		printf("\nFILE2:%s\n",file2);
+		//printf("FILE1:%s\n",file1);
+		//printf("FILE2:%s\n",file2);
 		mergeFiles(file1,file2,mergedFile);
-		printf("\nMERGEDFILE:%s\n",mergedFile);
+		//printf("MERGEDFILE:%s\n",mergedFile);
 		strcpy(file1,mergedFile);
 	}
 //GENERO COMANDO PARA EJECUTAR REDUCCION
 /*
 	char* command;
-	command = malloc(strlen(mergedFile)+strlen(script)+strlen(reducedFileName)+9);
-	asprintf(&command,"%s | %s > %s",mergedFile,script,reducedFileName);
+	command = malloc(strlen(mergedFile)+strlen(script)+strlen(reducedFileName)+13);
+	asprintf(&command,"cat %s | %s > %s",mergedFile,script,reducedFileName);
 	printf("\nCOMANDO\n:%s", command);
 //EJECUTO REDUCCION
 	system(command);

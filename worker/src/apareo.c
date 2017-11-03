@@ -21,7 +21,6 @@ void readWord(char *word, FILE *file, int* endFile){
 	if(!feof(file)){
 		int i=0;
 		fgets(word,128,file);
-		log_warning(logger,"LEO PALABRA %s", word);
 		for(i=0;word[i]!='\0';++i);
 			if(word[i-1]!='\n'){
 				word[i]='\n';
@@ -44,7 +43,7 @@ void mergeFiles(char* Aname, char* Bname, char *Cname){
 	if((C=fopen(Cname,"w"))==NULL)log_info(logger,"No se pudo crear el archivo %s", Cname);
 
 
-	log_info(logger,"Archivos Abiertos");
+	log_info(logger,"Archivos preparados para el apareo");
 
 	readWord(&word1[0], A, &endFile1);
 	readWord(&word2[0], B, &endFile2);
@@ -61,5 +60,5 @@ void mergeFiles(char* Aname, char* Bname, char *Cname){
 	fclose(A);
 	fclose(B);
 	fclose(C);
-	log_info(logger,"Apareo finalizado");
+	log_info(logger,"Apareo finalizado entre %s y %s", Aname, Bname);
 };
