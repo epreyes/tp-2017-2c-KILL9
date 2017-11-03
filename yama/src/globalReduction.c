@@ -63,9 +63,8 @@ void getGlobalReductionTmpName(rg_datos* nodeData, int op, int blockId,
 		int masterId) {
 	char* name;
 	long timestamp = current_timestamp();
-	asprintf(&name, "%s%ld-%c-M%03d-B%03d", "/tmp/", timestamp, op, masterId,
-			blockId);
-	//printf("\nEl nbombre creado es: %s (%d)\n", name, sizeof(name));
+	asprintf(&name, "%s%ld-RG-M%03d", "/tmp/", timestamp, masterId);
+	printf("\nEl nbombre creado es: %s (%d)\n", name, sizeof(name));
 
 	strcpy(nodeData->rg_tmp, name);
 }
