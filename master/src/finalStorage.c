@@ -18,8 +18,9 @@ store_rs* sendSRequest(){
 	memcpy(buffer,&(data->code),sizeof(char));
 //ENVIO REQUEST
 	log_info(logger,"Envio solicitud de almacenamiento final a YAMA");
-	send(masterSocket,buffer,sizeof(char),0);
-	//if -1 abortar
+	if(send(masterSocket,buffer,sizeof(char),0)<0){
+		log_error(logger, "YAMA se ha desconectado");
+	};
 	free(buffer);
 	free(data);
 
@@ -31,23 +32,19 @@ store_rs* sendSRequest(){
 	readBuffer(masterSocket, 16, &(yamaAnswer->ip));
 	readBuffer(masterSocket, sizeof(int), &(yamaAnswer->port));
 	readBuffer(masterSocket, 24, &(yamaAnswer->rg_tmp));
-
-	printf("\tnodo:%c\tip:%s\tport:%d\ttmp:%s\n", yamaAnswer->nodo, yamaAnswer->ip, yamaAnswer->port,yamaAnswer->rg_tmp);
+	log_info(logger, "Respuesta de YAMA recibida");
+	printf("Nodo:%d(:%s:%d) tmp:%s\n", yamaAnswer->nodo, yamaAnswer->ip, yamaAnswer->port,yamaAnswer->rg_tmp);
 
 	return yamaAnswer;
-	//recordar liberar
 }
-
-
-
 
 int sendDataToWorker(store_rs* datos, char* fileName){
 //PREPARO PAQUETE---
 	fs_node_rq* nodeData = malloc(sizeof(fs_node_rq));
 
 	nodeData->code='S';										//CODE
-	strcpy(nodeData->rg_tmp, datos->rg_tmp);			//NOMBRE TMP RED GLOBAL
-	nodeData->fileNameSize = strlen(fileName);				//NOMBRE ARCHIVO FINAL
+	strcpy(nodeData->rg_tmp, datos->rg_tmp);				//NOMBRE TMP RED GLOBAL
+	nodeData->fileNameSize = strlen(fileName)+1;			//NOMBRE ARCHIVO FINAL
 	nodeData->fileName = malloc(nodeData->fileNameSize);
 	strcpy(nodeData->fileName, fileName);
 
@@ -75,8 +72,9 @@ int sendDataToWorker(store_rs* datos, char* fileName){
 //ESPERO RESPUESTA
 	log_info(logger,"Esperando respuesta del Nodo Encargado");
 	fs_node_rs* answer = malloc(sizeof(fs_node_rs));
-	readBuffer(nodeSockets[datos->nodo], sizeof(int), &(answer->runTime));
 	readBuffer(nodeSockets[datos->nodo], sizeof(char), &(answer->result));
+	readBuffer(nodeSockets[datos->nodo], sizeof(int), &(answer->runTime));
+
 
 //RESPONDO A YAMA
 	if(answer->result == 'O'){
@@ -98,7 +96,6 @@ int sendDataToWorker(store_rs* datos, char* fileName){
 
 int saveResult(metrics *masterMetrics, char* fileName){
 
-
 	struct timeval af_start,af_end;
 	gettimeofday(&af_start,NULL);
 
@@ -106,7 +103,7 @@ int saveResult(metrics *masterMetrics, char* fileName){
 
 	store_rs* yamaAnswer=NULL;
 	yamaAnswer = sendSRequest();
-	sendDataToWorker(&yamaAnswer, fileName);
+	sendDataToWorker(yamaAnswer, fileName);
 
 	//GUARDO METRICA
 	gettimeofday(&af_end,NULL);

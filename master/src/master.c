@@ -27,8 +27,8 @@ int main(int argc, char* argv[]){
 	gettimeofday(&start,NULL);
 
 	createLoggers();
-	loadConfigs();
 	validateArgs(argc, argv);										//valido argumentos
+	loadConfigs();
 	openYamaConnection();
 	loadScripts(argv[1],argv[2]);
 
@@ -36,9 +36,9 @@ int main(int argc, char* argv[]){
 	runLocalReduction(&masterMetrics);		//ordena ejecución de Reductor Local
 
 	runGlobalReduction(&masterMetrics);		//ordena ejecución de Reductor Global
-	/*
 	saveResult(&masterMetrics, argv[4]);				//ordena guardado en FileSystem
 
+	/*
 	gettimeofday(&end,NULL);
 	masterMetrics.runTime = timediff(&end,&start);
 	printMetrics(masterMetrics);
