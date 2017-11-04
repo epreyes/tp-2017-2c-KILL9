@@ -58,72 +58,66 @@ t_list* findGlobalReductionPlaned(int master) {
 	return planed_list;
 }
 
-void viewFinalStoreResponse( void* response ){
+void viewFinalStoreResponse(void* response) {
 	char op;
 	memcpy(&op, response, sizeof(char));
 
-	int blocks;
-	memcpy(&blocks, response+sizeof(char), sizeof(int));
+	int nodo;
+	memcpy(&nodo, response + sizeof(char), sizeof(int));
 
-	void* data = malloc(sizeof(af_datos)*blocks);
-	memcpy(data, response+sizeof(char)+sizeof(int), sizeof(af_datos)*blocks);
+	char* ip = malloc(sizeof(char) * 16);
+	memcpy(ip, response + sizeof(char) + sizeof(int), sizeof(char) * 16);
 
-	int index = 0;
-	printf("\nOperacion %c, Bloques %d\n", op, blocks);
-	for(index = 0; index < blocks; index++){
-		af_datos* afdata = malloc(sizeof(af_datos));
-		memcpy(afdata, data+(index*sizeof(af_datos)), sizeof(af_datos));
+	int puerto;
+	memcpy(&puerto, response + sizeof(char) + sizeof(int) + sizeof(char) * 16,
+			sizeof(int));
 
-		printf( "\nnodo=%d, ip=%s, puerto=%d, rgtmp=%s\n", afdata->nodo, afdata->ip, afdata->port, afdata->rg_tmp);
-	}
+	char* fileName = malloc(sizeof(char) * 24);
+	memcpy(fileName,
+			response + sizeof(char) + sizeof(int) + sizeof(char) * 16
+					+ sizeof(int), sizeof(char) * 24);
+
+	printf(
+			"\nFINAL STORE RESPONSE: Code=%c, Nodo=%d, ip=%s, puerto=%d, filename=%s\n",
+			op, nodo, ip, puerto, fileName);
 }
 
 /*typedef struct {
-	int		nodo;
-	char	ip[16];
-	int 	port;
-	char	rg_tmp[24];
-}af_datos;*/
+ int		nodo;
+ char	ip[16];
+ int 	port;
+ char	rg_tmp[24];
+ }af_datos;*/
 void* processFinalStore(int master) {
 	if (allGlobalReductionProcesFinish(master)) {
 		t_list* planed = findGlobalReductionPlaned(master);
 
-		int fsSize = sizeof(char)*41+sizeof(int)*2;
+		rg_datos* elem = list_get(planed, 0);
 
-		void* finalStoreRes = malloc(
-				sizeof(char) + sizeof(int)
-						+ fsSize * list_size(planed));
+		int fsSize = sizeof(char) * 41 + sizeof(int) * 2;
+
+		void* finalStoreRes = malloc(fsSize);
 
 		memcpy(finalStoreRes, "S", sizeof(char));
-		int size = list_size(planed);
 
-		memcpy(finalStoreRes + sizeof(char), &size, sizeof(int));
+		memcpy(finalStoreRes + sizeof(char), &(elem->nodo), sizeof(int));
 
-		void* fsdata = malloc(fsSize * list_size(planed));
+		memcpy(finalStoreRes + sizeof(char) + sizeof(int), elem->ip,
+				sizeof(char) * 16);
 
-		int index = 0;
-		for (index = 0; index < list_size(planed); index++) {
-			rg_datos* elem = list_get(planed, index);
-			af_datos* finalStoreData = malloc(sizeof(af_datos));
-			finalStoreData->nodo = elem->nodo;
-			strcpy(finalStoreData->ip, elem->ip);
-			finalStoreData->port = elem->port;
-			strcpy(finalStoreData->rg_tmp, elem->rg_tmp);
+		memcpy(finalStoreRes + sizeof(char) + sizeof(int) + sizeof(char) * 16,
+				&(elem->port), sizeof(int));
 
-			setInStatusTable('S', master, finalStoreData->nodo, 0,
-					finalStoreData->rg_tmp, 0);
-			increaseNodeCharge(finalStoreData->nodo);
+		memcpy(
+				finalStoreRes + sizeof(char) + sizeof(int) + sizeof(char) * 16
+						+ sizeof(int), elem->rg_tmp, sizeof(char) * 24);
 
-			/*memcpy(
-					finalStoreRes + sizeof(char) + sizeof(int)
-							+ (index * sizeof(af_datos)), finalStoreData,
-					sizeof(af_datos));*/
-			memcpy(fsdata+(index*fsSize), &(finalStoreData->nodo), sizeof(int));
-			memcpy(fsdata+(index*fsSize)+sizeof(int), finalStoreData->ip, sizeof(char)*16);
-			memcpy(fsdata+(index*fsSize)+sizeof(int)+sizeof(char)*16, &(finalStoreData->port), sizeof(int));
-			memcpy(fsdata+(index*fsSize)+sizeof(int)+sizeof(char)*16+sizeof(int), finalStoreData->rg_tmp, 24*sizeof(char));
-		}
-		memcpy(finalStoreRes+sizeof(char)+sizeof(int), fsdata, fsSize * list_size(planed));
+		setInStatusTable('S', master, elem->nodo, 0,
+				elem->rg_tmp, 0);
+		increaseNodeCharge(elem->nodo);
+
+		viewFinalStoreResponse(finalStoreRes);
+
 		return finalStoreRes;
 	} else {
 		perror(

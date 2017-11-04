@@ -73,7 +73,7 @@ int getSizeToSend(void* masterRS) {
 		break;
 	case 'S':
 
-		size = (blocks * fsSize) + sizeof(char) + sizeof(int);
+		size = fsSize + sizeof(char);
 		viewFinalStoreResponse(masterRS);
 		break;
 	case 'A':
