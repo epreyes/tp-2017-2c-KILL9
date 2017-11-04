@@ -78,6 +78,9 @@ void  load_data_node_properties_files(){
 	data_node_config->file_system_ip= config_get_string_value(t_data_node,IP_FILESYSTEM);
 	data_node_config->file_system_port = config_get_string_value(t_data_node,PORT_FILESYSTEM);
 	data_node_config->path_data_bin= config_get_string_value(t_data_node,PATH_DATABIN);
+	data_node_config->worker_ip = config_get_string_value(t_data_node,IP_WORKER);
+	data_node_config->worker_port = config_get_string_value(t_data_node,PORT_WORKER);
+	data_node_config->name_nodo = config_get_int_value(t_data_node,NAME_NODO);
 
 	free(t_data_node);
 

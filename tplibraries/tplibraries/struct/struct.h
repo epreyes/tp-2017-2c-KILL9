@@ -22,8 +22,10 @@ typedef struct{
  char* file_system_ip;
  char* file_system_port;
  char* data_node_port;
- char* 	path_data_bin;
+ char*  path_data_bin;
+ char*  worker_port;
+ int name_nodo;
+ char * worker_ip;
 }__attribute__ ((__packed__)) t_data_node_config;
-
 
 #endif /* STRUCT_STRUCT_H_ */

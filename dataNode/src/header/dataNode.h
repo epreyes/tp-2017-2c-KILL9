@@ -28,6 +28,14 @@
  * STATIC
  */
 
+typedef struct __attribute__((packed)) {
+	 int 	handshake;
+	 int  	block_quantity;
+	 int 	id_nodo;
+	 int 	data_size;
+	 char*  worker_ip_port;
+} t_infoNodo;
+
 static char* DATA_NODE_PATH="./properties/dataNode.properties";
 
 /** Variables globales **/
