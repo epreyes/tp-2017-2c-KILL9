@@ -20,16 +20,20 @@ int obtenerIndiceDir(char* path);
 int crearDirectorio(char* nombreDir);
 bool existeDirectorio(char* path);
 
-void formatear();
+int formatear();
 
 void crearBitMapBloquesNodo(t_nodo* nodo);
-t_bitarray* obtenerBitMapBloquesNodo(t_nodo* nodo);
+t_bitarray* obtenerBitMapBloquesNodo(t_nodo* nodo); // Debe deprecarse
+
+t_bitarray* obtenerBitMapBloques(int idNodo);
+
 t_list* obtenerBloquesLibres(int cantBloques);
 char* obtenerIdNodo(char* cadena);
 int obtenerIdBloque(char* cadena);
 int obtenerBloquesNecesarios(char* contenido, int tipo);
 
 t_archivoInfo* obtenerArchivoInfo(char* path);
+t_archivoInfo* obtenerArchivoInfoPorMetadata(char* dirMetadata);
 char* obtenerDirArchivo(char* path);
 char* obtenerNombreArchivo(char* path);
 int existeArchivo(char* path);
@@ -41,5 +45,6 @@ bool ordenarPorCarga(t_nodo *nodoConMasCarga, t_nodo *nodoConMenosCarga);
 t_list* decidirNodo(t_list* nodos);
 
 bool estaFormateado();
+int obtenerEstadoArchivo(char* path);
 
 #endif /* FS_CORE_H_ */

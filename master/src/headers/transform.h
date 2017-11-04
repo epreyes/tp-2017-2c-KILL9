@@ -21,7 +21,7 @@ typedef struct dataThread_TR{
 
 void *runTransformThread(void* data);
 
-int transformFile(tr_datos yamaAnswer[], int totalRecords, metrics *masterMetrics, char* filename);
+int transformFile(/*tr_datos yamaAnswer[], int totalRecords,*/ metrics *masterMetrics, char* filename);
 
 void sendRequest(char* fileName);
 

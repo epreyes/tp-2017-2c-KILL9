@@ -13,9 +13,11 @@
 #define AYUDA "ayuda"
 #define CREAR_DIRECTORIO "mkdir"
 #define FORMATEAR "formatear"
+#define INFOARCHIVO "infoarchivo"
 
 #include "fs_comandos.h"
 
 void ejecutarConsola();
 
 #endif /* FS_CONSOLA_H_ */
+

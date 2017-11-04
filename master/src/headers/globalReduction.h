@@ -22,13 +22,14 @@ typedef struct dataThread_GR{
 	int			leadNode;
 	char 		leadIp[16];
 	int			leadPort;
+	char		rl_tmp[28];
 	char		rg_tmp[24];
 	dataNodes* 	brothersData;
 	int			brothersCount;
 }dataThread_GR;
 
 
-int runGlobalReduction(rg_datos yamaAnswer[], int totalRecords, metrics *masterMetrics);
+int runGlobalReduction(metrics *masterMetrics);
 
 
 #endif /* HEADERS_GLOBALREDUCTION_H_ */

@@ -21,28 +21,67 @@ int block_size = 256;
 
 void connectionToFileSystem() {
 	log_info(infoLogger, "INICIANDO CONEXION CON FILESYSTEM ...\n");
-
-	int cod_ope = NODE_HSK;
+	int blockQuantity;
 	int res;
 	int cod_resp;
+	struct stat sb;
 
 	map_data_node();
 
-	fileSystemSocket = connect_to_socket(data_node_config->file_system_ip,
-			data_node_config->file_system_port);
+	fileSystemSocket = connect_to_socket(data_node_config->file_system_ip,data_node_config->file_system_port);
 	if (fileSystemSocket == -1) {
 		log_error(infoLogger, "Error al conectar con fileSystem\n");
 	}
 
-	res = enviarMensaje(fileSystemSocket, &cod_ope, 4, infoLogger);
-	if (res < 1) {
-		log_error(infoLogger, "Enviando Mensanje a fileSystem\n");
+	if(stat(data_node_config ->path_data_bin,&sb) == -1){
+		log_error(infoLogger,"Tamanio del archivo data.bin");
+	}
+
+	//cantidad de bloques
+	//block_size : 1MB
+	blockQuantity = sb.st_size / block_size;
+
+	t_infoNodo infoNodo;
+	infoNodo.handshake = NODE_HSK;
+	infoNodo.block_quantity = blockQuantity;
+	infoNodo.id_nodo = data_node_config->name_nodo;
+
+	int dataSize = 0;
+	char* workerIPPort = string_new();
+	char*workerIP=data_node_config->worker_ip;
+	char* workerPort= data_node_config->worker_port;
+
+	dataSize += string_length(workerIP);
+	dataSize += string_length(workerPort);
+	dataSize += 1;
+	string_append(&workerIPPort,workerIP);
+	string_append(&workerIPPort,":");
+	string_append(&workerIPPort,workerPort);
+
+	infoNodo.data_size = dataSize;
+	strcpy(infoNodo.worker_ip_port,workerIPPort);
+
+
+	log_info(infoLogger,"Enviando informacion del nodo a FS .....\n");
+	log_info(infoLogger,
+			"-Handshake %d :  -Cantidad de bloque : %d -ID Nodo :%d \n -Tamaño data :%d -IP-Puerto FS : %d",
+			infoNodo.handshake,
+			infoNodo.block_quantity,
+			infoNodo.id_nodo,
+			infoNodo.data_size,
+			workerIPPort);
+
+	res = enviarMensaje(fileSystemSocket,&infoNodo,sizeof(int)*4,infoLogger);
+	if(res < 1){
+		log_error(infoLogger, "Envio IP worker fileSystem\n");
 		exit(EXIT_FAILURE);
 	}
+	send(fileSystemSocket, infoNodo.worker_ip_port, dataSize,0);
+
 
 	res = recibirMensaje(fileSystemSocket, &cod_resp, 4, infoLogger);
 	if (res < 1) {
-		log_error(infoLogger, "Error al recibir mensaje fileSystem\n");
+		log_error(infoLogger, "Respuesta FS a DataNode");
 		exit(EXIT_FAILURE);
 	}
 

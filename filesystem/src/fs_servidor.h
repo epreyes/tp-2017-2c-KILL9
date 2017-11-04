@@ -28,5 +28,8 @@ void procesarPedidoYama(t_header pedido, int socket);
 void procesarPedidoNodo(t_header pedido, int socket);
 
 void guardarConfigNodoEnBin();
+int habilitarBloques(t_nodo* nodo);
+t_nodo* nodoPerteneceAEstadoAnterior(t_nodo* nodo);
+int buscarNodoPorSocket(int socketNodo);
 
 #endif /* FS_SERVIDOR_H_ */

@@ -19,9 +19,44 @@ void ejecutarConsola() {
 		fgets(comandos, 100, stdin);
 		sscanf(comandos, "%s %s %s", instruccionConsola, param1, param2);
 
+		if (vieneDeNoEstado == 1)
+			if (!estaFormateado()
+					&& strcmp(instruccionConsola, FORMATEAR) != 0) {
+				printf("Debe formatear antes de comenzar a usar el nuevo fs\n");
+				instruccionConsola[0] = '\0';
+				param1[0] = '\0';
+				param2[0] = '\0';
+				continue;
+			}
+
 		if (strcmp(instruccionConsola, FORMATEAR) == 0) {
-			formatear();
-			printf("Formato completo\n");
+			int formato = formatear();
+			if (formato == 0)
+				printf("Formato completo\n");
+			else
+				printf("Error en el formateo \n");
+
+			instruccionConsola[0] = '\0';
+			param1[0] = '\0';
+			param2[0] = '\0';
+			continue;
+		}
+
+		if (strcmp(instruccionConsola, INFOARCHIVO) == 0) {
+
+			int estadoArchivo = obtenerEstadoArchivo(param1);
+			switch (estadoArchivo) {
+			case 0:
+				printf("Online\n");
+				break;
+			case -1:
+				printf("No existe el archivo\n");
+				break;
+			case -2:
+				printf("Offline\n");
+				break;
+			}
+
 			instruccionConsola[0] = '\0';
 			param1[0] = '\0';
 			param2[0] = '\0';
@@ -29,6 +64,14 @@ void ejecutarConsola() {
 		}
 
 		if (strcmp(instruccionConsola, CREAR_DIRECTORIO) == 0) {
+
+			if (param1[0] == '\0') {
+				printf("Falta parametro directorio\n");
+				instruccionConsola[0] = '\0';
+				param1[0] = '\0';
+				param2[0] = '\0';
+				continue;
+			}
 
 			int res = crearDirectorio(param1);
 			if (res == -1) {
@@ -120,10 +163,10 @@ void ejecutarConsola() {
 				exit(1);
 			}
 
-			char* lect = mmap((caddr_t) 0, sbuf.st_size, PROT_READ, MAP_SHARED,
-					fd, 0);
+			char* lect = mmap((caddr_t) 0, sbuf.st_size, PROT_READ,
+			MAP_SHARED, fd, 0);
 
-			if (lect == NULL ) {
+			if (lect == NULL) {
 				perror("error en map\n");
 				exit(1);
 			}

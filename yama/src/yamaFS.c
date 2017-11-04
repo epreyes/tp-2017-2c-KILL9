@@ -20,35 +20,49 @@ void* getFileSystemInfo(char* name) {
 	void* fsInfo = NULL;
 
 	/*creo el buffer que contendra la solicitud al filesystem*/
-	int buffersize = sizeof(char)+sizeof(int)+strlen(name);
+	int buffersize = sizeof(int) + sizeof(char) + sizeof(int) + strlen(name);
+
+	name = string_substring_from(name, 8);
+
+	printf("\nEnvio el archivo %s\n", name);
+
 	int sizename = strlen(name);
 
-	void* buffer = malloc( buffersize );
-	memcpy(buffer, "T", sizeof(char));
-	memcpy(buffer+sizeof(char), &sizename, sizeof(int));
-	memcpy(buffer+sizeof(char)+sizeof(int), name, sizename);
+	void* buffer = malloc(buffersize);
+	int handShake = 10;
+	memcpy(buffer, &handShake, sizeof(int));
+	memcpy(buffer + sizeof(int), "T", sizeof(char));
+	memcpy(buffer + sizeof(int) + sizeof(char), &sizename, sizeof(int));
+	memcpy(buffer + sizeof(int) + sizeof(char) + sizeof(int), name, sizename);
 
 	int infoSize = 0;
 	if (send(fs_client.socket_server_id, buffer, buffersize, 0) > 0) {
 		free(buffer);
 
-		buffer = malloc(sizeof(int));
+		char confirm;
+		recv(fs_client.socket_server_id, &confirm, sizeof(char), MSG_WAITALL);
 
-		int recved = recv(fs_client.socket_server_id, buffer, sizeof(int), MSG_WAITALL);
-		if (recved > 0) {
-			infoSize = *(int*) buffer;
-			free(buffer);
-			buffer = malloc(infoSize);
-			if( recv(fs_client.socket_server_id, buffer, infoSize, MSG_WAITALL) > 0){
-				fsInfo = malloc(sizeof(int)+infoSize);
-				memcpy(fsInfo, &infoSize, sizeof(int));
-				memcpy(fsInfo+sizeof(int), buffer, infoSize);
-			}else{
-				perror("Recibing payload from FileSystem...");
+		if (confirm == 'O') {
+			int blocks;
+			int recved = recv(fs_client.socket_server_id, &blocks, sizeof(int),
+					MSG_WAITALL);
+
+			if (recved > 0) {
+				infoSize = blocks*sizeof(block_info);
+
+				buffer = malloc(infoSize);
+				if (recv(fs_client.socket_server_id, buffer, infoSize,
+						MSG_WAITALL) > 0) {
+					fsInfo = malloc(sizeof(int) + infoSize);
+					memcpy(fsInfo, &infoSize, sizeof(int));
+					memcpy(fsInfo + sizeof(int), buffer, infoSize);
+				} else {
+					perror("Recibing payload from FileSystem...");
+				}
+
 			}
-
 		} else {
-			perror("Recibing...");
+			perror("No existe el archivo solicitado...");
 		}
 	} else {
 		perror("Sending");
@@ -61,9 +75,10 @@ void* getFileSystemInfo(char* name) {
 
 int findFile(char* fileName) {
 	int index = 0;
-	if ( !list_is_empty(yama->tabla_info_archivos) ) {
+	if (!list_is_empty(yama->tabla_info_archivos)) {
 		for (index = 0; index < list_size(yama->tabla_info_archivos); index++) {
-			elem_info_archivo* fileInfo = list_get(yama->tabla_info_archivos, index);
+			elem_info_archivo* fileInfo = list_get(yama->tabla_info_archivos,
+					index);
 			if (strcmp(fileName, fileInfo->filename) == 0) {
 				return index;
 			}
@@ -88,30 +103,31 @@ elem_info_archivo* getFileInfo(int master) {
 	buff = malloc(nameSize);
 	recv(master, buff, nameSize, MSG_WAITALL);
 
-	char fileName[28];
+	char fileName[nameSize];
 	strncpy(fileName, buff, nameSize);
-	fileName[27] = '\0';
+	fileName[nameSize] = '\0';
 	free(buff);
 
 	int fileIndex = findFile(fileName);
 
 	/*Si ya tengo la info del archivo, en la lista, la saco de ahi.*/
 	if (fileIndex >= 0) {
-		elem_info_archivo* fileInfo = list_get(yama->tabla_info_archivos, fileIndex);
+		elem_info_archivo* fileInfo = list_get(yama->tabla_info_archivos,
+				fileIndex);
 		info = fileInfo;
 	}
 	/*Si no tengo la informacion en la tabla, se la pido al filesystem*/
 	else {
 		void* fsInfo = getFileSystemInfo(fileName);
-		elem_info_archivo* fileInfo =  malloc(sizeof(elem_info_archivo));
-		strcpy(fileInfo->filename,fileName);
+		elem_info_archivo* fileInfo = malloc(sizeof(elem_info_archivo));
+		strcpy(fileInfo->filename, fileName);
 
 		int* size = malloc(sizeof(int));
 		memcpy(size, fsInfo, sizeof(int));
 		fileInfo->sizeInfo = *size;
 
 		fileInfo->info = malloc(*size);
-		memcpy( fileInfo->info, fsInfo + sizeof(int), *size );
+		memcpy(fileInfo->info, fsInfo + sizeof(int), *size);
 
 		fileInfo->blocks = *size / sizeof(block_info);
 

@@ -17,6 +17,8 @@
 #include <sys/socket.h>
 #include <sys/select.h>
 #include <tplibraries/protocol/master_worker.h>
+#include <tplibraries/protocol/worker_filesystem.h>
+#include <tplibraries/protocol/worker_worker.h>
 #include <unistd.h>
 #include <commons/config.h>
 #include <commons/log.h>
@@ -27,10 +29,12 @@ t_log* logger;
 //=========CONFIGS============//
 t_config* config;
 //=========FILES============//
-FILE* script_transform; 	//lo tomo del pedido de transformación
-FILE* script_reduction;		//lo tomo del pedido de reducción local
+FILE* script_transform;
+FILE* script_reduction;
 //=========SOCKETS============//
 int socket_worker;
 int socket_master;
+int socket_filesystem;
+int socket_nodes[50];
 
 #endif /* HEADERS_WORKER_H_ */

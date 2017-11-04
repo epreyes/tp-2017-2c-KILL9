@@ -41,6 +41,7 @@ typedef struct {
 	int job;
 	int master;
 	int node;
+	int node_block;
 	int block;
 	char op;
 	char status;

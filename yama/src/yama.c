@@ -67,22 +67,30 @@ void* processOperation(int master, char op) {
 	switch (op) {
 	case 'T':
 		response = processTransformation(master);
+		//viewTransformationResponse(response);
 		break;
 	case 'L':
 		response = processLocalReduction(master);
 		break;
 	case 'G':
 		response = processGlobalReduction(master);
+		viewGlobalReductionResponse(response);
 		break;
 	case 'S':
 		response = processFinalStore(master);
 		break;
 	case 'E':
-		response = processError(master);
+		response = processNodeError(master);
 		break;
 	case 'O':
-		processOk(master);
+		//printf("\nAntes del ok:\n");
+		//viewStateTable();
+		response = processOk(master);
+		//printf("\nDESPUES del ok:\n");
+		//viewStateTable();
 		break;
+	default:
+		response = invalidRequest(master, "Error: Operacion invalida.");
 	}
 
 	return response;
