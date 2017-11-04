@@ -31,20 +31,10 @@ void localReduction(){
 	log_info(logger,"Master %d: Datos de Reducción Local Obtenidos",socket_master);
 
 //GENERO RESPUESTA
-	int bufferSize = sizeof(int)+sizeof(char);
-	rl_node_rs* answer = malloc(sizeof(rl_node_rs));
-	void* buffer = malloc(bufferSize);
-//PROCESO
-	answer->result= reduceFiles(datos.tmpsQuantity, datos.tr_tmp, scriptName);
-	answer->runTime=12; //CAMBIAR
-	//serializo
-	memcpy(buffer,&(answer->result),sizeof(char));
-	memcpy(buffer+sizeof(char),&(answer->runTime),sizeof(int));
-	send(socket_master,buffer,bufferSize,0);
+	char result = reduceFiles(datos.tmpsQuantity, datos.tr_tmp, scriptName);
+	sendAnswerToMaster('L', 0, result, 12);
 
-	free(answer);
-	free(buffer);
-
+//----------------
 	free(datos.tr_tmp);
 	free(datos.file);
 	log_trace(logger, "Master %d: Reducción local finalizada", socket_master);

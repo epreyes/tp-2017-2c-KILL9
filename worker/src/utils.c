@@ -117,3 +117,39 @@ char* generateFile(char* fileContent, char operation, int socket){
 	return fileName;
 };
 
+void sendAnswerToMaster(char op, int blockNumber, char result, int runtime){
+	int bufferSize;
+	void* buffer = NULL;
+
+	if(op=='T'){
+		tr_node_rs* answer = malloc(sizeof(tr_node_rs));
+		bufferSize = sizeof(int)+sizeof(char)+sizeof(int);
+		buffer = malloc(bufferSize);
+	//EMPAQUETO
+		answer->block = blockNumber;
+		answer->result= result;
+		answer->runtime= runtime;
+	//SERIALIZO
+		memcpy(buffer,&(answer->block),sizeof(int));
+		memcpy(buffer+sizeof(int),&(answer->result),sizeof(char));
+		memcpy(buffer+sizeof(int)+sizeof(char),&(answer->runtime),sizeof(int));
+		send(socket_master,buffer,bufferSize,0);
+		printf("%d %c %d",answer->block,answer->result,answer->runtime);
+		free(answer);
+	}
+
+	else{
+		rl_node_rs* answer = malloc(sizeof(rl_node_rs));
+		bufferSize = sizeof(int)+sizeof(char);
+		buffer = malloc(bufferSize);
+		answer->result= result;
+		answer->runTime=runtime; 	//CAMBIAR
+	//SERIALIZO
+		memcpy(buffer,&(answer->result),sizeof(char));
+		memcpy(buffer+sizeof(char),&(answer->runTime),sizeof(int));
+		free(answer);
+	}
+		send(socket_master,buffer,bufferSize,0);
+		log_info(logger,"Resultados enviados");
+		free(buffer);
+}

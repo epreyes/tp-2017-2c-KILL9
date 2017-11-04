@@ -31,25 +31,12 @@ char* obtainNodeFile(rg_node datos){
 	return generateFile(nodeAnswer.file, 'G',socket_nodes[datos.node]);
 }
 
+
 void answerMaster(){
-	int bufferSize = sizeof(char)+sizeof(int);
-	rg_node_rs* answer = malloc(sizeof(rg_node_rs));
-	void* buffer = malloc(bufferSize);
-
-	answer->result = 'O';
-	answer->runTime = 12;
 	log_info(logger,"Enviando resultado de Reducción Global a Master");
-
-	memcpy(buffer,&(answer->result),sizeof(char));
-	memcpy(buffer+sizeof(char),&(answer->runTime),sizeof(int));
-	send(socket_master,buffer,bufferSize,0);
+	sendAnswerToMaster('G', 0, 'O', 12);
 	log_info(logger,"Resultados enviados");
-
-
-	free(buffer);
-	free(answer);
 }
-
 
 
 void globalReduction(){
