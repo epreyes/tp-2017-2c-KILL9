@@ -20,11 +20,13 @@ void* getFileSystemInfo(char* name) {
 	void* fsInfo = NULL;
 
 	/*creo el buffer que contendra la solicitud al filesystem*/
-	int buffersize = sizeof(int) + sizeof(char) + sizeof(int) + strlen(name);
 
 	name = string_substring_from(name, 8);
 
 	printf("\nEnvio el archivo %s\n", name);
+
+	int buffersize = sizeof(int) + sizeof(char) + sizeof(int) + strlen(name);
+
 
 	int sizename = strlen(name);
 
@@ -36,7 +38,9 @@ void* getFileSystemInfo(char* name) {
 	memcpy(buffer + sizeof(int) + sizeof(char) + sizeof(int), name, sizename);
 
 	int infoSize = 0;
-	if (send(fs_client.socket_server_id, buffer, buffersize, 0) > 0) {
+	int bytesSend = send(fs_client.socket_server_id, buffer, buffersize, 0);
+	printf("\n\nEnviados %d bytes a filesystem\n", bytesSend);
+	if (bytesSend > 0) {
 		free(buffer);
 
 		char confirm;
