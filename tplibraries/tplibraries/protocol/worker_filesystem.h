@@ -20,5 +20,6 @@ typedef struct{
 	char	result;				//'E': error / 'O': ok
 }fs_rs;
 
+#define WORKER_HSK 11
 
 #endif /* TPLIBRARIES_PROTOCOL_WORKER_FILESYSTEM_H_ */
