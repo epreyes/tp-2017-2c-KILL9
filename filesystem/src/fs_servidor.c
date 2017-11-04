@@ -58,14 +58,15 @@ void* lanzarHiloServidor() {
 				inet_ntoa(their_addr.sin_addr));
 
 		t_header d;
+		int handshak = 0;
 
-		if (recv(new_fd, &d, sizeof(t_header), 0) < 0) {
+		if (recv(new_fd, &handshak, sizeof(int), 0) < 0) {
 			log_error(logger, "Error en la recepcion del handshake");
 			exit(1);
 		}
 
-		log_debug(logger, "Se recibio handshake %d", d.idMensaje);
-		codigoHandshake = d.idMensaje;
+		log_debug(logger, "Se recibio handshake %d", handshak);
+		codigoHandshake = handshak;
 
 		if (codigoHandshake != YAMA_HSK && codigoHandshake != NODE_HSK) {
 			log_error(logger, "Codigo incorrecto de Handshake.");
@@ -77,48 +78,131 @@ void* lanzarHiloServidor() {
 		pthread_t hilo_cliente;
 
 		if (codigoHandshake == NODE_HSK) {
+			int block_quantity = 0;
+			int id_nodo = 0;
+			int data_size = 0;
 
-			// TODO: debe controlarse para la inicializacion, que los nodos que se conecten sean de:
-			// Si hay estado anterior: que sean los del estado anterior, denegar cualquier otro
-			// Si no hay estado anterior: pueden ser cualquiera, deben agregarse a nodos.bin
+			recv(new_fd, &block_quantity, sizeof(int), 0);
+			recv(new_fd, &id_nodo, sizeof(int), 0);
+			recv(new_fd, &data_size, sizeof(int), 0);
+			char* worker = malloc(data_size);
 
-			int hsk_ok = HSK_OK;
+			recv(new_fd, worker, sizeof(char) * data_size, 0);
 
-			if (send(new_fd, &hsk_ok, sizeof(int), 0) < 0) {
-				log_error(logger, "Error en el envio de hsk ok");
-				exit(1);
+			// TODO: no permitir que se conecte el mismo nodo mas de una vez
+
+			t_nodo* nodo;
+
+			if (vieneDeNoEstado == 1) {
+
+				int hsk_ok = HSK_OK;
+
+				if (send(new_fd, &hsk_ok, sizeof(int), 0) < 0) {
+					log_error(logger, "Error en el envio de hsk ok");
+					exit(1);
+				}
+
+				if (pthread_create(&hilo_cliente, NULL, connection_handler_nodo,
+						(void*) new_fd) < 0) {
+					perror("Error creando thread cliente nodo");
+					exit(1);
+				}
+
+				// Agrego el nodo en memoria
+				t_nodo* nodo = malloc(sizeof(t_nodo));
+				nodo->id = id_nodo;
+				nodo->libre = block_quantity;  // inicialmente es el total
+				nodo->total = block_quantity;
+
+				nodo->direccion = malloc(data_size + 1);
+				memcpy(nodo->direccion, worker, data_size);
+				nodo->direccion[data_size] = '\0';
+
+				nodo->socketNodo = new_fd;
+
+				log_info(logger,
+						"Nuevo nodo conectado - id: %d - total bloques: %d - direccion worker: %s",
+						id_nodo, block_quantity, worker);
+
+				sem_wait(&listaNodos);
+				list_add(nodos->nodos, nodo);
+				sem_post(&listaNodos);
+
+				// Guardo nodo en nodos.bin
+				guardarConfigNodoEnBin();
+
+				// Genero bitmap de gestion de bloques
+				crearBitMapBloquesNodo(nodo);
+
+				// Solo si viene de un no estado
+				sem_post(&nodoInit);
+
+			} else {
+
+				t_nodo* nodoAnterior = nodoPerteneceAEstadoAnterior(nodo);
+
+				if (nodoAnterior == NULL) {
+					// Rechazo conexion de nodo
+					int hsk = ACCESODENEGADO;
+
+					if (send(new_fd, &hsk, sizeof(int), 0) < 0) {
+						log_error(logger, "Error en el envio de hsk");
+						exit(1);
+					}
+					close(new_fd);
+				} else {
+					int hsk_ok = HSK_OK;
+
+					if (send(new_fd, &hsk_ok, sizeof(int), 0) < 0) {
+						log_error(logger, "Error en el envio de hsk ok");
+						exit(1);
+					}
+
+					if (pthread_create(&hilo_cliente, NULL,
+							connection_handler_nodo, (void*) new_fd) < 0) {
+						perror("Error creando thread cliente nodo");
+						exit(1);
+					}
+
+					// Agrego el nodo en memoria
+
+					// TODO: debe tomar la info de data.bin
+
+					t_nodo* nodo = malloc(sizeof(t_nodo));
+					nodo->id = id_nodo;
+					nodo->libre = block_quantity;  // inicialmente es el total
+					nodo->total = block_quantity;
+					nodo->direccion = malloc(data_size + 1);
+					memcpy(nodo->direccion, worker, data_size);
+					nodo->direccion[data_size] = '\0';
+					nodo->socketNodo = new_fd;
+
+					log_info(logger,
+							"Nodo de estado anterior conectado - id: %d - total bloques: %d - direccion worker: %s",
+							id_nodo, block_quantity, worker);
+
+					sem_wait(&listaNodos);
+					list_add(nodos->nodos, nodo);
+					sem_post(&listaNodos);
+
+					// Habilito bloques de archivos de un estado anterior
+					habilitarBloques(nodo);
+
+				}
+
 			}
-
-			log_info(logger, "Nuevo nodo conectado");
-
-			if (pthread_create(&hilo_cliente, NULL, connection_handler_nodo,
-					(void*) new_fd) < 0) {
-				perror("Error creando thread cliente nodo");
-				exit(1);
-			}
-
-			// Agrego el nodo en memoria
-
-			t_nodo* nodo = malloc(sizeof(t_nodo));
-			nodo->id = new_fd; // Debe venir del nodo
-			nodo->libre = 5500;  // inicialmente es el total
-			nodo->total = 5500; // TODO: debe venir del nodo
-			nodo->direccion = "127.0.0.2:6003"; // TODO: debe venir del nodo
-			nodo->socketNodo = new_fd;
-
-			list_add(nodos->nodos, nodo);
-
-			// Guardo nodo en nodos.bin
-			guardarConfigNodoEnBin();
-
-			crearBitMapBloquesNodo(nodo);
 
 		}
 
 		// TODO: controlar que no lleguen dos yamas
 		if (codigoHandshake == YAMA_HSK) {
 
-			log_info(logger, "Yama conectado");
+			if (estadoEstable == 0) {
+				log_error(logger,
+						"El fs no se encuentra en estado estable, rechazando conexion de yama");
+				close(new_fd);
+			} else
+				log_info(logger, "Yama conectado");
 
 			if (pthread_create(&hilo_cliente, NULL, connection_handler_yama,
 					(void*) new_fd) < 0) {
@@ -146,6 +230,120 @@ void *connection_handler_nodo(void *socket_desc) {
 		if (bytes <= 0) {
 			log_info(logger, "Error: el cliente %d cerro la conexion",
 					socketCliente);
+
+			int nodoId = buscarNodoPorSocket(socketCliente);
+
+			// TODO: Buscar los archivos que tienen referencia a este nodo y eliminarle una instancia
+			// ****************************+
+			int i = 0;
+			t_directorio* dir = inicioTablaDirectorios;
+
+			dir++;
+
+			for (i = 1; i < MAX_DIR_FS; i++) {
+
+				if (dir->padre == -1 && dir->indice != 0)
+					continue;
+
+				t_list* archivosInit = (t_list*) listarArchivos(dir->nombre);
+				if (list_size(archivosInit) == 0)
+					continue;
+
+				int j = 0;
+
+				for (j = 0; j < list_size(archivosInit); j++) {
+
+					char* arch = list_get(archivosInit, j);
+
+					char* pathMetadata = string_new();
+					string_append(&pathMetadata, fs->m_archivos);
+					string_append(&pathMetadata, string_itoa(dir->indice));
+					string_append(&pathMetadata, "/");
+					string_append(&pathMetadata, arch); // Ya include la extension de la metadata .csv
+
+					t_archivoInit* archivoInit = malloc(sizeof(t_archivoInit));
+					archivoInit->bloques = list_create();
+					archivoInit->identificador = malloc(
+							strlen(pathMetadata) + 1);
+
+					memcpy(archivoInit->identificador, pathMetadata,
+							strlen(pathMetadata));
+
+					archivoInit->identificador[strlen(pathMetadata)] = '\0';
+
+					char* mdat = malloc(strlen(pathMetadata) + 1);
+					memcpy(mdat, pathMetadata, strlen(pathMetadata));
+					mdat[strlen(pathMetadata)] = '\0';
+
+					t_archivoInfo* archInfo = obtenerArchivoInfoPorMetadata(
+							pathMetadata);
+
+					int k = 0;
+					for (k = 0; k < list_size(archInfo->bloques); k++) {
+
+						t_bloqueInfo* bi = list_get(archInfo->bloques, k);
+
+						// Si el bloque tiene referencia al nodo conectado-> el nro de bloque bi->nroBloque hay que hacerle post
+						if (atoi(bi->idNodo0) == nodoId
+								|| atoi(bi->idNodo1) == nodoId) {
+
+							// Busco lista de bloques del archivo en listaArchivoInit, luego busco el elemento
+							// que se corresponda con el bi->nroBloque y hago post al semaforo
+							int y = 0;
+							int z = 0;
+
+							for (y = 0; y < list_size(tablaArchivos); y++) {
+								t_archivoInit* lb = list_get(tablaArchivos, y);
+								if (strcmp(lb->identificador, mdat) == 0) {
+									for (z = 0; z < list_size(lb->bloques);
+											z++) {
+										t_bloqueInit* bli = list_get(
+												lb->bloques, z);
+
+										if (bli->nroBloque == bi->nroBloque) {
+
+											bli->cantInstancias -= 1;
+											log_info(logger,
+													"[%s] - Deshabilitando bloque %d de nodo %d - instancias: %d",
+													arch, bli->nroBloque,
+													nodoId,
+													bli->cantInstancias);
+											//sem_post(&bli->semaforo);
+										}
+
+									}
+								}
+
+							}
+
+						}
+
+					}
+
+				}
+
+				list_destroy(archivosInit);
+				dir++;
+
+			}
+			// *********
+			// Eliminar de lista nodos
+
+			log_info(logger, "Eliminando nodo de lista de nodos");
+			sem_wait(&listaNodos);
+
+			int j = 0;
+			for (j = 0; j < list_size(nodos->nodos); j++) {
+				t_nodo* nod = list_get(nodos->nodos, j);
+				if (nod->id == nodoId) {
+					list_remove(nodos->nodos, j);
+					break;
+				}
+
+			}
+
+			sem_post(&listaNodos);
+
 			return 0;
 		}
 
@@ -205,7 +403,7 @@ void procesarPedidoYama(t_header pedido, int socketCliente) {
 		int i = 0;
 		int offset = 0;
 		int cantReg = 0;
-		if (info == NULL ) {
+		if (info == NULL) {
 			log_error(logger, "No se pudo obtener la info de archivo: %s",
 					buffer);
 			t_header resp;
@@ -228,7 +426,7 @@ void procesarPedidoYama(t_header pedido, int socketCliente) {
 
 				block_info* biYama = malloc(sizeof(block_info));
 
-				biYama->block_id = i;
+				biYama->block_id = bi->nroBloque;
 
 				biYama->node1_block = bi->idBloque0;
 				biYama->node2_block = bi->idBloque1;
@@ -269,6 +467,8 @@ void procesarPedidoYama(t_header pedido, int socketCliente) {
 			}
 
 			free(respuesta);
+
+			log_info(logger, "Envio de info archivo a yama ok");
 
 		}
 
@@ -315,7 +515,7 @@ void guardarConfigNodoEnBin() {
 
 	// Si no hay estado anterior, se guarda el nodo en nodos.bin
 
-	if (nodoConfig == NULL ) {
+	if (nodoConfig == NULL) {
 		int conf = config_save_in_file(nodoConfig, fs->m_nodos);
 	}
 
@@ -380,5 +580,129 @@ void guardarConfigNodoEnBin() {
 	config_save(nodoConfig);
 
 	free(listaNodos);
+
+}
+
+// Indica si un nodo que se conecta pertenece a un estado anterior y devuelve su info
+t_nodo* nodoPerteneceAEstadoAnterior(t_nodo* nodo) {
+
+	/*t_config* nodoConfig = malloc(sizeof(t_config));
+
+	 nodoConfig = config_create(fs->m_nodos);
+
+	 if (!config_has_property(nodoConfig, "M_DIRECTORIOS")) {
+	 fs->m_directorios = config_get_string_value(fs->config,
+	 "M_DIRECTORIOS");*/
+	t_nodo* nodAnt = malloc(sizeof(t_nodo));
+
+	return nodAnt;
+}
+
+// Si no hay estado anterior, acepta el nodo conectado
+// Si hay estado anterior, acepta el nodo que se conecta (y solo si existe en nodos.bin),
+// y signalea los bloques de los archivos que estan en el nodo indicado
+int habilitarBloques(t_nodo* nodo) {
+
+	// Recorro todos los archivos y chequeo cuales poseen una referencia al nodo indicado por parametro
+	// Sin importar la instancia, hago signal del bloque del archivo
+
+	int i = 0;
+	t_directorio* dir = inicioTablaDirectorios;
+
+	dir++;
+
+	for (i = 1; i < MAX_DIR_FS; i++) {
+
+		if (dir->padre == -1 && dir->indice != 0)
+			continue;
+
+		t_list* archivosInit = (t_list*) listarArchivos(dir->nombre);
+		if (list_size(archivosInit) == 0)
+			continue;
+
+		int j = 0;
+
+		for (j = 0; j < list_size(archivosInit); j++) {
+
+			char* arch = list_get(archivosInit, j);
+
+			char* pathMetadata = string_new();
+			string_append(&pathMetadata, fs->m_archivos);
+			string_append(&pathMetadata, string_itoa(dir->indice));
+			string_append(&pathMetadata, "/");
+			string_append(&pathMetadata, arch); // Ya include la extension de la metadata .csv
+
+			t_archivoInit* archivoInit = malloc(sizeof(t_archivoInit));
+			archivoInit->bloques = list_create();
+			archivoInit->identificador = malloc(strlen(pathMetadata) + 1);
+
+			memcpy(archivoInit->identificador, pathMetadata,
+					strlen(pathMetadata));
+
+			archivoInit->identificador[strlen(pathMetadata)] = '\0';
+
+			char* mdat = malloc(strlen(pathMetadata) + 1);
+			memcpy(mdat, pathMetadata, strlen(pathMetadata));
+			mdat[strlen(pathMetadata)] = '\0';
+
+			t_archivoInfo* archInfo = obtenerArchivoInfoPorMetadata(
+					pathMetadata);
+
+			int k = 0;
+			for (k = 0; k < list_size(archInfo->bloques); k++) {
+
+				t_bloqueInfo* bi = list_get(archInfo->bloques, k);
+
+				// Si el bloque tiene referencia al nodo conectado-> el nro de bloque bi->nroBloque hay que hacerle post
+				if (atoi(bi->idNodo0) == nodo->id
+						|| atoi(bi->idNodo1) == nodo->id) {
+
+					// Busco lista de bloques del archivo en listaArchivoInit, luego busco el elemento
+					// que se corresponda con el bi->nroBloque y hago post al semaforo
+					int y = 0;
+					int z = 0;
+
+					for (y = 0; y < list_size(tablaArchivos); y++) {
+						t_archivoInit* lb = list_get(tablaArchivos, y);
+						if (strcmp(lb->identificador, mdat) == 0) {
+							for (z = 0; z < list_size(lb->bloques); z++) {
+								t_bloqueInit* bli = list_get(lb->bloques, z);
+
+								if (bli->nroBloque == bi->nroBloque) {
+
+									bli->cantInstancias += 1;
+									log_info(logger,
+											"[%s] - Habilitando bloque %d de nodo %d - instancias: %d",
+											arch, bli->nroBloque, nodo->id,
+											bli->cantInstancias);
+									sem_post(&bli->semaforo);
+								}
+
+							}
+						}
+
+					}
+
+				}
+
+			}
+
+		}
+
+		list_destroy(archivosInit);
+		dir++;
+
+	}
+
+}
+
+int buscarNodoPorSocket(int socketNodo) {
+	int i = 0;
+	for (i = 0; i < list_size(nodos->nodos); i++) {
+		t_nodo* nod = list_get(nodos->nodos, i);
+		if (nod->socketNodo == socketNodo)
+			return nod->id;
+	}
+	return -1;
 
 }

@@ -140,10 +140,8 @@ bool existeDirectorio(char* path) {
 
 // Formatea el FS
 
-void formatear() {
+int formatear() {
 // TODO: debe formatearse tambien los bitmaps y eliminarse los archivos csv (por ahora hay un script que lo hace por fuera)
-
-	log_info(logger, "Comenzando formateo de disco");
 
 	int fd;
 	struct stat sbuf;
@@ -151,7 +149,20 @@ void formatear() {
 
 	archivo = fs->m_directorios;
 
-	log_info(logger, "Formateando archivo de directorios %s...", archivo);
+	log_info(logger, "Comenzando formateo de disco");
+
+	log_info(logger, "Limpiando archivos de metadata...");
+
+	// Elimino archivos de metadata que existan
+
+	if (system("rm metadata/archivos -r") != 0)
+		return -1;
+
+	if (system("mkdir metadata/archivos -p") != 0)
+		return -1;
+
+	if (system("truncate -s 0MB metadata/directorios.dat") != 0)
+		return -1;
 
 	if ((fd = open(archivo, O_RDWR)) == -1) {
 		log_error(logger, "No existe el archivo %s", archivo);
@@ -170,12 +181,16 @@ void formatear() {
 
 	if (inicioTablaDirectorios == NULL) {
 		perror("error en map\n");
+
 		exit(1);
 	}
 
 	int i = 0;
 	t_directorio* dir = inicioTablaDirectorios;
 
+	log_info(logger, "Regenerando tabla de directorios...");
+
+	// Directorio raiz
 	dir->indice = 0;
 	dir->padre = -1;
 	dir++;
@@ -187,8 +202,59 @@ void formatear() {
 		dir++;
 	}
 
+	// Limpio los bitmaps que existan en la lista de nodos conectados (es igual a la de nodos.bin aunque pueden luego conectarse nodos del estado anterior)
+
+	// Los nodos que no se conectaron del estado anterior, despues del formateo no van a ser aceptados por el hecho de que no hay estado
+	// Seria el mismo caso de nodos que no pertenecen a ningun archivo del estado actual
+	// Solo quedarian los del nuevo estado (en limpio por el formateo)
+
+	i = 0;
+
+	// TODO: poner los semaforos
+
+	log_info(logger, "Limpiando bitmaps de bloques...");
+
+	for (i = 0; i < list_size(nodos->nodos); i++) {
+		t_nodo* nodo = list_get(nodos->nodos, i);
+		t_bitarray* ba = obtenerBitMapBloques(nodo->id);
+
+		// limpio bitmaps
+
+		// TODO: sacar el hardcode de la direccion
+		log_info(logger, "Limpiando nodo id: %d (%s)", nodo->id, "123");
+
+		int j = 0;
+		for (j = 0; j < ba->size; j++)
+			bitarray_clean_bit(ba, j);
+
+	}
+
 	log_info(logger, "Formateado de disco ok");
 
+	return 0;
+
+}
+
+// t_bitarray
+// Dado un id de nodo obtiene el bitmap de gestion de bloques
+
+t_bitarray* obtenerBitMapBloques(int idNodo) {
+	int i = 0;
+	int j = 0;
+	for (i = 0; i < list_size(nodos->nodos); i++) {
+		t_nodo* nodo = list_get(nodos->nodos, i);
+
+		for (j = 0; j < list_size(nodosBitMap); j++) {
+			t_nodosBitMap* nbm = list_get(nodosBitMap, j);
+
+			if (nbm->idNodo == nodo->id) {
+				return nbm->bitMapBloques;
+			}
+		}
+
+	}
+
+	return NULL;
 }
 
 // Dado un path devuelve el indice del directorio padre
@@ -331,26 +397,27 @@ t_list* listarArchivos(char* path) {
 	if (indiceDir == -1)
 		return NULL;
 
-	t_list* tablaArchivos = list_create();
+	t_list* ta = list_create();
+
 	DIR *d;
 	struct dirent *dir;
 
-	char *dpath = string_new();
+	char *dpt = string_new();
 
-	string_append(&dpath, fs->m_archivos);
-	string_append(&dpath, string_itoa(indiceDir));
+	string_append(&dpt, fs->m_archivos);
+	string_append(&dpt, string_itoa(indiceDir));
 
-	d = opendir(dpath);
+	d = opendir(dpt);
 	if (d) {
 		while ((dir = readdir(d)) != 0) {
 			if (strcmp(dir->d_name, ".") != 0
 					&& strcmp(dir->d_name, "..") != 0) {
 
-				char *dest = malloc(strlen(dir->d_name));
-				strncpy(dest, dir->d_name, strlen(dir->d_name));
+				char *dest = malloc(strlen(dir->d_name) + 1);
+				memcpy(dest, dir->d_name, strlen(dir->d_name));
 				dest[strlen(dir->d_name)] = '\0';
 
-				list_add(tablaArchivos, dest);
+				list_add(ta, dest);
 
 			}
 
@@ -359,9 +426,9 @@ t_list* listarArchivos(char* path) {
 		closedir(d);
 	}
 
-	free(dpath);
+	free(dpt);
 
-	return tablaArchivos;
+	return ta;
 
 }
 
@@ -470,10 +537,10 @@ int existeArchivo(char* path) {
 
 	int c = obtenerProfDir(path);
 
-	t_list* archivos = listarArchivos(dirArchivo);
+	t_list* archivosEx = listarArchivos(dirArchivo);
 
 // El directorio esta vacio
-	if (list_size(archivos) == 0)
+	if (list_size(archivosEx) == 0)
 		return -1;
 
 // El directorio tiene archivos
@@ -483,13 +550,13 @@ int existeArchivo(char* path) {
 
 	int j = 0;
 
-	for (j = 0; j < list_size(archivos); j++) {
+	for (j = 0; j < list_size(archivosEx); j++) {
 
-		int t = string_length((char*) list_get(archivos, j));
+		int t = string_length((char*) list_get(archivosEx, j));
 		log_debug(logger, "Comparando %s con %s (%d)", archivosDir,
-				(char*) list_get(archivos, j), t);
+				(char*) list_get(archivosEx, j), t);
 
-		if (strncmp(archivosDir, (char*) list_get(archivos, j), t - 5) == 0)
+		if (strncmp(archivosDir, (char*) list_get(archivosEx, j), t - 5) == 0)
 			return 0;
 
 	}
@@ -501,6 +568,8 @@ int existeArchivo(char* path) {
 // Obtiene la info del archivo en base al archivo de metadata
 
 t_archivoInfo* obtenerArchivoInfo(char* path) {
+
+	// TODO: debe verificar primero que este disponible (revisar tablaArchivos)
 
 	if (!estaFormateado())
 		return NULL;
@@ -638,6 +707,135 @@ t_archivoInfo* obtenerArchivoInfo(char* path) {
 	}
 
 	free(dirMetadata);
+	config_destroy(metadata);
+
+	return tInfo;
+
+}
+
+// Obtiene la informacion de un archivo pasandole el path del fs nativo de la metadata (nroDir/archivo.csv)
+t_archivoInfo* obtenerArchivoInfoPorMetadata(char* dirMetadata) {
+
+	t_config * metadata = config_create(dirMetadata);
+
+	t_archivoInfo* tInfo = malloc(sizeof(t_archivoInfo));
+
+	if (metadata == NULL) {
+		log_error(logger, "No se pudo abrir la metadata de archivo %s",
+				dirMetadata);
+		return NULL;
+	}
+
+	if (config_has_property(metadata, "TAMANIO")) {
+		tInfo->tamanio = 0;
+		tInfo->tamanio = config_get_int_value(metadata, "TAMANIO");
+	} else {
+		tInfo->tamanio = -1;
+	}
+	if (config_has_property(metadata, "TIPO")) {
+		tInfo->tipo = 0;
+		tInfo->tipo = config_get_int_value(metadata, "TIPO");
+	} else {
+		tInfo->tipo = -1;
+	}
+
+	int fd, offset;
+	char *data;
+	struct stat sbuf;
+	char* archivo;
+
+	if ((fd = open(dirMetadata, O_RDWR)) == -1) {
+//log_error(logger, "No existe el archivo %s", archivo);
+		exit(1);
+	}
+
+	if (stat(dirMetadata, &sbuf) == -1) {
+		perror("stat");
+		exit(1);
+	}
+
+	char* arch = mmap((caddr_t) 0, sbuf.st_size, PROT_READ, MAP_SHARED, fd, 0);
+
+	if (arch == NULL) {
+		perror("error en map\n");
+		exit(1);
+	}
+
+	char* p = arch;
+	int slinea = 0;
+
+	for (p = arch; *p; p++) {
+
+		if (*p == '\n')
+			slinea++;
+	}
+
+	close(fd);
+
+// Salteo los dos primeros registros
+	slinea -= 2;
+
+// Calculo la cantidad de bloques teniendo en cuenta que son 3 atributos por bloque
+	int cantBloques = slinea / 3;
+
+	if (slinea % 3 > 0) {
+		perror("Error en metadata");
+		exit(1);
+	}
+
+	tInfo->bloques = list_create();
+
+	int j = 0;
+	for (j = 0; j < cantBloques; j++) {
+
+		t_bloqueInfo* bi = malloc(sizeof(t_bloqueInfo));
+
+		char* bloqueInfo = string_new();
+		string_append(&bloqueInfo, "BLOQUE");
+		string_append(&bloqueInfo, string_itoa(j));
+		string_append(&bloqueInfo, "COPIA0");
+
+		if (config_has_property(metadata, bloqueInfo)) {
+			bi->idNodo0 = obtenerIdNodo(
+					config_get_string_value(metadata, bloqueInfo));
+			bi->idBloque0 = obtenerIdBloque(
+					config_get_string_value(metadata, bloqueInfo));
+		}
+
+		free(bloqueInfo);
+
+		bloqueInfo = string_new();
+		string_append(&bloqueInfo, "BLOQUE");
+		string_append(&bloqueInfo, string_itoa(j));
+		string_append(&bloqueInfo, "COPIA1");
+
+		if (config_has_property(metadata, bloqueInfo)) {
+			bi->idNodo1 = obtenerIdNodo(
+					config_get_string_value(metadata, bloqueInfo));
+			bi->idBloque1 = obtenerIdBloque(
+					config_get_string_value(metadata, bloqueInfo));
+		}
+
+		free(bloqueInfo);
+
+		bloqueInfo = string_new();
+		string_append(&bloqueInfo, "BLOQUE");
+		string_append(&bloqueInfo, string_itoa(j));
+		string_append(&bloqueInfo, "BYTES");
+
+		if (config_has_property(metadata, bloqueInfo))
+			bi->finBytes = config_get_int_value(metadata, bloqueInfo);
+
+		bi->nroBloque = j; // TODO: debe tomarse el nro de bloque de la property (ejemplo: BLOQUE0). Puede que haya algun bloque intermedio
+		// que no exista por lo tanto tomar el indice j va a ser incorrecto.
+
+		free(bloqueInfo);
+
+		list_add(tInfo->bloques, bi);
+
+	}
+
+	//free(dirMetadata); // este free si lo comento da problemas
 	config_destroy(metadata);
 
 	return tInfo;
@@ -1042,6 +1240,7 @@ int leerArchivo(char* path) {
 
 }
 
+// Chequea si el fs esta formateado
 bool estaFormateado() {
 
 	t_directorio* dir = inicioTablaDirectorios;
@@ -1055,6 +1254,61 @@ bool estaFormateado() {
 
 	return false;
 
+}
+
+int obtenerEstadoArchivo(char* path) {
+
+	int y = 0;
+	int z = 0;
+
+	t_archivoInfo* tInfo = malloc(sizeof(t_archivoInfo));
+
+	if (existeArchivo(path) == -1) {
+		log_debug(logger, "No existe el archivo %s", path);
+		return -1;
+	}
+
+	char* dirArchivo = obtenerDirArchivo(path);
+	int indiceDir = obtenerIndiceDir(dirArchivo);
+
+	char *dirMetadata = string_new();
+
+	string_append(&dirMetadata, fs->m_archivos);
+	string_append(&dirMetadata, string_itoa(indiceDir));
+	string_append(&dirMetadata, "/");
+	string_append(&dirMetadata, obtenerNombreArchivo(path));
+	string_append(&dirMetadata, ".csv");
+
+	t_config * metadata = config_create(dirMetadata);
+
+	if (metadata == NULL) {
+		log_error(logger, "No se pudo abrir la metadata de archivo %s",
+				dirMetadata);
+		return -1;
+	}
+
+	sem_wait(&semTablaArchivos);
+
+	for (y = 0; y < list_size(tablaArchivos); y++) {
+		t_archivoInit* lb = list_get(tablaArchivos, y);
+		if (strcmp(lb->identificador, dirMetadata) == 0) {
+			for (z = 0; z < list_size(lb->bloques); z++) {
+				t_bloqueInit* bli = list_get(lb->bloques, z);
+
+				if (bli->cantInstancias == 0) {
+					sem_post(&semTablaArchivos);
+					return -2;
+				}
+
+			}
+
+		}
+
+	}
+
+	sem_post(&semTablaArchivos);
+
+	return 0;
 }
 
 // Funciones auxiliares

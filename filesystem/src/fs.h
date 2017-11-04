@@ -79,11 +79,30 @@ typedef struct {
 	t_list* bloques;
 } t_archivoInfo;
 
+// **** Estructuras de inicializacion ****
+
+// Estructura usada para mantener el estado de cada bloque de un archivo
+typedef struct {
+	int nroBloque;   // nro del bloque del archivo (no se refiere a instancia)
+	sem_t semaforo; // Se usa para desbloquear en inicializacion una vez que se obtuvo una instancia del bloque en la conexion del nodo
+	int cantInstancias; // Cantidad de instancias del bloque del archivo (se utiliza en obtenerArchivoInfo para ver disponibilidad de archivo)
+} t_bloqueInit;
+
+// Estructura usada para mantener la informacion de los bloques de un archivo en la inicializacion
+typedef struct {
+	char* identificador; // Es el path completo del archivo de metadata
+	// Lista de archivos del fs que se genera en el proceso de inicializacion (si se recupera de un estado anterior o no)
+	// Se utiliza para saber si un archivo esta disponible o no
+	t_list* bloques; // Lista de t_bloqueInit
+} t_archivoInit;
+
+// Tabla de archivos
+t_list* tablaArchivos; // Lista de t_archivoInit
+
+// **** Fin estructuras de inicializacion ***
+
 // Puntero al inicio de la tabla de directorios
 t_directorio* inicioTablaDirectorios;
-
-// Tabla de archivos (es una lista de archivos con su path completo empezando desde el indice de directorio padre)
-t_list* tablaArchivos;
 
 // Estructura que guarda los nodos que van conectandose (TODO: por ahora se persiste en archivo de registros, debe ser de texto)
 t_nodos* nodos;
@@ -94,12 +113,12 @@ t_list* nodosBitMap;
 t_log *logger;
 
 typedef struct {
-        t_config * config;
-        int32_t puerto;
-        char* m_directorios; // path a archivo directorios.dat
-        char* m_nodos;		 // path a archivo nodos.bin
-        char* m_bitmap;      // path a directorio donde guardar los bitmaps
-        char* m_archivos;    // path a directorio donde guardar la metadata de los archivos generados
+	t_config * config;
+	int32_t puerto;
+	char* m_directorios; // path a archivo directorios.dat
+	char* m_nodos;		 // path a archivo nodos.bin
+	char* m_bitmap;      // path a directorio donde guardar los bitmaps
+	char* m_archivos; // path a directorio donde guardar la metadata de los archivos generados
 } t_fs;
 
 t_fs *fs;
@@ -119,8 +138,26 @@ t_fs *fs;
 
 void iniciarFS();
 void cargarArchivoDeConfiguracion(t_fs *fs, char *configPath);
-int inicializacionConNodos();
 
+void obtenerNodosUnaInstanciaArchivos();
+void esperarConexionNodos();
+
+// Semaforo para escritura desde consola
 sem_t semEscritura;
+
+// Semaforos para conexion de nodos (sin estado previo)
+sem_t nodoInit;
+
+// Semaforos para exclusion mutua en lista de nodos
+sem_t listaNodos;
+
+// Semaforos para exclusion mutua en tabla de archivos
+sem_t semTablaArchivos;
+
+// Determina si no hay estado previo
+int vieneDeNoEstado;
+
+// Estado del fs
+int estadoEstable;
 
 #endif /* FS_H_ */

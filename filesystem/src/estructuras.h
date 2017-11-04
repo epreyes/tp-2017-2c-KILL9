@@ -23,8 +23,17 @@ typedef struct
 		int idBloque0;
 		int idBloque1;
 		long finBytes;
+		int nroBloque;
 	// Agregar ip y puerto
 	} t_bloqueInfo;
+
+	typedef struct {
+		int handshake;
+		int block_quantity;
+		int id_nodo;
+		int data_size;
+		char* worker_ip_port;
+	} t_infoNodo;
 
 // Errores escritura
 
