@@ -6,6 +6,14 @@
  */
 
 #include "headers/utils.h"
+#include <sys/stat.h>
+#include <sys/mman.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <stdarg.h>
+
+
 
 void generateTempsFolder(){
 	system("mkdir -p tmp");
@@ -48,7 +56,7 @@ void loadConfigs(){
 
 
 void createLoggers(){
-	char* LOG_PATH = "../logs/worker.log";
+	char* LOG_PATH = "./logs/worker.log";
 	logger = log_create(LOG_PATH,"worker",1,LOG_LEVEL_TRACE);
 	log_info(logger, "Logger generado");
 }
@@ -116,4 +124,69 @@ char* generateFile(char* fileContent, char operation, int socket){
 	log_info(logger,"Archivo almacenado en \"%s\"", fileName);
 	return fileName;
 };
+
+static void
+check (int test, const char * message, ...)
+{
+    if (test) {
+        va_list args;
+        va_start (args, message);
+        vfprintf (stderr, message, args);
+        va_end (args);
+        fprintf (stderr, "\n");
+        exit (EXIT_FAILURE);
+    }
+}
+
+
+void map_data_node() {
+	log_info(logger," Inicio mapeo del archivo bin en memoria \n");
+
+	int fd;
+	/*Informacion acerca del archivo */
+	struct stat stat_data;
+	int status;
+	size_t size;
+
+	char* dataBinName = config_get_string_value(config,"RUTA_DATABIN");
+	/*Abrir el archivo para leer e escribir*/
+	fd = open(dataBinName, O_RDWR);
+	if(fd < 0){
+		log_error(logger,"Error al abrir el archivo\n");
+	}
+	check (fd < 0, "open %s failed: %s", dataBinName, strerror (errno));
+
+	/*Obtener el tamanio del archivo */
+	 status = fstat(fd,&stat_data);
+	 if(status < 0){
+	 	log_error(logger,"Error al obtener el tamaño del archivo\n");
+	 }
+	 check (status < 0, "stat %s failed: %s", dataBinName, strerror (errno));
+	 size = stat_data.st_size;
+
+	 /* Memory-map del archivo. */
+	 mapped_data_node = mmap ((caddr_t) 0, size, PROT_READ, MAP_SHARED, fd, 0);
+	 if(mapped_data_node == MAP_FAILED){
+		 log_error(logger,"Error al mapear el archivo en memoria\n");
+	 }
+	 check (mapped_data_node == MAP_FAILED, "mmap %s failed: %s",dataBinName, strerror (errno));
+
+	log_info(logger,"Fin mapeo de archivo en memoria \n");
+}
+
+/*****************************************************
+ *	Implementacion para leer un bloque de un archivo   *
+ ******************************************************/
+char* getBlockData(int blockNumber, int sizeByte) {
+	log_info(logger, "Iniciando lectura  bloque archivo ");
+
+	void * buffer = malloc(sizeByte);
+
+	void * pos = mapped_data_node + blockNumber * BLOCK_SIZE;
+	memcpy(buffer, pos, sizeByte);
+	log_info(logger, "Fin lectura bloque archivo ");
+	return (char *) buffer;
+}
+
+
 

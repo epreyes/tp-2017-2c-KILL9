@@ -24,6 +24,13 @@
 #include <commons/log.h>
 #include "utils.h"
 
+//Tamaño de bloque = 1MB
+#define BLOCK_SIZE 20		//cambiar por 1MB = 1048576
+
+
+/** variables globales**/
+void * mapped_data_node;
+
 //=========LOGGERS=============//
 t_log* logger;
 //=========CONFIGS============//

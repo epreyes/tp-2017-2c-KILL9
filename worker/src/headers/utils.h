@@ -17,6 +17,7 @@ void createLoggers();
 char* generateScriptName(char operation, int master);
 void readBuffer(int socket,int size,void* destiny);
 char* serializeFile(char* fileName);
-
+void map_data_node();
+char* getBlockData(int blockNumber,int size);
 
 #endif /* HEADERS_UTILS_H_ */

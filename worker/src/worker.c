@@ -15,6 +15,9 @@
 int main(){
 	createLoggers();
 	loadConfigs();
+
+	map_data_node();
+
 	loadServer();
 	//-------------
 	//openFileSystemConnection();
