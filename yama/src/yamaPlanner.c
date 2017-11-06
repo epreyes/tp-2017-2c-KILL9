@@ -116,7 +116,7 @@ tr_datos* buildNodePlaned(block_info* blockRecived, int master, int node_id) {
 
 int increseClock(int clock) {
 	clock++;
-	if ( clock >= list_size(yama->tabla_nodos)) {
+	if (clock >= list_size(yama->tabla_nodos)) {
 		clock = 0;
 	}
 	return clock;
@@ -131,7 +131,7 @@ tr_datos* updateNodeInTable(block_info* blockRecived, int master, int clock) {
 	tr_datos* nodePlaned = buildNodePlaned(blockRecived, master, nodo->node_id);
 
 	//avanzo el clock al siguiente nodo.
-	yama->clock = increseClock( yama->clock );
+	yama->clock = increseClock(yama->clock);
 
 	//devuelvo el nodo planificado.
 	return nodePlaned;
@@ -158,11 +158,11 @@ tr_datos* evaluateClock(block_info* blockRecived, int master, int clock) {
 	} else {
 		//En el caso de que no se encuentre, se deberá utilizar el siguiente Worker que posea una disponibilidad mayor a 0.
 		//Para este caso, no se deberá modificar el Worker apuntado por el Clock.
-		yama->clock_aux = increseClock( yama->clock_aux );
+		yama->clock_aux = increseClock(yama->clock_aux);
 		elem_tabla_nodos* nodeAux = list_get(yama->tabla_nodos,
 				yama->clock_aux);
 		while (nodeAux->availability == 0) {
-			yama->clock_aux = increseClock( yama->clock_aux );
+			yama->clock_aux = increseClock(yama->clock_aux);
 			nodeAux = list_get(yama->tabla_nodos, yama->clock_aux);
 		}
 		if (yama->clock == yama->clock_aux) {
@@ -180,6 +180,9 @@ tr_datos* doPlanning(block_info* blockRecived, int master) {
 	yama->clock = getHigerAvailNode(yama);
 	yama->clock_aux = yama->clock;
 	//Se deberá evaluar si el Bloque a asignar se encuentra en el Worker apuntado por el Clock y el mismo tenga disponibilidad mayor a 0.
+	int planigDelay = config_get_int_value(yama->config,
+			"RETARDO_PLANIFICACION");
+	usleep(planigDelay);
 	return evaluateClock(blockRecived, master, yama->clock);
 }
 
@@ -202,6 +205,10 @@ void* replanTask(int master, int node) {
 				getBlockId(dataNode->tr_tmp), dataNode->tr_tmp);
 		list_add(replanedTasks, dataNode);
 	}
+
+	int planigDelay = config_get_int_value(yama->config,
+			"RETARDO_PLANIFICACION");
+	usleep(planigDelay);
 
 	return sortTransformationResponse(replanedTasks, master);
 }

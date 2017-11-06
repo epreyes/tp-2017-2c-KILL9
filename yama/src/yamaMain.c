@@ -10,8 +10,12 @@
 
 #include "headers/connectionManager.h"
 #include "headers/yama.h"
+#include "headers/signalManager.h"
 
 int main(void) {
+
+	/*capturo la señal SIGUSR1*/
+	signal(SIGUSR1,reloadConfig);
 
 	/* inicializo yama */
 	init();
