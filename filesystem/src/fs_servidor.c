@@ -68,7 +68,8 @@ void* lanzarHiloServidor() {
 		log_debug(logger, "Se recibio handshake %d", handshak);
 		codigoHandshake = handshak;
 
-		if (codigoHandshake != YAMA_HSK && codigoHandshake != NODE_HSK) {
+		if (codigoHandshake != YAMA_HSK && codigoHandshake != NODE_HSK
+				&& codigoHandshake != WORKER_HSK) {
 			log_error(logger, "Codigo incorrecto de Handshake.");
 			continue;
 		}
@@ -192,6 +193,22 @@ void* lanzarHiloServidor() {
 
 			}
 
+		}
+
+		if (codigoHandshake == WORKER_HSK) {
+
+			if (estadoEstable == 0) {
+				log_error(logger,
+						"El fs no se encuentra en estado estable, rechazando conexion de worker");
+				close(new_fd);
+			} else
+				log_info(logger, "Worker conectado");
+
+			if (pthread_create(&hilo_cliente, NULL, connection_handler_worker,
+					(void*) new_fd) < 0) {
+				perror("Error creando thread cliente worker");
+				exit(1);
+			}
 		}
 
 		// TODO: controlar que no lleguen dos yamas
@@ -503,6 +520,110 @@ void procesarPedidoNodo(t_header pedido, int socket) {
 		// Si es invalido->no hago nada y cierro el socket
 		log_error(logger, "Pedido %d invalido", pedido.idMensaje);
 		close(socket);
+		break;
+	}
+
+}
+
+void *connection_handler_worker(void *socket_desc) {
+	int socketCliente = (int) socket_desc;
+	int32_t bytes = 0;
+	char cod_op;
+
+	while (1) {
+
+		log_info(logger, "Esperando mensaje del cliente %d...", socketCliente);
+		bytes = recv(socketCliente, &cod_op, sizeof(char), 0);
+
+		if (bytes <= 0) {
+			log_info(logger, "Error: el cliente %d cerro la conexion",
+					socketCliente);
+			return 0;
+		}
+
+		t_header header;
+		header.idMensaje = cod_op;
+
+		procesarPedidoWorker(header, socketCliente);
+	}
+
+	return 0;
+}
+
+void procesarPedidoWorker(t_header pedido, int socketCliente) {
+
+	char codop;
+
+	int escribir = 0;
+
+	int fileNameSize = 0;
+	int fileSize = 0;
+	recv(socketCliente, &fileNameSize, sizeof(int), 0);
+
+	char* fileName = malloc(fileNameSize + 1);
+	recv(socketCliente, fileName, fileNameSize, 0);
+	fileName[fileNameSize] = '\0';
+
+	recv(socketCliente, &fileSize, sizeof(int), 0);
+
+	char* contenido = malloc(fileSize);
+	recv(socketCliente, contenido, fileSize, 0);
+
+	switch (pedido.idMensaje) {
+
+	case 'S':
+
+		escribir = escribirArchivo(fileName, contenido, TEXTO);
+
+		if (escribir == 0) {
+			log_info(logger, "Escritura de %s realizada con exito", fileName);
+			printf("Escritura ok\n");
+			codop = 'O';
+			if (send(socketCliente, &codop, sizeof(char), 0) < 0) {
+				log_error(logger,
+						"Error en el envio de respuesta de store final");
+				exit(1);
+			}
+		} else {
+
+			codop = 'E';
+			if (send(socketCliente, &codop, sizeof(char), 0) < 0) {
+				log_error(logger,
+						"Error en el envio de respuesta de store final");
+				exit(1);
+			}
+
+			switch (escribir) {
+			case SIN_ESPACIO:
+				log_error(logger,
+						"No se pudo escribir el archivo, no hay espacio en disco");
+				break;
+			case ARCHIVO_EXISTENTE:
+				log_error(logger,
+						"No se pudo escribir el archivo, el archivo ya existe");
+				break;
+
+			case NO_HAY_NODOS:
+				log_error(logger, "No hay nodos conectados para la escritura");
+				break;
+
+			case TAMANIO_RENGLON_INVALIDO:
+				log_error(logger, "Tamanio de renglon es mayor al del bloque");
+				break;
+
+			case NO_EXISTE_DIR_DESTINO:
+				log_error(logger, "El directorio destino no existe");
+				break;
+			}
+
+		}
+
+		break;
+
+	default:
+		// Si es invalido->no hago nada y cierro el socket
+		log_error(logger, "Pedido %d invalido", pedido.idMensaje);
+		close(socketCliente);
 		break;
 	}
 
