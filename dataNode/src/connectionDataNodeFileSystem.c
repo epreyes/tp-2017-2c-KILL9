@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-int block_size = 256;
+int block_size = 1000000;
 
 void connectionToFileSystem() {
 	log_info(infoLogger, "INICIANDO CONEXION CON FILESYSTEM ...\n");
