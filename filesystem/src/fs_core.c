@@ -72,6 +72,10 @@ int crearDirectorio(char* nombreDir) {
 
 bool existeDirectorio(char* path) {
 
+	// Es directorio raiz
+	if (strncmp(path, "./", 2) == 0 || strncmp(path, ".", 1) == 0)
+		return true;
+
 	char** directorios = NULL;
 
 	char *p = path;
@@ -84,7 +88,7 @@ bool existeDirectorio(char* path) {
 	}
 
 	bool esDirRaiz = (d == 0);
-
+	// El directorio esta en raiz
 	if (esDirRaiz) {
 		t_directorio* dir = (t_directorio*) inicioTablaDirectorios;
 		int j = 0;
@@ -141,7 +145,6 @@ bool existeDirectorio(char* path) {
 // Formatea el FS
 
 int formatear() {
-// TODO: debe formatearse tambien los bitmaps y eliminarse los archivos csv (por ahora hay un script que lo hace por fuera)
 
 	int fd;
 	struct stat sbuf;
@@ -181,7 +184,6 @@ int formatear() {
 
 	if (inicioTablaDirectorios == NULL) {
 		perror("error en map\n");
-
 		exit(1);
 	}
 
@@ -220,8 +222,8 @@ int formatear() {
 
 		// limpio bitmaps
 
-		// TODO: sacar el hardcode de la direccion
-		log_info(logger, "Limpiando nodo id: %d (%s)", nodo->id, "123");
+		log_info(logger, "Limpiando nodo id: %d (worker %s)", nodo->id,
+				nodo->direccion);
 
 		int j = 0;
 		for (j = 0; j < ba->size; j++)
@@ -235,7 +237,6 @@ int formatear() {
 
 }
 
-// t_bitarray
 // Dado un id de nodo obtiene el bitmap de gestion de bloques
 
 t_bitarray* obtenerBitMapBloques(int idNodo) {
@@ -392,10 +393,18 @@ int obtenerIndiceDir(char* path) {
 
 t_list* listarArchivos(char* path) {
 
-	int indiceDir = obtenerIndiceDir(path);
+	int indiceDir = 0;
+
+	if (strncmp(path, "./", 2) == 0 || strncmp(path, ".", 1) == 0)
+		indiceDir = 0;
+	else
+		indiceDir = obtenerIndiceDir(path);
 
 	if (indiceDir == -1)
 		return NULL;
+
+	if (strncmp(path, "./", 2) == 0)
+		indiceDir = 0;
 
 	t_list* ta = list_create();
 
@@ -433,8 +442,6 @@ t_list* listarArchivos(char* path) {
 }
 
 // Crea el bitmap para la gestion de bloques de un nodo
-// TODO: queda pendiente ver el tema de inicializacion, por ahora pisa el archivo si ya existe
-
 void crearBitMapBloquesNodo(t_nodo* nodo) {
 
 	int fd, offset;
@@ -448,17 +455,20 @@ void crearBitMapBloquesNodo(t_nodo* nodo) {
 
 	char* bloquesBitMap;
 
-	int existe = 1;
-
-// Si no existe lo creo
 	if ((fd = open(archivo, O_RDWR)) == -1) {
-		existe = 0;
+
 		if ((fd = open(archivo, O_RDWR | O_CREAT, 00700)) == -1) {
+			log_error(logger, "Error creando archivo de bitmap");
 			exit(1);
 		}
-	}
 
-	ftruncate(fd, (nodo->total) / 8);
+		int tamanio = nodo->total / 8;
+
+		if (nodo->total % 8 > 0)
+			tamanio++;
+
+		ftruncate(fd, tamanio);
+	}
 
 	if (stat(archivo, &sbuf) == -1) {
 		perror("stat");
@@ -525,6 +535,8 @@ t_bitarray* obtenerBitMapBloquesNodo(t_nodo* nodo) {
 
 	free(archivo);
 
+	close(fd);
+
 	return b;
 
 }
@@ -553,8 +565,6 @@ int existeArchivo(char* path) {
 	for (j = 0; j < list_size(archivosEx); j++) {
 
 		int t = string_length((char*) list_get(archivosEx, j));
-		log_debug(logger, "Comparando %s con %s (%d)", archivosDir,
-				(char*) list_get(archivosEx, j), t);
 
 		if (strncmp(archivosDir, (char*) list_get(archivosEx, j), t - 5) == 0)
 			return 0;
@@ -569,8 +579,6 @@ int existeArchivo(char* path) {
 
 t_archivoInfo* obtenerArchivoInfo(char* path) {
 
-	// TODO: debe verificar primero que este disponible (revisar tablaArchivos)
-
 	if (!estaFormateado())
 		return NULL;
 
@@ -582,7 +590,12 @@ t_archivoInfo* obtenerArchivoInfo(char* path) {
 	}
 
 	char* dirArchivo = obtenerDirArchivo(path);
-	int indiceDir = obtenerIndiceDir(dirArchivo);
+
+	int indiceDir = 0;
+	if (strncmp(path, "./", 2) == 0)
+		indiceDir = 0;
+	else
+		indiceDir = obtenerIndiceDir(dirArchivo);
 
 	char *dirMetadata = string_new();
 
@@ -674,6 +687,16 @@ t_archivoInfo* obtenerArchivoInfo(char* path) {
 					config_get_string_value(metadata, bloqueInfo));
 			bi->idBloque0 = obtenerIdBloque(
 					config_get_string_value(metadata, bloqueInfo));
+
+			t_nodo* nodod = buscarNodoPorId_(atoi(bi->idNodo0));
+			if (nodod != NULL) {
+				bi->dirWorker0 = malloc(20);
+				memcpy(bi->dirWorker0, nodod->direccion, 20);
+			} else {
+				bi->dirWorker0 = malloc(20);
+				memcpy(bi->dirWorker0, "xxx:123", 7);
+			}
+
 		}
 
 		free(bloqueInfo);
@@ -688,6 +711,15 @@ t_archivoInfo* obtenerArchivoInfo(char* path) {
 					config_get_string_value(metadata, bloqueInfo));
 			bi->idBloque1 = obtenerIdBloque(
 					config_get_string_value(metadata, bloqueInfo));
+
+			t_nodo* nodod = buscarNodoPorId_(atoi(bi->idNodo1));
+			if (nodod != NULL) {
+				bi->dirWorker1 = malloc(20);
+				memcpy(bi->dirWorker1, nodod->direccion, 20);
+			} else {
+				bi->dirWorker1 = malloc(20);
+				memcpy(bi->dirWorker1, "xxx:123", 7);
+			}
 		}
 
 		free(bloqueInfo);
@@ -699,6 +731,9 @@ t_archivoInfo* obtenerArchivoInfo(char* path) {
 
 		if (config_has_property(metadata, bloqueInfo))
 			bi->finBytes = config_get_int_value(metadata, bloqueInfo);
+
+		bi->nroBloque = j; // TODO: debe tomarse el nro de bloque de la property (ejemplo: BLOQUE0). Puede que haya algun bloque intermedio
+		// que no exista por lo tanto tomar el indice j va a ser incorrecto.
 
 		free(bloqueInfo);
 
@@ -835,7 +870,6 @@ t_archivoInfo* obtenerArchivoInfoPorMetadata(char* dirMetadata) {
 
 	}
 
-	//free(dirMetadata); // este free si lo comento da problemas
 	config_destroy(metadata);
 
 	return tInfo;
@@ -1048,7 +1082,10 @@ int crearArchivoMetadata(t_list* bloquesInfo, char* path, int tipo, int tamanio)
 
 	char* dirArchivo = obtenerDirArchivo(path);
 
-	string_append(&farchivo, string_itoa(obtenerIndiceDir(dirArchivo)));
+	if (strncmp(path, "./", 2) == 0)
+		string_append(&farchivo, "0");
+	else
+		string_append(&farchivo, string_itoa(obtenerIndiceDir(dirArchivo)));
 
 	struct stat st = { 0 };
 
@@ -1174,8 +1211,7 @@ t_list* obtenerBloquesLibres(int cantBloques) {
 		t = decidirNodo(nodos->nodos);
 		t_nodo* nodo = list_get(t, nod);
 
-// TODO: reemplazar esta linea con la busqueda en nodosBitMap
-		t_bitarray* bitMapBloque = obtenerBitMapBloquesNodo(nodo);
+		t_bitarray* bitMapBloque = obtenerBitMapBloques(nodo->id);
 
 		if (bitMapBloque == NULL) {
 			log_error(logger, "No se pudo abrir el bitmap de bloques");
@@ -1269,7 +1305,12 @@ int obtenerEstadoArchivo(char* path) {
 	}
 
 	char* dirArchivo = obtenerDirArchivo(path);
-	int indiceDir = obtenerIndiceDir(dirArchivo);
+
+	int indiceDir = 0;
+	if (strncmp(path, "./", 2) == 0)
+		indiceDir = 0;
+	else
+		indiceDir = obtenerIndiceDir(dirArchivo);
 
 	char *dirMetadata = string_new();
 
@@ -1315,6 +1356,9 @@ int obtenerEstadoArchivo(char* path) {
 
 // Dado un path completo devuelve el path (directorio) del archivo
 char* obtenerDirArchivo(char* path) {
+
+	if (strncmp(path, "./", 2) == 0)
+		return "./";
 
 	char* dirobj = string_new();
 

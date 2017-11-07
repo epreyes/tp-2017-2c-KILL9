@@ -21,7 +21,8 @@ void ejecutarConsola() {
 
 		if (vieneDeNoEstado == 1)
 			if (!estaFormateado()
-					&& strcmp(instruccionConsola, FORMATEAR) != 0) {
+					&& (strcmp(instruccionConsola, FORMATEAR) != 0
+							&& strcmp(instruccionConsola, AYUDA) != 0)) {
 				printf("Debe formatear antes de comenzar a usar el nuevo fs\n");
 				instruccionConsola[0] = '\0';
 				param1[0] = '\0';
@@ -56,6 +57,16 @@ void ejecutarConsola() {
 				printf("Offline\n");
 				break;
 			}
+
+			instruccionConsola[0] = '\0';
+			param1[0] = '\0';
+			param2[0] = '\0';
+			continue;
+		}
+
+		if (strcmp(instruccionConsola, ESTADONODOS) == 0) {
+
+			imprimirEstadoNodos();
 
 			instruccionConsola[0] = '\0';
 			param1[0] = '\0';
@@ -138,8 +149,9 @@ void ejecutarConsola() {
 			}
 
 			int j = 0;
-			for (j = 0; j < list_size(l); j++)
+			for (j = 0; j < list_size(l); j++) {
 				printf("%s\n", list_get(l, j));
+			}
 
 			list_destroy(l);
 		}
@@ -178,6 +190,7 @@ void ejecutarConsola() {
 			string_append(&destino, param2);
 			string_append(&destino, "/");
 			string_append(&destino, obtenerNombreArchivo(dirArchivo));
+
 			int escribir = escribirArchivo(destino, lect, TEXTO);
 
 			if (escribir == 0) {

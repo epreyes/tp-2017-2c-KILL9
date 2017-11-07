@@ -34,7 +34,7 @@
 
 // Estructuras administrativas del FS
 
-#define TAMANIO_BLOQUE 256 // Tamanio del bloque en bytes 1MB (1048576 bytes). TODO: Por ahora uso un tamanio chico para pruebas
+#define TAMANIO_BLOQUE 1000000 // Tamanio del bloque en bytes 1MB (1048576 bytes). TODO: Por ahora uso un tamanio chico para pruebas
 #define MAX_DIR_FS 100
 
 typedef struct {
@@ -43,13 +43,13 @@ typedef struct {
 	int padre;
 } t_directorio;
 
-// Se usan estas estructuras por el momento para gestionar los nodos, debe hacerse por archivo
+
 typedef struct {
 	int id;
 	int total;
 	int libre;
-	char* direccion; // TODO: Cuando se cambie a archivo, esto debe construirse en un struct aparte
-	int socketNodo; // TODO: Cuando se cambie a archivo, esto debe construirse en un struct aparte
+	char* direccion; // Direccion del worker
+	int socketNodo;
 } t_nodo;
 
 typedef struct {
@@ -141,6 +141,8 @@ void cargarArchivoDeConfiguracion(t_fs *fs, char *configPath);
 
 void obtenerNodosUnaInstanciaArchivos();
 void esperarConexionNodos();
+
+void iniciarSemaforos();
 
 // Semaforo para escritura desde consola
 sem_t semEscritura;

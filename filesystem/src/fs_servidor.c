@@ -90,16 +90,29 @@ void* lanzarHiloServidor() {
 
 			recv(new_fd, worker, sizeof(char) * data_size, 0);
 
-			// TODO: no permitir que se conecte el mismo nodo mas de una vez
-
 			t_nodo* nodo;
 
 			if (vieneDeNoEstado == 1) {
 
-				int hsk_ok = HSK_OK;
+				int hsk = HSK_OK;
 
-				if (send(new_fd, &hsk_ok, sizeof(int), 0) < 0) {
-					log_error(logger, "Error en el envio de hsk ok");
+				// Si el nodo ya esta conectado, rechazarlo
+				if (buscarNodoPorId(id_nodo) != -1) {
+					log_info(logger,
+							"Se rechaza la conexion del nodo de id %d porque ya se encuentra conectado",
+							id_nodo);
+					hsk = ACCESODENEGADO;
+
+					if (send(new_fd, &hsk, sizeof(int), 0) < 0) {
+						log_error(logger, "Error en el envio de hsk");
+						exit(1);
+					}
+					close(new_fd);
+					continue;
+				}
+
+				if (send(new_fd, &hsk, sizeof(int), 0) < 0) {
+					log_error(logger, "Error en el envio de hsk");
 					exit(1);
 				}
 
@@ -114,6 +127,9 @@ void* lanzarHiloServidor() {
 				nodo->id = id_nodo;
 				nodo->libre = block_quantity;  // inicialmente es el total
 				nodo->total = block_quantity;
+
+				nodos->tamanio = 100; // TODO: debe sumarse con los otros nodos
+				nodos->libre = 100;  // TODO: debe sumarse con los otros nodos
 
 				nodo->direccion = malloc(data_size + 1);
 				memcpy(nodo->direccion, worker, data_size);
@@ -132,7 +148,7 @@ void* lanzarHiloServidor() {
 				// Guardo nodo en nodos.bin
 				guardarConfigNodoEnBin();
 
-				// Genero bitmap de gestion de bloques
+				// Genero bitmap de gestion de bloques (si no existe)
 				crearBitMapBloquesNodo(nodo);
 
 				// Solo si viene de un no estado
@@ -140,22 +156,42 @@ void* lanzarHiloServidor() {
 
 			} else {
 
-				t_nodo* nodoAnterior = nodoPerteneceAEstadoAnterior(nodo);
+				t_nodo* nodoAnterior = nodoPerteneceAEstadoAnterior(id_nodo);
 
 				if (nodoAnterior == NULL) {
 					// Rechazo conexion de nodo
 					int hsk = ACCESODENEGADO;
 
+					log_info(logger,
+							"Rechazando nodo de id %d porque no se encuentra en el estado anterior",
+							id_nodo);
+
 					if (send(new_fd, &hsk, sizeof(int), 0) < 0) {
 						log_error(logger, "Error en el envio de hsk");
 						exit(1);
 					}
+					// Cuidado con esto ya que se puede cerrar el socket en el medio del send
 					close(new_fd);
 				} else {
-					int hsk_ok = HSK_OK;
+					int hsk = HSK_OK;
 
-					if (send(new_fd, &hsk_ok, sizeof(int), 0) < 0) {
-						log_error(logger, "Error en el envio de hsk ok");
+					// Si el nodo ya esta conectado, rechazarlo
+					if (buscarNodoPorId(id_nodo) != -1) {
+						hsk = ACCESODENEGADO;
+						log_info(logger,
+								"Se rechaza la conexion del nodo de id %d porque ya se encuentra conectado",
+								id_nodo);
+
+						if (send(new_fd, &hsk, sizeof(int), 0) < 0) {
+							log_error(logger, "Error en el envio de hsk");
+							exit(1);
+						}
+						close(new_fd);
+						continue;
+					}
+
+					if (send(new_fd, &hsk, sizeof(int), 0) < 0) {
+						log_error(logger, "Error en el envio de hsk");
 						exit(1);
 					}
 
@@ -167,24 +203,28 @@ void* lanzarHiloServidor() {
 
 					// Agrego el nodo en memoria
 
-					// TODO: debe tomar la info de data.bin
-
 					t_nodo* nodo = malloc(sizeof(t_nodo));
 					nodo->id = id_nodo;
-					nodo->libre = block_quantity;  // inicialmente es el total
-					nodo->total = block_quantity;
+					nodo->libre = nodoAnterior->libre;
+					nodo->total = nodoAnterior->total;
 					nodo->direccion = malloc(data_size + 1);
 					memcpy(nodo->direccion, worker, data_size);
 					nodo->direccion[data_size] = '\0';
 					nodo->socketNodo = new_fd;
 
+					free(nodoAnterior);
+
 					log_info(logger,
-							"Nodo de estado anterior conectado - id: %d - total bloques: %d - direccion worker: %s",
-							id_nodo, block_quantity, worker);
+							"Nodo de estado anterior conectado - id: %d - total bloques: %d - libre: %d  - direccion worker: %s - socketNodo: %d",
+							nodo->id, nodo->total, nodo->libre, nodo->direccion,
+							new_fd);
 
 					sem_wait(&listaNodos);
 					list_add(nodos->nodos, nodo);
 					sem_post(&listaNodos);
+
+					// Genero bitmap de gestion de bloques (si no existe)
+					crearBitMapBloquesNodo(nodo);
 
 					// Habilito bloques de archivos de un estado anterior
 					habilitarBloques(nodo);
@@ -213,7 +253,6 @@ void* lanzarHiloServidor() {
 
 		// TODO: controlar que no lleguen dos yamas
 		if (codigoHandshake == YAMA_HSK) {
-
 			if (estadoEstable == 0) {
 				log_error(logger,
 						"El fs no se encuentra en estado estable, rechazando conexion de yama");
@@ -250,14 +289,12 @@ void *connection_handler_nodo(void *socket_desc) {
 
 			int nodoId = buscarNodoPorSocket(socketCliente);
 
-			// TODO: Buscar los archivos que tienen referencia a este nodo y eliminarle una instancia
+			// Buscar los archivos que tienen referencia a este nodo y eliminarle una instancia
 			// ****************************+
 			int i = 0;
 			t_directorio* dir = inicioTablaDirectorios;
 
-			dir++;
-
-			for (i = 1; i < MAX_DIR_FS; i++) {
+			for (i = 0; i < MAX_DIR_FS; i++) {
 
 				if (dir->padre == -1 && dir->indice != 0)
 					continue;
@@ -325,7 +362,6 @@ void *connection_handler_nodo(void *socket_desc) {
 													arch, bli->nroBloque,
 													nodoId,
 													bli->cantInstancias);
-											//sem_post(&bli->semaforo);
 										}
 
 									}
@@ -399,6 +435,7 @@ void procesarPedidoYama(t_header pedido, int socketCliente) {
 
 	void* respuesta;
 	char* buffer;
+	int estadoArchivo = 0;
 
 	t_archivoInfo* info;
 
@@ -414,6 +451,25 @@ void procesarPedidoYama(t_header pedido, int socketCliente) {
 
 		log_info(logger, "Pidiendo informacion del archivo: %s (long: %d)",
 				buffer, pedido.size);
+
+		estadoArchivo = obtenerEstadoArchivo(buffer);
+
+		if (estadoArchivo == -2) {
+
+			log_error(logger, "El archivo %s no esta disponible (nodos caidos)",
+					buffer);
+			t_header resp;
+			resp.idMensaje = 'E';
+
+			if (send(socketCliente, &resp, sizeof(t_header), 0) < 0) {
+				log_error(logger,
+						"Error en el envio de respuesta de archivo info a YAMA");
+				exit(1);
+			}
+
+			return;
+
+		}
 
 		info = obtenerArchivoInfo(buffer);
 
@@ -449,11 +505,11 @@ void procesarPedidoYama(t_header pedido, int socketCliente) {
 				biYama->node2_block = bi->idBloque1;
 				biYama->end_block = bi->finBytes;
 
-				strcpy(biYama->node1_ip, "127.0.0.1");
-				biYama->node1_port = 5010;
+				strcpy(biYama->node1_ip, string_split(bi->dirWorker0, ":")[0]);
+				biYama->node1_port = atoi(string_split(bi->dirWorker0, ":")[1]);
 
-				strcpy(biYama->node2_ip, "127.0.0.2");
-				biYama->node2_port = 5011;
+				strcpy(biYama->node2_ip, string_split(bi->dirWorker1, ":")[0]);
+				biYama->node2_port = atoi(string_split(bi->dirWorker1, ":")[1]);
 
 				biYama->node1 = atoi(bi->idNodo0);
 				biYama->node2 = atoi(bi->idNodo1);
@@ -629,96 +685,6 @@ void procesarPedidoWorker(t_header pedido, int socketCliente) {
 
 }
 
-void guardarConfigNodoEnBin() {
-
-	t_config* nodoConfig = malloc(sizeof(t_config));
-	nodoConfig = config_create(fs->m_nodos);
-
-	// Si no hay estado anterior, se guarda el nodo en nodos.bin
-
-	if (nodoConfig == NULL) {
-		int conf = config_save_in_file(nodoConfig, fs->m_nodos);
-	}
-
-	// Recorro la lista nodos y refresco la config
-
-	int i = 0;
-	int totalTamanio = 0;
-	int totalLibre = 0;
-	char* listaNodos = string_new();
-	int cantNodos = list_size(nodos->nodos);
-	string_append(&listaNodos, "[");
-	for (i = 0; i < cantNodos; i++) {
-
-		t_nodo* nod = list_get(nodos->nodos, i);
-
-		string_append(&listaNodos, "Nodo");
-		string_append(&listaNodos, string_itoa(nod->id));
-
-		if (cantNodos == 1)
-			string_append(&listaNodos, "]");
-
-		if (cantNodos > 1 && i < (cantNodos - 1))
-			string_append(&listaNodos, ",");
-
-		totalTamanio += nod->total;
-		totalLibre += nod->libre;
-
-		// Creo la entrada del nuevo nodo
-
-		char* nodoTotalProperty = string_new();
-		string_append(&nodoTotalProperty, "Nodo");
-		string_append(&nodoTotalProperty, string_itoa(nod->id));
-		string_append(&nodoTotalProperty, "Total");
-
-		config_set_value(nodoConfig, nodoTotalProperty,
-				string_itoa(nod->total));
-
-		free(nodoTotalProperty);
-
-		char* nodoLibreProperty = string_new();
-		string_append(&nodoLibreProperty, "Nodo");
-		string_append(&nodoLibreProperty, string_itoa(nod->id));
-		string_append(&nodoLibreProperty, "Libre");
-
-		config_set_value(nodoConfig, nodoLibreProperty,
-				string_itoa(nod->libre));
-
-		free(nodoLibreProperty);
-
-	}
-
-	if (cantNodos > 1)
-		string_append(&listaNodos, "]");
-
-	// Actualizo totales
-	config_set_value(nodoConfig, "TAMANIO", string_itoa(totalTamanio));
-	config_set_value(nodoConfig, "LIBRE", string_itoa(totalLibre));
-
-	// Actualizo lista NODOS
-	config_set_value(nodoConfig, "NODOS", listaNodos);
-
-	config_save(nodoConfig);
-
-	free(listaNodos);
-
-}
-
-// Indica si un nodo que se conecta pertenece a un estado anterior y devuelve su info
-t_nodo* nodoPerteneceAEstadoAnterior(t_nodo* nodo) {
-
-	/*t_config* nodoConfig = malloc(sizeof(t_config));
-
-	 nodoConfig = config_create(fs->m_nodos);
-
-	 if (!config_has_property(nodoConfig, "M_DIRECTORIOS")) {
-	 fs->m_directorios = config_get_string_value(fs->config,
-	 "M_DIRECTORIOS");*/
-	t_nodo* nodAnt = malloc(sizeof(t_nodo));
-
-	return nodAnt;
-}
-
 // Si no hay estado anterior, acepta el nodo conectado
 // Si hay estado anterior, acepta el nodo que se conecta (y solo si existe en nodos.bin),
 // y signalea los bloques de los archivos que estan en el nodo indicado
@@ -730,9 +696,7 @@ int habilitarBloques(t_nodo* nodo) {
 	int i = 0;
 	t_directorio* dir = inicioTablaDirectorios;
 
-	dir++;
-
-	for (i = 1; i < MAX_DIR_FS; i++) {
+	for (i = 0; i < MAX_DIR_FS; i++) {
 
 		if (dir->padre == -1 && dir->indice != 0)
 			continue;
@@ -793,9 +757,9 @@ int habilitarBloques(t_nodo* nodo) {
 
 									bli->cantInstancias += 1;
 									log_info(logger,
-											"[%s] - Habilitando bloque %d de nodo %d - instancias: %d",
-											arch, bli->nroBloque, nodo->id,
-											bli->cantInstancias);
+											"[%d/%s] - Habilitando bloque %d de nodo %d - instancias: %d",
+											dir->indice, arch, bli->nroBloque,
+											nodo->id, bli->cantInstancias);
 									sem_post(&bli->semaforo);
 								}
 
@@ -814,16 +778,5 @@ int habilitarBloques(t_nodo* nodo) {
 		dir++;
 
 	}
-
-}
-
-int buscarNodoPorSocket(int socketNodo) {
-	int i = 0;
-	for (i = 0; i < list_size(nodos->nodos); i++) {
-		t_nodo* nod = list_get(nodos->nodos, i);
-		if (nod->socketNodo == socketNodo)
-			return nod->id;
-	}
-	return -1;
 
 }

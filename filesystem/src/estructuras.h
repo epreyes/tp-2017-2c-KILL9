@@ -24,7 +24,8 @@ typedef struct
 		int idBloque1;
 		long finBytes;
 		int nroBloque;
-	// Agregar ip y puerto
+		char* dirWorker0;
+		char* dirWorker1;
 	} t_bloqueInfo;
 
 	typedef struct {

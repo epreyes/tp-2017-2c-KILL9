@@ -12,12 +12,6 @@
 
 int main(void) {
 
-	sem_init(&semEscritura, 0, 1);
-
-	sem_init(&nodoInit, 0, 0);
-	sem_init(&listaNodos, 0, 1);
-	sem_init(&semTablaArchivos, 0, 1);
-
 	tablaArchivos = list_create();
 
 	logger = log_create("yamafs.log", "YAMA_FS", 0, LOG_LEVEL_DEBUG);
@@ -26,11 +20,11 @@ int main(void) {
 
 	cargarArchivoDeConfiguracion(fs, "yamafs.cfg");
 
+	iniciarSemaforos();
+
 	iniciarFS();
 
 	nodos = malloc(sizeof(t_nodos));
-	nodos->tamanio = 100; // TODO: esta info debe venir de los nodos (una vez que se coenctan)
-	nodos->libre = 100;
 	nodos->nodos = list_create();
 
 	nodosBitMap = list_create();
@@ -150,7 +144,7 @@ int inicializacionConNodos() {
 	DIR *d;
 	struct dirent *dir;
 
-	vieneDeNoEstado=0;
+	vieneDeNoEstado = 0;
 
 	d = opendir(fs->m_archivos);
 	if (d) {
@@ -185,8 +179,10 @@ int inicializacionConNodos() {
 
 	} else {
 
-		log_info(logger,"Existe un estado anterior, esperando que se conecten los nodos correspondientes...");
-		printf("Existe un estado anterior, esperando que se conecten los nodos correspondientes...\n");
+		log_info(logger,
+				"Existe un estado anterior, esperando que se conecten los nodos correspondientes...");
+		printf(
+				"Existe un estado anterior, esperando que se conecten los nodos correspondientes...\n");
 
 		// Espero la conexion de nodos que contienen 1 instancia de los bloques de todos los archivo (cualquiera de las dos)
 
@@ -212,10 +208,7 @@ void obtenerNodosUnaInstanciaArchivos() {
 	int i = 0;
 	t_directorio* dir = inicioTablaDirectorios;
 
-	dir++; // TODO: ver que pasa si no salteo raiz (no debe saltearse porque pueden haber archivos ahi pero hay un bug con algunas funciones con raiz)
-
-	// i en 1 porque salteo dir raiz
-	for (i = 1; i < MAX_DIR_FS; i++) {
+	for (i = 0; i < MAX_DIR_FS; i++) {
 
 		if (dir->padre == -1 && dir->indice != 0)
 			continue;
@@ -285,6 +278,8 @@ void esperarConexionNodos() {
 	int i = 0;
 	int j = 0;
 
+	printf("Esperando finalizacion de conexion de nodos...\n");
+
 	for (i = 0; i < list_size(tablaArchivos); i++) {
 		t_archivoInit* lb = list_get(tablaArchivos, i);
 		for (j = 0; j < list_size(lb->bloques); j++) {
@@ -294,5 +289,15 @@ void esperarConexionNodos() {
 
 	}
 
+	estadoEstable = 1;
+
+	printf("Finalizado\n");
+
 }
 
+void iniciarSemaforos() {
+	sem_init(&semEscritura, 0, 1);
+	sem_init(&nodoInit, 0, 0);
+	sem_init(&listaNodos, 0, 1);
+	sem_init(&semTablaArchivos, 0, 1);
+}

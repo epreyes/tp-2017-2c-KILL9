@@ -11,8 +11,8 @@
 #include "fs_core.h"
 #include "datanode.h"
 #include "estructuras.h"
+#include "nodoUtils.h"
 
 int escribirArchivo(char* path, char* contenido, int tipo);
-
 
 #endif /* FS_COMANDOS_H_ */

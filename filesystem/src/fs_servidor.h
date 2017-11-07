@@ -11,8 +11,10 @@
 
 #include <arpa/inet.h>
 #include <commons/log.h>
+
 #include "estructuras.h" // esto debe ser deprecado
 #include "fs.h"
+#include "nodoUtils.h"
 
 #include <tplibraries/protocol/filesystem_datanode.h>
 #include <tplibraries/protocol/filesystem_yama.h>
@@ -30,9 +32,7 @@ void procesarPedidoYama(t_header pedido, int socket);
 void procesarPedidoNodo(t_header pedido, int socket);
 void procesarPedidoWorker(t_header pedido, int socket);
 
-void guardarConfigNodoEnBin();
 int habilitarBloques(t_nodo* nodo);
-t_nodo* nodoPerteneceAEstadoAnterior(t_nodo* nodo);
-int buscarNodoPorSocket(int socketNodo);
+
 
 #endif /* FS_SERVIDOR_H_ */

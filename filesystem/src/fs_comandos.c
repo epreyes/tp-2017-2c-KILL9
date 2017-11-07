@@ -18,7 +18,7 @@ int escribirArchivo(char* path, char* contenido, int tipo) {
 		return NO_HAY_NODOS;
 	}
 
-	char* dirPath= obtenerDirArchivo(path);
+	char* dirPath = obtenerDirArchivo(path);
 
 	if (!existeDirectorio(dirPath)) {
 		return NO_EXISTE_DIR_DESTINO;
@@ -32,7 +32,9 @@ int escribirArchivo(char* path, char* contenido, int tipo) {
 
 // Debo saber de antemano si con los bloques de los nodos actuales me alcanza para escribir el archivo
 
-	log_debug(logger, "Verificando si hay espacio...");
+	log_debug(logger,
+			"Verificando si hay espacio para archivo de %d (*2) bloques...",
+			bloquesNecesarios);
 
 // Debe ser *2 para hacer las copias
 	t_list* bl = obtenerBloquesLibres(bloquesNecesarios * 2);
@@ -49,11 +51,9 @@ int escribirArchivo(char* path, char* contenido, int tipo) {
 		return SIN_CONTENIDO_ESCRIBIR;
 	}
 
-	t_list* bloques;
 	t_list* bloquesInfo = list_create(); // lista con la informacion de bloque que se va a escribir en el archivo de metadata
 
 // Escribo en los bloques reservados
-	int i = 0;
 
 	char bloque[TAMANIO_BLOQUE];
 
@@ -144,7 +144,10 @@ int escribirArchivo(char* path, char* contenido, int tipo) {
 					log_info(logger,
 							"Escritura en el datanode realizada con exito");
 
-					nodo->libre -= 1;
+					// Actualizo lista nodos y nodos.bin
+					log_info(logger, "Actualizando nodos.bin...");
+					// nodo->libre -= 1; // Ya lo hace la reserva de bloques
+					actualizarConfigNodoEnBin(nodo);
 
 					bi->finBytes = finbytes;
 					finbytes = 0;
@@ -187,13 +190,15 @@ int escribirArchivo(char* path, char* contenido, int tipo) {
 					log_info(logger,
 							"Escritura en el datanode realizada con exito");
 
-					nodo->libre -= 1;
+					// Actualizo lista nodos y nodos.bin
+					log_info(logger, "Actualizando nodos.bin...");
+					// nodo->libre -= 1; // Ya lo hace la reserva de bloques
+					actualizarConfigNodoEnBin(nodo);
+
 					bi->idBloque1 = bloqueAModificar;
 					bi->idNodo1 = string_itoa(nodo->id);
 
 					list_add(bloquesInfo, bi);
-
-					/// ***
 
 					restanteBloque = TAMANIO_BLOQUE;
 					i++;
@@ -255,14 +260,18 @@ int escribirArchivo(char* path, char* contenido, int tipo) {
 
 		log_info(logger, "Escritura en el datanode realizada con exito");
 
-		nodo->libre -= 1;
+		// Actualizo lista nodos y nodos.bin
+		log_info(logger, "Actualizando nodos.bin...");
+		// nodo->libre -= 1; // Ya lo hace la reserva de bloques
+		actualizarConfigNodoEnBin(nodo);
 
 		bi->finBytes = finbytes;
 		bi->idBloque0 = bloqueAModificar;
 		bi->idNodo0 = string_itoa(nodo->id);
 
 //*********************************//
-// Copia del bloque
+
+		// Copia del bloque
 //*********************************//
 // Debo hacer el envio al datanode del mismo contenido en el nodo y bloque id indicado por la lista (el siguiente elemento)
 
@@ -296,7 +305,11 @@ int escribirArchivo(char* path, char* contenido, int tipo) {
 
 		log_info(logger, "Escritura en el datanode realizada con exito");
 
-		nodo->libre -= 1;
+		// Actualizo lista nodos y nodos.bin
+		log_info(logger, "Actualizando nodos.bin...");
+		// nodo->libre -= 1; // Ya lo hace la reserva de bloques
+		actualizarConfigNodoEnBin(nodo);
+
 		bi->idBloque1 = bloqueAModificar;
 		bi->idNodo1 = string_itoa(nodo->id);
 
@@ -304,20 +317,10 @@ int escribirArchivo(char* path, char* contenido, int tipo) {
 
 	}
 
-/// ***
+/// *** Tipo de archivo binario
 
 	if (tipo == BINARIO) {
-
-		for (i = 0; i < list_size(bloques); i++) {
-
-			memcpy(bloque, contenido + offset, TAMANIO_BLOQUE);
-			// Pedido al datanode
-			//escribirEnBloque(list_get(bloques, i), bloque);
-			log_info(logger, "Escribiendo en bloque %d: %s",
-					list_get(bloques, i), bloque);
-			offset += TAMANIO_BLOQUE;
-
-		}
+		;
 	}
 
 	log_info(logger,

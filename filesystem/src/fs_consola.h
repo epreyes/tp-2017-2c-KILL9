@@ -14,6 +14,7 @@
 #define CREAR_DIRECTORIO "mkdir"
 #define FORMATEAR "formatear"
 #define INFOARCHIVO "infoarchivo"
+#define ESTADONODOS "estadoNodos"
 
 #include "fs_comandos.h"
 
