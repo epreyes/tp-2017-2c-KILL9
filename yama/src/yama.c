@@ -74,7 +74,6 @@ void* processOperation(int master, char op) {
 		break;
 	case 'G':
 		response = processGlobalReduction(master);
-		viewGlobalReductionResponse(response);
 		break;
 	case 'S':
 		response = processFinalStore(master);

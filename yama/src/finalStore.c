@@ -82,12 +82,7 @@ void viewFinalStoreResponse(void* response) {
 			op, nodo, ip, puerto, fileName);
 }
 
-/*typedef struct {
- int		nodo;
- char	ip[16];
- int 	port;
- char	rg_tmp[24];
- }af_datos;*/
+
 void* processFinalStore(int master) {
 	if (allGlobalReductionProcesFinish(master)) {
 		t_list* planed = findGlobalReductionPlaned(master);

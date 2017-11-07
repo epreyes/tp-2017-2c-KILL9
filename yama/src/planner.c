@@ -5,8 +5,9 @@
  *      Author: utnso
  */
 
-#include "headers/yamaPlanner.h"
-
+#include "headers/planner.h"
+#include "headers/tablesManager.h"
+#include "headers/transformation.h"
 #include <string.h>
 
 int getMaxWorkload(Yama* yama) {
@@ -201,8 +202,9 @@ void* replanTask(int master, int node) {
 			node = blockInfo->node1;
 		}
 		tr_datos* dataNode = buildNodePlaned(blockInfo, master, node);
+
 		setInStatusTable('T', master, dataNode->nodo,
-				getBlockId(dataNode->tr_tmp), dataNode->tr_tmp);
+				getBlockId(dataNode->tr_tmp), dataNode->tr_tmp, dataNode->bloque);
 		list_add(replanedTasks, dataNode);
 	}
 

@@ -139,16 +139,6 @@ void* processGlobalReduction(int master) {
 		rl_datos* enchargeNode = getLastChargedNode();
 		int enchargeSeted = 0;
 
-		/*
-		 * typedef struct rg_datos{				//es un record por nodo
-		 int		nodo;
-		 char	ip[16];
-		 int 	port;
-		 char	rl_tmp[28];
-		 char	rg_tmp[24];
-		 char	encargado;
-		 }rg_datos;*/
-
 		int index = 0;
 		for (index = 0; index < list_size(planed); index++) {
 			rl_datos* elem = list_get(planed, index);
@@ -160,8 +150,6 @@ void* processGlobalReduction(int master) {
 
 			if (enchargeSeted == 0
 					&& globalRedData->nodo == enchargeNode->nodo) {
-				printf("\nMetiendo como encargado al nodo %d (%d) \n",
-						enchargeNode->nodo, globalRedData->nodo);
 
 				getGlobalReductionTmpName(globalRedData, 'G', 0, master);
 				globalRedData->encargado = 'T';
@@ -174,14 +162,6 @@ void* processGlobalReduction(int master) {
 				getGlobalReductionTmpName(globalRedData, 'G', 0, master);
 				globalRedData->encargado = 'F';
 			}
-
-			printf("\nVa a copiar en el buffer: Encargado %c, tmp: %s\n",
-					globalRedData->encargado, globalRedData->rg_tmp);
-
-			/*memcpy(
-			 globalReductionRes + sizeof(char) + sizeof(int)
-			 + (index * sizeof(rg_datos)), globalRedData,
-			 sizeof(rg_datos));*/
 
 			memcpy(dataGR + (index * tamData), &(globalRedData->nodo),
 					sizeof(int));

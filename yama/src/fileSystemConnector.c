@@ -4,7 +4,7 @@
  *  Created on: 21/9/2017
  *      Author: utnso
  */
-#include "headers/yamaFS.h"
+#include "headers/fileSystemConnector.h"
 
 void* getFileSystemInfo(char* name) {
 
@@ -39,7 +39,6 @@ void* getFileSystemInfo(char* name) {
 
 	int infoSize = 0;
 	int bytesSend = send(fs_client.socket_server_id, buffer, buffersize, 0);
-	printf("\n\nEnviados %d bytes a filesystem\n", bytesSend);
 	if (bytesSend > 0) {
 		free(buffer);
 

@@ -34,21 +34,6 @@ Client acceptMasterConnection(Server* server, fd_set* masterList, int hightSd) {
 	return theClient;
 }
 
-/*typedef struct rg_datos{				//es un record por nodo
- int		nodo;
- char	ip[16];
- int 	port;
- char	rl_tmp[28];
- char	rg_tmp[24];
- char	encargado;
- }rg_datos;
-
- typedef struct {
- int		nodo;
- char	ip[16];
- int 	port;
- char	rg_tmp[24];
- }af_datos;*/
 int getSizeToSend(void* masterRS) {
 	char op;
 	memcpy(&op, masterRS, sizeof(char));
@@ -72,9 +57,7 @@ int getSizeToSend(void* masterRS) {
 		size = (blocks * grSize) + sizeof(char) + sizeof(int);
 		break;
 	case 'S':
-
 		size = fsSize + sizeof(char);
-		viewFinalStoreResponse(masterRS);
 		break;
 	case 'A':
 		size = sizeof(error_rq);

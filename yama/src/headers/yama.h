@@ -92,8 +92,10 @@ void init();
 
 void* getResponse(int master, char request);
 
+/*
+ * Proceso la operacion que viene en el header. Si es una transformacion, saco la info de la tabla de archivos, si existe;
+ * si no, se la pido al filesystem.
+ * */
 void* processOperation(int master, char op);
-
-void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId);
 
 #endif /* YAMA_H_ */

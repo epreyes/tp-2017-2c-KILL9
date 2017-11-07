@@ -6,7 +6,7 @@
  */
 
 
-void reloadConfig(){
+void reloadConfig(int param){
 	//cargar el archivo de configuracion en memoria.
 	//editar los datos correspondientes.
 	//guardar los cambios.

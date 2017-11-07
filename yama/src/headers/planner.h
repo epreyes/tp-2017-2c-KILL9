@@ -11,6 +11,12 @@
 #include <commons/collections/list.h>
 #include "yama.h"
 
+void addAvailBase();
+
+void updateAvailability();
+
+void* replanTask(int master, int node);
+
 int getMaxWorkload(Yama* yama);
 
 int clockAvail(Yama* yama);
@@ -21,17 +27,13 @@ int setNewAvailability(elem_tabla_nodos* elem);
 
 int setBaseAvailability();
 
-void addAvailBase();
-
-void updateAvailability();
-
 int getHigerAvailNode(Yama* yama);
 
 int blockExistInClock(block_info* blockRecived, int clock);
 
-tr_datos* buildNodePlaned(block_info* blockRecived, int master, int node_id);
-
 int increseClock(int clock);
+
+tr_datos* buildNodePlaned(block_info* blockRecived, int master, int node_id);
 
 tr_datos* updateNodeInTable(block_info* blockRecived, int master, int clock);
 

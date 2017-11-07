@@ -5,7 +5,7 @@
  *      Author: utnso
  */
 
-#include "headers/yamaStateTable.h"
+#include "headers/tablesManager.h"
 
 int existInStatusTable(int job, char op, int node){
 	if (!list_is_empty(yama->tabla_estados)) {
@@ -296,7 +296,7 @@ void updateTasksAborted(int master, int node, int codeOp) {
 	}
 }
 
-t_list* getTaskFailed(int master, int node, int code) {
+t_list* getTaskFailed(int master, int node) {
 	int index = 0;
 	t_list* tasksFails = list_create();
 	for (index = 0; index < list_size(yama->tabla_estados); index++) {
@@ -328,29 +328,5 @@ block_info* findBlock(int block) {
 	}
 
 	return NULL;
-}
-
-int getBlockOfFilie( nodo, bloque) {
-	int index = 0;
-	for (index = 0; index < list_size(yama->tabla_info_archivos); index++) {
-		elem_info_archivo* elem = list_get(yama->tabla_info_archivos, index);
-		void* info = malloc(elem->sizeInfo);
-		memcpy(info, elem->info, elem->sizeInfo);
-
-		int j = 0;
-		for (j = 0; j < elem->blocks; j++) {
-			block_info* blockInfo = malloc(sizeof(block_info));
-			memcpy(blockInfo, info + (j * sizeof(block_info)),
-					sizeof(block_info));
-			if ((blockInfo->node1 == nodo && blockInfo->node1_block == bloque)
-					|| (blockInfo->node2 == nodo
-							&& blockInfo->node2_block == bloque)) {
-				return blockInfo->block_id;
-			}
-		}
-
-		free(info);
-	}
-	return -1;
 }
 

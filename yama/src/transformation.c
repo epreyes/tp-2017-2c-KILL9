@@ -6,7 +6,8 @@
  */
 
 #include "headers/transformation.h"
-#include "headers/yamaFS.h"
+
+#include "headers/fileSystemConnector.h"
 
 void viewTransformationResponse(void* response){
 	char op;

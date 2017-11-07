@@ -5,11 +5,11 @@
  *      Author: utnso
  */
 
-#ifndef SRC_HEADERS_YAMAFS_H_
-#define SRC_HEADERS_YAMAFS_H_
+#ifndef SRC_HEADERS_FILESYSTEMCONNECTOR_H_
+#define SRC_HEADERS_FILESYSTEMCONNECTOR_H_
 
-#include "yamaStateTable.h"
 #include <tplibraries/protocol/filesystem_yama.h>
+#include "tablesManager.h"
 
 void* getFileSystemInfo(char* name);
 
@@ -17,4 +17,4 @@ int findFile(char* fileName);
 
 elem_info_archivo* getFileInfo(int master);
 
-#endif /* SRC_HEADERS_YAMAFS_H_ */
+#endif /* SRC_HEADERS_FILESYSTEMCONNECTOR_H_ */

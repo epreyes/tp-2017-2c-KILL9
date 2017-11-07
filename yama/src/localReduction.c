@@ -7,6 +7,8 @@
 
 #include "headers/localReduction.h"
 
+#include "headers/tablesManager.h"
+
 void deleteOfPlanedList(int items, int master) {
 	int i = 0;
 	for (i = 0; i < items; i++) {

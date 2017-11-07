@@ -10,6 +10,14 @@
 
 #include "yama.h"
 
+void deleteOfGlobalReductionPlanedList(int items, int master);
+
+void viewFinalStoreResponse(void* response);
+
 void* processFinalStore(int master);
+
+int allGlobalReductionProcesFinish(int master);
+
+t_list* findGlobalReductionPlaned(int master);
 
 #endif /* SRC_HEADERS_FINALSTORE_H_ */
