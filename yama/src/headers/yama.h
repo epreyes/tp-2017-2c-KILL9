@@ -92,6 +92,7 @@ void init();
 
 void* getResponse(int master, char request);
 
+void viewConfig();
 /*
  * Proceso la operacion que viene en el header. Si es una transformacion, saco la info de la tabla de archivos, si existe;
  * si no, se la pido al filesystem.

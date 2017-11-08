@@ -26,6 +26,21 @@ t_log* getLog() {
 	return log_create(LOG_PATH, "YAMA", 1, LOG_LEVEL_TRACE);
 }
 
+void viewConfig(){
+	/*
+	FS_IP=127.0.1.1
+	FS_PUERTO=8880
+	RETARDO_PLANIFICACION=0
+	ALGORITMO_BALANCEO=WRR
+	YAMA_PUERTO=8881
+	NODE_AVAIL=5*/
+	printf("\nCONFIGURACION:\n\nPS_IP: %s\n FS_PUERTO: %d\n RETARDO_PLANIFICACION: %d\n ALGORITMO_BALANCEO: %s\n YAMA_PUERTO: %d\n NODE_AVAIL: %d\n",
+			config_get_string_value(yama->config, "FS_IP"), config_get_int_value(yama->config, "FS_PUERTO"), config_get_int_value(yama->config, "RETARDO_PLANIFICACION"),
+			config_get_string_value(yama->config, "ALGORITMO_BALANCEO"), config_get_int_value(yama->config, "YAMA_PUERTO"), config_get_int_value(yama->config, "NODE_AVAIL"));
+
+	yama->config;
+}
+
 /*---------------------- Public ----------------------------------*/
 void init() {
 	yama = malloc(sizeof(Yama));
@@ -50,6 +65,8 @@ void init() {
 
 	log_trace(yama->log, "YAMA was succesfully configured.");
 	yama->jobs = 0;
+
+	viewConfig();
 }
 
 void* getResponse(int master, char request) {
