@@ -18,26 +18,67 @@ void printSeparator(char c){
 void printProcessMetrics(char* name, procMetrics metrics){
 	printf("%s\n", name);
 	printSeparator('-');
-	printf("Cantidad total de tareas:\t\t%d\n", 40);
-	printf("Cantidad de tareas paralelas:\t\t%d\n", 40);
-	printf("Cantidad de errores:\t\t\t%d\n", 0);
+	if(strcmp(name,"ALMACENADO FINAL")){
+		printf("Cantidad total de tareas:\t\t%d\n", metrics.tasks);
+		if(strcmp(name,"REDUCCIÓN GLOBAL"))
+			printf("Cantidad de tareas paralelas:\t\t%d\n", metrics.parallelTask);
+	}
+	printf("Tiempo de ejecución promedio:\t\t%.6gms\n", metrics.runTime);
+	printf("Cantidad de errores:\t\t\t%d\n", metrics.errors);
 	printSeparator('=');
 }
 
-void printMetrics(metrics masterMetrics){
-	//Tiempos de ejecucion
-		printSeparator('=');
-		printf("TIEMPO DE EJECUCIÓN TOTAL:\t\t%.6gms\n", masterMetrics.runTime);
-		printSeparator('-');
-		printf("> Transformacion\t\t\t%.6gms\n", masterMetrics.transformation.runTime);
-		printf("> LocalReduction\t\t\t%.6gms\n", masterMetrics.localReduction.runTime);
-		printf("> GlobalReduction\t\t\t%.6gms\n", masterMetrics.globalReduction.runTime);
-		printf("> FinalStorage\t\t\t\t%.6gms\n", masterMetrics.finalStorage.runTime);
-		printSeparator('=');
+void printErrorProcess(char* name){
+	printf("%s\n", name);
+	printf("No se pudo procesar esta operación\n");
+	printSeparator('-');
+}
 
-	//Imprimo las métricas de cada proceso
-		printProcessMetrics("TRANSFORMACIÓN", masterMetrics.transformation);
-		printProcessMetrics("REDUCCIÓN LOCAL", masterMetrics.localReduction);
-		printProcessMetrics("REDUCCIÓN GLOBAL", masterMetrics.globalReduction);
-		printProcessMetrics("ALMACENADO FINAL",masterMetrics.finalStorage);
+
+void printMetrics(metrics masterMetrics){
+	log_trace(logger,"Preparando impresión de métricas");
+
+//MÉTRICAS GENERALES
+	printSeparator('=');
+	printf("TIEMPO DE EJECUCIÓN TOTAL:\t\t%.6gms\n", masterMetrics.runTime);
+	printSeparator('-');
+	printf("CANTIDAD DE FALLOS TOTAL:\t\t%d\n", masterMetrics.transformation.errors+masterMetrics.localReduction.errors+masterMetrics.globalReduction.errors+masterMetrics.finalStorage.errors);
+	printSeparator('=');
+
+//MÉTRICAS POR PROCESO
+
+	switch(abortJob){
+		case '0':
+			printProcessMetrics("TRANSFORMACIÓN", masterMetrics.transformation);
+			printProcessMetrics("REDUCCIÓN LOCAL", masterMetrics.localReduction);
+			printProcessMetrics("REDUCCIÓN GLOBAL", masterMetrics.globalReduction);
+			printProcessMetrics("ALMACENADO FINAL",masterMetrics.finalStorage);
+			break;
+		case 'T':
+			printProcessMetrics("TRANSFORMACIÓN", masterMetrics.transformation);
+			printErrorProcess("TRANSFORMACIÓN");
+			printErrorProcess("REDUCCIÓN LOCAL");
+			printErrorProcess("REDUCCIÓN GLOBAL");
+			printErrorProcess("ALMACENADO FINAL");
+			break;
+		case 'L':
+			printProcessMetrics("TRANSFORMACIÓN", masterMetrics.transformation);
+			printErrorProcess("REDUCCIÓN LOCAL");
+			printErrorProcess("REDUCCIÓN GLOBAL");
+			printErrorProcess("ALMACENADO FINAL");
+			break;
+		case 'G':
+			printProcessMetrics("TRANSFORMACIÓN", masterMetrics.transformation);
+			printProcessMetrics("REDUCCIÓN LOCAL", masterMetrics.localReduction);
+			printErrorProcess("REDUCCIÓN GLOBAL");
+			printErrorProcess("ALMACENADO FINAL");
+			break;
+		case 'S':
+			printProcessMetrics("TRANSFORMACIÓN", masterMetrics.transformation);
+			printProcessMetrics("REDUCCIÓN LOCAL", masterMetrics.localReduction);
+			printProcessMetrics("REDUCCIÓN GLOBAL", masterMetrics.globalReduction);
+			printErrorProcess("ALMACENADO FINAL");
+			break;
+	}
+	log_trace(logger,"Impresión de métricas finalizada");
 }

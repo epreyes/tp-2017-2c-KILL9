@@ -144,3 +144,9 @@ int sendErrorToYama(char opCode, int node){
 		return 0;
 	}
 };
+
+void increaseMetricsError(int* metric){
+	pthread_mutex_lock(&errors);
+	metric[0]++;
+	pthread_mutex_unlock(&errors);
+};

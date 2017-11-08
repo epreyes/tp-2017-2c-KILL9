@@ -129,7 +129,7 @@ int sendNodeRequest(dataThread_GR* datos){
 
 ////////////////////////////////////GLOBAL_REDUCTION/////////////////////////////////////////
 
-int runGlobalReduction(metrics *masterMetrics){
+int runGlobalReduction(){
 	struct timeval gr_start,gr_end;
 	gettimeofday(&gr_start,NULL);
 	int totalRecords=0, recordCounter=0, brothersCounter=0;
@@ -181,7 +181,7 @@ int runGlobalReduction(metrics *masterMetrics){
 
 //METRICS================================================================
 	gettimeofday(&gr_end,NULL);
-	masterMetrics->globalReduction.runTime = timediff(&gr_end,&gr_start);
+	masterMetrics.globalReduction.runTime = timediff(&gr_end,&gr_start);
 
 	log_trace(logger,"Reducción global Finalizada");
 	return EXIT_SUCCESS;

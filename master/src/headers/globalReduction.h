@@ -29,7 +29,7 @@ typedef struct dataThread_GR{
 }dataThread_GR;
 
 
-int runGlobalReduction(metrics *masterMetrics);
+int runGlobalReduction();
 
 
 #endif /* HEADERS_GLOBALREDUCTION_H_ */

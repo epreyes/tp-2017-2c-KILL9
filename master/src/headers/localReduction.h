@@ -26,6 +26,6 @@ local_rs* sendLRequest();
 
 void *runLocalRedThread(void* data);
 
-int runLocalReduction(metrics *masterMetrics);
+int runLocalReduction();
 
 #endif /* HEADERS_LOCALREDUCTION_H_ */

@@ -128,7 +128,7 @@ void *runLocalRedThread(void* data){
 
 //=============MAIN===================================//
 
-int runLocalReduction(metrics* masterMetrics){
+int runLocalReduction(){
 	struct timeval lr_start,lr_end;
 	gettimeofday(&lr_start,NULL);
 	int tmpsCounter=0,recordCounter=0, nodeCounter=0, threadIndex=0, nodo, totalRecords;
@@ -200,6 +200,6 @@ int runLocalReduction(metrics* masterMetrics){
 	log_trace(logger,"REDUCCION LOCAL FINALIZADA");
 	free(yamaAnswer);
 	gettimeofday(&lr_end,NULL);
-	masterMetrics->localReduction.runTime = timediff(&lr_end,&lr_start);
+	masterMetrics.localReduction.runTime = timediff(&lr_end,&lr_start);
 	return EXIT_SUCCESS;
 }

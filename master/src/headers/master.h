@@ -53,7 +53,7 @@ typedef struct procMetrics{
 }procMetrics;
 
 
-typedef struct metrics{
+typedef struct{
 	double runTime;
 	procMetrics transformation;
 	procMetrics localReduction;
@@ -61,8 +61,16 @@ typedef struct metrics{
 	procMetrics finalStorage;
 }metrics;
 
+//==========METRICS==========//
+metrics masterMetrics;
+pthread_mutex_t parallelTasks;
+pthread_mutex_t runTime;
+pthread_mutex_t errors;
+
 //==========OTHERS===========//
 char replanification;
+char abortJob;
+int parallelAux;
 //===========================//
 
 #endif /* MASTER_H_ */
