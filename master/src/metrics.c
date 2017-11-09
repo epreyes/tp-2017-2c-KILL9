@@ -55,7 +55,6 @@ void printMetrics(metrics masterMetrics){
 			printProcessMetrics("ALMACENADO FINAL",masterMetrics.finalStorage);
 			break;
 		case 'T':
-			printProcessMetrics("TRANSFORMACIÓN", masterMetrics.transformation);
 			printErrorProcess("TRANSFORMACIÓN");
 			printErrorProcess("REDUCCIÓN LOCAL");
 			printErrorProcess("REDUCCIÓN GLOBAL");

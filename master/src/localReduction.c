@@ -46,9 +46,12 @@ local_rs* sendLRequest(){
 	log_info(logger, "Datos de reducción local obtenidos de YAMA");
 	return yamaAnswer;
 }
-
-
-
+//=============REPORT_ERROR======================================//
+void reportError(int node){
+	sendErrorToYama('L',node);
+	abortJob = 'L';
+	increaseMetricsError(&(masterMetrics.localReduction.errors));
+}
 //=============THREAD_ACTION===================================//
 
 void *runLocalRedThread(void* data){
@@ -77,7 +80,7 @@ void *runLocalRedThread(void* data){
 		counter+=sizeof(int);
 	memcpy(buffer+counter,(nodeData->file),nodeData->fileSize);						//Contenido delscript de Reduccion
 		counter+=nodeData->fileSize;
-	memcpy(buffer+counter,nodeData->rl_tmp,28);							//nombre el TMP de reducción
+	memcpy(buffer+counter,nodeData->rl_tmp,28);										//nombre el TMP de reducción
 		counter+=28;
 	memcpy(buffer+counter,&(nodeData->tmpsQuantity),sizeof(int));					//cantidad de TMPs a procesar
 		counter+=sizeof(int);
@@ -87,51 +90,67 @@ void *runLocalRedThread(void* data){
 	}
 	counter+=(datos->tmpsCounter)*28;
 
-//ENVÍO A WORKER (Transform ya abrió el socket)
-
+//ENVÍO A WORKER
 	log_info(logger,"Estableciendo conexión con nodo %d",datos->node);
 	if(send(nodeSockets[datos->node],buffer,bufferSize,0)<0){
-		log_error(logger,"No se pudo conectar con nodo %d (%s:%d)", datos->node, datos->ip, datos->port);
-		sendErrorToYama('L',datos->node);
-		exit(1); //Ver como hacer para liberar memoria y cerrar hilos
+		log_error(logger,"Nodo %d: Desconectado (%s:%d)", datos->node, datos->ip, datos->port);
+		reportError(datos->node);
+		return NULL;
 	};
-
-	log_info(logger,"Datos enviados a Nodo %d", datos->node);
+	log_info(logger,"Nodo %d: Datos de reducción local enviados", datos->node);
+	log_trace(logger,"Nodo %d: Reducción local iniciada", datos->node);
 	free(nodeData->file);
 	free(nodeData);
 	free(buffer);
+
+//METRICS
+	gettimeofday(&(datos->metrics.start),NULL);
+
+	pthread_mutex_lock(&parallelTasks);
+		parallelAux+=datos->tmpsCounter;
+		if(masterMetrics.localReduction.parallelTask < parallelAux) masterMetrics.localReduction.parallelTask= parallelAux;
+	pthread_mutex_unlock(&parallelTasks);
 
 //ESPERO RESPUESTA
 	log_info(logger,"Esperando respuesta de nodo %d",datos->node);
 	rl_node_rs* answer = malloc(sizeof(rl_node_rs));
 	readBuffer(nodeSockets[datos->node], sizeof(char), &(answer->result));
 	readBuffer(nodeSockets[datos->node], sizeof(int), &(answer->runTime));
-	//printf("RESULT:%cRUNTIME:%d\n",answer->result,answer->runTime);
+
+	pthread_mutex_lock(&parallelTasks);
+		parallelAux--;
+	pthread_mutex_unlock(&parallelTasks);
+
 //RESPONDO A YAMA
-	log_trace(logger,"Nodo %d: Reducción Local Finalizada", datos->node);
 	if(answer->result == 'O'){
 		log_info(logger,"Comunicando a YAMA finalización de Reducción Local en nodo %d",datos->node);
 		sendOkToYama('L',0,datos->node);
 	}else{
-		log_error(logger,"No fue posible realizar la Reducción Local en el nodo %d",datos->node);
-		log_info(logger, "Se informa el error a YAMA");
-		sendErrorToYama('L',datos->node);
+		log_error(logger,"Nodo %d: No es posible realizar la Reducción Local",datos->node);
+		free(answer);
+		reportError(datos->node);
+		return NULL;
 	}
+	free(answer);
 
+	gettimeofday(&(datos->metrics.end),NULL);
+	pthread_mutex_lock(&runTime);
+		masterMetrics.localReduction.runTime+= timediff(&(datos->metrics.end),&(datos->metrics.start));
+	pthread_mutex_unlock(&runTime);
+
+	log_trace(logger,"Nodo %d: Reducción Local Finalizada (%.6gms)", datos->node, timediff(&(datos->metrics.end),&(datos->metrics.start)));
 	/*
 	printf("hilo iniciado:%d\t ip:%s\t port:%d\t reduciónFile:%s\n",datos[0].node,datos[0].ip,datos[0].port,datos[0].rl_tmp);
 	for (i = 0; i <= (datos[0].tmpsCounter); ++i) printf("\t nodo:%d \t local:%s\n", datos[0].node, datos[0].tr_tmps[i]);
 	*/
-
 	return NULL;
 }
 
 //=============MAIN===================================//
 
 int runLocalReduction(){
-	struct timeval lr_start,lr_end;
-	gettimeofday(&lr_start,NULL);
 	int tmpsCounter=0,recordCounter=0, nodeCounter=0, threadIndex=0, nodo, totalRecords;
+	parallelAux = 0;
 	tr_tmp* tr_tmps = NULL;
 	pthread_t *threads = NULL; 						//creo array de hilos dinámico
 	dataThread_LR *dataThreads = NULL;				//creo array de params para el hilo
@@ -148,8 +167,8 @@ int runLocalReduction(){
 
 	int i=0;
 	for(i=0;i<(yamaAnswer->blocksQuantity);++i)
-	printf("nodo:%d\ttr_tmp:%s\tip:%s\t:port:%d\n", items[i].nodo, items[i].tr_tmp,items[i].ip,items[i].port);
 	/*
+	printf("nodo:%d\ttr_tmp:%s\tip:%s\t:port:%d\n", items[i].nodo, items[i].tr_tmp,items[i].ip,items[i].port);
 	*/
 
 	while(recordCounter<totalRecords){
@@ -178,14 +197,16 @@ int runLocalReduction(){
 	}
 
 //EJECUTO HILOS DE WORKERS
-	for(threadIndex=0;threadIndex<nodeCounter;++threadIndex){
-		usleep(10000);
+	for(threadIndex=0;threadIndex<nodeCounter;++threadIndex)
 		pthread_create(&threads[threadIndex],NULL,(void*) runLocalRedThread, (void*) &dataThreads[threadIndex]);
-	}
 
 //JOINEO LOS HILOS
 	for(threadIndex=0;threadIndex<nodeCounter;++threadIndex)
 		pthread_join(threads[threadIndex],NULL);
+
+//MÉTRICAS
+	masterMetrics.localReduction.tasks = totalRecords;
+	masterMetrics.localReduction.runTime = (masterMetrics.localReduction.runTime)/totalRecords;
 
 //LIBERO MEMORIA
 	int var=0;
@@ -195,11 +216,10 @@ int runLocalReduction(){
 	free(tr_tmps);
 	free(dataThreads);
 	free(threads);
-
 	free(items);
-	log_trace(logger,"REDUCCION LOCAL FINALIZADA");
 	free(yamaAnswer);
-	gettimeofday(&lr_end,NULL);
-	masterMetrics.localReduction.runTime = timediff(&lr_end,&lr_start);
+
+//FINALIZO
+	(abortJob!='L')?log_trace(logger, "REDUCCIÓN LOCAL FINALIZADA"):log_error(logger, "REDUCCIÓN LOCAL ABORTADA");
 	return EXIT_SUCCESS;
 }

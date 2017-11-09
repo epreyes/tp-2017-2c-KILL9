@@ -66,7 +66,6 @@ int sendDataToWorker(store_rs* datos, char* fileName){
 		sendErrorToYama('S',datos->nodo);
 		masterMetrics.finalStorage.errors++;
 		free(buffer);
-		log_error(logger, ">>JOB ABORTADO<<");
 		return 1;
 	};
 	free(buffer);
@@ -89,13 +88,11 @@ int sendDataToWorker(store_rs* datos, char* fileName){
 		log_error(logger,"El nodo %d no pudo realizar el almacenado final",datos->nodo);
 		log_info(logger, "Se informa el error a YAMA ");
 		sendErrorToYama('S',datos->nodo);
-		log_error(logger, ">>JOB ABORTADO<<");
 		masterMetrics.finalStorage.errors++;
 		free(answer);
 		return 1;
 	}
 }
-
 
 
 int saveResult(char* fileName){
@@ -113,6 +110,8 @@ int saveResult(char* fileName){
 	free(yamaAnswer);
 	gettimeofday(&af_end,NULL);
 	masterMetrics.finalStorage.runTime = timediff(&af_end,&af_start);
+
+	(abortJob=='0')?log_trace(logger, "ALMACENADO FINALIZADO"):log_error(logger, "ALMACENADO ABORTADA");
 
 	return EXIT_SUCCESS;
 }

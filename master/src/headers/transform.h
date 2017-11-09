@@ -11,12 +11,6 @@
 #include "master.h"
 #include "utils.h"
 
-//=====METRICS======
-typedef struct {
-	struct timeval start;
-	struct timeval end;
-}threadMetrics;
-
 typedef struct dataThread_TR{
 	int				node;
 	char 			ip[16];

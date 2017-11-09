@@ -44,6 +44,10 @@ FILE* script_transform;
 FILE* script_reduction;
 
 //=========METRICS TAD=========//
+typedef struct {
+	struct timeval start;
+	struct timeval end;
+}threadMetrics;
 
 typedef struct procMetrics{
 	double runTime;
@@ -51,7 +55,6 @@ typedef struct procMetrics{
 	int parallelTask;
 	int tasks;
 }procMetrics;
-
 
 typedef struct{
 	double runTime;

@@ -146,7 +146,7 @@ void *runTransformThread(void* data){
 			log_info(logger,"bloque %d del nodo %d transformado",datos->blocks[i].pos,datos->node);
 			sendOkToYama('T',answer->block,datos->node);
 		}else{
-			log_info(logger,"bloque %d del nodo %d no se pudo transformar",datos->blocks[i].pos,datos->node);
+			log_warning(logger,"bloque %d del nodo %d no se pudo transformar",datos->blocks[i].pos,datos->node);
 			checkReplanification(datos->node);
 			free(answer);
 			return NULL;
@@ -229,6 +229,7 @@ int transformFile(char* filename){
 	for(threadIndex=0;threadIndex<nodeCounter;++threadIndex)
 		pthread_join(threads[threadIndex],NULL);
 
+//MÉTRICAS
 	masterMetrics.transformation.tasks = totalRecords;
 	masterMetrics.transformation.runTime = (masterMetrics.transformation.runTime)/totalRecords;
 
