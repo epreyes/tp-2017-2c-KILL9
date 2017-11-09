@@ -31,6 +31,33 @@ char* obtainNodeFile(rg_node datos){
 	return generateFile(nodeAnswer.file, 'G',socket_nodes[datos.node]);
 }
 
+//======PASO ARCHIVO TMP A OTRO WORKER================
+void sendNodeFile(char* fileName){
+//RECUPERO ARCHIVO SOLICITADO
+	char* fileContent = NULL;
+	strcpy(fileContent, serializeFile(fileName));
+
+//PREPARO PAQUETE
+	nodeData_rs* answer = malloc(sizeof(nodeData_rs));
+	answer->code = 'R';
+	answer->fileSize = strlen(fileContent)+1;
+	answer->file = malloc(answer->fileSize);
+	strcpy(answer->file, fileContent);
+
+//SERIALIZO RESPUESTA
+	int bufferSize = sizeof(char)+sizeof(int)+(answer->fileSize);
+	void* buffer = malloc(bufferSize);
+	memcpy(buffer,&(answer->code),sizeof(char));
+	memcpy(buffer+sizeof(char),&(answer->fileSize),sizeof(int));
+	memcpy(buffer+sizeof(char)+sizeof(int),answer->file,answer->fileSize);
+
+//LIBERO MEMORIA
+	free(answer->file);
+	free(answer);
+	free(buffer);
+}
+
+//========RESPONDO A MASTER================
 void answerMaster(){
 	int bufferSize = sizeof(char)+sizeof(int);
 	rg_node_rs* answer = malloc(sizeof(rg_node_rs));
@@ -73,7 +100,6 @@ void globalReduction(){
 //OBTENIENDO DATOS DE LOS OTROS NODOS
 	readBuffer(socket_master,sizeof(int),&(datos.nodesQuantity));	//cantidad de NODOS
 	datos.nodes = malloc(sizeof(rg_node)*datos.nodesQuantity);		//
-
 
 	for(i=0; i<datos.nodesQuantity; ++i){
 		readBuffer(socket_master,sizeof(int),&(datos.nodes[i].node));

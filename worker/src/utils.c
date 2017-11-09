@@ -6,14 +6,6 @@
  */
 
 #include "headers/utils.h"
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <stdarg.h>
-
-
 
 void generateTempsFolder(){
 	system("mkdir -p tmp");
@@ -56,7 +48,7 @@ void loadConfigs(){
 
 
 void createLoggers(){
-	char* LOG_PATH = "./logs/worker.log";
+	char* LOG_PATH = "../logs/worker.log";
 	logger = log_create(LOG_PATH,"worker",1,LOG_LEVEL_TRACE);
 	log_info(logger, "Logger generado");
 }

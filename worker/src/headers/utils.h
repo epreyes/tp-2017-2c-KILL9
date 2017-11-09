@@ -9,6 +9,12 @@
 #define HEADERS_UTILS_H_
 
 #include "worker.h"
+#include <sys/stat.h>
+#include <sys/mman.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <stdarg.h>
 
 void generateTempsFolder();																//genera directorio de temporales
 char* regenerateScript(char* fileContent, FILE* script, char operation, int socket); 	//recibo el string y genero el archivo
