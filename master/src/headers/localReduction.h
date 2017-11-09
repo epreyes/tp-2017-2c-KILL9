@@ -29,4 +29,6 @@ void *runLocalRedThread(void* data);
 
 int runLocalReduction();
 
+void reportError(int node);
+
 #endif /* HEADERS_LOCALREDUCTION_H_ */

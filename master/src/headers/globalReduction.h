@@ -19,17 +19,19 @@ typedef struct dataNodes{
 }dataNodes;
 
 typedef struct dataThread_GR{
-	int			leadNode;
-	char 		leadIp[16];
-	int			leadPort;
-	char		rl_tmp[28];
-	char		rg_tmp[24];
-	dataNodes* 	brothersData;
-	int			brothersCount;
+	int				leadNode;
+	char 			leadIp[16];
+	int				leadPort;
+	char			rl_tmp[28];
+	char			rg_tmp[24];
+	dataNodes* 		brothersData;
+	int				brothersCount;
+	threadMetrics	metrics;
 }dataThread_GR;
 
 
 int runGlobalReduction();
 
+void reportGRError(int node);
 
 #endif /* HEADERS_GLOBALREDUCTION_H_ */

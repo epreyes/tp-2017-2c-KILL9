@@ -24,6 +24,9 @@ local_rs* sendLRequest(){
 	log_info(logger,"Envio solicitud de Reducción Local a YAMA");
 	if(send(masterSocket,buffer,sizeof(char),0)<0){
 		log_error(logger,"No se pudo conectar a YAMA");
+		abortJob = 'L';
+		free(buffer);
+		return NULL;
 	};
 	free(buffer);
 
@@ -158,6 +161,12 @@ int runLocalReduction(){
 
 	//Obtengo respuesta de YAMA
 	yamaAnswer = sendLRequest();
+
+	if(!yamaAnswer){
+		log_error(logger, "REDUCCIÓN LOCAL ABORTADA");
+		return EXIT_FAILURE;
+	};
+
 	totalRecords = yamaAnswer->blocksQuantity;
 
 	//Obtengo datos de los bloques
@@ -220,6 +229,11 @@ int runLocalReduction(){
 	free(yamaAnswer);
 
 //FINALIZO
-	(abortJob!='L')?log_trace(logger, "REDUCCIÓN LOCAL FINALIZADA"):log_error(logger, "REDUCCIÓN LOCAL ABORTADA");
-	return EXIT_SUCCESS;
+	if(abortJob=='0'){
+		log_trace(logger, "REDUCCIÓN LOCAL FINALIZADA");
+		return EXIT_SUCCESS;
+	}else{
+		log_error(logger, "REDUCCIÓN LOCAL ABORTADA");
+		return EXIT_FAILURE;
+	}
 }

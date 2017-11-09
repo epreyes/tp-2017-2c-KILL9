@@ -16,13 +16,16 @@ store_rs* sendSRequest(){
 //SERIALIZO
 	void* buffer = malloc(sizeof(char));
 	memcpy(buffer,&(data->code),sizeof(char));
+	free(data);
 //ENVIO REQUEST
 	log_info(logger,"Envio solicitud de almacenamiento final a YAMA");
 	if(send(masterSocket,buffer,sizeof(char),0)<0){
 		log_error(logger, "YAMA se ha desconectado");
+		abortJob = 'S';
+		free(buffer);
+		return NULL;
 	};
 	free(buffer);
-	free(data);
 
 //RECIBO RESPONSE
 	store_rs* yamaAnswer=malloc(sizeof(store_rs));
@@ -65,6 +68,7 @@ int sendDataToWorker(store_rs* datos, char* fileName){
 	if(send(nodeSockets[datos->nodo],buffer,bufferSize,0)<0){
 		sendErrorToYama('S',datos->nodo);
 		masterMetrics.finalStorage.errors++;
+		abortJob='S';
 		free(buffer);
 		return 1;
 	};
@@ -89,6 +93,7 @@ int sendDataToWorker(store_rs* datos, char* fileName){
 		log_info(logger, "Se informa el error a YAMA ");
 		sendErrorToYama('S',datos->nodo);
 		masterMetrics.finalStorage.errors++;
+		abortJob='S';
 		free(answer);
 		return 1;
 	}
@@ -104,6 +109,12 @@ int saveResult(char* fileName){
 
 	store_rs* yamaAnswer=NULL;
 	yamaAnswer = sendSRequest();
+
+	if(!yamaAnswer){
+		log_error(logger, "ALMACENADO FINAL ABORTADO");
+		return EXIT_FAILURE;
+	};
+
 	sendDataToWorker(yamaAnswer, fileName);
 
 //GUARDO MÉTRICA
@@ -111,7 +122,11 @@ int saveResult(char* fileName){
 	gettimeofday(&af_end,NULL);
 	masterMetrics.finalStorage.runTime = timediff(&af_end,&af_start);
 
-	(abortJob=='0')?log_trace(logger, "ALMACENADO FINALIZADO"):log_error(logger, "ALMACENADO ABORTADA");
-
-	return EXIT_SUCCESS;
+	if(abortJob=='0'){
+		log_trace(logger, "ALMACENAMIENTO FINALIZADO");
+		return EXIT_SUCCESS;
+	}else{
+		log_error(logger, "ALMACENAIENTO ABORTADO");
+		return EXIT_FAILURE;
+	}
 }

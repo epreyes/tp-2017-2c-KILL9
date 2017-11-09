@@ -29,7 +29,12 @@ transform_rs* sendTRequest(char* fileName){
 
 //ENVIO
 	log_info(logger, "Solicitando datos de transformación a YAMA");
-	send(masterSocket,buffer,bufferSize,0);
+	if(send(masterSocket,buffer,bufferSize,0)<0){
+		log_error(logger,"No se pudo conectar a YAMA");
+		abortJob = 'T';
+		free(buffer);
+		return NULL;
+	};
 	free(buffer);
 
 //ESPERANDO RESPUESTA DE YAMA
@@ -185,6 +190,12 @@ int transformFile(char* filename){
 	int totalRecords;
 
 	yamaAnswer=sendTRequest(filename);
+
+	if(!yamaAnswer){
+		log_error(logger, "TRANSFORMACIÓN ABORTADA");
+		return EXIT_FAILURE;
+	};
+
 	totalRecords = yamaAnswer->bocksQuantity;
 
 	int sizeBlocks = sizeof(tr_datos)*totalRecords;
@@ -247,6 +258,11 @@ int transformFile(char* filename){
 //EJECUTO REPLANIFICACIÓN--------
 	if(replanification == 'T') transformFile(filename);
 
-	(abortJob!='T')?log_trace(logger, "TRANSFORMACIÓN FINALIZADA"):log_error(logger, "TRANSFORMACIÓN ABORTADA");
-	return EXIT_SUCCESS;
+	if(abortJob=='0'){
+		log_trace(logger, "TRANSFORMACIÓN FINALIZADA");
+		return EXIT_SUCCESS;
+	}else{
+		log_error(logger, "TRANSFORMACIÓN ABORTADA");
+		return EXIT_FAILURE;
+	}
 }
