@@ -17,13 +17,12 @@ void* getFileSystemInfo(char* name) {
 	/*me conecto al filesystem*/
 	Client fs_client = connectClient(fs_ip, fs_port);
 
+	log_info(yama->log, "Succesfull FileSystem connection.");
 	void* fsInfo = NULL;
 
 	/*creo el buffer que contendra la solicitud al filesystem*/
 
 	name = string_substring_from(name, 8);
-
-	printf("\nEnvio el archivo %s\n", name);
 
 	int buffersize = sizeof(int) + sizeof(char) + sizeof(int) + strlen(name);
 
@@ -60,15 +59,15 @@ void* getFileSystemInfo(char* name) {
 					memcpy(fsInfo, &infoSize, sizeof(int));
 					memcpy(fsInfo + sizeof(int), buffer, infoSize);
 				} else {
-					perror("Recibing payload from FileSystem...");
+					log_error(yama->log, "Error ecibing payload from FileSystem...");
 				}
 
 			}
 		} else {
-			perror("No existe el archivo solicitado...");
+			log_error(yama->log, "File requested does not exist.");
 		}
 	} else {
-		perror("Sending");
+		log_error(yama->log, "Error in filesystem connection.");
 	}
 	disconnectClient(&fs_client);
 	addToNodeList(fsInfo);
@@ -111,16 +110,20 @@ elem_info_archivo* getFileInfo(int master) {
 	fileName[nameSize] = '\0';
 	free(buff);
 
+	log_info(yama->log, gettingFileInfoMsg(fileName, master));
+
 	int fileIndex = findFile(fileName);
 
 	/*Si ya tengo la info del archivo, en la lista, la saco de ahi.*/
 	if (fileIndex >= 0) {
+		log_info(yama->log, gettingFileInfoFromMsg("cache", master));
 		elem_info_archivo* fileInfo = list_get(yama->tabla_info_archivos,
 				fileIndex);
 		info = fileInfo;
 	}
 	/*Si no tengo la informacion en la tabla, se la pido al filesystem*/
 	else {
+		log_info(yama->log, gettingFileInfoFromMsg("filesystem", master));
 		void* fsInfo = getFileSystemInfo(fileName);
 		elem_info_archivo* fileInfo = malloc(sizeof(elem_info_archivo));
 		strcpy(fileInfo->filename, fileName);

@@ -19,6 +19,8 @@
 #include <tplibraries/protocol/master_yama.h>
 #include <tplibraries/protocol/filesystem_yama.h>
 
+#include "messages.h"
+
 static char* CONFIG_PATH = "./config/yamaConfig.properties";
 static char* LOG_PATH = "./log/yama.log";
 

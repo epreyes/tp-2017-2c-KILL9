@@ -16,8 +16,8 @@ t_config* getConfig() {
 	if (fileExist(CONFIG_PATH)) {
 		config = config_create(CONFIG_PATH);
 	} else {
-		perror("Missing configuration file.");
-		exit(1);
+		log_error(yama->log, "Missing configuration File.");
+		printf("\nMissing configuration file. Add a configuration file and reload it using SIGURS1 signal.\n");
 	}
 	return config;
 }
@@ -63,7 +63,7 @@ void init() {
 	yama->yama_server = startServer(
 			config_get_int_value(yama->config, "YAMA_PUERTO"));
 
-	log_trace(yama->log, "YAMA was succesfully configured.");
+	log_info(yama->log, "YAMA was succesfully configured.");
 	yama->jobs = 0;
 
 	viewConfig();
@@ -78,21 +78,24 @@ void* getResponse(int master, char request) {
  * si no, se la pido al filesystem.
  * */
 void* processOperation(int master, char op) {
-
 	void* response = NULL;
 
 	switch (op) {
 	case 'T':
+		log_info(yama->log, processOperationMsg(master, op));
 		response = processTransformation(master);
 		//viewTransformationResponse(response);
 		break;
 	case 'L':
+		log_info(yama->log, processOperationMsg(master, op));
 		response = processLocalReduction(master);
 		break;
 	case 'G':
+		log_info(yama->log, processOperationMsg(master, op));
 		response = processGlobalReduction(master);
 		break;
 	case 'S':
+		log_info(yama->log, processOperationMsg(master, op));
 		response = processFinalStore(master);
 		break;
 	case 'E':
@@ -106,7 +109,7 @@ void* processOperation(int master, char op) {
 		//viewStateTable();
 		break;
 	default:
-		response = invalidRequest(master, "Error: Operacion invalida.");
+		response = invalidRequest(master, "Error: Invalid operation.");
 	}
 
 	return response;

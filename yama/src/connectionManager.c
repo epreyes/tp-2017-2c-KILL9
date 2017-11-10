@@ -71,10 +71,7 @@ int sendResponse(int master, void* masterRS) {
 
 	int bytesSent = send(master, masterRS, getSizeToSend(masterRS), 0);
 	if (bytesSent > 0) {
-		char message[30];
-		snprintf(message, sizeof(message), "%d bytes sent to master id %d",
-				bytesSent, master);
-		log_trace(yama->log, message);
+		log_trace(yama->log, sendResponseMsg(master, bytesSent, masterRS));
 		free(masterRS);
 	} else {
 		perror("Send response to master.");
@@ -88,10 +85,10 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 	/* Si recibo -1 o 0, el cliente se desconecto o hubo un error */
 	if (nbytes <= 0) {
 		if (nbytes == 0) {
-			log_trace(yama->log, "Master disconnected.");
+			log_info(yama->log, masterDisconnectedMsg(socket));
 		} else {
-			log_trace(yama->log, "Error getting data from Master");
-			perror("recv");
+			log_error(yama->log, "Error getting data from Master.");
+			printf( "\nError getting data from Master.\n" );
 		}
 		/* si hubo error, desconecto el socket y lo saco de la lista de monitoreo */
 		close(socket);
@@ -99,8 +96,6 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 	}
 	/* si recibi bytes, proceso el request */
 	else {
-		log_trace(yama->log, "Getting Master message...");
-
 		//proceso el request y obtengo la respuesta
 		void* response = getResponse(socket, *(char*) request);
 
@@ -135,7 +130,8 @@ void exploreActivity(fd_set* mastersListTemp, fd_set* mastersList) {
 			if (index == yama->yama_server.server_socket) {
 				client = acceptMasterConnection(&(yama->yama_server),
 						&(*mastersList), hightSd);
-				log_trace(yama->log, "Master process connected!");
+
+				log_trace(yama->log, masterConnectedMsg(client.socket_id));
 			}
 			/* Si hubo actividad en otro socket, recibo el mensage */
 			else {
@@ -148,7 +144,7 @@ void exploreActivity(fd_set* mastersListTemp, fd_set* mastersList) {
 void waitMastersConnections() {
 
 	if (yama->yama_server.status > -1) {
-		log_trace(yama->log, "YAMA ready to accept Masters connections");
+		log_info(yama->log, "YAMA ready to recive Master's requests...");
 
 		/* creo las listas de sockets entrantes que seran monitoreadas */
 		fd_set mastersList;
@@ -167,7 +163,7 @@ void waitMastersConnections() {
 					&mastersListTemp, NULL, NULL, NULL);
 
 			if (activity == -1) {
-				log_trace(yama->log, "Error monitoring current connections.");
+				log_error(yama->log, "Error monitoring current connections.");
 				perror("select");
 				exit(1);
 			} else {
