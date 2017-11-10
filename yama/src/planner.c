@@ -186,8 +186,8 @@ tr_datos* doPlanning(block_info* blockRecived, int master) {
 
 	if( yama->debug ){
 		log_info(yama->log, "----------------- Planificacion -----------------");
-		log_info(yama->log, printPlannigLogInfo("Clock", yama->clock));
-		log_info(yama->log, printPlannigLogInfo("Planing Delay", planigDelay));
+		log_info(yama->log, "Clock = %d", yama->clock);
+		log_info(yama->log, "Planing Delay = %d", planigDelay);
 		log_info(yama->log, printNodeTable());
 	}
 

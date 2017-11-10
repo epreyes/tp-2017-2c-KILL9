@@ -25,7 +25,8 @@ void viewTransformationResponse(void* response){
 }
 
 void* processTransformation(int master) {
-	log_info(yama->log, startTransformationMsg(master));
+	log_info(yama->log, "Atendiendo solicitud de Transformación. Job %d.",
+			yama->jobs + master);
 	/*me traigo la informacion del archivo.*/
 	elem_info_archivo* fsInfo = getFileInfo(master);
 

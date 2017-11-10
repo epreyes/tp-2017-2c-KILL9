@@ -110,20 +110,21 @@ elem_info_archivo* getFileInfo(int master) {
 	fileName[nameSize] = '\0';
 	free(buff);
 
-	log_info(yama->log, gettingFileInfoMsg(fileName, master));
+	log_info(yama->log, "Solicitando informacion del archivo: %s. Job %d.", fileName,
+			yama->jobs + master);
 
 	int fileIndex = findFile(fileName);
 
 	/*Si ya tengo la info del archivo, en la lista, la saco de ahi.*/
 	if (fileIndex >= 0) {
-		log_info(yama->log, gettingFileInfoFromMsg("cache", master));
+		log_info(yama->log, "Obteniendo informacion de cache. Job %d.", yama->jobs + master);
 		elem_info_archivo* fileInfo = list_get(yama->tabla_info_archivos,
 				fileIndex);
 		info = fileInfo;
 	}
 	/*Si no tengo la informacion en la tabla, se la pido al filesystem*/
 	else {
-		log_info(yama->log, gettingFileInfoFromMsg("filesystem", master));
+		log_info(yama->log, "Obteniendo informacion del filesystem. Job %d.", yama->jobs + master);
 		void* fsInfo = getFileSystemInfo(fileName);
 		elem_info_archivo* fileInfo = malloc(sizeof(elem_info_archivo));
 		strcpy(fileInfo->filename, fileName);

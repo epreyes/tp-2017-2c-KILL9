@@ -17,7 +17,8 @@ t_config* getConfig() {
 		config = config_create(CONFIG_PATH);
 	} else {
 		log_error(yama->log, "Missing configuration File.");
-		printf("\nMissing configuration file. Add a configuration file and reload it using SIGURS1 signal.\n");
+		printf(
+				"\nMissing configuration file. Add a configuration file and reload it using SIGURS1 signal.\n");
 	}
 	return config;
 }
@@ -26,10 +27,15 @@ t_log* getLog() {
 	return log_create(LOG_PATH, "YAMA", 1, LOG_LEVEL_TRACE);
 }
 
-void viewConfig(){
-	printf("\nCONFIGURACION:\n\nPS_IP: %s\n FS_PUERTO: %d\n RETARDO_PLANIFICACION: %d\n ALGORITMO_BALANCEO: %s\n YAMA_PUERTO: %d\n NODE_AVAIL: %d\n",
-			config_get_string_value(yama->config, "FS_IP"), config_get_int_value(yama->config, "FS_PUERTO"), config_get_int_value(yama->config, "RETARDO_PLANIFICACION"),
-			config_get_string_value(yama->config, "ALGORITMO_BALANCEO"), config_get_int_value(yama->config, "YAMA_PUERTO"), config_get_int_value(yama->config, "NODE_AVAIL"));
+void viewConfig() {
+	printf(
+			"\nCONFIGURACION:\n\nPS_IP: %s\n FS_PUERTO: %d\n RETARDO_PLANIFICACION: %d\n ALGORITMO_BALANCEO: %s\n YAMA_PUERTO: %d\n NODE_AVAIL: %d\n",
+			config_get_string_value(yama->config, "FS_IP"),
+			config_get_int_value(yama->config, "FS_PUERTO"),
+			config_get_int_value(yama->config, "RETARDO_PLANIFICACION"),
+			config_get_string_value(yama->config, "ALGORITMO_BALANCEO"),
+			config_get_int_value(yama->config, "YAMA_PUERTO"),
+			config_get_int_value(yama->config, "NODE_AVAIL"));
 
 	yama->config;
 }
@@ -77,20 +83,24 @@ void* processOperation(int master, char op) {
 
 	switch (op) {
 	case 'T':
-		log_info(yama->log, processOperationMsg(master, op));
+		log_info(yama->log, "Solicitud de transformación. Job %d.",
+				yama->jobs + master);
 		response = processTransformation(master);
 		//viewTransformationResponse(response);
 		break;
 	case 'L':
-		log_info(yama->log, processOperationMsg(master, op));
+		log_info(yama->log, "Solicitud de Reducción Local. Job %d.",
+				yama->jobs + master);
 		response = processLocalReduction(master);
 		break;
 	case 'G':
-		log_info(yama->log, processOperationMsg(master, op));
+		log_info(yama->log, "Solicitud de Reducción Global. Job %d",
+				yama->jobs + master);
 		response = processGlobalReduction(master);
 		break;
 	case 'S':
-		log_info(yama->log, processOperationMsg(master, op));
+		log_info(yama->log, "Solicitud de Almacenado Final. Job %d.",
+				yama->jobs + master);
 		response = processFinalStore(master);
 		break;
 	case 'E':

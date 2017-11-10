@@ -40,6 +40,7 @@ void* processNodeError(int master) {
 	case 'L':
 	case 'G':
 		response = abortJob(master, *(int*) node, *(char*) op);
+		log_error(yama->log, "Se aborta job %d. Master %d.", yama->jobs+master, master);
 		break;
 	}
 	return response;

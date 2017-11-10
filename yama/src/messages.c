@@ -7,63 +7,6 @@
 
 #include "headers/yama.h"
 
-char* masterConnectedMsg(int master) {
-	char* msg;
-	asprintf(&msg, "Master %d conectado!", master);
-	return msg;
-}
-
-char* masterDisconnectedMsg(int master) {
-	char* msg;
-	asprintf(&msg, "Master %d desconectado!", master);
-	return msg;
-}
-
-char* processOperationMsg(int master, int op) {
-	char* msg;
-	switch (op) {
-	case 'T':
-		asprintf(&msg, "Solicitud de transformación. Job %d.",
-				yama->jobs + master);
-		break;
-	case 'L':
-		asprintf(&msg, "Solicitud de Reducción Local. Job %d.",
-				yama->jobs + master);
-		break;
-	case 'G':
-		asprintf(&msg, "Solicitud de Reducción Global. Job %d",
-				yama->jobs + master);
-		break;
-	case 'S':
-		asprintf(&msg, "Solicitud de Almacenado Final. Job %d.",
-				yama->jobs + master);
-		break;
-	}
-
-	return msg;
-}
-
-char* startTransformationMsg(int master) {
-	char* msg;
-	asprintf(&msg, "Atendiendo solicitud de Transformación. Job %d.",
-			yama->jobs + master);
-	return msg;
-}
-
-char* gettingFileInfoMsg(char* fileName, int master) {
-	char* msg;
-	asprintf(&msg, "Solicitando informacion del archivo: %s. Job %d.", fileName,
-			yama->jobs + master);
-	return msg;
-}
-
-char* gettingFileInfoFromMsg(char* from, int master) {
-	char* msg;
-	asprintf(&msg, "Obteniendo informacion de %s. Job %d.", from,
-			yama->jobs + master);
-	return msg;
-}
-
 char* sendResponseMsg(int master, int bytes, void* response) {
 	char op;
 	memcpy(&op, response, sizeof(char));

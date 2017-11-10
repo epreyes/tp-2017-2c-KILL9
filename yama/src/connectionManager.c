@@ -17,7 +17,6 @@ Client acceptMasterConnection(Server* server, fd_set* masterList, int hightSd) {
 			(struct sockaddr *) &client_address, &addrlen);
 
 	if (client > -1) {
-		log_trace(yama->log, "New Master connection");
 		FD_SET(client, &(*masterList));
 		if (client > hightSd) {
 			server->higherSocketDesc = client;
@@ -26,9 +25,7 @@ Client acceptMasterConnection(Server* server, fd_set* masterList, int hightSd) {
 		theClient.address = client_address;
 		yama->jobs++;
 	} else {
-		log_trace(yama->log, "Error trying to accept connection");
-		perror("Error trying to accept connection");
-		exit(1);
+		log_error(yama->log, "Error aceptando conexion.");
 	}
 
 	return theClient;
@@ -71,7 +68,7 @@ int sendResponse(int master, void* masterRS) {
 
 	int bytesSent = send(master, masterRS, getSizeToSend(masterRS), 0);
 	if (bytesSent > 0) {
-		log_trace(yama->log, sendResponseMsg(master, bytesSent, masterRS));
+		log_info(yama->log, sendResponseMsg(master, bytesSent, masterRS));
 		free(masterRS);
 	} else {
 		log_error(yama->log, "Error sending response to master.");
@@ -85,7 +82,7 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 	/* Si recibo -1 o 0, el cliente se desconecto o hubo un error */
 	if (nbytes <= 0) {
 		if (nbytes == 0) {
-			log_info(yama->log, masterDisconnectedMsg(socket));
+			log_info(yama->log, "Master %d desconectado!", socket);
 		} else {
 			log_error(yama->log, "Error al recibir mensajes de master.");
 		}
@@ -130,7 +127,7 @@ void exploreActivity(fd_set* mastersListTemp, fd_set* mastersList) {
 				client = acceptMasterConnection(&(yama->yama_server),
 						&(*mastersList), hightSd);
 
-				log_trace(yama->log, masterConnectedMsg(client.socket_id));
+				log_info(yama->log, "Master %d conectado!", client.socket_id);
 			}
 			/* Si hubo actividad en otro socket, recibo el mensage */
 			else {
@@ -143,7 +140,7 @@ void exploreActivity(fd_set* mastersListTemp, fd_set* mastersList) {
 void waitMastersConnections() {
 
 	if (yama->yama_server.status > -1) {
-		log_info(yama->log, "YAMA ready to recive Master's requests...");
+		log_info(yama->log, "Yama process (%d) ready to recive Master's requests.", getpid());
 
 		/* creo las listas de sockets entrantes que seran monitoreadas */
 		fd_set mastersList;
@@ -164,15 +161,14 @@ void waitMastersConnections() {
 				continue;
 			}
 			if (activity == -1) {
-				log_error(yama->log, "Error monitoring current connections.");
+				log_error(yama->log, "Error monitoreando conexiones.");
 			} else {
 				/* exploro la actividad reciente */
 				exploreActivity(&mastersListTemp, &mastersList);
 			}
 		}
 	} else {
-		log_trace(yama->log, "Error: Yama server is not ready.");
-		exit(1);
+		log_info(yama->log, "Error: El servidor de yama no esta listo.");
 	}
 
 }
