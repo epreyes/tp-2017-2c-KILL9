@@ -13,6 +13,8 @@
 #include "estructuras.h"
 #include "nodoUtils.h"
 
-int escribirArchivo(char* path, char* contenido, int tipo);
+int escribirArchivo(char* path, char* contenido, int tipo, int tamanio);
+char* leerArchivo(char* path);
+int copiarDesdeYamaALocal(char* origen, char* destino);
 
 #endif /* FS_COMANDOS_H_ */

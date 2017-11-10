@@ -85,7 +85,7 @@ typedef struct {
 typedef struct {
 	int nroBloque;   // nro del bloque del archivo (no se refiere a instancia)
 	sem_t semaforo; // Se usa para desbloquear en inicializacion una vez que se obtuvo una instancia del bloque en la conexion del nodo
-	int cantInstancias; // Cantidad de instancias del bloque del archivo (se utiliza en obtenerArchivoInfo para ver disponibilidad de archivo)
+	int cantInstancias; // Cantidad de instancias del bloque del archivo
 } t_bloqueInit;
 
 // Estructura usada para mantener la informacion de los bloques de un archivo en la inicializacion
@@ -100,6 +100,16 @@ typedef struct {
 t_list* tablaArchivos; // Lista de t_archivoInit
 
 // **** Fin estructuras de inicializacion ***
+
+// Estructura usada para lectura en paralelo con los nodos
+typedef struct {
+	int nroBloque;
+	int idNodo;
+	sem_t lecturaOk;
+	int finBytes;
+	char* lectura;
+} t_lectura;
+
 
 // Puntero al inicio de la tabla de directorios
 t_directorio* inicioTablaDirectorios;
@@ -146,6 +156,10 @@ void iniciarSemaforos();
 
 // Semaforo para escritura desde consola
 sem_t semEscritura;
+
+// Lista con informacion de gestion para lectura en paralelo con los nodos
+t_list* lista;
+
 
 // Semaforos para conexion de nodos (sin estado previo)
 sem_t nodoInit;

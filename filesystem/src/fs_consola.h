@@ -15,6 +15,8 @@
 #define FORMATEAR "formatear"
 #define INFOARCHIVO "infoarchivo"
 #define ESTADONODOS "estadoNodos"
+#define LEERARCHIVO "cat"
+#define COPIARDEYAMAALOCAL "cpto"
 
 #include "fs_comandos.h"
 

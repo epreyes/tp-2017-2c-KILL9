@@ -13,11 +13,13 @@ void ejecutarConsola() {
 	char instruccionConsola[100];
 	char param1[100];
 	char param2[100];
+	char param3[2];
 	printf("FS Yama\nTipear ayuda para ver los comandos disponibles\n");
 	while (1) {
 		printf(">");
 		fgets(comandos, 100, stdin);
-		sscanf(comandos, "%s %s %s", instruccionConsola, param1, param2);
+		sscanf(comandos, "%s %s %s %s", instruccionConsola, param1, param2,
+				param3);
 
 		if (vieneDeNoEstado == 1)
 			if (!estaFormateado()
@@ -114,15 +116,19 @@ void ejecutarConsola() {
 			printf("Comandos disponibles\n");
 			printf("--------------------\n");
 			printf(
-					"cpfrom [PathArchivoOrigenFsNativo] [PathDirDestinoFsYama]\n");
+					"cpfrom [PathArchivoOrigenFsNativo] [PathDirDestinoFsYama] [-b/-t]\n");
 			printf(
-					"-Copia un archivo del fs nativo a un directorio del fs yama\n");
+					"-Copia un archivo del fs nativo a un directorio del fs yama. Por defecto copia en binario si no se especifica tipo\n");
 			printf("mkdir [directorio]\n");
 			printf("-Crea un directorio\n");
 			printf("ls [path]\n");
 			printf("-Lista los archivos del path indicado\n");
 			printf("formatear\n");
 			printf("-Da formato al filesystem\n");
+			printf("cpto [PathArchivoOrigenYama] [PathDirDestinoFsNativo]\n");
+			printf("Copia un archivo de yama a un directorio del fs nativo\n");
+			printf("cat [PathArchivoYama]\n");
+			printf("Muestra el contenido de un archivo por consola\n");
 		}
 
 		// Nuevos comandos
@@ -156,6 +162,17 @@ void ejecutarConsola() {
 			list_destroy(l);
 		}
 
+		if (strcmp(instruccionConsola, LEERARCHIVO) == 0) {
+			char* result = leerArchivo(param1);
+
+			if (result == NULL )
+				printf("No existe el archivo\n");
+			else {
+				printf("%s\n", result);
+				free(result);
+			}
+		}
+
 		if (strcmp(instruccionConsola, ESCRIBIR_ARCHIVO_LOCAL_YAMA) == 0) {
 
 			int fd;
@@ -175,10 +192,10 @@ void ejecutarConsola() {
 				exit(1);
 			}
 
-			char* lect = mmap((caddr_t) 0, sbuf.st_size, PROT_READ,
-			MAP_SHARED, fd, 0);
+			char* lect = mmap((caddr_t) 0, sbuf.st_size, PROT_READ, MAP_SHARED,
+					fd, 0);
 
-			if (lect == NULL) {
+			if (lect == NULL ) {
 				perror("error en map\n");
 				exit(1);
 			}
@@ -191,7 +208,18 @@ void ejecutarConsola() {
 			string_append(&destino, "/");
 			string_append(&destino, obtenerNombreArchivo(dirArchivo));
 
-			int escribir = escribirArchivo(destino, lect, TEXTO);
+			int escribir;
+			if (strncmp(param3, "-b", 2) == 0) {
+				escribir = escribirArchivo(destino, lect, BINARIO,
+						sbuf.st_size);
+			}
+			if (strncmp(param3, "-t", 2) == 0)
+				escribir = escribirArchivo(destino, lect, TEXTO, 0);
+
+			if (strncmp(param3, "-t", 2) != 0 && strncmp(param3, "-b", 2) != 0) {
+				escribir = escribirArchivo(destino, lect, BINARIO,
+						sbuf.st_size);
+			}
 
 			if (escribir == 0) {
 				log_info(logger, "Escritura de %s realizada con exito", param1);
@@ -229,6 +257,16 @@ void ejecutarConsola() {
 
 			}
 
+		}
+
+		if (strcmp(instruccionConsola, COPIARDEYAMAALOCAL) == 0) {
+			int resultado = copiarDesdeYamaALocal(param1, param2);
+			if (resultado == -1)
+				printf("No existe el archivo\n");
+			if (resultado == -2)
+				printf("No existe el directorio destino\n");
+			if (resultado == 0)
+				printf("Escritura en local ok\n");
 		}
 
 		instruccionConsola[0] = '\0';

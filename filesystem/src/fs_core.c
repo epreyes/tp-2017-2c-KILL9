@@ -1131,7 +1131,8 @@ int crearArchivoMetadata(t_list* bloquesInfo, char* path, int tipo, int tamanio)
 }
 
 // Devuelve la lista de bloques necesarios para el archivo
-int obtenerBloquesNecesarios(char* contenido, int tipo) {
+// El parametro tamanio sirve para archivos binarios
+int obtenerBloquesNecesarios(char* contenido, int tipo, int tamanio) {
 
 	int offset = 0;
 
@@ -1184,8 +1185,10 @@ int obtenerBloquesNecesarios(char* contenido, int tipo) {
 	}
 
 	if (tipo == BINARIO) {
-// TODO
-		return 0;
+		int cantBloques = tamanio / TAMANIO_BLOQUE;
+		if (tamanio % TAMANIO_BLOQUE > 0)
+			cantBloques++;
+		return cantBloques;
 	}
 
 	return i + 1;
@@ -1267,12 +1270,6 @@ t_list* obtenerBloquesLibres(int cantBloques) {
 	}
 
 	return res;
-
-}
-
-int leerArchivo(char* path) {
-
-	return 0;
 
 }
 

@@ -277,11 +277,12 @@ void *connection_handler_nodo(void *socket_desc) {
 	int socketCliente = (int) socket_desc;
 	int32_t bytes = 0;
 	t_header header;
+	int codop = 0;
 
 	while (1) {
 
 		log_info(logger, "Esperando mensaje del cliente %d...", socketCliente);
-		bytes = recv(socketCliente, &header, sizeof(int), 0);
+		bytes = recv(socketCliente, &codop, sizeof(int), 0);
 
 		if (bytes <= 0) {
 			log_info(logger, "Error: el cliente %d cerro la conexion",
@@ -400,7 +401,7 @@ void *connection_handler_nodo(void *socket_desc) {
 			return 0;
 		}
 
-		procesarPedidoNodo(header, socketCliente);
+		procesarPedidoNodo(codop, socketCliente);
 	}
 
 	return 0;
@@ -558,11 +559,15 @@ void procesarPedidoYama(t_header pedido, int socketCliente) {
 
 }
 
-void procesarPedidoNodo(t_header pedido, int socket) {
+void procesarPedidoNodo(int codop, int socket) {
 
-	char* resultado = malloc(sizeof(char) * pedido.size);
+	int tamBuff = 0;
+	int nroBloque = 0;
+	int i = 0;
+	int idNodo = 0;
+	log_info(logger, "Se recibio codigo %d del nodo", codop);
 
-	switch (pedido.idMensaje) {
+	switch (codop) {
 
 	case SET_BLOQUE_OK:
 
@@ -572,9 +577,30 @@ void procesarPedidoNodo(t_header pedido, int socket) {
 
 		break;
 
+	case GET_BLOQUE_OK:
+
+		recv(socket, &tamBuff, sizeof(int), 0);
+		recv(socket, &nroBloque, sizeof(int), 0);
+
+		idNodo=buscarNodoPorSocket(socket);
+
+		for (i = 0; i < list_size(lista); i++) {
+			t_lectura* lect = list_get(lista, i);
+			if (lect->nroBloque == nroBloque) {
+				log_info(logger,"Se recibio respuesta del nodo %d bloque nro %d", idNodo, nroBloque);
+				lect->lectura=malloc(tamBuff);
+				int bytesRecibidos=recv_all(socket, lect->lectura, tamBuff, 0);
+				sem_post(&lect->lecturaOk);
+			}
+		}
+
+		log_info(logger, "Lectura en nodo ok");
+
+		break;
+
 	default:
 		// Si es invalido->no hago nada y cierro el socket
-		log_error(logger, "Pedido %d invalido", pedido.idMensaje);
+		log_error(logger, "Pedido %d invalido", codop);
 		close(socket);
 		break;
 	}
@@ -629,7 +655,7 @@ void procesarPedidoWorker(t_header pedido, int socketCliente) {
 
 	case 'S':
 
-		escribir = escribirArchivo(fileName, contenido, TEXTO);
+		escribir = escribirArchivo(fileName, contenido, TEXTO, 0);
 
 		if (escribir == 0) {
 			log_info(logger, "Escritura de %s realizada con exito", fileName);
