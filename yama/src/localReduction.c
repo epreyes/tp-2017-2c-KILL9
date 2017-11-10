@@ -48,16 +48,13 @@ void viewLocalReductionResponse(void* response) {
 	memcpy(op, response, sizeof(char));
 	int* bloques = malloc(sizeof(int));
 	memcpy(bloques, response + sizeof(char), sizeof(int));
-	printf("\nLa respuesta de la reduccion local es (%c, %d, %d): ", *op,
-			*bloques, (*bloques) * sizeof(rl_datos));
+
 	int plus = sizeof(int) + sizeof(char);
 	int i = 0;
 	for (i = 0; i < *bloques; i++) {
 		rl_datos* data = malloc(sizeof(rl_datos));
 		memcpy(data, response + plus + (i * sizeof(rl_datos)),
 				sizeof(rl_datos));
-		printf("\nNodo=%d - Ip=%s - Puerto=%d - TR_TMP=%s - RL_TMP=%s\n",
-				data->nodo, data->ip, data->port, data->tr_tmp, data->rl_tmp);
 	}
 }
 
@@ -127,8 +124,7 @@ void* processLocalReduction(int master) {
 		}
 		return localReductionRes;
 	} else {
-		perror(
-				"\nTODAS LAS TRANSFORMACIONES DEBEN TERMINAR ANTES DE EMPEZAR LAS REDUCCIONES LOCALES.");
+		log_warning(yama->log, "Todas las transformaciones deben terminar antes de empezar las reducciones locales.");
 		return NULL;
 	}
 

@@ -18,6 +18,7 @@
 #include <tplibraries/sockets/socket.h>
 #include <tplibraries/protocol/master_yama.h>
 #include <tplibraries/protocol/filesystem_yama.h>
+#include <errno.h>
 
 #include "messages.h"
 
@@ -80,6 +81,7 @@ typedef struct {
 	int jobs;
 	int clock;
 	int clock_aux;
+	int debug;
 } Yama;
 
 Yama* yama;

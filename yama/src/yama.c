@@ -27,13 +27,6 @@ t_log* getLog() {
 }
 
 void viewConfig(){
-	/*
-	FS_IP=127.0.1.1
-	FS_PUERTO=8880
-	RETARDO_PLANIFICACION=0
-	ALGORITMO_BALANCEO=WRR
-	YAMA_PUERTO=8881
-	NODE_AVAIL=5*/
 	printf("\nCONFIGURACION:\n\nPS_IP: %s\n FS_PUERTO: %d\n RETARDO_PLANIFICACION: %d\n ALGORITMO_BALANCEO: %s\n YAMA_PUERTO: %d\n NODE_AVAIL: %d\n",
 			config_get_string_value(yama->config, "FS_IP"), config_get_int_value(yama->config, "FS_PUERTO"), config_get_int_value(yama->config, "RETARDO_PLANIFICACION"),
 			config_get_string_value(yama->config, "ALGORITMO_BALANCEO"), config_get_int_value(yama->config, "YAMA_PUERTO"), config_get_int_value(yama->config, "NODE_AVAIL"));
@@ -58,6 +51,8 @@ void init() {
 	yama->tabla_T_planificados = list_create();
 	yama->tabla_LR_planificados = list_create();
 	yama->tabla_GR_planificados = list_create();
+
+	yama->debug = config_get_string_value(yama->config, "DEBUG");
 
 	/* inicializo el server en el socket configurado */
 	yama->yama_server = startServer(

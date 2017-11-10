@@ -183,6 +183,14 @@ tr_datos* doPlanning(block_info* blockRecived, int master) {
 	//Se deberá evaluar si el Bloque a asignar se encuentra en el Worker apuntado por el Clock y el mismo tenga disponibilidad mayor a 0.
 	int planigDelay = config_get_int_value(yama->config,
 			"RETARDO_PLANIFICACION");
+
+	if( yama->debug ){
+		log_info(yama->log, "----------------- Planificacion -----------------");
+		log_info(yama->log, printPlannigLogInfo("Clock", yama->clock));
+		log_info(yama->log, printPlannigLogInfo("Planing Delay", planigDelay));
+		log_info(yama->log, printNodeTable());
+	}
+
 	usleep(planigDelay);
 	return evaluateClock(blockRecived, master, yama->clock);
 }

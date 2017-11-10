@@ -74,7 +74,7 @@ int sendResponse(int master, void* masterRS) {
 		log_trace(yama->log, sendResponseMsg(master, bytesSent, masterRS));
 		free(masterRS);
 	} else {
-		perror("Send response to master.");
+		log_error(yama->log, "Error sending response to master.");
 	}
 	return bytesSent;
 }
@@ -87,8 +87,7 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 		if (nbytes == 0) {
 			log_info(yama->log, masterDisconnectedMsg(socket));
 		} else {
-			log_error(yama->log, "Error getting data from Master.");
-			printf( "\nError getting data from Master.\n" );
+			log_error(yama->log, "Error al recibir mensajes de master.");
 		}
 		/* si hubo error, desconecto el socket y lo saco de la lista de monitoreo */
 		close(socket);
@@ -161,11 +160,11 @@ void waitMastersConnections() {
 			mastersListTemp = mastersList;
 			activity = select(yama->yama_server.higherSocketDesc + 1,
 					&mastersListTemp, NULL, NULL, NULL);
-
+			if( errno == EINTR ){
+				continue;
+			}
 			if (activity == -1) {
 				log_error(yama->log, "Error monitoring current connections.");
-				perror("select");
-				exit(1);
 			} else {
 				/* exploro la actividad reciente */
 				exploreActivity(&mastersListTemp, &mastersList);

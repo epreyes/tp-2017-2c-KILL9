@@ -19,7 +19,7 @@ int main(void) {
 
 	/* inicializo yama */
 	init();
-
+	 printf("\n\nYAMA process ID : %d\n\n\n", getpid());
 	/* espero las conexiones de los masters */
 	waitMastersConnections();
 

@@ -115,8 +115,7 @@ void* processFinalStore(int master) {
 
 		return finalStoreRes;
 	} else {
-		perror(
-				"\nLA REDUCCION GLOBAL DEBE TERMINAR ANTES DE EMPEZAR EL ALMACENAMIENTO FINAL.");
+		log_warning(yama->log, "La reducción global debe terminar antes de empezar el almacenamiento final.");
 		return NULL;
 	}
 }

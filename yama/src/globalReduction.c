@@ -190,8 +190,7 @@ void* processGlobalReduction(int master) {
 		memcpy( globalReductionRes + sizeof(char) + sizeof(int), dataGR, tamData*list_size(planed));
 		return globalReductionRes;
 	} else {
-		perror(
-				"\nTODAS LAS REDUCCIONES LOCALES DEBEN TERMINAR ANTES DE EMPEZAR LA REDUCCION GLOBAL.");
+		log_warning(yama->log, "Todas las reducciones locales deben terminar antes de empezar la reducción global.");
 		globalReductionRes = malloc(sizeof(char));
 		memcpy(globalReductionRes, "X", sizeof(char));
 		return globalReductionRes;
