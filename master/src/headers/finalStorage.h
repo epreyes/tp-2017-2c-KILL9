@@ -11,6 +11,6 @@
 #include "master.h"
 #include "utils.h"
 
-int saveResult(metrics *masterMetrics, char* fileName);
+int saveResult(char* fileName);
 
 #endif /* HEADERS_FINALSTORAGE_H_ */

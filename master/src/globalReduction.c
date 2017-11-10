@@ -18,7 +18,9 @@ global_rs* sendGRequest(){
 //ENVIO
 	if(send(masterSocket,buffer,sizeof(char),0)<0){
 		log_error(logger,"No se pudo conectar a YAMA");
-		exit(1);
+		abortJob = 'G';
+		free(buffer);
+		return NULL;
 	};
 	free(buffer);
 
@@ -44,7 +46,14 @@ global_rs* sendGRequest(){
 	return yamaAnswer;
 }
 
+//=============REPORT_ERROR======================================//
+void reportGRError(int node){
+	sendErrorToYama('G',node);
+	abortJob = 'G';
+	increaseMetricsError(&(masterMetrics.globalReduction.errors));
+}
 
+//==============THREAD==========================================//
 int sendNodeRequest(dataThread_GR* datos){
 
 	int i=0, counter=0;
@@ -61,7 +70,6 @@ int sendNodeRequest(dataThread_GR* datos){
 	strcpy(nodeData->rl_tmp, datos->rl_tmp);
 	strcpy(nodeData->rg_tmp, datos->rg_tmp);
 	nodeData->nodesQuantity = datos->brothersCount;
-	//printf("RL:%s RG:%s\n",datos->rl_tmp,datos->rg_tmp);
 
 //SERIALIZO---
 	int bufferSize = sizeof(char)+sizeof(int)*2+(nodeData->fileSize)+28+24+((nodeData->nodesQuantity)*sizeof(rg_node));
@@ -96,21 +104,27 @@ int sendNodeRequest(dataThread_GR* datos){
 	log_info(logger,"Estableciendo conexión con nodo %d",datos->leadNode);
 	if(send(nodeSockets[datos->leadNode],buffer,bufferSize,0)<0){
 		log_error(logger,"No se pudo conectar con nodo %d (%s:%d)", datos->leadNode, datos->leadIp, datos->leadPort);
-		sendErrorToYama('G',datos->leadNode);
-		exit(1); //Ver como hacer para liberar y cancelar el programa
+		reportGRError(datos->leadNode);
+		return 1;
 	};
 
 	log_info(logger,"Datos enviados a Nodo %d", datos->leadNode);
+	log_trace(logger,"Nodo %d: Reducción Global Iniciada", datos->leadNode);
 
 	free(buffer);
 	free(nodeData->file);
 	free(nodeData);
+	//METRICS
+	gettimeofday(&(datos->metrics.start),NULL);
 
 //ESPERO RESPUESTA
 	log_info(logger,"Esperando respuesta de nodo %d",datos->leadNode);
 	rg_node_rs* answer = malloc(sizeof(rg_node_rs));
 	readBuffer(nodeSockets[datos->leadNode], sizeof(char), &(answer->result));
 	readBuffer(nodeSockets[datos->leadNode], sizeof(int), &(answer->runTime));
+
+	gettimeofday(&(datos->metrics.end),NULL);
+	masterMetrics.globalReduction.runTime+= timediff(&(datos->metrics.end),&(datos->metrics.start));
 
 //RESPONDO A YAMA
 	log_trace(logger,"Nodo %d: Reducción Global Finalizada", datos->leadNode);
@@ -120,7 +134,9 @@ int sendNodeRequest(dataThread_GR* datos){
 	}else{
 		log_error(logger,"No fue posible realizar la Reducción Global en el nodo %d",datos->leadNode);
 		log_info(logger, "Se informa el error a YAMA");
-		sendErrorToYama('G',datos->leadNode);
+		reportGRError(datos->leadNode);
+		free(answer);
+		return 1;
 	}
 
 	free(answer);
@@ -129,9 +145,7 @@ int sendNodeRequest(dataThread_GR* datos){
 
 ////////////////////////////////////GLOBAL_REDUCTION/////////////////////////////////////////
 
-int runGlobalReduction(metrics *masterMetrics){
-	struct timeval gr_start,gr_end;
-	gettimeofday(&gr_start,NULL);
+int runGlobalReduction(){
 	int totalRecords=0, recordCounter=0, brothersCounter=0;
 
 	dataThread_GR* dataThread = NULL;
@@ -141,6 +155,12 @@ int runGlobalReduction(metrics *masterMetrics){
 	global_rs* yamaAnswer;
 
 	yamaAnswer = sendGRequest();
+
+	if(!yamaAnswer){
+		log_error(logger, "REDUCCION GLOBAL ABORTADA");
+		return EXIT_FAILURE;
+	};
+
 	totalRecords = yamaAnswer->blocksQuantity;
 
 	//Obtengo datos de los bloques
@@ -175,14 +195,14 @@ int runGlobalReduction(metrics *masterMetrics){
 
 	free(dataThread->brothersData);
 	free(dataThread);
-
 	free(yamaAnswer);
 	free(items);
 
-//METRICS================================================================
-	gettimeofday(&gr_end,NULL);
-	masterMetrics->globalReduction.runTime = timediff(&gr_end,&gr_start);
-
-	log_trace(logger,"Reducción global Finalizada");
-	return EXIT_SUCCESS;
+	if(abortJob=='0'){
+		log_trace(logger, "REDUCCIÓN GLOBAL FINALIZADA");
+		return EXIT_SUCCESS;
+	}else{
+		log_error(logger, "REDUCCIÓN GLOBAL ABORTADA");
+		return EXIT_FAILURE;
+	}
 }

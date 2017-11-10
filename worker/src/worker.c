@@ -16,7 +16,7 @@ int main(){
 	createLoggers();
 	loadConfigs();
 
-	map_data_node();
+	//map_data_node();
 
 	loadServer();
 	//-------------

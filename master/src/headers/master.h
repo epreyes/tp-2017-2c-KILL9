@@ -44,6 +44,10 @@ FILE* script_transform;
 FILE* script_reduction;
 
 //=========METRICS TAD=========//
+typedef struct {
+	struct timeval start;
+	struct timeval end;
+}threadMetrics;
 
 typedef struct procMetrics{
 	double runTime;
@@ -52,8 +56,7 @@ typedef struct procMetrics{
 	int tasks;
 }procMetrics;
 
-
-typedef struct metrics{
+typedef struct{
 	double runTime;
 	procMetrics transformation;
 	procMetrics localReduction;
@@ -61,8 +64,16 @@ typedef struct metrics{
 	procMetrics finalStorage;
 }metrics;
 
+//==========METRICS==========//
+metrics masterMetrics;
+pthread_mutex_t parallelTasks;
+pthread_mutex_t runTime;
+pthread_mutex_t errors;
+
 //==========OTHERS===========//
 char replanification;
+char abortJob;
+int parallelAux;
 //===========================//
 
 #endif /* MASTER_H_ */

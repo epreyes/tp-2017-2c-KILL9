@@ -12,7 +12,6 @@
 
 #include "headers/master.h"
 #include "headers/metrics.h"
-#include "headers/answers.h"
 
 #include "headers/transform.h"
 #include "headers/localReduction.h"
@@ -22,35 +21,45 @@
 ///////////MAIN PROGRAM///////////
 
 int main(int argc, char* argv[]){
-//--preparo metricas---------
+
+//PREPARO
+	abortJob = '0';
 	struct timeval start,end;
 	gettimeofday(&start,NULL);
-
 	createLoggers();
-	validateArgs(argc, argv);										//valido argumentos
+	validateArgs(argc, argv);
 	loadConfigs();
-	openYamaConnection();
 	loadScripts(argv[1],argv[2]);
+	openYamaConnection();
 
-	transformFile(&masterMetrics,argv[3]);	//ordena ejecución de transformacion
-	runLocalReduction(&masterMetrics);		//ordena ejecución de Reductor Local
 
-	runGlobalReduction(&masterMetrics);		//ordena ejecución de Reductor Global
-	saveResult(&masterMetrics, argv[4]);				//ordena guardado en FileSystem
+//PROCESO
+	transformFile(argv[3]);				//RUN TRANSFORMATION
+	if(abortJob!='T'){
+		runLocalReduction();			//RUN LOCAL REDUCTION
+		if(abortJob!='L'){
+			runGlobalReduction();		//RUN GLOBAL REDUCTION
+			if(abortJob!='G')
+				saveResult(argv[4]);	//RUN FINAL STORAGE
+		}
+	}
 
-	/*
+//IMPRIMO MÉTRICAS
+
 	gettimeofday(&end,NULL);
 	masterMetrics.runTime = timediff(&end,&start);
 	printMetrics(masterMetrics);
-	*/
 
-//--cierro todo lo grobal
+//FINALIZO
+
 	fclose(script_transform);
 	fclose(script_reduction);
 
-	log_trace(logger,"JOB FINALIZADO");
+	(abortJob=='0')?log_trace(logger,"JOB FINALIZADO"):log_error(logger,"JOB ABORTADO");
 	log_destroy(logger);
 	config_destroy(config);
+
+	//cerrar sockets
 
 	return EXIT_SUCCESS;
 };
