@@ -29,7 +29,7 @@ void *connection_handler_nodo(void *socket_desc);
 void *connection_handler_yama(void *socket_desc);
 void *connection_handler_worker(void *socket_desc);
 void procesarPedidoYama(t_header pedido, int socket);
-void procesarPedidoNodo(t_header pedido, int socket);
+void procesarPedidoNodo(int codop, int socket);
 void procesarPedidoWorker(t_header pedido, int socket);
 
 int habilitarBloques(t_nodo* nodo);

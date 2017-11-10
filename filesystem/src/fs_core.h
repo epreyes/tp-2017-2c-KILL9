@@ -30,7 +30,7 @@ t_bitarray* obtenerBitMapBloques(int idNodo);
 t_list* obtenerBloquesLibres(int cantBloques);
 char* obtenerIdNodo(char* cadena);
 int obtenerIdBloque(char* cadena);
-int obtenerBloquesNecesarios(char* contenido, int tipo);
+int obtenerBloquesNecesarios(char* contenido, int tipo, int tamanio);
 
 t_archivoInfo* obtenerArchivoInfo(char* path);
 t_archivoInfo* obtenerArchivoInfoPorMetadata(char* dirMetadata);
@@ -38,7 +38,6 @@ char* obtenerDirArchivo(char* path);
 char* obtenerNombreArchivo(char* path);
 int existeArchivo(char* path);
 int crearArchivoMetadata(t_list* bloquesInfo, char* path, int tipo, int tamanio);
-int leerArchivo(char* path);
 void actualizarBitMapBloques(t_list* bloquesInfo);
 
 bool ordenarPorCarga(t_nodo *nodoConMasCarga, t_nodo *nodoConMenosCarga);

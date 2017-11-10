@@ -133,13 +133,15 @@ void process_request_file_system(int client_socket) {
  ******************************************************/
 void get_block(int client_socket, t_leerBloque* t_bloque) {
 	log_info(infoLogger, "Iniciando lectura  bloque archivo ");
-	int cod_resp;
+	int cod_resp=GET_BLOQUE_OK;
 	int num_block;
+	int nroBloque=0;
 
 	int block_cant = t_bloque->finByte;
 	void * buffer = malloc(block_cant);
 	// Recibo el numero de bloque
 	//recibirMensaje(fileSystemSocket, &cod_resp, 4, infoLogger);
+	recv(fileSystemSocket, &nroBloque, sizeof(int),0);
 
 	//num_block = cod_resp;
 	num_block = t_bloque->idBloque;
@@ -160,7 +162,11 @@ void get_block(int client_socket, t_leerBloque* t_bloque) {
 
 	//Envio los datos del bloque
 	log_info(infoLogger, "Envio los datos del bloque");
-	enviarMensaje(fileSystemSocket, buffer, block_cant, infoLogger);
+	send(fileSystemSocket, &cod_resp, sizeof(int),0);
+	send(fileSystemSocket, &block_cant, sizeof(int),0);
+	send(fileSystemSocket, &nroBloque, sizeof(int),0);
+//	enviarMensaje(fileSystemSocket, buffer, block_cant, infoLogger);
+	send(fileSystemSocket, buffer, block_cant, MSG_WAITALL);
 	log_info(infoLogger, "Fin envio datos del bloque");
 
 	log_info(infoLogger, "Fin lectura bloque archivo ");
@@ -172,12 +178,8 @@ void get_block(int client_socket, t_leerBloque* t_bloque) {
 void set_block(int client_socket, t_leerBloque* t_bloque) {
 	log_info(infoLogger, "INICIO : escritura de un bloque del archivo ");
 
-	// Recibo el numero de bloque
-	//int num_block;
-	//recibirMensaje(client_socket, &num_block, 4, infoLogger);
-	//Recibo los datos a escribir
-	void * buffer = malloc(sizeof(char)*(t_bloque->finByte)); //Reemplazar 1076 por el 1MB = 1048576
-	//recibirMensaje(client_socket,buffer,1076,infoLogger);
+	t_bloque->contenido=malloc(sizeof(char)* t_bloque->finByte);
+    recv(client_socket, t_bloque->contenido,sizeof(char)* t_bloque->finByte, MSG_WAITALL);
 
 	void * pos = mapped_data_node + (t_bloque->idBloque) * block_size;
 	memcpy(pos, t_bloque->contenido, t_bloque->finByte);

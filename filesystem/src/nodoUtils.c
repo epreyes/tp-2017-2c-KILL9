@@ -166,6 +166,7 @@ int buscarNodoPorSocket(int socketNodo) {
 
 }
 
+// Determina si existe un nodo
 int buscarNodoPorId(int idNodo) {
 	int i = 0;
 	for (i = 0; i < list_size(nodos->nodos); i++) {
@@ -177,6 +178,7 @@ int buscarNodoPorId(int idNodo) {
 
 }
 
+// Devuelve la info de un nodo por id de nodo
 t_nodo* buscarNodoPorId_(int idNodo) {
 	int i = 0;
 	for (i = 0; i < list_size(nodos->nodos); i++) {
