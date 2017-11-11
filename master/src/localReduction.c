@@ -118,7 +118,6 @@ void *runLocalRedThread(void* data){
 	log_info(logger,"Esperando respuesta de nodo %d",datos->node);
 	rl_node_rs* answer = malloc(sizeof(rl_node_rs));
 	readBuffer(nodeSockets[datos->node], sizeof(char), &(answer->result));
-	readBuffer(nodeSockets[datos->node], sizeof(int), &(answer->runTime));
 
 	pthread_mutex_lock(&parallelTasks);
 		parallelAux--;

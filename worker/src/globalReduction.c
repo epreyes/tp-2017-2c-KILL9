@@ -8,7 +8,7 @@
 #include "headers/globalReduction.h"
 
 char* obtainNodeFile(rg_node datos){
-//ESTABLEZCO CONEXIÓN CON NODO HERMANO
+//ESTABLEZCO CONEXIÓN CON OTRO WORKER PARA PEDIR TMP
 	openNodeConnection(datos.node, datos.ip, datos.port);
 //ENVIO DATOS
 	int bufferSize = sizeof(char)+28;

@@ -15,6 +15,7 @@ void generateTempsFolder(){
 char* regenerateScript(char* fileContent, FILE* script, char operation, int socket){
 	char* scriptName = generateScriptName(operation, socket);
 	char command[36];
+
 	script = fopen(scriptName,"w");
 	if(script == NULL){
 		log_error(logger,"Error al guardar el script %s", scriptName);
@@ -60,21 +61,25 @@ long current_timestamp() {
 }
 
 char* generateScriptName(char operation, int master){
-	char* name;
+	char* name = malloc(sizeof(char)*26);
 	long timestamp = current_timestamp();
 	asprintf(&name, "tmp_scripts/%c%d-%ld",operation,master,timestamp);
 	return name;
 }
 
-void readBuffer(int socket,int size,void* destiny){
+int readBuffer(int socket,int size,void* destiny){
 	void* buffer = malloc(size);
 	int bytesReaded = recv(socket, buffer, size, MSG_WAITALL);
-	if (bytesReaded <= 0) {
-		log_warning(logger,"Master %d: desconectado",socket);
-		exit(1);
+	if (bytesReaded <= 0){
+		log_warning(logger,"Socket %d: desconectado",socket);
+		close(socket);
+		free(buffer);
+		exit(1);		//QUITAR
+		return EXIT_FAILURE;
 	}
 	memcpy(destiny, buffer, size);
 	free(buffer);
+	return EXIT_SUCCESS;
 }
 
 char* serializeFile(char* fileName){

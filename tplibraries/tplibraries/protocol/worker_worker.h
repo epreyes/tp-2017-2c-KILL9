@@ -11,8 +11,8 @@
 //========NODO_A_NODO==========
 
 typedef struct{
-	char	code;			//'P'	Indica que es un hermano pidiendo RG
-	char	rl_tmp[28];			//		Nombre del archivo solicitado
+	char	code;			//'R'	Indica que es un hermano pidiendo tmp de RL
+	char	rl_tmp[28];		//		Nombre del archivo solicitado
 }nodeData_rq;
 
 

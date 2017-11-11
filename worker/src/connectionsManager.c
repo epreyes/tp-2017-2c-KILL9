@@ -84,6 +84,7 @@ int openNodeConnection(int node, char* ip, int port){
 void readMasterBuffer(){
 	char operation;
 	readBuffer(socket_master,sizeof(char),&operation);
+	printf("%c",operation);
 		//--------
 		switch(operation){
 			case 'T':

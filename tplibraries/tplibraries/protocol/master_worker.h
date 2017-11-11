@@ -29,7 +29,6 @@ typedef struct{
 //-----Response---//
 typedef struct{
 	int		block;
-	int		runtime;	//ver de pasar a real
 	char	result;		//'E': error / 'O':"ok"
 }tr_node_rs;
 
@@ -49,7 +48,6 @@ typedef struct{
 //-----Response---//
 typedef struct{
 	char	result;		//'E': error / 'O':"ok"
-	int		runTime;
 }rl_node_rs;
 
 

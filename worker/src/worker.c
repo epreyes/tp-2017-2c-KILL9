@@ -11,13 +11,10 @@
 #include "headers/worker.h"
 #include "headers/connectionsManager.h"
 
-
 int main(){
 	createLoggers();
 	loadConfigs();
-
 	//map_data_node();
-
 	loadServer();
 	//-------------
 	//openFileSystemConnection();

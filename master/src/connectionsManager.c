@@ -7,6 +7,13 @@
 
 #include "headers/connectionsManager.h"
 
+void initializeNodeSockets(void){
+	int i;
+	for(i=0;i<100;++i){
+		nodeSockets[i] = -1;
+	};
+}
+
 void openYamaConnection(void) {
 	struct sockaddr_in yamaAddr;
 	char* yama_ip = config_get_string_value(config,"YAMA_IP");
@@ -50,3 +57,23 @@ int openNodeConnection(int node, char* ip, int port){
 		return 0;
 	}
 }
+
+int closeConnections(){
+	int i=0;
+	log_info(logger,"Cerrando Conexiones");
+	if(close(masterSocket)<0){
+		log_error(logger, "No se pudo cerrar la conexión con YAMA");
+		return EXIT_FAILURE;
+	}
+	log_info(logger, "Conexión con YAMA cerrada");
+	for(i=0;i<100;++i){
+		if(nodeSockets[i]>0){
+			if(close(nodeSockets[i])<0){
+				log_error(logger, "Nodo %d: No es posible cerrar la conexión", i);
+				return EXIT_FAILURE;
+			}
+			log_info(logger,"Nodo %d: Conexión cerrada", i);
+		}
+	}
+	return EXIT_SUCCESS;
+};

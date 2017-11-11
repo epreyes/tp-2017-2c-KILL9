@@ -144,7 +144,6 @@ void *runTransformThread(void* data){
 
 		readBuffer(nodeSockets[datos->node], sizeof(int), &(answer->block));
 		readBuffer(nodeSockets[datos->node], sizeof(char), &(answer->result));
-		readBuffer(nodeSockets[datos->node], sizeof(int), &(answer->runtime));
 
 //RESPONDO A YAMA
 		if(answer->result == 'O'){
