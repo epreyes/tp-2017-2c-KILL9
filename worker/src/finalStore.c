@@ -7,19 +7,19 @@
 
 #include "headers/finalStore.h"
 
-void finalStorage(){
+void finalStorage(int socketClient){
 	fs_node_rq datos;
-	log_info(logger,"Master %d: Obteniendo datos de almacenado Final",socket_master);
+	log_info(logger,"Master %d: Obteniendo datos de almacenado Final",socketClient);
 
 //OBTENIENDO DATOS DE MASTER
-	readBuffer(socket_master,24,&(datos.rg_tmp));
-	readBuffer(socket_master,sizeof(int),&(datos.fileNameSize));
+	readBuffer(socketClient,24,&(datos.rg_tmp));
+	readBuffer(socketClient,sizeof(int),&(datos.fileNameSize));
 	datos.fileName=malloc(datos.fileNameSize);
-	readBuffer(socket_master,datos.fileNameSize,datos.fileName);
+	readBuffer(socketClient,datos.fileNameSize,datos.fileName);
 
 	printf("%s %s\n",datos.rg_tmp,datos.fileName);
 
-	log_info(logger,"Master %d: Datos de almacenamiento final obtenidos",socket_master);
+	log_info(logger,"Master %d: Datos de almacenamiento final obtenidos",socketClient);
 
 //GENERO PAQUETE PARA FS
 /*
@@ -79,10 +79,10 @@ void finalStorage(){
 	memcpy(buff,&(answer->result),sizeof(char));
 	memcpy(buff+sizeof(char),&(answer->runTime),sizeof(int));
 
-	send(socket_master,buff,bufferSize,0);
+	send(socketClient,buff,bufferSize,0);
 
 	free(answer);
 	free(buff);
-	log_trace(logger, "Master %d: Almacenado Finalizado", socket_master);
-	log_trace(logger, "Master %d: JOB FINALIZADO", socket_master);
+	log_trace(logger, "Master %d: Almacenado Finalizado", socketClient);
+	log_trace(logger, "Master %d: JOB FINALIZADO", socketClient);
 }

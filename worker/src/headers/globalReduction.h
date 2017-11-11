@@ -12,6 +12,6 @@
 #include "worker.h"
 #include "connectionsManager.h"
 
-void globalReduction();
+void globalReduction(int socketClient);
 
 #endif /* HEADERS_GLOBALREDUCTION_H_ */

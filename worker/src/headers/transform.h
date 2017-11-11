@@ -12,6 +12,6 @@
 
 char transformBlock(int position, int size, char temporal[28], char* fileName);
 
-void transformation();
+void transformation(int socketClient);
 
 #endif /* HEADERS_TRANSFORM_H_ */

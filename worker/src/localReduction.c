@@ -7,28 +7,28 @@
 
 #include "headers/localReduction.h"
 
-void localReduction(){
+void localReduction(int socketClient){
 	rl_node datos;
 	int i=0;
-	log_info(logger,"Master %d: Obteniendo datos de reducción local",socket_master);
+	log_info(logger,"Master %d: Obteniendo datos de reducción local",socketClient);
 
 //OBTENIENDO SCRIPT REDUCTOR
-	readBuffer(socket_master,sizeof(int),&(datos.fileSize));
+	readBuffer(socketClient,sizeof(int),&(datos.fileSize));
 	datos.file=malloc(datos.fileSize);
-	readBuffer(socket_master,datos.fileSize,datos.file);
-	readBuffer(socket_master,28,&(datos.rl_tmp));			//nombre de archivo de salida
+	readBuffer(socketClient,datos.fileSize,datos.file);
+	readBuffer(socketClient,28,&(datos.rl_tmp));			//nombre de archivo de salida
 
-	char* scriptName = regenerateScript(datos.file,script_reduction,'R',socket_master);
+	char* scriptName = regenerateScript(datos.file,script_reduction,'R',socketClient);
 
 //OBTENIENDO DATOS DE ARCHIVOS A REDUCIR
-	readBuffer(socket_master,sizeof(int),&(datos.tmpsQuantity));
+	readBuffer(socketClient,sizeof(int),&(datos.tmpsQuantity));
 	datos.tr_tmp = malloc(28*(datos.tmpsQuantity));
 	for(i=0; i<datos.tmpsQuantity; ++i){
-		readBuffer(socket_master,sizeof(tmp_tr),&(datos.tr_tmp[i]));
+		readBuffer(socketClient,sizeof(tmp_tr),&(datos.tr_tmp[i]));
 		//printf("FILE:%s\n", datos.tr_tmp[i]);
 	}
 	//printf("\nCANTIDAD:%d\n", datos.tmpsQuantity);
-	log_info(logger,"Master %d: Datos de Reducción Local Obtenidos",socket_master);
+	log_info(logger,"Master %d: Datos de Reducción Local Obtenidos",socketClient);
 
 //GENERO RESPUESTA
 	int bufferSize = sizeof(int)+sizeof(char);
@@ -40,14 +40,14 @@ void localReduction(){
 	//serializo
 	memcpy(buffer,&(answer->result),sizeof(char));
 	memcpy(buffer+sizeof(char),&(answer->runTime),sizeof(int));
-	send(socket_master,buffer,bufferSize,0);
+	send(socketClient,buffer,bufferSize,0);
 
 	free(answer);
 	free(buffer);
 
 	free(datos.tr_tmp);
 	free(datos.file);
-	log_trace(logger, "Master %d: Reducción local finalizada", socket_master);
+	log_trace(logger, "Master %d: Reducción local finalizada", socketClient);
 };
 
 

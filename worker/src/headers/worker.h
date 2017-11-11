@@ -31,6 +31,7 @@
 /** variables globales**/
 void * mapped_data_node;
 
+
 //=========LOGGERS=============//
 t_log* logger;
 //=========CONFIGS============//
@@ -43,5 +44,6 @@ int socket_worker;
 int socket_master;
 int socket_filesystem;
 int socket_nodes[50];
+
 
 #endif /* HEADERS_WORKER_H_ */

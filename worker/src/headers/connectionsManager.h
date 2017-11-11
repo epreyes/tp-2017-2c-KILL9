@@ -18,5 +18,7 @@
 
 void loadServer(void);
 void readMasterBuffer(void);
+void startWorkerServer();
+void processRequest(int socket_master);
 
 #endif /* HEADERS_CONNECTIONSMANAGER_H_ */

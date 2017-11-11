@@ -6,6 +6,8 @@
  */
 
 #include "headers/connectionsManager.h"
+#include  <sys/types.h>
+#include <tplibraries/protocol/master_worker.h>
 
 void loadServer(void){
 
@@ -29,6 +31,7 @@ void loadServer(void){
 	struct sockaddr_in masterAddr;
 	unsigned int len;
 
+	/*
 	int masterSocket = accept(workerSocket, (void*) &masterAddr, &len);
 	if(masterSocket!=-1){
 		log_trace(logger,"Master %d: Conectado",masterSocket);
@@ -36,8 +39,11 @@ void loadServer(void){
 		log_error(logger,"Error al establecer conexión con Master");
 		exit(1);
 	}
-	socket_worker=workerSocket;
 	socket_master=masterSocket;
+	
+	*/
+	socket_worker=workerSocket;
+	
 }
 
 //=======================FILESYSTEM=============================================
@@ -81,32 +87,60 @@ int openNodeConnection(int node, char* ip, int port){
 
 //==========================================================================
 
-void readMasterBuffer(){
+void startWorkerServer(){
+	struct sockaddr_in masterAddr;
+	unsigned int len;
 	char operation;
-	readBuffer(socket_master,sizeof(char),&operation);
-		//--------
-		switch(operation){
-			case 'T':
-				log_trace(logger,"Master %d: Solicitud de transformación recibida",socket_master);
-				transformation();
-				break;
-			case 'L':
-				log_info(logger,"Master %d: Solicitud de Reducción Local recibida",socket_master);
-				localReduction();
-				break;
-			case 'G':
-				log_info(logger,"Master %d: Solicitud de Reducción Global recibida",socket_master);
-				globalReduction();
-				break;
-			case 'S':
-				log_info(logger,"Master %d: Solicitud de Almacenado Final recibida",socket_master);
-				finalStorage();
-				break;
-			default:
-				log_warning(logger,"Master %d: No existe la operación Solicitada");
-				//close(socket_master);
-				break;
-				//cerrar conexion y devolver error
+	pid_t pid ;
+	int handshak = 0; //Default
+	int socket_client ;
+	while(1){
+	
+		socket_client = accept(socket_worker, (void*) &masterAddr, &len);
+		if(socket_client == -1){
+			log_error(logger,"Error al establecer conexión con el cliente");
+			continue;
 		}
-		//free(buffer);
+		log_info(logger,"Cliente conectado %d: Conectado desde %s\n",socket_client,inet_ntoa(masterAddr.sin_addr));
+
+		//Espero codigo de operacion del cliente
+		readBuffer(socket_client,sizeof(char),&operation);
+				//--------
+		switch (operation) {
+		case 'T':
+			log_trace(logger, "Master %d: Solicitud de transformación recibida",
+					socket_client);
+			transformation(socket_client);
+			break;
+		case 'L':
+			log_info(logger, "Master %d: Solicitud de Reducción Local recibida",
+					socket_client);
+			//localReduction(socket_client);
+			break;
+		case 'G':
+			log_info(logger,
+					"Master %d: Solicitud de Reducción Global recibida",
+					socket_client);
+			globalReduction(socket_client);
+			break;
+		case 'S':
+			log_info(logger,
+					"Master %d: Solicitud de Almacenado Final recibida",
+					socket_client);
+			finalStorage(socket_client);
+			break;
+
+		case 'R':
+			log_info(logger,"Worker %d: Solicitud de reduccion ",socket_client);
+			//TODO Leer el nombre del archivo y responder al worker
+			sendNodeFile(socket_client);
+			break;
+		default:
+			log_error(logger, "No existe la operación Solicitada %s",operation);
+			break;
+
+		log_info(logger, "Fin de procesamiento solicitud de master ... \n");
+	   }
+	}
 }
+

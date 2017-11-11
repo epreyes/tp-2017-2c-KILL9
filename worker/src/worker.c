@@ -15,16 +15,19 @@
 int main(){
 	createLoggers();
 	loadConfigs();
-
-	//map_data_node();
+	map_data_node();
 
 	loadServer();
 	//-------------
 	//openFileSystemConnection();
-	generateTempsFolder();
-	while(1){
-		readMasterBuffer();
-	}
+	//generateTempsFolder();
+	//while(1){
+	//Atiendo conexiones 
+
+	//readMasterBuffer();
+	startWorkerServer();
+
+	//}
 	//-------------
 	log_destroy(logger);
 	config_destroy(config);

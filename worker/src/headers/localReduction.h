@@ -13,6 +13,5 @@
 
 void localReduction();
 
-char reduceFiles();
-
+char reduceFiles(int filesQuantity, tmp_tr* filesNames, char* script);
 #endif /* HEADERS_LOCALREDUCTION_H_ */

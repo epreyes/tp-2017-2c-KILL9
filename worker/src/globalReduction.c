@@ -57,8 +57,9 @@ void sendNodeFile(char* fileName){
 	free(buffer);
 }
 
-//========RESPONDO A MASTER================
-void answerMaster(){
+
+
+void answerMaster(int socketClient){
 	int bufferSize = sizeof(char)+sizeof(int);
 	rg_node_rs* answer = malloc(sizeof(rg_node_rs));
 	void* buffer = malloc(bufferSize);
@@ -69,7 +70,7 @@ void answerMaster(){
 
 	memcpy(buffer,&(answer->result),sizeof(char));
 	memcpy(buffer+sizeof(char),&(answer->runTime),sizeof(int));
-	send(socket_master,buffer,bufferSize,0);
+	send(socketClient,buffer,bufferSize,0);
 	log_info(logger,"Resultados enviados");
 
 
@@ -79,36 +80,37 @@ void answerMaster(){
 
 
 
-void globalReduction(){
+void globalReduction(int socketClient){
 	typedef char rl_tmp[28];
 
 	rg_node_rq datos;
 	int i=0;
 
-	log_info(logger,"Master %d: Obteniendo datos de reducción global",socket_master);
+	log_info(logger,"Master %d: Obteniendo datos de reducción global",socketClient);
 
 //OBTENIENDO DATOS DEL NODO ANFITRION
-	readBuffer(socket_master,sizeof(int),&(datos.fileSize));
+	readBuffer(socketClient,sizeof(int),&(datos.fileSize));
 	datos.file = malloc(datos.fileSize);
-	readBuffer(socket_master,datos.fileSize,datos.file);
-	readBuffer(socket_master,28,&(datos.rl_tmp));					//archivo RL
-	readBuffer(socket_master,24,&(datos.rg_tmp));					//archivo RG
+	readBuffer(socketClient,datos.fileSize,datos.file);
+	readBuffer(socketClient,28,&(datos.rl_tmp));					//archivo RL
+	readBuffer(socketClient,24,&(datos.rg_tmp));					//archivo RG
 	//printf("%s %s\n",datos.rg_tmp,datos.rl_tmp);
 
-	char* scriptName = regenerateScript(datos.file,script_reduction,'R',socket_master);
+	char* scriptName = regenerateScript(datos.file,script_reduction,'R',socketClient);
 
 //OBTENIENDO DATOS DE LOS OTROS NODOS
-	readBuffer(socket_master,sizeof(int),&(datos.nodesQuantity));	//cantidad de NODOS
+	readBuffer(socketClient,sizeof(int),&(datos.nodesQuantity));	//cantidad de NODOS
 	datos.nodes = malloc(sizeof(rg_node)*datos.nodesQuantity);		//
 
+
 	for(i=0; i<datos.nodesQuantity; ++i){
-		readBuffer(socket_master,sizeof(int),&(datos.nodes[i].node));
-		readBuffer(socket_master,16,(datos.nodes[i].ip));
-		readBuffer(socket_master,sizeof(int),&(datos.nodes[i].port));
-		readBuffer(socket_master,28,&(datos.nodes[i].rl_tmp));
+		readBuffer(socketClient,sizeof(int),&(datos.nodes[i].node));
+		readBuffer(socketClient,16,(datos.nodes[i].ip));
+		readBuffer(socketClient,sizeof(int),&(datos.nodes[i].port));
+		readBuffer(socketClient,28,&(datos.nodes[i].rl_tmp));
 		//printf("N:%d(%s:%d) TMP:%s\n",datos.nodes[i].node,datos.nodes[i].ip,datos.nodes[i].port,datos.nodes[i].rl_tmp);
 	}
-	log_info(logger,"Master %d: Datos de Reducción Global obtenidos",socket_master);
+	log_info(logger,"Master %d: Datos de Reducción Global obtenidos",socketClient);
 
 
 	rl_tmp* rlFilesNames = malloc((datos.nodesQuantity+1)*sizeof(rl_tmp)); //+1 por el del anfitrion
@@ -125,7 +127,7 @@ void globalReduction(){
 	reduceFiles(datos.nodesQuantity+1,rlFilesNames, script_reduction, datos.rg_tmp);
 
 */
-	answerMaster(); //agregar error
+	answerMaster(socketClient); //agregar error
 	free(datos.file);
 	free(datos.nodes);
 };

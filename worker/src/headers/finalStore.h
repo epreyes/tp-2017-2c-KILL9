@@ -9,5 +9,5 @@
 #define HEADERS_FINALSTORE_H_
 
 #include "worker.h"
-
+void finalStorage(int socketClient);
 #endif /* HEADERS_FINALSTORE_H_ */
