@@ -78,8 +78,6 @@ int sendDataToWorker(store_rs* datos, char* fileName){
 	log_info(logger,"Esperando respuesta del Nodo Encargado");
 	fs_node_rs* answer = malloc(sizeof(fs_node_rs));
 	readBuffer(nodeSockets[datos->nodo], sizeof(char), &(answer->result));
-	readBuffer(nodeSockets[datos->nodo], sizeof(int), &(answer->runTime));
-
 
 //RESPONDO A YAMA
 	if(answer->result == 'O'){

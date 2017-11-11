@@ -54,7 +54,7 @@ void openFileSystemConnection(void) {
 	socket_filesystem = socket(AF_INET, SOCK_STREAM, 0);
 	if (connect(socket_filesystem, (void*) &fileSystemAddr, sizeof(fileSystemAddr)) != 0) {
 		log_warning(logger,"No se pudo conectar con Filesystem (%s:%d)",fileSystem_ip,fileSystem_port);
-		error(1);	//ver como manejar
+		exit(1);	//ver como manejar
 	};
 	log_info(logger,"conexión con Filesystem establecida (%s:%d)",fileSystem_ip,fileSystem_port);
 }
@@ -106,6 +106,23 @@ void readMasterBuffer(){
 			default:
 				log_warning(logger,"Master %d: No existe la operación Solicitada");
 				//close(socket_master);
+				break;
+				//cerrar conexion y devolver error
+		}
+		//free(buffer);
+}
+
+void readWorkerBuffer(){
+	char operation;
+	readBuffer(socket_worker,sizeof(char),&operation);
+		switch(operation){
+			case 'R':
+				log_trace(logger,"Worker %d: Solicitud de archivo temporal recibida",socket_worker);
+				sendNodeFile(socket_worker);
+				break;
+			default:
+				log_warning(logger,"Worker %d: No existe la operación Solicitada");
+				//close(socket_worker);
 				break;
 				//cerrar conexion y devolver error
 		}

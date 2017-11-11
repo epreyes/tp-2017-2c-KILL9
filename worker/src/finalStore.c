@@ -24,7 +24,7 @@ void finalStorage(){
 //GENERO PAQUETE PARA FS
 /*
 	char* fileContent;
-	//fileContent = serializeFile(datos.rg_tmp+1);
+	fileContent = serializeFile(datos.rg_tmp+1);
 
 	fs_rq* fs_datos;
 	fs_datos = malloc(sizeof(fs_rq));
@@ -52,12 +52,14 @@ void finalStorage(){
 	//ENVIO
 	send(socket_filesystem,buffer,bufferSize,0);
 
+	free(fs_datos->fileName);
+	free(fs_datos->file);
 	free(fs_datos);
 	free(buffer);
-
+*/
 //ESPERO RESPUESTA DE FS
 	char rs_fs;
-
+/*
 	readBuffer(socket_filesystem,sizeof(char),&rs_fs);
 	if(rs_fs=='O'){
 		log_info(logger, "JOB Master %d: Archivo almacenado correctamente", socket_master);
@@ -67,19 +69,14 @@ void finalStorage(){
 	}
 
 */
+	rs_fs = 'O'; //QUITAR
 //RESPUESTA A MASTER
-
 	fs_node_rs* answer = malloc(sizeof(fs_node_rs));
-	answer->result = 'O'; //cambiar por rs_fs
-	answer->runTime = 12;
+	answer->result = rs_fs;
 
-	int bufferSize = sizeof(int)+sizeof(char);
-	void* buff = malloc(bufferSize);
-
+	void* buff = malloc(sizeof(char));
 	memcpy(buff,&(answer->result),sizeof(char));
-	memcpy(buff+sizeof(char),&(answer->runTime),sizeof(int));
-
-	send(socket_master,buff,bufferSize,0);
+	send(socket_master,buff,sizeof(char),0);
 
 	free(answer);
 	free(buff);

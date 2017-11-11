@@ -32,10 +32,15 @@ char* obtainNodeFile(rg_node datos){
 }
 
 //======PASO ARCHIVO TMP A OTRO WORKER================
-void sendNodeFile(char* fileName){
+void sendNodeFile(int worker){
+//OBTENGO DATOS
+	char fileName[28];
+	readBuffer(worker,sizeof(char)*28,fileName);
+	log_trace(logger,"Worker %d Solicitó el archivo %s", worker, fileName);
+
 //RECUPERO ARCHIVO SOLICITADO
 	char* fileContent = NULL;
-	strcpy(fileContent, serializeFile(fileName));
+	fileContent=serializeFile(fileName);
 
 //PREPARO PAQUETE
 	nodeData_rs* answer = malloc(sizeof(nodeData_rs));
@@ -45,13 +50,16 @@ void sendNodeFile(char* fileName){
 	strcpy(answer->file, fileContent);
 
 //SERIALIZO RESPUESTA
+	log_trace(logger, "Enviando archivo %s a worker %d", worker);
 	int bufferSize = sizeof(char)+sizeof(int)+(answer->fileSize);
 	void* buffer = malloc(bufferSize);
 	memcpy(buffer,&(answer->code),sizeof(char));
 	memcpy(buffer+sizeof(char),&(answer->fileSize),sizeof(int));
 	memcpy(buffer+sizeof(char)+sizeof(int),answer->file,answer->fileSize);
+	send(socket,buffer,bufferSize,0);
 
 //LIBERO MEMORIA
+	free(fileContent);
 	free(answer->file);
 	free(answer);
 	free(buffer);
@@ -59,29 +67,23 @@ void sendNodeFile(char* fileName){
 
 //========RESPONDO A MASTER================
 void answerMaster(){
-	int bufferSize = sizeof(char)+sizeof(int);
+	int bufferSize = sizeof(char);
 	rg_node_rs* answer = malloc(sizeof(rg_node_rs));
 	void* buffer = malloc(bufferSize);
 
 	answer->result = 'O';
-	answer->runTime = 12;
 	log_info(logger,"Enviando resultado de Reducción Global a Master");
 
 	memcpy(buffer,&(answer->result),sizeof(char));
-	memcpy(buffer+sizeof(char),&(answer->runTime),sizeof(int));
 	send(socket_master,buffer,bufferSize,0);
 	log_info(logger,"Resultados enviados");
-
 
 	free(buffer);
 	free(answer);
 }
 
-
-
 void globalReduction(){
 	typedef char rl_tmp[28];
-
 	rg_node_rq datos;
 	int i=0;
 
@@ -93,7 +95,7 @@ void globalReduction(){
 	readBuffer(socket_master,datos.fileSize,datos.file);
 	readBuffer(socket_master,28,&(datos.rl_tmp));					//archivo RL
 	readBuffer(socket_master,24,&(datos.rg_tmp));					//archivo RG
-	//printf("%s %s\n",datos.rg_tmp,datos.rl_tmp);
+	printf("%s %s\n",datos.rg_tmp,datos.rl_tmp);
 
 	char* scriptName = regenerateScript(datos.file,script_reduction,'R',socket_master);
 

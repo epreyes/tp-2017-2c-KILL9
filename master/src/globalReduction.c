@@ -121,7 +121,6 @@ int sendNodeRequest(dataThread_GR* datos){
 	log_info(logger,"Esperando respuesta de nodo %d",datos->leadNode);
 	rg_node_rs* answer = malloc(sizeof(rg_node_rs));
 	readBuffer(nodeSockets[datos->leadNode], sizeof(char), &(answer->result));
-	readBuffer(nodeSockets[datos->leadNode], sizeof(int), &(answer->runTime));
 
 	gettimeofday(&(datos->metrics.end),NULL);
 	masterMetrics.globalReduction.runTime+= timediff(&(datos->metrics.end),&(datos->metrics.start));
