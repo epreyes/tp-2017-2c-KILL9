@@ -23,6 +23,6 @@ int allLocalReductionProcesFinish(int master);
 
 t_list* findLocalReductionPlaned(int master);
 
-rl_datos* getLastChargedNode();
+int getLastChargedNode(t_list* planed);
 
 #endif /* SRC_HEADERS_GLOBALREDUCTION_H_ */

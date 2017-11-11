@@ -97,6 +97,7 @@ void* processOperation(int master, char op) {
 		log_info(yama->log, "Solicitud de Reducción Global. Job %d",
 				yama->jobs + master);
 		response = processGlobalReduction(master);
+		viewGlobalReductionResponse(response);
 		break;
 	case 'S':
 		log_info(yama->log, "Solicitud de Almacenado Final. Job %d.",

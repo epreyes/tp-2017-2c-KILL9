@@ -24,10 +24,10 @@ void* getFileSystemInfo(char* name) {
 
 	name = string_substring_from(name, 8);
 
-	int buffersize = sizeof(int) + sizeof(char) + sizeof(int) + strlen(name);
+	int buffersize = sizeof(int) + sizeof(char) + sizeof(int) + strlen(name)+1;
 
 
-	int sizename = strlen(name);
+	int sizename = strlen(name)+1;
 
 	void* buffer = malloc(buffersize);
 	int handShake = 10;
