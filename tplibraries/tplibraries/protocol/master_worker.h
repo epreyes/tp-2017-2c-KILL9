@@ -15,7 +15,7 @@
 typedef struct{
 	int 	pos;
 	int 	size;
-	char	tmp[28];
+	char	tmp[27];
 }block;
 
 typedef struct{
@@ -29,33 +29,66 @@ typedef struct{
 //-----Response---//
 typedef struct{
 	int		block;
-	int		runtime;	//ver de pasar a real
 	char	result;		//'E': error / 'O':"ok"
 }tr_node_rs;
 
 /*========LOCRED==========*/
 //----Request----//
-/*
-typedef struct{
-	int pos;
-	int size;
-}tr_tmp;
+typedef char tmp_tr[28];
 
 typedef struct{
-	char		code;
-	size_t		fileSize;
-	char*		file;
-	size_t		tr_tmpsSize;
-	tr_tmp*		tr_tmps;
-}tr_node;
+	char		code;				//red loc 'L'
+	size_t		fileSize;			//tamaño del script
+	char*		file;				//script
+	char		rl_tmp[28];			//nombre del archivo de salida
+	size_t		tmpsQuantity;		//cantidad de temporales a reducir
+	tmp_tr*		tr_tmp;				//nombre de temporales a reducir
+}rl_node;
 
 //-----Response---//
 typedef struct{
-	char 	code;
-	int		block;
 	char	result;		//'E': error / 'O':"ok"
-}tr_node_rs;
+}rl_node_rs;
 
-*/
+
+/*========GLOBAL_REDUCTION==========*/
+typedef struct{
+	int		node;
+	char	ip[16];
+	int		port;
+	char	rl_tmp[28];
+}rg_node;
+
+//----Request----//
+typedef struct{
+	char		code;			//'G'
+	size_t		fileSize;			//tamaño del script
+	char*		file;				//script
+	char		rl_tmp[28];		//tmp del nodo maestro
+	char		rg_tmp[24];		//nombre del archivo de salida
+	int			nodesQuantity;
+	rg_node*	nodes;			//datos de los nodos hermanos
+}rg_node_rq;
+
+//-----Response---//
+typedef struct{
+	int		runTime;
+	char	result;		//'E': error / 'O':"ok"
+}rg_node_rs;
+
+/*========FINAL_STORAGE==========*/
+
+typedef struct{
+	char	code;		//'S'
+	char	rg_tmp[24];
+	int		fileNameSize;
+	char*	fileName;			//Nombre del archivo Final
+}fs_node_rq;
+
+typedef struct{
+	int		runTime;
+	char	result;
+}fs_node_rs;
+
 
 #endif /* MASTER_WORKER_H_ */

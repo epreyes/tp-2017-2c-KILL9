@@ -12,8 +12,6 @@
 
 #include "headers/master.h"
 #include "headers/metrics.h"
-#include "headers/answers.h"
-
 #include "headers/transform.h"
 #include "headers/localReduction.h"
 #include "headers/globalReduction.h"
@@ -23,39 +21,47 @@
 
 int main(int argc, char* argv[]){
 
-//--preparo metricas---------
+//PREPARO
+	abortJob = '0';
 	struct timeval start,end;
 	gettimeofday(&start,NULL);
-
-
-//--recibo respuestas de Yama
-	int answerSize_TR = sizeof(tr_answer)/sizeof(tr_answer[0]);
-	int answerSize_RL = sizeof(rl_answer)/sizeof(rl_answer[0]);
-	int answerSize_RG = sizeof(rg_answer)/sizeof(rg_answer[0]);
-	int answerSize_AF = sizeof(af_answer)/sizeof(af_answer[0]);
-
 	createLoggers();
+	validateArgs(argc, argv);
 	loadConfigs();
-	openYamaConnection();
-	validateArgs(argc, argv);										//valido argumentos
 	loadScripts(argv[1],argv[2]);
+	initializeNodeSockets();
+	openYamaConnection();
 
-	transformFile(tr_answer,answerSize_TR,&masterMetrics,argv[3]);	//ordena ejecución de transformacion
-	/*
-	runLocalReduction(rl_answer,answerSize_RL,&masterMetrics);		//ordena ejecución de Reductor Local
-	runGlobalReduction(rg_answer,answerSize_RG,&masterMetrics);		//ordena ejecución de Reductor Global
-	saveResult(af_answer,answerSize_AF,&masterMetrics);				//ordena guardado en FileSystem
 
+//PROCESO
+	transformFile(argv[3]);				//RUN TRANSFORMATION
+	if(abortJob!='T'){
+		runLocalReduction();			//RUN LOCAL REDUCTION
+		if(abortJob!='L'){
+			runGlobalReduction();		//RUN GLOBAL REDUCTION
+			if(abortJob!='G')
+				saveResult(argv[4]);	//RUN FINAL STORAGE
+		}
+	}
+	closeConnections();
+
+//IMPRIMO MÉTRICAS
 	gettimeofday(&end,NULL);
 	masterMetrics.runTime = timediff(&end,&start);
 	printMetrics(masterMetrics);
-	*/
 
-//--cierro todo lo grobal
+//FINALIZO
 	fclose(script_transform);
 	fclose(script_reduction);
-	log_destroy(logger);
 	config_destroy(config);
 
-	return EXIT_SUCCESS;
+	if(abortJob=='0'){
+		log_trace(logger,"JOB FINALIZADO CORRECTAMENTE");
+		log_destroy(logger);
+		return EXIT_SUCCESS;
+	}else{
+		log_error(logger,"JOB ABORTADO");
+		log_destroy(logger);
+		return EXIT_FAILURE;
+	}
 };

@@ -8,9 +8,9 @@
 #include "headers/transform.h"
 
 //=============YAMA_REQUEST=============================//
-void sendTRequest(char* fileName){
+transform_rs* sendTRequest(char* fileName){
 
-//---Preparo Paquete---
+//PREPARO PAQUETE
 	transform_rq* data;
 	data = malloc(sizeof(transform_rq));
 	data->code='T';
@@ -18,29 +18,63 @@ void sendTRequest(char* fileName){
 	data->fileName = malloc(data->fileNameSize);
 	strcpy(data->fileName,fileName);
 
-//---Serializo---
-	void* buffer = malloc(5+(data->fileNameSize));
+//SERIALIZO
+	int bufferSize = sizeof(char)+sizeof(int)+(data->fileNameSize);
+	void* buffer = malloc(bufferSize);
 	memcpy(buffer,&(data->code),1);
-	memcpy(buffer+1,&(data->fileNameSize),4);
-	memcpy(buffer+5,(data->fileName),(data->fileNameSize));
-
-//---Envío---
-	log_info(logger, "Solicitando datos de transformación a YAMA");
-	send(masterSocket,buffer,5+(data->fileNameSize),0);
-
-/*---DES_SERIALIZACIÓN---
-	transform_rq *reciv = malloc(sizeof(transform_rq));
-	memcpy(&(reciv->code),buffer,1);
-	memcpy(&(reciv->fileNameSize),buffer+1,4);
-	reciv->fileName = malloc (reciv->fileNameSize);
-	strcpy(reciv->fileName, buffer+5);
-	free(reciv->fileName);
-	free(reciv);
-*/
-	free(buffer);
+	memcpy(buffer+sizeof(char),&(data->fileNameSize),sizeof(int));
+	memcpy(buffer+sizeof(char)+sizeof(int),(data->fileName),(data->fileNameSize));
 	free(data->fileName);
 	free(data);
+
+//ENVIO
+	log_info(logger, "Solicitando datos de transformación a YAMA");
+	if(send(masterSocket,buffer,bufferSize,0)<0){
+		log_error(logger,"No se pudo conectar a YAMA");
+		abortJob = 'T';
+		free(buffer);
+		return NULL;
+	};
+	free(buffer);
+
+//ESPERANDO RESPUESTA DE YAMA
+	int i=0;
+	transform_rs* yamaAnswer=malloc(sizeof(transform_rs));
+
+	readBuffer(masterSocket, sizeof(char), &(yamaAnswer->code));
+	readBuffer(masterSocket, sizeof(int), &(yamaAnswer->bocksQuantity));
+	yamaAnswer->blockData = malloc(sizeof(tr_datos)*(yamaAnswer->bocksQuantity));
+
+	for(i=0;i<(yamaAnswer->bocksQuantity);++i){
+		readBuffer(masterSocket, sizeof(int), &(yamaAnswer->blockData[i].nodo));
+		readBuffer(masterSocket, 16, &(yamaAnswer->blockData[i].ip));
+		readBuffer(masterSocket, sizeof(int), &(yamaAnswer->blockData[i].port));
+		readBuffer(masterSocket, sizeof(int), &(yamaAnswer->blockData[i].bloque));
+		readBuffer(masterSocket, sizeof(int), &(yamaAnswer->blockData[i].tamanio));
+		readBuffer(masterSocket, 28, &(yamaAnswer->blockData[i].tr_tmp));
+		printf("\tnodo:%d\tpos:%d\ttam:%d\tip:%s\t:port:%d\n", yamaAnswer->blockData[i].nodo, yamaAnswer->blockData[i].bloque, yamaAnswer->blockData[i].tamanio,yamaAnswer->blockData[i].ip,yamaAnswer->blockData[i].port);
+	}
+	return yamaAnswer;
 }
+
+//=============CHECK_REPLANIFICATION===========================//
+
+void checkReplanification(int node){
+	char code;
+	sendErrorToYama('T',node);
+	increaseMetricsError(&(masterMetrics.transformation.errors));
+
+	log_warning(logger, "Reportado a YAMA, a la espera de replanificación...");
+	readBuffer(masterSocket,sizeof(char),&code);
+	if(code!='R'){
+		log_error(logger, "Nodo %d: No es posible replanificar, se aborta la tarea", node);
+		abortJob = 'T';
+		increaseMetricsError(&(masterMetrics.transformation.errors));
+	}else{
+		replanification = 'T';
+		log_trace(logger, "Nodo %d: Replanificado, reanudando transformación...", node);
+	};
+};
 
 //=============THREAD_ACTION===================================//
 
@@ -49,8 +83,7 @@ void *runTransformThread(void* data){
 	int i, counter=0;
 	char* scriptString;
 
-//---Preparo Paquete---
-
+//PREPARO PAQUETE PARA WORKER---
 	scriptString=serializeFile(script_transform);	//hacer que se genere una sola vez(?)
 	tr_node* nodeData=malloc(sizeof(tr_node));
 	nodeData->code='T';
@@ -59,7 +92,7 @@ void *runTransformThread(void* data){
 	strcpy(nodeData->file,scriptString);
 	nodeData->blocksSize=datos->blocksCount;
 
-//---Serializo---
+//SERIALIZO---
 	void* buffer = malloc(sizeof(char)+sizeof(int)+nodeData->fileSize+sizeof(int)+(sizeof(block)*(datos->blocksCount)));
 	memcpy(buffer,&(nodeData->code),sizeof(char));
 	counter=sizeof(char);
@@ -75,46 +108,61 @@ void *runTransformThread(void* data){
 		memcpy(buffer+counter+sizeof(int)+i*sizeof(block),&(datos->blocks[i].size),sizeof(int));
 		memcpy(buffer+counter+sizeof(int)+sizeof(int)+i*sizeof(block),(datos->blocks[i].tmp),28);
 	}
+
+//CONEXION CON WORKER
 	log_info(logger,"Estableciendo conexión con nodo %d",datos->node);
-	openNodeConnection(datos[0].node, datos[0].ip, datos[0].port);
+	if(openNodeConnection(datos[0].node, datos[0].ip, datos[0].port)!=0){
+		checkReplanification(datos->node);
+		return NULL;
+	};
+
+//ENVIO DATOS A WORKER
 	counter=1+4+(nodeData->fileSize)+4+(36*(datos->blocksCount));
+	if(send(nodeSockets[datos->node],buffer,counter,0)<0){
+		log_warning(logger, "Nodo %d: Desconectado", datos->node);
+		checkReplanification(datos->node);
+		return NULL;
+	};
 
-//--Envío---
-	send(nodeSockets[datos->node],buffer,counter,0);
 	log_trace(logger,"Nodo %d: Transformación iniciada", datos->node);
-//--Espero respuesta
 
+//METRICS
+	gettimeofday(&(datos->metrics.start),NULL);
+
+	pthread_mutex_lock(&parallelTasks);
+		parallelAux+=datos->blocksCount;
+		if(masterMetrics.transformation.parallelTask < parallelAux) masterMetrics.transformation.parallelTask= parallelAux;
+	pthread_mutex_unlock(&parallelTasks);
+
+//OBTENGO RESPUESTA DEL WORKER
 	tr_node_rs* answer = malloc(sizeof(tr_node_rs));
 
-	void readBuffer(int socket,int size,void* destiny){
-		void* buffer = malloc(size);
-		int bytesReaded = recv(socket, buffer, size, MSG_WAITALL);
-		if (bytesReaded <= 0) {
-			log_warning(logger,"Nodo %d: desconectado",socket);
-			exit(1);
-		}
-		memcpy(destiny, buffer, size);
-		free(buffer);
-	}
-
 	for(i=0;i < (datos->blocksCount); ++i){
-		//-----
+		pthread_mutex_lock(&parallelTasks);
+			parallelAux--;
+		pthread_mutex_unlock(&parallelTasks);
+
 		readBuffer(nodeSockets[datos->node], sizeof(int), &(answer->block));
-			//printf("BLOQUE:%d\n",answer->block);
 		readBuffer(nodeSockets[datos->node], sizeof(char), &(answer->result));
-			//printf("RESULT:%c\n",answer->result);
-		readBuffer(nodeSockets[datos->node], sizeof(int), &(answer->runtime));
-			//printf("METRIC:%d\n",answer->runtime);
+
+//RESPONDO A YAMA
 		if(answer->result == 'O'){
 			log_info(logger,"bloque %d del nodo %d transformado",datos->blocks[i].pos,datos->node);
+			sendOkToYama('T',answer->block,datos->node);
 		}else{
-			log_info(logger,"bloque %d del nodo %d no se pudo transformar",datos->blocks[i].pos,datos->node);
+			log_warning(logger,"bloque %d del nodo %d no se pudo transformar",datos->blocks[i].pos,datos->node);
+			checkReplanification(datos->node);
+			free(answer);
+			return NULL;
 		}
-			//ENVIAR A YAMA
-		//send(masterSocket,buffer,5+(data->fileNameSize),0);
 	}
-	log_trace(logger,"Nodo %d: Transformación finalizada", datos->node);
 	free(answer);
+
+	gettimeofday(&(datos->metrics.end),NULL);
+	pthread_mutex_lock(&runTime);
+	masterMetrics.transformation.runTime+= timediff(&(datos->metrics.end),&(datos->metrics.start));
+	pthread_mutex_unlock(&runTime);
+	log_trace(logger,"Nodo %d: Transformación finalizada (%.6gms)", datos->node, timediff(&(datos->metrics.end),&(datos->metrics.start)));
 /*
 	for (i = 0; i < (datos[0].blocksCount); ++i){
 		printf("\t nodo:%d \t pos:%d  \t tam:%d\n", datos[0].node, datos[0].blocks[i].pos, datos[0].blocks[i].size);
@@ -124,31 +172,46 @@ void *runTransformThread(void* data){
 	free(nodeData->file);
 	free(nodeData);
 	free(scriptString);
-	close(nodeSockets[datos->node]);
 	return NULL;
 }
 
 //==============MAIN===========================================//
 
-int transformFile(tr_datos yamaAnswer[], int totalRecords, metrics *masterMetrics, char* filename){
-	struct timeval tr_start,tr_end;
-	gettimeofday(&tr_start,NULL);
+int transformFile(char* filename){
+	replanification = 'F';
+	parallelAux = 0;
+
 	int blockCounter=0,recordCounter=0, nodeCounter=0, threadIndex=0, nodo;
 	block* blocks = NULL;
 	pthread_t *threads = NULL; 						//creo array de hilos dinámico
 	dataThread_TR *dataThreads = NULL;				//creo array de params para el hilo
+	transform_rs* yamaAnswer;
+	int totalRecords;
 
-	sendTRequest(filename);
+	yamaAnswer=sendTRequest(filename);
 
-	log_info(logger, "Transformación iniciada");
+	if(!yamaAnswer){
+		log_error(logger, "TRANSFORMACIÓN ABORTADA");
+		return EXIT_FAILURE;
+	};
+
+	totalRecords = yamaAnswer->bocksQuantity;
+
+	int sizeBlocks = sizeof(tr_datos)*totalRecords;
+
+	tr_datos* yamaBlocks = malloc(sizeBlocks);
+	memcpy(yamaBlocks, yamaAnswer->blockData, sizeBlocks);
+
+	log_info(logger, "Transformación iniciada...");
+
 
 	while(recordCounter<totalRecords){
-		nodo = yamaAnswer[recordCounter].nodo;	//init first key
-		while(yamaAnswer[recordCounter].nodo==nodo && recordCounter<totalRecords){
+		nodo = yamaBlocks[recordCounter].nodo;	//init first key
+		while(yamaBlocks[recordCounter].nodo==nodo && recordCounter<totalRecords){
 			blocks=(block *) realloc(blocks,(sizeof(block)*(blockCounter+1)));
-			blocks[blockCounter].pos = yamaAnswer[recordCounter].bloque;
-			blocks[blockCounter].size = yamaAnswer[recordCounter].tamanio;
-			strcpy(blocks[blockCounter].tmp,yamaAnswer[recordCounter].tr_tmp);
+			blocks[blockCounter].pos = yamaBlocks[recordCounter].bloque;
+			blocks[blockCounter].size = yamaBlocks[recordCounter].tamanio;
+			strcpy(blocks[blockCounter].tmp,yamaBlocks[recordCounter].tr_tmp);
 			blockCounter++;
 			recordCounter++;
 		};
@@ -159,25 +222,28 @@ int transformFile(tr_datos yamaAnswer[], int totalRecords, metrics *masterMetric
 		//defino los parámetros
 		dataThreads[nodeCounter].blocks=(block *) malloc(sizeof(block)*(blockCounter));
 		dataThreads[nodeCounter].blocks=(block *) memcpy(dataThreads[nodeCounter].blocks,blocks, sizeof(block)*(blockCounter));
-
 		dataThreads[nodeCounter].node=nodo;
-		strcpy(dataThreads[nodeCounter].ip,yamaAnswer[recordCounter-1].ip);
-		dataThreads[nodeCounter].port=yamaAnswer[recordCounter-1].port;
+		strcpy(dataThreads[nodeCounter].ip,yamaBlocks[recordCounter-1].ip);
+		dataThreads[nodeCounter].port=yamaBlocks[recordCounter-1].port;
 		dataThreads[nodeCounter].blocksCount=blockCounter;
 		nodeCounter++;
 		blockCounter = 0;
 	}
 
-//---creo los hilos------------
+//CREO LOS HILOS
 	for(threadIndex=0;threadIndex<nodeCounter;++threadIndex)
 		pthread_create(&threads[threadIndex],NULL,(void*) runTransformThread, (void*) &dataThreads[threadIndex]);
 
-//---joineo los hilos----
+//JOINEO HILOS
 
 	for(threadIndex=0;threadIndex<nodeCounter;++threadIndex)
 		pthread_join(threads[threadIndex],NULL);
 
-//---libero memoria-----------------
+//MÉTRICAS
+	masterMetrics.transformation.tasks = totalRecords;
+	masterMetrics.transformation.runTime = (masterMetrics.transformation.runTime)/totalRecords;
+
+//LIBERO MEMORIA----------------
 	int var=0;
 	for (var = 0; var < nodeCounter; ++var)
 		free(dataThreads[var].blocks);
@@ -185,11 +251,17 @@ int transformFile(tr_datos yamaAnswer[], int totalRecords, metrics *masterMetric
 	free(dataThreads);
 	free(threads);
 	free(blocks);
+	free(yamaAnswer);
 
-	gettimeofday(&tr_end,NULL);
-	masterMetrics->transformation.runTime = timediff(&tr_end,&tr_start);
 
-	log_info(logger, "Tranformación finalizada");
+//EJECUTO REPLANIFICACIÓN--------
+	if(replanification == 'T') transformFile(filename);
 
-	return EXIT_SUCCESS;
+	if(abortJob=='0'){
+		log_trace(logger, "TRANSFORMACIÓN FINALIZADA");
+		return EXIT_SUCCESS;
+	}else{
+		log_error(logger, "TRANSFORMACIÓN ABORTADA");
+		return EXIT_FAILURE;
+	}
 }

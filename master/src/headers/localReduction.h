@@ -14,17 +14,21 @@
 typedef char tr_tmp[28];
 
 typedef struct dataThread_LR{
-	int		node;
-	char 	ip[16];
-	int		port;
-	tr_tmp* tr_tmps;
-	char	rl_tmp[28];
-	int 	tmpsCounter;
+	int				node;
+	char 			ip[16];
+	int				port;
+	tr_tmp* 		tr_tmps;
+	char			rl_tmp[28];
+	int 			tmpsCounter;
+	threadMetrics	metrics;
 }dataThread_LR;
 
+local_rs* sendLRequest();
 
 void *runLocalRedThread(void* data);
 
-int runLocalReduction(rl_datos yamaAnswer[], int totalRecords, metrics *masterMetrics);
+int runLocalReduction();
+
+void reportError(int node);
 
 #endif /* HEADERS_LOCALREDUCTION_H_ */

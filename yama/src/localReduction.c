@@ -7,13 +7,16 @@
 
 #include "headers/localReduction.h"
 
+#include "headers/tablesManager.h"
+
 void deleteOfPlanedList(int items, int master) {
 	int i = 0;
-	for(i = 0; i < items; i++){
+	for (i = 0; i < items; i++) {
 		int j = 0;
-		for(j = 0; j < list_size(yama->tabla_T_planificados); j++){
-			elem_tabla_planificados* elem = list_get(yama->tabla_T_planificados, j);
-			if( elem->master == master){
+		for (j = 0; j < list_size(yama->tabla_T_planificados); j++) {
+			elem_tabla_planificados* elem = list_get(yama->tabla_T_planificados,
+					j);
+			if (elem->master == master) {
 				list_remove(yama->tabla_T_planificados, j);
 				break;
 			}
@@ -45,16 +48,13 @@ void viewLocalReductionResponse(void* response) {
 	memcpy(op, response, sizeof(char));
 	int* bloques = malloc(sizeof(int));
 	memcpy(bloques, response + sizeof(char), sizeof(int));
-	printf("\nLa respuesta de la reduccion local es (%c, %d, %d): ", *op,
-			*bloques, (*bloques) * sizeof(rl_datos));
+
 	int plus = sizeof(int) + sizeof(char);
 	int i = 0;
 	for (i = 0; i < *bloques; i++) {
 		rl_datos* data = malloc(sizeof(rl_datos));
 		memcpy(data, response + plus + (i * sizeof(rl_datos)),
 				sizeof(rl_datos));
-		printf("\nNodo=%d - Ip=%s - Puerto=%d - TR_TMP=%s - RL_TMP=%s\n",
-				data->nodo, data->ip, data->port, data->tr_tmp, data->rl_tmp);
 	}
 }
 
@@ -106,12 +106,17 @@ void* processLocalReduction(int master) {
 			strcpy(localRedData->tr_tmp, elem->tr_tmp);
 			getLocalReductionTmpName(localRedData, 'L',
 					getBlockId(elem->tr_tmp), master);
-			setInStatusTable('L', master, localRedData->nodo,
-					getBlockId(localRedData->rl_tmp), localRedData->rl_tmp);
+			if (!existInStatusTable(yama->jobs + master, 'L',
+					localRedData->nodo)) {
+				setInStatusTable('L', master, localRedData->nodo,
+						getBlockId(localRedData->rl_tmp), localRedData->rl_tmp,
+						0);
 
-			//creo el elemento para agregar a la tabla de planificados.
-			addToLocalReductionPlanedTable(master, localRedData);
-			increaseNodeCharge(localRedData->nodo);
+				//creo el elemento para agregar a la tabla de planificados.
+				addToLocalReductionPlanedTable(master, localRedData);
+				increaseNodeCharge(localRedData->nodo);
+			}
+
 			memcpy(
 					localReductionRes + sizeof(char) + sizeof(int)
 							+ (index * sizeof(rl_datos)), localRedData,
@@ -119,7 +124,7 @@ void* processLocalReduction(int master) {
 		}
 		return localReductionRes;
 	} else {
-		perror("\nTODAS LAS TRANSFORMACIONES DEBEN TERMINAR ANTES DE EMPEZAR LAS REDUCCIONES LOCALES.");
+		log_warning(yama->log, "Todas las transformaciones deben terminar antes de empezar las reducciones locales.");
 		return NULL;
 	}
 

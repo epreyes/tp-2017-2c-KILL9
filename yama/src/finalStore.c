@@ -58,40 +58,62 @@ t_list* findGlobalReductionPlaned(int master) {
 	return planed_list;
 }
 
+void viewFinalStoreResponse(void* response) {
+	char op;
+	memcpy(&op, response, sizeof(char));
+
+	int nodo;
+	memcpy(&nodo, response + sizeof(char), sizeof(int));
+
+	char* ip = malloc(sizeof(char) * 16);
+	memcpy(ip, response + sizeof(char) + sizeof(int), sizeof(char) * 16);
+
+	int puerto;
+	memcpy(&puerto, response + sizeof(char) + sizeof(int) + sizeof(char) * 16,
+			sizeof(int));
+
+	char* fileName = malloc(sizeof(char) * 24);
+	memcpy(fileName,
+			response + sizeof(char) + sizeof(int) + sizeof(char) * 16
+					+ sizeof(int), sizeof(char) * 24);
+
+	printf(
+			"\nFINAL STORE RESPONSE: Code=%c, Nodo=%d, ip=%s, puerto=%d, filename=%s\n",
+			op, nodo, ip, puerto, fileName);
+}
+
+
 void* processFinalStore(int master) {
 	if (allGlobalReductionProcesFinish(master)) {
 		t_list* planed = findGlobalReductionPlaned(master);
 
-		void* finalStoreRes = malloc(
-				sizeof(char) + sizeof(int)
-						+ sizeof(af_datos) * list_size(planed));
+		rg_datos* elem = list_get(planed, 0);
+
+		int fsSize = sizeof(char) * 41 + sizeof(int) * 2;
+
+		void* finalStoreRes = malloc(fsSize);
+
 		memcpy(finalStoreRes, "S", sizeof(char));
-		int size = list_size(planed);
-		memcpy(finalStoreRes + sizeof(char), &size, sizeof(int));
 
-		int index = 0;
-		for (index = 0; index < list_size(planed); index++) {
-			rg_datos* elem = list_get(planed, index);
-			af_datos* finalStoreData = malloc(sizeof(af_datos));
-			finalStoreData->nodo = elem->nodo;
-			strcpy(finalStoreData->ip, elem->ip);
-			finalStoreData->port = elem->port;
-			strcpy(finalStoreData->rg_tmp, elem->rg_tmp);
+		memcpy(finalStoreRes + sizeof(char), &(elem->nodo), sizeof(int));
 
-			//char op, int master, int nodo, int bloque, char* tmpName
-			setInStatusTable('S', master, finalStoreData->nodo, 0,
-					finalStoreData->rg_tmp);
-			increaseNodeCharge(finalStoreData->nodo);
+		memcpy(finalStoreRes + sizeof(char) + sizeof(int), elem->ip,
+				sizeof(char) * 16);
 
-			memcpy(
-					finalStoreRes + sizeof(char) + sizeof(int)
-							+ (index * sizeof(af_datos)), finalStoreData,
-					sizeof(af_datos));
-		}
+		memcpy(finalStoreRes + sizeof(char) + sizeof(int) + sizeof(char) * 16,
+				&(elem->port), sizeof(int));
+
+		memcpy(
+				finalStoreRes + sizeof(char) + sizeof(int) + sizeof(char) * 16
+						+ sizeof(int), elem->rg_tmp, sizeof(char) * 24);
+
+		setInStatusTable('S', master, elem->nodo, 0,
+				elem->rg_tmp, 0);
+		increaseNodeCharge(elem->nodo);
+
 		return finalStoreRes;
 	} else {
-		perror(
-				"\nLA REDUCCION GLOBAL DEBE TERMINAR ANTES DE EMPEZAR EL ALMACENAMIENTO FINAL.");
+		log_warning(yama->log, "La reducción global debe terminar antes de empezar el almacenamiento final.");
 		return NULL;
 	}
 }

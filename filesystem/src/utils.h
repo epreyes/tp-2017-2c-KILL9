@@ -15,4 +15,6 @@ void simularEntradaConexionNodo(t_nodos* nodos);
 int obtenerProfDir(char* path);
 char** obtenerDirectorios(char* path);
 
+void imprimirEstadoNodos();
+
 #endif /* UTILS_H_ */

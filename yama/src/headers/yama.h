@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
 #include <commons/collections/list.h>
 #include <commons/config.h>
 #include <commons/log.h>
@@ -17,6 +18,9 @@
 #include <tplibraries/sockets/socket.h>
 #include <tplibraries/protocol/master_yama.h>
 #include <tplibraries/protocol/filesystem_yama.h>
+#include <errno.h>
+
+#include "messages.h"
 
 static char* CONFIG_PATH = "./config/yamaConfig.properties";
 static char* LOG_PATH = "./log/yama.log";
@@ -41,6 +45,7 @@ typedef struct {
 	int job;
 	int master;
 	int node;
+	int node_block;
 	int block;
 	char op;
 	char status;
@@ -62,6 +67,12 @@ typedef struct{
 	int master;
 }elem_tabla_GR_planificados;
 
+typedef struct{
+	int availBase;
+	int planningDelay;
+	char algoritm[3];
+} t_planningParams;
+
 typedef struct {
 	t_config* config;
 	t_list* tabla_nodos;
@@ -76,6 +87,10 @@ typedef struct {
 	int jobs;
 	int clock;
 	int clock_aux;
+	int debug;
+	int planningDelay;
+	char algoritm[3];
+	int availBase;
 } Yama;
 
 Yama* yama;
@@ -90,8 +105,11 @@ void init();
 
 void* getResponse(int master, char request);
 
+void viewConfig();
+/*
+ * Proceso la operacion que viene en el header. Si es una transformacion, saco la info de la tabla de archivos, si existe;
+ * si no, se la pido al filesystem.
+ * */
 void* processOperation(int master, char op);
-
-void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId);
 
 #endif /* YAMA_H_ */

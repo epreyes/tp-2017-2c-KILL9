@@ -10,5 +10,6 @@
 
 #include "yama.h"
 
+void* processOk(int master);
 
 #endif /* SRC_HEADERS_SUCCESSOPERATION_H_ */

@@ -43,7 +43,7 @@ void map_data_node() {
 	/*Abrir el archivo para leer e escribir*/
 	fd = open(file_name, O_RDWR);
 	if(fd < 0){
-		log_error(logError,"Error al abrir el archivo\n");
+		log_error(logError,"No se encuentra el archivo data.bin, ejecute generarbin [tamanioMB] para crear uno\n");
 	}
 	check (fd < 0, "open %s failed: %s", file_name, strerror (errno));
 
@@ -78,6 +78,9 @@ void  load_data_node_properties_files(){
 	data_node_config->file_system_ip= config_get_string_value(t_data_node,IP_FILESYSTEM);
 	data_node_config->file_system_port = config_get_string_value(t_data_node,PORT_FILESYSTEM);
 	data_node_config->path_data_bin= config_get_string_value(t_data_node,PATH_DATABIN);
+	data_node_config->worker_ip = config_get_string_value(t_data_node,IP_WORKER);
+	data_node_config->worker_port = config_get_string_value(t_data_node,PORT_WORKER);
+	data_node_config->name_nodo = config_get_int_value(t_data_node,NAME_NODO);
 
 	free(t_data_node);
 

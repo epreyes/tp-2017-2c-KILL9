@@ -6,17 +6,42 @@
  */
 
 #include "headers/transformation.h"
-#include "headers/yamaFS.h"
+
+#include "headers/fileSystemConnector.h"
+
+void viewTransformationResponse(void* response) {
+	char op;
+	memcpy(&op, response, sizeof(char));
+
+	int blocks;
+	memcpy(&blocks, response + sizeof(char), sizeof(int));
+
+	int i = 0;
+	for (i = 0; i < blocks; i++) {
+		tr_datos* data = malloc(sizeof(tr_datos));
+		memcpy(data,
+				response + sizeof(char) + sizeof(int) + (i * sizeof(tr_datos)),
+				sizeof(tr_datos));
+		printf("\n%d - %d - %s - %d\n", data->bloque, data->nodo, data->ip,
+				data->port);
+	}
+}
 
 void* processTransformation(int master) {
+	log_info(yama->log, "Atendiendo solicitud de Transformación. Job %d.",
+			yama->jobs + master);
 	/*me traigo la informacion del archivo.*/
 	elem_info_archivo* fsInfo = getFileInfo(master);
 
-	/*Creo una lista, que va a ser la respuesta que se le va a mandar al master, sin planificar.*/
-	t_list* nodeList = list_create();
-	nodeList = buildTransformationResponseNodeList(fsInfo, master);
+	if ( (*(char*)fsInfo) == 'E') {
+		return fsInfo;
+	} else {
+		/*Creo una lista, que va a ser la respuesta que se le va a mandar al master, sin planificar.*/
+		t_list* nodeList = list_create();
+		nodeList = buildTransformationResponseNodeList(fsInfo, master);
 
-	return sortTransformationResponse(nodeList, master);
+		return sortTransformationResponse(nodeList, master);
+	}
 }
 
 void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId) {
@@ -31,13 +56,15 @@ void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId) {
 t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 		int master) {
 
+	t_planningParams* planningParams = getPlanningParams();
+
 	void* info = malloc(fsInfo->sizeInfo);
 	memcpy(info, fsInfo->info, fsInfo->sizeInfo);
 
 	t_list* nodeList = list_create();
 
 	//Se calcularán los valores de disponibilidades para cada Worker
-	updateAvailability();
+	updateAvailability( planningParams->algoritm, planningParams->availBase );
 
 	int index = 0;
 	for (index = 0; index < fsInfo->blocks; index++) {
@@ -46,13 +73,13 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 				sizeof(block_info));
 
 		//Planifico
-		tr_datos* nodeData = doPlanning(blockInfo, master);
+		tr_datos* nodeData = doPlanning(blockInfo, master, planningParams);
 		//agrego a la lista de respuesta
 		list_add(nodeList, nodeData);
 
 		//actualizo la tabla de estados con la informacion del nuevo job.
-		setInStatusTable('T', master, nodeData->nodo,
-				getBlockId(nodeData->tr_tmp), nodeData->tr_tmp);
+		setInStatusTable('T', master, nodeData->nodo, blockInfo->block_id,
+				nodeData->tr_tmp, nodeData->bloque);
 
 		free(blockInfo);
 	}
@@ -86,6 +113,16 @@ void* sortTransformationResponse(t_list* buffer, int master) {
 	}
 
 	return sortedBuffer;
+}
+
+t_planningParams* getPlanningParams(){
+	t_planningParams* params = malloc(sizeof(t_planningParams));
+
+	params->availBase = yama->availBase;
+	params->planningDelay = yama->planningDelay;
+	strcpy(params->algoritm, yama->algoritm);
+
+	return params;
 }
 
 bool compareTransformationBlocks(void* b1, void* b2) {

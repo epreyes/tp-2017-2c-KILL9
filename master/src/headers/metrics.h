@@ -11,15 +11,13 @@
 #include "master.h"
 #include "utils.h"
 
-//=======Estructuras para las métricas=======//
-
-metrics masterMetrics;
-
 //==============Funciones====================//
 
 void printSeparator(char c);
 
 void printProcessMetrics(char* name, procMetrics metrics);
+
+void printErrorProcess(char* name);
 
 void printMetrics(metrics masterMetrics);
 

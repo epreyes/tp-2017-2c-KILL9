@@ -7,119 +7,152 @@
 
 #include "headers/connectionsManager.h"
 
-void loadServer(void){
+void loadServer(void) {
 
 	struct sockaddr_in workerAddr;
 	workerAddr.sin_family = AF_INET;
 	workerAddr.sin_addr.s_addr = INADDR_ANY;
-	workerAddr.sin_port = htons(config_get_int_value(config,"WORKER_PUERTO"));
-	int workerSocket= socket(AF_INET, SOCK_STREAM, 0);
+	workerAddr.sin_port = htons(config_get_int_value(config, "WORKER_PUERTO"));
+	int workerSocket = socket(AF_INET, SOCK_STREAM, 0);
 
 	int activado = 1;
-	setsockopt(workerSocket, SOL_SOCKET, SO_REUSEADDR, &activado, sizeof(activado));
+	setsockopt(workerSocket, SOL_SOCKET, SO_REUSEADDR, &activado,
+			sizeof(activado));
 
 	if (bind(workerSocket, (void*) &workerAddr, sizeof(workerAddr)) != 0) {
-		log_error(logger,"No se pudo realizar el bind");
+		log_error(logger, "No se pudo realizar el bind en puerto %d",
+				config_get_int_value(config, "WORKER_PUERTO"));
 		exit(1);
 	}
-
-	log_info(logger,"Esperando conexiones de master");
+	log_trace(logger, "Worker iniciado en puerto %d",
+			config_get_int_value(config, "WORKER_PUERTO"));
 	listen(workerSocket, 100);
 
-	struct sockaddr_in masterAddr;
+	struct sockaddr_in clientAddr;
 	unsigned int len;
+	while (1) {
+		//acepto conexion de algun cliente
+		log_trace(logger, "Esperando conexiones...");
+		int clientSocket = accept(workerSocket, (void*) &clientAddr, &len);
 
-	int masterSocket = accept(workerSocket, (void*) &masterAddr, &len);
-	if(masterSocket!=-1){
-		log_trace(logger,"Master %d: Conectado",masterSocket);
-	}else{
-		log_error(logger,"Error al establecer conexión");
-		exit(1);
-	}
-	socket_worker=workerSocket;		//sacar
-	socket_master=masterSocket;		//sacar
+		//si hubo conexion
+		if (clientSocket != -1) {
+			log_trace(logger, "Cliente %d: Conectado", clientSocket);
+			socket_worker = workerSocket;
+
+			//forkeo para atender solicitud
+			int pid = fork();
+			if (pid < 0) {
+				perror("ERROR on fork");
+				exit(1);
+			}
+			//si estoy en el proceso hijo, atiendo solicitud
+			if (pid == 0) {
+				socket_master = clientSocket;
+				while (readClientBuffer() > 0)
+					;
+			}
+		} else {
+			log_error(logger, "Error al establecer conexión con Cliente");
+			exit(1);
+		}
+
+	} /* end of while */
+
 }
+
+//=======================FILESYSTEM=============================================
+
+void openFileSystemConnection(void) {
+	struct sockaddr_in fileSystemAddr;
+	char* fileSystem_ip = config_get_string_value(config, "IP_FILESYSTEM");
+	int fileSystem_port = config_get_int_value(config, "PUERTO_FILESYSTEM");
+
+	fileSystemAddr.sin_family = AF_INET;
+	fileSystemAddr.sin_addr.s_addr = inet_addr(fileSystem_ip);
+	fileSystemAddr.sin_port = htons(fileSystem_port);
+
+	socket_filesystem = socket(AF_INET, SOCK_STREAM, 0);
+	if (connect(socket_filesystem, (void*) &fileSystemAddr,
+			sizeof(fileSystemAddr)) != 0) {
+		log_warning(logger, "No se pudo conectar con Filesystem (%s:%d)",
+				fileSystem_ip, fileSystem_port);
+		exit(1);	//ver como manejar
+	};
+	log_info(logger, "Conexión con Filesystem establecida (%s:%d)",
+			fileSystem_ip, fileSystem_port);
+}
+
+//=======================NODE=============================================
+int openNodeConnection(int node, char* ip, int port) {
+
+	struct sockaddr_in workerAddr;
+	workerAddr.sin_family = AF_INET;
+	workerAddr.sin_addr.s_addr = inet_addr(ip);
+	workerAddr.sin_port = htons(port);
+
+	socket_nodes[node] = socket(AF_INET, SOCK_STREAM, 0);
+
+	if (connect(socket_nodes[node], (void*) &workerAddr, sizeof(workerAddr))
+			!= 0) {
+		log_error(logger, "No se puede conectar con el nodo:%d (%s:%d)", node,
+				ip, port);
+		return 1;
+	} else {
+		log_info(logger,
+				"Conexión con nodo %d establecida (puerto:%d-socket:%d)", node,
+				port, socket_nodes[node]);
+		return 0;
+	}
+}
+
 //==========================================================================
 
-void readSocketBuffer(int socket,int size,void* destiny){
-	void* buffer = malloc(size);
-	int bytesReaded = recv(socket, buffer, size, MSG_WAITALL);
-	if (bytesReaded <= 0) {
-		log_warning(logger,"Master %d: desconectado",socket);
-		exit(1);
-	}
-	memcpy(destiny, buffer, size);
-	free(buffer);
-}
-
-void readBuffer(){
+int readClientBuffer() {
 	char operation;
-	readSocketBuffer(socket_master,sizeof(char),&operation);
-		//--------
-		tr_node datos;
+	if (readBuffer(socket_master, sizeof(char), &operation) == 0) {
 
-		switch(operation){
-			case 'T':
-			//tamanio del archivo
-				log_trace(logger,"Master %d: Solicitud de transformación recibida",socket_master);
-				log_info(logger,"Master %d: Obteniendo datos de transformación",socket_master);
-				//Obteniendo Script INFO
-				readSocketBuffer(socket_master,sizeof(int),&(datos.fileSize));
-				datos.file=malloc(datos.fileSize);
-				readSocketBuffer(socket_master,datos.fileSize,datos.file);
-
-				//Obteniendo Blocks INFO
-				readSocketBuffer(socket_master,sizeof(int),&(datos.blocksSize));
-				datos.blocks=malloc(sizeof(block)*datos.blocksSize);
-				readSocketBuffer(socket_master,sizeof(block)*datos.blocksSize,datos.blocks);
-				log_info(logger,"Master %d: Datos de transformación obtenidos",socket_master);
-
-				regenerateScript(datos.file,script_transform,"script.sh");
-
-				//------------
-				tr_node_rs* answer = malloc(sizeof(tr_node_rs));
-				void* buff = malloc(sizeof(int)+sizeof(char)+sizeof(int));
-				int i;
-				for (i = 0; i < (datos.blocksSize); ++i){ //REEMPLAZAR POR FORKS
-					answer->block = datos.blocks[i].pos;
-					answer->result=transformBlock(datos.blocks[i].pos,datos.blocks[i].size,datos.blocks[i].tmp);
-					answer->runtime=12;
-					//serializo
-					memcpy(buff,&(answer->block),sizeof(int));
-						//printf("\BLOQUE:%d\n", answer->block);
-					memcpy(buff+sizeof(int),&(answer->result),sizeof(char));
-						//printf("\RESULT:%c\n", answer->result);
-					memcpy(buff+sizeof(int)+sizeof(char),&(answer->runtime),sizeof(int));
-						//printf("\METRIC:%d\n", answer->runtime);
-					send(socket_master,buff,sizeof(int)+sizeof(char)+sizeof(int),0);
-				}
-				free(buff);
-				free(answer);
-
-				//------------
-				free(datos.blocks);
-				free(datos.file);
-				system("rm -f script.sh");			//borra el script temporal
-				log_trace(logger, "Master %d: Transformación finalizada", socket_master);
-				break;
-			case 'L':
-				log_info(logger,"Solicitud de reducción local recibida");
-				regenerateScript("hola mundo",script_reduction,"rd.sh");
-				//reduceFile(file[],reductionScript);
-				break;
-			case 'G':
-				log_info(logger,"Solicitud de reducción global recibida");
-				//globalReduction(files[],reductionScript);
-				break;
-			case 'S':
-				log_info(logger,"Solicitud de almacenadoFinal recibida");
-				//finalStorage(???,???);
-				break;
-			default:
-				log_error(logger,"No existe la operación solicita");
-				close(socket_master);
-				break;
-				//cerrar conexion y devolver error
+		switch (operation) {
+		case 'T':
+			log_trace(logger, "Master %d: Solicitud de transformación recibida",
+					socket_master);
+			transformation();
+			return 1;
+			break;
+		case 'L':
+			log_info(logger, "Master %d: Solicitud de Reducción Local recibida",
+					socket_master);
+			localReduction();
+			return 1;
+			break;
+		case 'G':
+			log_info(logger,
+					"Master %d: Solicitud de Reducción Global recibida",
+					socket_master);
+			globalReduction();
+			return 1;
+			break;
+		case 'S':
+			log_info(logger,
+					"Master %d: Solicitud de Almacenado Final recibida",
+					socket_master);
+			finalStorage();
+			return 1;
+			break;
+		case 'R':
+			log_trace(logger,
+					"Worker %d: Solicitud de archivo temporal recibida",
+					socket_worker);
+			sendNodeFile(socket_worker);
+			return 1;
+			break;
+		default:
+			log_warning(logger, "No existe la operación Solicitada");
+			return -1;
+			break;
 		}
-		//free(buffer);
+	}
+	else{
+		return -1;
+	}
 }

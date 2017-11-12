@@ -11,16 +11,14 @@
 #include "headers/worker.h"
 #include "headers/connectionsManager.h"
 
-
 int main(){
 	createLoggers();
 	loadConfigs();
+	//map_data_node();
+	generateTempsFolder();
 	loadServer();
 	//-------------
-	generateTempsFolder();
-	readBuffer();
-
-	//-------------
+	//openFileSystemConnection();
 	log_destroy(logger);
 	config_destroy(config);
 	return EXIT_SUCCESS;

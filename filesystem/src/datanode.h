@@ -11,10 +11,13 @@
 #include <stddef.h>
 #include <commons/log.h>
 #include <tplibraries/protocol/filesystem_datanode.h>
+#include <errno.h>
+
+#define DATANODE_DUMMY 0
 
 // Pedidos al datanode
 int escribirEnDataNode(int idBloque, char* contenido, int socketNodo,
 		long finBytes, t_log* logger);
-char* leerDeDataNode(int idBloque, int socketNodo, long finBytes, t_log* logger);
+int leerDeDataNode(int idBloque, int socketNodo, long finBytes, int nroBloque, t_log* logger);
 
 #endif /* DATANODE_H_ */

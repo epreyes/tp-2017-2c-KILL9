@@ -17,20 +17,31 @@
 #include <sys/socket.h>
 #include <sys/select.h>
 #include <tplibraries/protocol/master_worker.h>
+#include <tplibraries/protocol/worker_filesystem.h>
+#include <tplibraries/protocol/worker_worker.h>
 #include <unistd.h>
 #include <commons/config.h>
 #include <commons/log.h>
 #include "utils.h"
+
+//Tamaño de bloque = 1MB
+#define BLOCK_SIZE 20		//cambiar por 1MB = 1048576
+
+
+/** variables globales**/
+void * mapped_data_node;
 
 //=========LOGGERS=============//
 t_log* logger;
 //=========CONFIGS============//
 t_config* config;
 //=========FILES============//
-FILE* script_transform; 	//lo tomo del pedido de transformación
-FILE* script_reduction;		//lo tomo del pedido de reducción local
+FILE* script_transform;
+FILE* script_reduction;
 //=========SOCKETS============//
 int socket_worker;
 int socket_master;
+int socket_filesystem;
+int socket_nodes[50];
 
 #endif /* HEADERS_WORKER_H_ */

@@ -1,3 +1,2 @@
 all: 
-	gcc ../src/*.c -o fs -lcommons -pthread
-
+	gcc ../src/*.c -o fs -lcommons -lpthread -ltplibraries

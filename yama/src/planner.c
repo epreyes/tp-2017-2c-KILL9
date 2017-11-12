@@ -5,8 +5,9 @@
  *      Author: utnso
  */
 
-#include "headers/yamaPlanner.h"
-
+#include "headers/planner.h"
+#include "headers/tablesManager.h"
+#include "headers/transformation.h"
 #include <string.h>
 
 int getMaxWorkload(Yama* yama) {
@@ -21,44 +22,34 @@ int getMaxWorkload(Yama* yama) {
 	return max;
 }
 
-int clockAvail(Yama* yama) {
-	return config_get_int_value(yama->config, "NODE_AVAIL");
+int hClockAvail(Yama* yama, elem_tabla_nodos* elem, int avail) {
+	return avail + (getMaxWorkload(yama) - elem->tasks_in_progress);
 }
 
-int hClockAvail(Yama* yama, elem_tabla_nodos* elem) {
-	return clockAvail(yama) + (getMaxWorkload(yama) - elem->tasks_in_progress);
-}
+int setNewAvailability(elem_tabla_nodos* elem, char* algoritm, int avail) {
 
-int setNewAvailability(elem_tabla_nodos* elem) {
-
-	if (strcmp(config_get_string_value(yama->config, "ALGORITMO_BALANCEO"),
-			"WRR") == 0)
-		return hClockAvail(yama, elem);
-	if (strcmp(config_get_string_value(yama->config, "ALGORITMO_BALANCEO"),
-			"RR") == 0)
-		return clockAvail(yama);
+	if (strcmp(algoritm, "WRR") == 0)
+		return hClockAvail(yama, elem, avail);
+	if (strcmp(algoritm, "RR") == 0)
+		return avail;
 
 	return 0;
 }
 
-int setBaseAvailability() {
-	return config_get_int_value(yama->config, "NODE_AVAIL");
-}
-
-void addAvailBase() {
+void addAvailBase(int avail) {
 	int index = 0;
 	for (index = 0; index < list_size(yama->tabla_nodos); index++) {
 		elem_tabla_nodos* node = list_get(yama->tabla_nodos, index);
-		node->availability += config_get_int_value(yama->config, "NODE_AVAIL");
+		node->availability += avail;
 		list_replace(yama->tabla_nodos, index, node);
 	}
 }
 
-void updateAvailability() {
+void updateAvailability(char* algoritm, int avail) {
 	int index = 0;
 	for (index = 0; index < list_size(yama->tabla_nodos); index++) {
 		elem_tabla_nodos* elem = list_get(yama->tabla_nodos, index);
-		elem->availability = setNewAvailability(elem);
+		elem->availability = setNewAvailability(elem, algoritm, avail);
 		list_replace(yama->tabla_nodos, index, elem);
 	}
 
@@ -114,11 +105,12 @@ tr_datos* buildNodePlaned(block_info* blockRecived, int master, int node_id) {
 	return nodeData;
 }
 
-void increseClock(int* clock) {
-	(*clock)++;
-	if ((*clock) >= list_size(yama->tabla_nodos)) {
-		(*clock) = 0;
+int increseClock(int clock) {
+	clock++;
+	if (clock >= list_size(yama->tabla_nodos)) {
+		clock = 0;
 	}
+	return clock;
 }
 
 tr_datos* updateNodeInTable(block_info* blockRecived, int master, int clock) {
@@ -130,18 +122,34 @@ tr_datos* updateNodeInTable(block_info* blockRecived, int master, int clock) {
 	tr_datos* nodePlaned = buildNodePlaned(blockRecived, master, nodo->node_id);
 
 	//avanzo el clock al siguiente nodo.
-	increseClock(&(yama->clock));
+	yama->clock = increseClock(yama->clock);
+
+	if (yama->debug) {
+		log_info(yama->log, "Se selecciona el Nodo %d", nodo->node_id);
+		log_info(yama->log,
+				"--------------- Fin Planificacion ---------------");
+		viewNodeTable();
+	}
 
 	//devuelvo el nodo planificado.
 	return nodePlaned;
 }
 
-tr_datos* evaluateClock(block_info* blockRecived, int master, int clock) {
+tr_datos* evaluateClock(block_info* blockRecived, int master, int clock,
+		t_planningParams* planningParams) {
 	elem_tabla_nodos* node = list_get(yama->tabla_nodos, clock);
 	//si existe el bloque en el nodo...
 	if (blockExistInClock(blockRecived, clock)) {
+		if (yama->debug == 1) {
+			log_info(yama->log, "Bloque %d existe en Clock = Nodo %d",
+					blockRecived->block_id, node->node_id);
+		}
 		//...y tiene dispo mayor a cero
 		if (node->availability > 0) {
+			if (yama->debug == 1) {
+				log_info(yama->log, "Clock = Nodo %d tiene disponibilidad %d",
+						node->node_id, node->availability);
+			}
 			//actualizo todo
 			return updateNodeInTable(blockRecived, master, clock);
 		} else {
@@ -149,38 +157,87 @@ tr_datos* evaluateClock(block_info* blockRecived, int master, int clock) {
 			//Si dicho clock fuera a ser asignado a un Worker cuyo nivel de disponibilidad fuera 0...
 			//se deberá restaurar la disponibilidad al valor de la disponibilidad base y luego,
 			//avanzar el clock al siguiente Worker, repitiendo el paso 2.
-			node->availability = setBaseAvailability(node);
+			if (yama->debug == 1) {
+				log_info(yama->log, "Clock = Nodo %d tiene disponibilidad %d",
+						node->node_id, node->availability);
+			}
+			node->availability = planningParams->availBase;
+
+			if (yama->debug == 1) {
+				log_info(yama->log,
+						"Se restaura la disponibilidad base (%d) al Nodo %d",
+						config_get_int_value(yama->config, "NODE_AVAIL"),
+						node->node_id);
+			}
+
 			list_replace(yama->tabla_nodos, clock, node);
-			increseClock(&(yama->clock));
-			return evaluateClock(blockRecived, master, yama->clock);
+			yama->clock = increseClock(yama->clock);
+
+			if (yama->debug == 1) {
+				elem_tabla_nodos* newNode = list_get(yama->tabla_nodos,
+						yama->clock);
+
+				log_info(yama->log,
+						"Se incrementa el Clock. Nuevo Valor = Nodo %d y se vuelve a evaluar.",
+						newNode->node_id);
+			}
+
+			return evaluateClock(blockRecived, master, yama->clock, planningParams);
 		}
 	} else {
 		//En el caso de que no se encuentre, se deberá utilizar el siguiente Worker que posea una disponibilidad mayor a 0.
 		//Para este caso, no se deberá modificar el Worker apuntado por el Clock.
-		yama->clock_aux = yama->clock;
-		increseClock(&(yama->clock_aux));
+		yama->clock_aux = increseClock(yama->clock_aux);
+
+		if (yama->debug == 1) {
+			elem_tabla_nodos* newNode = list_get(yama->tabla_nodos,
+					yama->clock);
+			log_info(yama->log,
+					"El bloque no se encuentra en el Clock. Se incrementa. Nuevo Valor = Nodo %d y se vuelve a evaluar.",
+					newNode->node_id);
+		}
+
 		elem_tabla_nodos* nodeAux = list_get(yama->tabla_nodos,
 				yama->clock_aux);
 		while (nodeAux->availability == 0) {
-			increseClock(&(yama->clock_aux));
+			yama->clock_aux = increseClock(yama->clock_aux);
 			nodeAux = list_get(yama->tabla_nodos, yama->clock_aux);
 		}
 		if (yama->clock == yama->clock_aux) {
 			//Si se volviera a caer en el Worker apuntado por el clock por no existir disponibilidad en los Workers (es decir, da una vuelta completa a los Workers),
 			//se deberá sumar al valor de disponibilidad de todos los workers el valor de la Disponibilidad Base configurado al inicio de la pre-planificación.
-			addAvailBase();
+			addAvailBase(planningParams->availBase);
+
+			if (yama->debug == 1) {
+				log_info(yama->log,
+						"No existe disponibilidad en ningun nodo. Se suma la disponibilidad base %d",
+						config_get_int_value(yama->config, "NODE_AVAIL"));
+			}
 		}
-		return evaluateClock(blockRecived, master, yama->clock_aux);
+		return evaluateClock(blockRecived, master, yama->clock_aux, planningParams);
 	}
 }
 
-tr_datos* doPlanning(block_info* blockRecived, int master) {
+tr_datos* doPlanning(block_info* blockRecived, int master,
+		t_planningParams* planningParams) {
 
 	//Se posicionará el Clock en el Worker de mayor disponibilidad, desempatando por el primer worker que tenga menor cantidad de tareas realizadas históricamente.
 	yama->clock = getHigerAvailNode(yama);
-
+	elem_tabla_nodos* nodoClock = list_get(yama->tabla_nodos, yama->clock);
+	yama->clock_aux = yama->clock;
 	//Se deberá evaluar si el Bloque a asignar se encuentra en el Worker apuntado por el Clock y el mismo tenga disponibilidad mayor a 0.
-	return evaluateClock(blockRecived, master, yama->clock);
+	int planigDelay = planningParams->planningDelay;
+
+	if (yama->debug == 1) {
+		printf("\n");
+		log_info(yama->log,
+				"----------------- Planificacion -----------------");
+		log_info(yama->log, "Clock = Nodo %d", nodoClock->node_id);
+		log_info(yama->log, "Retardo = %d", planigDelay);
+	}
+
+	usleep(planigDelay);
+	return evaluateClock(blockRecived, master, yama->clock, planningParams);
 }
 
 void* replanTask(int master, int node) {
@@ -198,10 +255,16 @@ void* replanTask(int master, int node) {
 			node = blockInfo->node1;
 		}
 		tr_datos* dataNode = buildNodePlaned(blockInfo, master, node);
+
 		setInStatusTable('T', master, dataNode->nodo,
-				getBlockId(dataNode->tr_tmp), dataNode->tr_tmp);
+				getBlockId(dataNode->tr_tmp), dataNode->tr_tmp,
+				dataNode->bloque);
 		list_add(replanedTasks, dataNode);
 	}
+
+	int planigDelay = config_get_int_value(yama->config,
+			"RETARDO_PLANIFICACION");
+	usleep(planigDelay);
 
 	return sortTransformationResponse(replanedTasks, master);
 }
