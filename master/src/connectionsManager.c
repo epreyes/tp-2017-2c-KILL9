@@ -28,11 +28,11 @@ void openYamaConnection(void) {
 	masterSocket = socket(AF_INET, SOCK_STREAM, 0);
 
 	if (connect(masterSocket, (void*) &yamaAddr, sizeof(yamaAddr)) != 0) {
-		log_error(logger,"No se pudo conectar con Yama (%s:%d)",yama_ip,yama_port);
+		log_error(logger,"No se pudo conectar con Yama (%s:%d) socket:%d",yama_ip,yama_port, masterSocket);
 		exit(1);
 	};
 
-	log_info(logger,"conexión con Yama establecida (%s:%d)",yama_ip,yama_port);
+	log_info(logger,"conexión con Yama establecida (%s:%d) socket:%d",yama_ip,yama_port, masterSocket);
 }
 
 int openNodeConnection(int node, char* ip, int port){

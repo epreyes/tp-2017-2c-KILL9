@@ -79,7 +79,7 @@ void openFileSystemConnection(void) {
 				fileSystem_ip, fileSystem_port);
 		exit(1);	//ver como manejar
 	};
-	log_info(logger, "conexión con Filesystem establecida (%s:%d)",
+	log_info(logger, "Conexión con Filesystem establecida (%s:%d)",
 			fileSystem_ip, fileSystem_port);
 }
 
@@ -111,8 +111,7 @@ int openNodeConnection(int node, char* ip, int port) {
 int readClientBuffer() {
 	char operation;
 	if (readBuffer(socket_master, sizeof(char), &operation) == 0) {
-		printf("%c", operation);
-		//--------
+
 		switch (operation) {
 		case 'T':
 			log_trace(logger, "Master %d: Solicitud de transformación recibida",
@@ -148,17 +147,12 @@ int readClientBuffer() {
 			return 1;
 			break;
 		default:
-			log_warning(logger, "Master %d: No existe la operación Solicitada");
-			//close(socket_master);
+			log_warning(logger, "No existe la operación Solicitada");
 			return -1;
 			break;
-			//cerrar conexion y devolver error
 		}
 	}
 	else{
 		return -1;
 	}
-
-	//free(buffer);
-
 }

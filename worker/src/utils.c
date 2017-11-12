@@ -37,12 +37,15 @@ char* regenerateScript(char* fileContent, FILE* script, char operation, int sock
 
 
 void loadConfigs(){
-	char* CONFIG_PATH = "worker.properties";
-	config = config_create(CONFIG_PATH);
+	char* CONFIG_PATH = "properties/worker.properties";
+	if(!(config = config_create(CONFIG_PATH))){
+		log_error(logger, "No se pudo cargar el archivo de configuración");
+		exit(1);
+	};
 	if(!(config_has_property(config,"WORKER_PUERTO"))){
 		log_error(logger, "Error al cargar archivos de configuración");
 		config_destroy(config);
-		exit(0);
+		exit(1);
 	}
 	log_info(logger, "Archivo de configuraciones cargado");
 }
@@ -50,8 +53,12 @@ void loadConfigs(){
 
 void createLoggers(){
 	char* LOG_PATH = "../logs/worker.log";
-	logger = log_create(LOG_PATH,"worker",1,LOG_LEVEL_TRACE);
-	log_info(logger, "Logger generado");
+	if(logger = log_create(LOG_PATH,"worker",1,LOG_LEVEL_TRACE)){
+		log_info(logger, "Logger inicializado");
+	}else{
+		log_warning(logger, "No se pudo generar el logger");
+		exit(1);
+	};
 }
 
 long current_timestamp() {
@@ -74,7 +81,6 @@ int readBuffer(int socket,int size,void* destiny){
 		log_warning(logger,"Socket %d: desconectado",socket);
 		close(socket);
 		free(buffer);
-		exit(1);		//QUITAR
 		return EXIT_FAILURE;
 	}
 	memcpy(destiny, buffer, size);
