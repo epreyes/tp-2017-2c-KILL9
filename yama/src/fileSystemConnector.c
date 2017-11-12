@@ -24,10 +24,10 @@ void* getFileSystemInfo(char* name) {
 
 	name = string_substring_from(name, 8);
 
-	int buffersize = sizeof(int) + sizeof(char) + sizeof(int) + strlen(name)+1;
+	int buffersize = sizeof(int) + sizeof(char) + sizeof(int) + strlen(name)
+			+ 1;
 
-
-	int sizename = strlen(name)+1;
+	int sizename = strlen(name) + 1;
 
 	void* buffer = malloc(buffersize);
 	int handShake = 10;
@@ -47,30 +47,38 @@ void* getFileSystemInfo(char* name) {
 		if (confirm == 'O') {
 			int blocks;
 			int recved = recv(fs_client.socket_server_id, &blocks, sizeof(int),
-					MSG_WAITALL);
+			MSG_WAITALL);
 
 			if (recved > 0) {
-				infoSize = blocks*sizeof(block_info);
+				infoSize = blocks * sizeof(block_info);
 
 				buffer = malloc(infoSize);
 				if (recv(fs_client.socket_server_id, buffer, infoSize,
-						MSG_WAITALL) > 0) {
+				MSG_WAITALL) > 0) {
 					fsInfo = malloc(sizeof(int) + infoSize);
 					memcpy(fsInfo, &infoSize, sizeof(int));
 					memcpy(fsInfo + sizeof(int), buffer, infoSize);
+					free(buffer);
+					addToNodeList(fsInfo);
 				} else {
-					log_error(yama->log, "Error ecibing payload from FileSystem...");
+					log_error(yama->log,
+							"Error ecibing payload from FileSystem...");
+					fsInfo = malloc(sizeof(char));
+					memcpy(fsInfo, "E", sizeof(char));
 				}
 
 			}
 		} else {
-			log_error(yama->log, "File requested does not exist.");
+			log_warning(yama->log, "File requested does not exist.");
+			fsInfo = malloc(sizeof(char));
+			memcpy(fsInfo, "E", sizeof(char));
 		}
 	} else {
 		log_error(yama->log, "Error in filesystem connection.");
+		fsInfo = malloc(sizeof(char));
+		memcpy(fsInfo, "E", sizeof(char));
 	}
 	disconnectClient(&fs_client);
-	addToNodeList(fsInfo);
 
 	return fsInfo;
 }
@@ -110,37 +118,45 @@ elem_info_archivo* getFileInfo(int master) {
 	fileName[nameSize] = '\0';
 	free(buff);
 
-	log_info(yama->log, "Solicitando informacion del archivo: %s. Job %d.", fileName,
-			yama->jobs + master);
+	log_info(yama->log, "Solicitando informacion del archivo: %s. Job %d.",
+			fileName, yama->jobs + master);
 
 	int fileIndex = findFile(fileName);
 
 	/*Si ya tengo la info del archivo, en la lista, la saco de ahi.*/
 	if (fileIndex >= 0) {
-		log_info(yama->log, "Obteniendo informacion de cache. Job %d.", yama->jobs + master);
+		log_info(yama->log, "Obteniendo informacion de cache. Job %d.",
+				yama->jobs + master);
 		elem_info_archivo* fileInfo = list_get(yama->tabla_info_archivos,
 				fileIndex);
 		info = fileInfo;
+		return info;
 	}
 	/*Si no tengo la informacion en la tabla, se la pido al filesystem*/
 	else {
-		log_info(yama->log, "Obteniendo informacion del filesystem. Job %d.", yama->jobs + master);
+		log_info(yama->log, "Obteniendo informacion del filesystem. Job %d.",
+				yama->jobs + master);
 		void* fsInfo = getFileSystemInfo(fileName);
-		elem_info_archivo* fileInfo = malloc(sizeof(elem_info_archivo));
-		strcpy(fileInfo->filename, fileName);
 
-		int* size = malloc(sizeof(int));
-		memcpy(size, fsInfo, sizeof(int));
-		fileInfo->sizeInfo = *size;
+		if ( (*(char*)fsInfo) == 'E') {
+			return fsInfo;
+		} else {
+			elem_info_archivo* fileInfo = malloc(sizeof(elem_info_archivo));
+			strcpy(fileInfo->filename, fileName);
 
-		fileInfo->info = malloc(*size);
-		memcpy(fileInfo->info, fsInfo + sizeof(int), *size);
+			int* size = malloc(sizeof(int));
+			memcpy(size, fsInfo, sizeof(int));
+			fileInfo->sizeInfo = *size;
 
-		fileInfo->blocks = *size / sizeof(block_info);
+			fileInfo->info = malloc(*size);
+			memcpy(fileInfo->info, fsInfo + sizeof(int), *size);
 
-		list_add(yama->tabla_info_archivos, fileInfo);
+			fileInfo->blocks = *size / sizeof(block_info);
 
-		info = fileInfo;
+			list_add(yama->tabla_info_archivos, fileInfo);
+
+			info = fileInfo;
+			return info;
+		}
 	}
-	return info;
 }

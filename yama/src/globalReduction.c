@@ -89,7 +89,6 @@ void getGlobalReductionTmpName(rg_datos* nodeData, int op, int blockId,
 	char* name;
 	long timestamp = current_timestamp();
 	asprintf(&name, "%s%ld-RG-M%03d", "/tmp/", timestamp, masterId);
-	printf("\nEl nbombre creado es: %s (%d)\n", name, sizeof(name));
 
 	strcpy(nodeData->rg_tmp, name);
 }
@@ -112,7 +111,6 @@ int allLocalReductionProcesFinish(int master) {
 }
 
 int getLastChargedNode(t_list* planed) {
-	viewNodeTable();
 
 	rl_datos* minNode = list_get(planed, 0);
 

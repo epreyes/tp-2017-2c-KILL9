@@ -6,8 +6,9 @@
  */
 
 #include "headers/successOperation.h"
+#include "headers/tablesManager.h"
 
-void processOk(int master) {
+void* processOk(int master) {
 
 	void* buffer = malloc(sizeof(char));
 	recv(master, buffer, sizeof(char), 0);
@@ -30,6 +31,10 @@ void processOk(int master) {
 	updateStatusTable(master, opCode, nodo, bloque, 'F');
 	decreaseNodeCharge(nodo);
 
+	log_info(yama->log, "Operacion %c OK en nodo %d, bloque %d, Master %d.", opCode, nodo, bloque, master);
+
 	buffer = malloc(sizeof(char));
 	memcpy(buffer, "O", sizeof(char));
+
+	return buffer;
 }

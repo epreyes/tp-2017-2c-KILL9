@@ -24,6 +24,6 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 
 bool compareTransformationBlocks(void* b1, void* b2);
 
-
+t_planningParams* getPlanningParams();
 
 #endif /* SRC_HEADERS_TRANSFORMATION_H_ */

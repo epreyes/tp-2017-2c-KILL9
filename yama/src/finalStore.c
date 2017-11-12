@@ -111,8 +111,6 @@ void* processFinalStore(int master) {
 				elem->rg_tmp, 0);
 		increaseNodeCharge(elem->nodo);
 
-		viewFinalStoreResponse(finalStoreRes);
-
 		return finalStoreRes;
 	} else {
 		log_warning(yama->log, "La reducción global debe terminar antes de empezar el almacenamiento final.");

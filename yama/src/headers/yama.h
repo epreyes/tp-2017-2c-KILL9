@@ -67,6 +67,12 @@ typedef struct{
 	int master;
 }elem_tabla_GR_planificados;
 
+typedef struct{
+	int availBase;
+	int planningDelay;
+	char algoritm[3];
+} t_planningParams;
+
 typedef struct {
 	t_config* config;
 	t_list* tabla_nodos;
@@ -82,6 +88,9 @@ typedef struct {
 	int clock;
 	int clock_aux;
 	int debug;
+	int planningDelay;
+	char algoritm[3];
+	int availBase;
 } Yama;
 
 Yama* yama;

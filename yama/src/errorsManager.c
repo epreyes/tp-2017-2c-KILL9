@@ -33,7 +33,7 @@ void* processNodeError(int master) {
 
 	switch (*(char*) op) {
 	case 'T':
-		log_error(yama->log, planningErrorMsg(op, node, master));
+		log_error(yama->log, "Error en Nodo %d. Comienza replanificacion. Job %d.", node, yama->jobs+master);
 		response = replanTask(master, *(int*) node);
 		log_info(yama->log, "Enviando informacion de replanificacion.");
 		break;

@@ -52,15 +52,16 @@ int findNode(int node_id) {
 }
 
 void viewNodeTable() {
-	printf("\nLa cantidad de entradas de la tabla de nodos es: %d\n",
+	printf("\n------------- Tabla de Nodos: %d -------------\n",
 			list_size(yama->tabla_nodos));
 	int index = 0;
 	for (index = 0; index < list_size(yama->tabla_nodos); index++) {
 		elem_tabla_nodos* node = list_get(yama->tabla_nodos, index);
-		printf("nodo id: %d, avail: %d, in progres: %d, done: %d\n",
+		printf("ID: %d, Disponibilidad: %d, Tareas en Progreso: %d, Tareas Finalizadas: %d\n",
 				node->node_id, node->availability, node->tasks_in_progress,
 				node->tasts_done);
 	}
+	printf("----------------------------------------------\n");
 }
 
 void viewPlannedTable() {
@@ -206,8 +207,7 @@ int findInProcessTasks(int master, int node_id, int block, char op) {
 						&& (node->status == 'P')) {
 					return index;
 				}
-			}
-			else {
+			} else {
 				if ((node->node == node_id) && (master == node->master)
 						&& (op == node->op) && (node->status == 'P')) {
 					return index;

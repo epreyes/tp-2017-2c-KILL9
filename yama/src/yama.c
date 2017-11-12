@@ -36,8 +36,6 @@ void viewConfig() {
 			config_get_string_value(yama->config, "ALGORITMO_BALANCEO"),
 			config_get_int_value(yama->config, "YAMA_PUERTO"),
 			config_get_int_value(yama->config, "NODE_AVAIL"));
-
-	yama->config;
 }
 
 /*---------------------- Public ----------------------------------*/
@@ -57,17 +55,18 @@ void init() {
 	yama->tabla_T_planificados = list_create();
 	yama->tabla_LR_planificados = list_create();
 	yama->tabla_GR_planificados = list_create();
+	yama->availBase = config_get_int_value(yama->config, "NODE_AVAIL");
+	yama->planningDelay = config_get_int_value(yama->config, "RETARDO_PLANIFICACION");
+	strcpy(yama->algoritm, config_get_string_value(yama->config, "ALGORITMO_BALANCEO"));
 
-	yama->debug = config_get_string_value(yama->config, "DEBUG");
+	yama->debug = config_get_int_value(yama->config, "DEBUG");
 
 	/* inicializo el server en el socket configurado */
 	yama->yama_server = startServer(
 			config_get_int_value(yama->config, "YAMA_PUERTO"));
 
-	log_info(yama->log, "YAMA was succesfully configured.");
+	log_info(yama->log, "YAMA fue configurado correctamente.");
 	yama->jobs = 0;
-
-	viewConfig();
 }
 
 void* getResponse(int master, char request) {
@@ -97,7 +96,6 @@ void* processOperation(int master, char op) {
 		log_info(yama->log, "Solicitud de Reducción Global. Job %d",
 				yama->jobs + master);
 		response = processGlobalReduction(master);
-		viewGlobalReductionResponse(response);
 		break;
 	case 'S':
 		log_info(yama->log, "Solicitud de Almacenado Final. Job %d.",
@@ -108,11 +106,7 @@ void* processOperation(int master, char op) {
 		response = processNodeError(master);
 		break;
 	case 'O':
-		//printf("\nAntes del ok:\n");
-		//viewStateTable();
 		response = processOk(master);
-		//printf("\nDESPUES del ok:\n");
-		//viewStateTable();
 		break;
 	default:
 		response = invalidRequest(master, "Error: Invalid operation.");

@@ -59,6 +59,9 @@ int getSizeToSend(void* masterRS) {
 	case 'A':
 		size = sizeof(error_rq);
 		break;
+	case 'E':
+		size = sizeof(char);
+		break;
 	}
 
 	return size;
@@ -140,7 +143,7 @@ void exploreActivity(fd_set* mastersListTemp, fd_set* mastersList) {
 void waitMastersConnections() {
 
 	if (yama->yama_server.status > -1) {
-		log_info(yama->log, "Yama process (%d) ready to recive Master's requests.", getpid());
+		log_info(yama->log, "Proceso YAMA (id: %d) listo para recibir solicitudes de Masters.", getpid());
 
 		/* creo las listas de sockets entrantes que seran monitoreadas */
 		fd_set mastersList;
