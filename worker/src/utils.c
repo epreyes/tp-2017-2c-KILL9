@@ -38,6 +38,7 @@ char* regenerateScript(char* fileContent, FILE* script, char operation, int sock
 
 void loadConfigs(){
 	char* CONFIG_PATH = "properties/worker.properties";
+
 	if(!(config = config_create(CONFIG_PATH))){
 		log_error(logger, "No se pudo cargar el archivo de configuración");
 		exit(1);

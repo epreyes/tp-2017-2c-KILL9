@@ -65,7 +65,7 @@ void loadScripts(char* transformScript, char* reductionScript){
 //------------------------------
 
 void loadConfigs(){
-	char* CONFIG_PATH = "../properties/master.properties";
+	char* CONFIG_PATH = "properties/master.properties";
 	config = config_create(CONFIG_PATH);
 	if(!(config_has_property(config,"YAMA_IP"))|| !(config_has_property(config,"YAMA_PUERTO"))){
 		log_error(logger,"error en el archivo de configuración");
@@ -76,7 +76,7 @@ void loadConfigs(){
 
 
 void createLoggers(){
-	char* LOG_PATH = "../logs/master.log";
+	char* LOG_PATH = "logs/master.log";
 	logger = log_create(LOG_PATH,"master",1,LOG_LEVEL_TRACE);
 }
 
