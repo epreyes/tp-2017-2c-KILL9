@@ -43,7 +43,7 @@ void map_data_node() {
 	/*Abrir el archivo para leer e escribir*/
 	fd = open(file_name, O_RDWR);
 	if(fd < 0){
-		log_error(logError,"Error al abrir el archivo\n");
+		log_error(logError,"No se encuentra el archivo data.bin, ejecute generarbin [tamanioMB] para crear uno\n");
 	}
 	check (fd < 0, "open %s failed: %s", file_name, strerror (errno));
 
