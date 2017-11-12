@@ -15,14 +15,10 @@ int main(){
 	createLoggers();
 	loadConfigs();
 	//map_data_node();
+	generateTempsFolder();
 	loadServer();
 	//-------------
 	//openFileSystemConnection();
-	generateTempsFolder();
-	while(1){
-		readMasterBuffer();
-	}
-	//-------------
 	log_destroy(logger);
 	config_destroy(config);
 	return EXIT_SUCCESS;
