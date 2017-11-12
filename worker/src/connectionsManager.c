@@ -67,20 +67,16 @@ void openFileSystemConnection(void) {
 	struct sockaddr_in fileSystemAddr;
 	char* fileSystem_ip = config_get_string_value(config, "IP_FILESYSTEM");
 	int fileSystem_port = config_get_int_value(config, "PUERTO_FILESYSTEM");
-
 	fileSystemAddr.sin_family = AF_INET;
 	fileSystemAddr.sin_addr.s_addr = inet_addr(fileSystem_ip);
 	fileSystemAddr.sin_port = htons(fileSystem_port);
 
 	socket_filesystem = socket(AF_INET, SOCK_STREAM, 0);
-	if (connect(socket_filesystem, (void*) &fileSystemAddr,
-			sizeof(fileSystemAddr)) != 0) {
-		log_warning(logger, "No se pudo conectar con Filesystem (%s:%d)",
-				fileSystem_ip, fileSystem_port);
-		exit(1);	//ver como manejar
+	if (connect(socket_filesystem, (void*) &fileSystemAddr, sizeof(fileSystemAddr)) != 0) {
+		log_warning(logger, "No se pudo conectar con Filesystem (%s:%d)", fileSystem_ip, fileSystem_port);
+		exit(1);
 	};
-	log_info(logger, "Conexión con Filesystem establecida (%s:%d)",
-			fileSystem_ip, fileSystem_port);
+	log_info(logger, "Conexión con Filesystem establecida (%s:%d)", fileSystem_ip, fileSystem_port);
 }
 
 //=======================NODE=============================================

@@ -42,6 +42,10 @@ transform_rs* sendTRequest(char* fileName){
 	transform_rs* yamaAnswer=malloc(sizeof(transform_rs));
 
 	readBuffer(masterSocket, sizeof(char), &(yamaAnswer->code));
+	if(yamaAnswer->code!='T'){
+		log_warning(logger,"El archivo solicitado no existe");
+		exit(1);
+	}
 	readBuffer(masterSocket, sizeof(int), &(yamaAnswer->bocksQuantity));
 	yamaAnswer->blockData = malloc(sizeof(tr_datos)*(yamaAnswer->bocksQuantity));
 
