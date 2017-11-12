@@ -71,17 +71,17 @@ char reduceFiles(int filesQuantity, tmp_tr* filesNames, char* script, char* redu
 	log_info(logger,"Apareo de archivos finalizado");
 	log_info(logger,"Preparando para ejecución de reducción");
 //GENERO COMANDO PARA EJECUTAR REDUCCION
-	char* command;
+	char* command = NULL;
 	command = malloc(strlen(mergedFile)+strlen(script)+strlen(reducedFileName)+13);
 	asprintf(&command,"cat %s | %s > %s",mergedFile,script,reducedFileName+1);
-	printf("\nCOMANDO\n:%s", command);
+	//printf("\nCOMANDO\n:%s", command);
 //EJECUTO REDUCCION
 	if (system(command)!=0){
-		log_error(logger,"Falló la reducción local");
+		log_error(logger,"Falló la reducción");
 		free(command);
 		return 'E';
 	}else{
-		log_trace(logger,"Reducción local finalizada");
+		log_trace(logger,"Reducción finalizada");
 		free(command);
 		return 'O';
 	}

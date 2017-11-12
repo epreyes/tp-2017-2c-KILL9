@@ -9,6 +9,7 @@
 #include "headers/tablesManager.h"
 #include "headers/transformation.h"
 #include <string.h>
+#include <unistd.h>
 
 int getMaxWorkload(Yama* yama) {
 	int max = 0;
@@ -236,11 +237,11 @@ tr_datos* doPlanning(block_info* blockRecived, int master,
 		log_info(yama->log, "Retardo = %d", planigDelay);
 	}
 
-	usleep(planigDelay);
+	sleep(planigDelay);
 	return evaluateClock(blockRecived, master, yama->clock, planningParams);
 }
 
-void* replanTask(int master, int node) {
+void* replanTask(int master, int node, t_planningParams* params) {
 	t_list* taskFailed = getTaskFailed(master, node);
 	t_list* replanedTasks = list_create();
 
@@ -262,9 +263,8 @@ void* replanTask(int master, int node) {
 		list_add(replanedTasks, dataNode);
 	}
 
-	int planigDelay = config_get_int_value(yama->config,
-			"RETARDO_PLANIFICACION");
-	usleep(planigDelay);
+	int planigDelay = params->planningDelay;
+	sleep(planigDelay);
 
 	return sortTransformationResponse(replanedTasks, master);
 }

@@ -22,7 +22,7 @@ void finalStorage(){
 	log_info(logger,"Master %d: Datos de almacenamiento final obtenidos",socket_master);
 
 //GENERO PAQUETE PARA FS
-/*
+
 	char* fileContent;
 	fileContent = serializeFile(datos.rg_tmp+1);
 
@@ -38,17 +38,28 @@ void finalStorage(){
 	fs_datos->file = malloc(fs_datos->fileSize);
 	strcpy(fs_datos->file, fileContent);
 
+//--quito "yamafs:/"-----------------------
+	fs_datos->fileNameSize -=8;
+	strcpy(fs_datos->fileName,&(fs_datos->fileName[8]));
+	printf("TAM:%d\n", fs_datos->fileNameSize);
+	printf("FILE:%s\n", fs_datos->fileName);
+//-----------------------------------------
+
+	int hskw = WORKER_HSK;
+
 	void* buffer;
-	int bufferSize=sizeof(char)+sizeof(int)*2+fs_datos->fileNameSize+fs_datos->fileSize;
+	int bufferSize=sizeof(char)+sizeof(int)*3+(fs_datos->fileNameSize)+fs_datos->fileSize;
 	buffer = malloc(bufferSize);
 
 	//SERIALIZO
-	memcpy(buffer,&(fs_datos->operation),sizeof(char));
-	memcpy(buffer+sizeof(char),&(fs_datos->fileNameSize),sizeof(int));
-	memcpy(buffer+sizeof(char)+sizeof(int),fs_datos->fileName,fs_datos->fileNameSize);
-	memcpy(buffer+sizeof(char)+sizeof(int)+fs_datos->fileNameSize, &(fs_datos->fileSize), sizeof(int));
-	memcpy(buffer+sizeof(char)+sizeof(int)*2+fs_datos->fileNameSize, fs_datos->file, fs_datos->fileSize);
+	memcpy(buffer,&(hskw),sizeof(int));
+	memcpy(buffer+sizeof(int),&(fs_datos->operation),sizeof(char));
+	memcpy(buffer+sizeof(int)+sizeof(char),&(fs_datos->fileNameSize),sizeof(int));
+	memcpy(buffer+sizeof(char)+sizeof(int)*2,fs_datos->fileName,fs_datos->fileNameSize);
+	memcpy(buffer+sizeof(char)+sizeof(int)*2+fs_datos->fileNameSize, &(fs_datos->fileSize), sizeof(int));
+	memcpy(buffer+sizeof(char)+sizeof(int)*3+fs_datos->fileNameSize, fs_datos->file, fs_datos->fileSize);
 
+	openFileSystemConnection();
 	//ENVIO
 	send(socket_filesystem,buffer,bufferSize,0);
 
@@ -56,20 +67,18 @@ void finalStorage(){
 	free(fs_datos->file);
 	free(fs_datos);
 	free(buffer);
-*/
+
 //ESPERO RESPUESTA DE FS
 	char rs_fs;
-/*
 	readBuffer(socket_filesystem,sizeof(char),&rs_fs);
-	if(rs_fs=='O'){
-		log_info(logger, "JOB Master %d: Archivo almacenado correctamente", socket_master);
-	}else{
+	if(rs_fs!='O'){
 		log_error(logger, "JOB Master %d: Error al intentar almacenar el archivo", socket_master);
-		exit(1);
+	}else{
+		log_info(logger, "Master %d: Archivo almacenado correctamente", socket_master);
+		log_info(logger, "Cerrando conexión con FileSystem");
 	}
+	close(socket_filesystem);
 
-*/
-	rs_fs = 'O'; //QUITAR
 //RESPUESTA A MASTER
 	fs_node_rs* answer = malloc(sizeof(fs_node_rs));
 	answer->result = rs_fs;

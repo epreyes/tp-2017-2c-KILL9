@@ -66,12 +66,12 @@ void sendNodeFile(int worker){
 }
 
 //========RESPONDO A MASTER================
-void answerMaster(){
+void answerMaster(char result){
 	int bufferSize = sizeof(char);
 	rg_node_rs* answer = malloc(sizeof(rg_node_rs));
 	void* buffer = malloc(bufferSize);
 
-	answer->result = 'O';
+	answer->result = result;
 	log_info(logger,"Enviando resultado de Reducción Global a Master");
 
 	memcpy(buffer,&(answer->result),sizeof(char));
@@ -97,7 +97,6 @@ void globalReduction(){
 	readBuffer(socket_master,24,&(datos.rg_tmp));					//archivo RG
 	printf("%s %s\n",datos.rg_tmp,datos.rl_tmp);
 
-	char* scriptName = regenerateScript(datos.file,script_reduction,'R',socket_master);
 
 //OBTENIENDO DATOS DE LOS OTROS NODOS
 	readBuffer(socket_master,sizeof(int),&(datos.nodesQuantity));	//cantidad de NODOS
@@ -112,22 +111,24 @@ void globalReduction(){
 	}
 	log_info(logger,"Master %d: Datos de Reducción Global obtenidos",socket_master);
 
+	char* scriptName = regenerateScript(datos.file,script_reduction,'R',socket_master);
 
 	rl_tmp* rlFilesNames = malloc((datos.nodesQuantity+1)*sizeof(rl_tmp)); //+1 por el del anfitrion
 
-/*
-	//genero todos los temps, los guardo y devuelvo el nombre
+//genero todos los temps, los guardo y devuelvo el nombre
 	for(i=0;i<(datos.nodesQuantity);++i){
 		strcpy(rlFilesNames[i],obtainNodeFile(datos.nodes[i]));
 		printf("FILE:%s\n",rlFilesNames[i]);
 	}
+	printf("obteniendo archivos\n");
 	strcpy(rlFilesNames[datos.nodesQuantity], datos.rl_tmp);				//pongo último el del anfitrion
 	printf("FILE:%s\n",rlFilesNames[datos.nodesQuantity]);
 	//Aplico reducción (reutilizo funct de redloc)
-	reduceFiles(datos.nodesQuantity+1,rlFilesNames, script_reduction, datos.rg_tmp);
 
-*/
-	answerMaster(); //agregar error
+	char result = reduceFiles(datos.nodesQuantity+1,rlFilesNames, scriptName, datos.rg_tmp);
+
+	answerMaster(result);
 	free(datos.file);
 	free(datos.nodes);
+	log_trace(logger,"Reducción global finalizada");
 };
