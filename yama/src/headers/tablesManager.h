@@ -34,16 +34,16 @@ void addNewRowStatusTable(elem_tabla_estados* elem);
 void updateStatusTable(int master, char opCode, int node, int bloque,
 		char status);
 
-void addToTransformationPlanedTable(int master, tr_datos* nodeData);
+void addToTransformationPlanedTable(int master, tr_datos* nodeData, char* fileName);
 
-void addToLocalReductionPlanedTable(int master, rl_datos* nodeData);
+void addToLocalReductionPlanedTable(int master, rl_datos* nodeData, char* fileName);
 
-void addToGlobalReductionPlanedTable(int master, rg_datos* nodeData);
+void addToGlobalReductionPlanedTable(int master, rg_datos* nodeData, char* fileName);
 
 void updateTasksAborted(int master, int node, int codeOp);
 
 void setInStatusTable(char op, int master, int nodo, int bloque, char* tmpName,
-		int nodeBlock);
+		int nodeBlock, char* filename);
 
 int findInProcessTasks(int master, int node_id, int block, char op);
 

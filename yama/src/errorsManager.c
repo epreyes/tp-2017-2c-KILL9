@@ -34,7 +34,7 @@ void* processNodeError(int master) {
 	switch (*(char*) op) {
 	case 'T':
 		log_error(yama->log, "Error en Nodo %d. Comienza replanificacion. Job %d.", *(int*)node, yama->jobs+master);
-		t_planningParams* params = malloc(sizeof(t_planningParams));
+		t_planningParams* params = getPlanningParams();
 		strcpy(params->algoritm, yama->algoritm);
 		params->availBase = yama->availBase;
 		params->planningDelay = yama->planningDelay;
@@ -43,8 +43,11 @@ void* processNodeError(int master) {
 		break;
 	case 'L':
 	case 'G':
+	case 'S':
+		log_trace(yama->log, "Recivo error en operacion %c. Job %d.", *(char*) op, yama->jobs+master);
 		response = abortJob(master, *(int*) node, *(char*) op);
 		log_error(yama->log, "Se aborta job %d. Master %d.", yama->jobs+master, master);
+		viewStateTable();
 		break;
 	}
 	return response;
@@ -60,7 +63,7 @@ void showErrorMessage(void* response){
 	char* msg = malloc(sizeMsg);
 	memcpy(msg, response+sizeof(char)+sizeof(int), sizeMsg);
 
-	printf("\n%s\n", msg);
+	log_error("%s", msg);
 }
 
 void* processErrorMessage(int master, char* errorMessage){

@@ -65,7 +65,7 @@ void init() {
 	yama->yama_server = startServer(
 			config_get_int_value(yama->config, "YAMA_PUERTO"));
 
-	log_info(yama->log, "YAMA fue configurado correctamente.");
+	log_trace(yama->log, "YAMA fue configurado correctamente.");
 	yama->jobs = 0;
 }
 
@@ -82,29 +82,27 @@ void* processOperation(int master, char op) {
 
 	switch (op) {
 	case 'T':
-		log_info(yama->log, "Solicitud de transformación. Job %d.",
+		log_trace(yama->log, "Solicitud de transformación. Job %d.",
 				yama->jobs + master);
 		response = processTransformation(master);
-		viewStateTable();
 		break;
 	case 'L':
-		log_info(yama->log, "Solicitud de Reducción Local. Job %d.",
+		log_trace(yama->log, "Solicitud de Reducción Local. Job %d.",
 				yama->jobs + master);
 		response = processLocalReduction(master);
 		break;
 	case 'G':
-		log_info(yama->log, "Solicitud de Reducción Global. Job %d",
+		log_trace(yama->log, "Solicitud de Reducción Global. Job %d",
 				yama->jobs + master);
 		response = processGlobalReduction(master);
 		break;
 	case 'S':
-		log_info(yama->log, "Solicitud de Almacenado Final. Job %d.",
+		log_trace(yama->log, "Solicitud de Almacenamiento Final. Job %d.",
 				yama->jobs + master);
 		response = processFinalStore(master);
 		break;
 	case 'E':
 		response = processNodeError(master);
-		viewStateTable();
 		break;
 	case 'O':
 		response = processOk(master);

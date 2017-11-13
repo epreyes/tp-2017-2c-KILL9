@@ -18,7 +18,7 @@ char* sendResponseMsg(int master, int bytes, void* response) {
 				bytes, yama->jobs + master);
 		break;
 	case 'L':
-		asprintf(&msg, "Respuesta de reduccion Gocal: enviados %d bytes. Job %d.",
+		asprintf(&msg, "Respuesta de reduccion Local: enviados %d bytes. Job %d.",
 				bytes, yama->jobs + master);
 		break;
 	case 'G':

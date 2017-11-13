@@ -24,7 +24,7 @@ int existInStatusTable(int job, char op, int node){
 }
 
 void setInStatusTable(char op, int master, int nodo, int bloque, char* tmpName,
-		int nodeBlock) {
+		int nodeBlock, char* filename) {
 	elem_tabla_estados* elemStatus = malloc(sizeof(elem_tabla_estados));
 	elemStatus->block = bloque;
 	elemStatus->job = yama->jobs + master;
@@ -34,8 +34,9 @@ void setInStatusTable(char op, int master, int nodo, int bloque, char* tmpName,
 	elemStatus->op = op;
 	elemStatus->status = 'P';
 	strcpy(elemStatus->tmp, tmpName);
+	strcpy(elemStatus->fileProcess, filename);
 
-	addNewRowStatusTable(elemStatus);
+	list_add(yama->tabla_estados, elemStatus);
 }
 
 int findNode(int node_id) {
@@ -189,9 +190,9 @@ void viewStateTable() {
 		elem_tabla_estados* row = list_get(stateTable, i);
 		i++;
 		printf(
-				"Row:\nJob=%d - Master=%d - Block=%d - Node=%d - Node_block=%d - Oper=%c - Temp=%s - Status=%c\n",
+				"Row:\nJob=%d - Master=%d - Block=%d - Node=%d - Node_block=%d - Oper=%c - Temp=%s - Status=%c (%s)\n",
 				row->job, row->master, row->block, row->node, row->node_block,
-				row->op, row->tmp, row->status);
+				row->op, row->tmp, row->status, row->fileProcess);
 	}
 }
 
@@ -227,21 +228,6 @@ int getBlockId(char* tmpName) {
 	return code;
 }
 
-void addNewRowStatusTable(elem_tabla_estados* elem) {
-	elem_tabla_estados* row;
-
-	row = malloc(sizeof(elem_tabla_estados));
-	row->master = elem->master;
-	row->op = elem->op;
-	row->status = elem->status;
-	row->job = elem->job;
-	row->node = elem->node;
-	row->node_block = elem->node_block;
-	row->block = elem->block;
-	strcpy(row->tmp, elem->tmp);
-	list_add(yama->tabla_estados, row);
-}
-
 void updateStatusTable(int master, char opCode, int node, int bloque,
 		char status) {
 
@@ -259,27 +245,30 @@ void updateStatusTable(int master, char opCode, int node, int bloque,
 	}
 }
 
-void addToTransformationPlanedTable(int master, tr_datos* nodeData) {
+void addToTransformationPlanedTable(int master, tr_datos* nodeData, char* fileName) {
 	elem_tabla_planificados* planed = malloc(sizeof(elem_tabla_planificados));
+	strcpy(planed->fileName, fileName);
 	planed->data = malloc(sizeof(tr_datos));
 	memcpy(planed->data, nodeData, sizeof(tr_datos));
 	planed->master = master;
 	list_add(yama->tabla_T_planificados, planed);
 }
 
-void addToLocalReductionPlanedTable(int master, rl_datos* nodeData) {
+void addToLocalReductionPlanedTable(int master, rl_datos* nodeData, char* fileName) {
 	elem_tabla_LR_planificados* planed = malloc(
 			sizeof(elem_tabla_LR_planificados));
 	planed->data = malloc(sizeof(rl_datos));
 	memcpy(planed->data, nodeData, sizeof(rl_datos));
 	planed->master = master;
+	strcpy(planed->fileName, fileName);
 	list_add(yama->tabla_LR_planificados, planed);
 }
 
-void addToGlobalReductionPlanedTable(int master, rg_datos* nodeData) {
+void addToGlobalReductionPlanedTable(int master, rg_datos* nodeData, char* fileName) {
 	elem_tabla_GR_planificados* planed = malloc(
 			sizeof(elem_tabla_GR_planificados));
 	planed->data = malloc(sizeof(rg_datos));
+	strcpy(planed->fileName, fileName);
 	memcpy(planed->data, nodeData, sizeof(rg_datos));
 	planed->master = master;
 	list_add(yama->tabla_GR_planificados, planed);
@@ -292,6 +281,7 @@ void updateTasksAborted(int master, int node, int codeOp) {
 		if ((elem->node == node) && (elem->master == master)
 				&& (elem->op == codeOp) && (elem->status == 'P')) {
 			updateStatusTable(master, codeOp, node, elem->block, 'A');
+			sendErrorToFileSystem(elem->fileProcess);
 		}
 	}
 }

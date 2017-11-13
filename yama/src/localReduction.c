@@ -33,7 +33,7 @@ t_list* findTransformationPlaned(int master) {
 	for (i = 0; i < list_size(yama->tabla_T_planificados); i++) {
 		elem_tabla_planificados* elem = list_get(yama->tabla_T_planificados, i);
 		if (elem->master == master) {
-			list_add(planed_list, elem->data);
+			list_add(planed_list, elem);
 			itemsToRemove++;
 		}
 	}
@@ -98,7 +98,9 @@ void* processLocalReduction(int master) {
 
 		int index = 0;
 		for (index = 0; index < list_size(planed); index++) {
-			tr_datos* elem = list_get(planed, index);
+			elem_tabla_planificados* elemData = list_get(planed, index);
+			tr_datos* elem = malloc(sizeof(tr_datos));
+			memcpy(elem, elemData->data, sizeof(tr_datos));
 			rl_datos* localRedData = malloc(sizeof(rl_datos));
 			localRedData->nodo = elem->nodo;
 			localRedData->port = elem->port;
@@ -110,10 +112,10 @@ void* processLocalReduction(int master) {
 					localRedData->nodo)) {
 				setInStatusTable('L', master, localRedData->nodo,
 						getBlockId(localRedData->rl_tmp), localRedData->rl_tmp,
-						0);
+						0, elemData->fileName);
 
 				//creo el elemento para agregar a la tabla de planificados.
-				addToLocalReductionPlanedTable(master, localRedData);
+				addToLocalReductionPlanedTable(master, localRedData, elemData->fileName);
 				increaseNodeCharge(localRedData->nodo);
 			}
 

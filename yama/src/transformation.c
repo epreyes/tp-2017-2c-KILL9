@@ -28,19 +28,19 @@ void viewTransformationResponse(void* response) {
 }
 
 void* processTransformation(int master) {
-	log_info(yama->log, "Atendiendo solicitud de Transformación. Job %d.",
+	log_trace(yama->log, "Atendiendo solicitud de Transformación. Job %d.",
 			yama->jobs + master);
 	/*me traigo la informacion del archivo.*/
 	elem_info_archivo* fsInfo = getFileInfo(master);
 
-	if ( (*(char*)fsInfo) == 'E') {
+	if ((*(char*) fsInfo) == 'E') {
 		return fsInfo;
 	} else {
 		/*Creo una lista, que va a ser la respuesta que se le va a mandar al master, sin planificar.*/
 		t_list* nodeList = list_create();
 		nodeList = buildTransformationResponseNodeList(fsInfo, master);
 
-		return sortTransformationResponse(nodeList, master);
+		return sortTransformationResponse(nodeList, master, 0);
 	}
 }
 
@@ -64,7 +64,7 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 	t_list* nodeList = list_create();
 
 	//Se calcularán los valores de disponibilidades para cada Worker
-	updateAvailability( planningParams->algoritm, planningParams->availBase );
+	updateAvailability(planningParams->algoritm, planningParams->availBase);
 
 	int index = 0;
 	for (index = 0; index < fsInfo->blocks; index++) {
@@ -79,7 +79,10 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 
 		//actualizo la tabla de estados con la informacion del nuevo job.
 		setInStatusTable('T', master, nodeData->nodo, blockInfo->block_id,
-				nodeData->tr_tmp, nodeData->bloque);
+				nodeData->tr_tmp, nodeData->bloque, fsInfo->filename);
+
+		//creo el elemento para agregar a la tabla de planificados.
+		addToTransformationPlanedTable(master, nodeData, fsInfo->filename);
 
 		free(blockInfo);
 	}
@@ -87,7 +90,7 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 	return nodeList;
 }
 
-void* sortTransformationResponse(t_list* buffer, int master) {
+void* sortTransformationResponse(t_list* buffer, int master, int replaned) {
 	bool (*comparator)(void*, void*);
 	comparator = &compareTransformationBlocks;
 	list_sort(buffer, comparator);
@@ -104,8 +107,6 @@ void* sortTransformationResponse(t_list* buffer, int master) {
 	int index = 0;
 	for (index = 0; index < *blocks; index++) {
 		tr_datos* data = list_get(buffer, index);
-		//creo el elemento para agregar a la tabla de planificados.
-		addToTransformationPlanedTable(master, data);
 
 		memcpy(
 				sortedBuffer + sizeof(char) + sizeof(int)
@@ -115,7 +116,7 @@ void* sortTransformationResponse(t_list* buffer, int master) {
 	return sortedBuffer;
 }
 
-t_planningParams* getPlanningParams(){
+t_planningParams* getPlanningParams() {
 	t_planningParams* params = malloc(sizeof(t_planningParams));
 
 	params->availBase = yama->availBase;

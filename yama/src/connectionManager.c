@@ -71,10 +71,10 @@ int sendResponse(int master, void* masterRS) {
 
 	int bytesSent = send(master, masterRS, getSizeToSend(masterRS), 0);
 	if (bytesSent > 0) {
-		log_info(yama->log, sendResponseMsg(master, bytesSent, masterRS));
+		log_trace(yama->log, sendResponseMsg(master, bytesSent, masterRS));
 		free(masterRS);
 	} else {
-		log_error(yama->log, "Error sending response to master.");
+		log_error(yama->log, "Error al enviar la respuesta al Master (%d).", master);
 	}
 	return bytesSent;
 }
@@ -85,7 +85,7 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 	/* Si recibo -1 o 0, el cliente se desconecto o hubo un error */
 	if (nbytes <= 0) {
 		if (nbytes == 0) {
-			log_info(yama->log, "Master %d desconectado!", socket);
+			log_trace(yama->log, "Master %d desconectado!", socket);
 		} else {
 			log_error(yama->log, "Error al recibir mensajes de master.");
 		}
@@ -97,13 +97,14 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 	else {
 		//proceso el request y obtengo la respuesta
 		void* response = getResponse(socket, *(char*) request);
+		char opRq = *(char*) request;
 
 		char responseCode;
 		memcpy(&responseCode, response, sizeof(char));
 
 		if ((responseCode == 'T') || (responseCode == 'L')
 				|| (responseCode == 'G') || (responseCode == 'S')
-				|| (responseCode == 'E')) {
+				|| ( (responseCode == 'E')&&(opRq == 'T') )) {
 			sendResponse(socket, response);
 		} else {
 			if (responseCode != 'O') {
@@ -130,7 +131,7 @@ void exploreActivity(fd_set* mastersListTemp, fd_set* mastersList) {
 				client = acceptMasterConnection(&(yama->yama_server),
 						&(*mastersList), hightSd);
 
-				log_info(yama->log, "Master %d conectado!", client.socket_id);
+				log_trace(yama->log, "Master %d conectado!", client.socket_id);
 			}
 			/* Si hubo actividad en otro socket, recibo el mensage */
 			else {
@@ -143,7 +144,7 @@ void exploreActivity(fd_set* mastersListTemp, fd_set* mastersList) {
 void waitMastersConnections() {
 
 	if (yama->yama_server.status > -1) {
-		log_info(yama->log, "Proceso YAMA (id: %d) listo para recibir solicitudes de Masters.", getpid());
+		log_info(yama->log, "YAMA listo para recibir solicitudes de Masters.", getpid());
 
 		/* creo las listas de sockets entrantes que seran monitoreadas */
 		fd_set mastersList;

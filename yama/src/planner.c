@@ -259,12 +259,12 @@ void* replanTask(int master, int node, t_planningParams* params) {
 
 		setInStatusTable('T', master, dataNode->nodo,
 				getBlockId(dataNode->tr_tmp), dataNode->tr_tmp,
-				dataNode->bloque);
+				dataNode->bloque, elem->fileProcess);
 		list_add(replanedTasks, dataNode);
 	}
 
 	int planigDelay = params->planningDelay;
 	sleep(planigDelay);
-
-	return sortTransformationResponse(replanedTasks, master);
+	int replaned = 1;
+	return sortTransformationResponse(replanedTasks, master, replaned);
 }

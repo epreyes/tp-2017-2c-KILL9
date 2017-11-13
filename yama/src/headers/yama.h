@@ -50,21 +50,25 @@ typedef struct {
 	char op;
 	char status;
 	char tmp[28];
+	char fileProcess[28];
 } elem_tabla_estados;
 
 typedef struct{
 	tr_datos* data;
 	int master;
+	char fileName[28];
 }elem_tabla_planificados;
 
 typedef struct{
 	rl_datos* data;
 	int master;
+	char fileName[28];
 }elem_tabla_LR_planificados;
 
 typedef struct{
 	rg_datos* data;
 	int master;
+	char fileName[28];
 }elem_tabla_GR_planificados;
 
 typedef struct{

@@ -33,6 +33,11 @@ void* processOk(int master) {
 
 	log_info(yama->log, "Operacion %c OK en nodo %d, bloque %d, Master %d.", opCode, nodo, bloque, master);
 
+	if( opCode == 'S' ){
+		log_trace(yama->log, "Job %d Finalizado con exito. Master %d.", master+yama->jobs, master);
+		viewStateTable();
+	}
+
 	buffer = malloc(sizeof(char));
 	memcpy(buffer, "O", sizeof(char));
 

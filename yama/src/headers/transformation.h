@@ -17,7 +17,7 @@ void* processTransformation(int master);
 
 void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId);
 
-void* sortTransformationResponse(t_list* buffer, int master);
+void* sortTransformationResponse(t_list* buffer, int master, int replaned);
 
 t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 		int master);
