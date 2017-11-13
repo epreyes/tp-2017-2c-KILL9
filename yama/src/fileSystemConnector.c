@@ -14,10 +14,13 @@ void* getFileSystemInfo(char* name) {
 	/*configuro el puerto del filesystem*/
 	int fs_port = config_get_int_value(yama->config, "FS_PUERTO");
 	void* fsInfo = NULL;
+
 	/*me conecto al filesystem*/
+	log_info(yama->log, "Conectando al filesystem %s:%d ...", fs_ip, fs_port);
 	Client fs_client = connectClient(fs_ip, fs_port);
+
 	if( fs_client.socket_id > -1 ){
-		log_info(yama->log, "Succesfull FileSystem connection.");
+		log_info(yama->log, "La conexion con el filesystem fue exitosa!");
 
 			/*creo el buffer que contendra la solicitud al filesystem*/
 
@@ -68,7 +71,7 @@ void* getFileSystemInfo(char* name) {
 
 					}
 				} else {
-					log_warning(yama->log, "File requested does not exist.");
+					log_warning(yama->log, "No existe el archivo solicitado.");
 					fsInfo = malloc(sizeof(char));
 					memcpy(fsInfo, "E", sizeof(char));
 				}
@@ -78,7 +81,7 @@ void* getFileSystemInfo(char* name) {
 				memcpy(fsInfo, "E", sizeof(char));
 			}
 	}else {
-		log_error(yama->log, "Error in filesystem connection.");
+		log_error(yama->log, "No se puede conectar al filesystem %s:%d.", fs_ip, fs_port);
 		fsInfo = malloc(sizeof(char));
 		memcpy(fsInfo, "E", sizeof(char));
 	}
