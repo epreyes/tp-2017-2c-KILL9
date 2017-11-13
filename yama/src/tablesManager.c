@@ -320,3 +320,25 @@ block_info* findBlock(int block) {
 	return NULL;
 }
 
+t_list* getTaskWithError(int master, int node) {
+	int index = 0;
+	t_list* tasksError = list_create();
+	for (index = 0; index < list_size(yama->tabla_estados); index++) {
+		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
+		if ((elem->node == node) && (elem->master == master)
+				&& (elem->op == 'T') && (elem->status == 'E') && (elem->job == yama->jobs+master)) {
+			list_add(tasksError, elem);
+		}
+	}
+	return tasksError;
+}
+
+
+int previousReplanning(int master, int node){
+	t_list* tasksFailed = getTaskFailed(master, node);
+	t_list* tasksWithError = getTaskWithError(master, node);
+
+
+
+	return 0;
+}

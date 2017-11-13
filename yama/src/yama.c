@@ -111,5 +111,7 @@ void* processOperation(int master, char op) {
 		response = invalidRequest(master, "Error: Invalid operation.");
 	}
 
+	viewStateTable();
+
 	return response;
 }

@@ -40,7 +40,7 @@ void* processTransformation(int master) {
 		t_list* nodeList = list_create();
 		nodeList = buildTransformationResponseNodeList(fsInfo, master);
 
-		return sortTransformationResponse(nodeList, master, 0);
+		return sortTransformationResponse(nodeList, master);
 	}
 }
 
@@ -90,7 +90,7 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 	return nodeList;
 }
 
-void* sortTransformationResponse(t_list* buffer, int master, int replaned) {
+void* sortTransformationResponse(t_list* buffer, int master) {
 	bool (*comparator)(void*, void*);
 	comparator = &compareTransformationBlocks;
 	list_sort(buffer, comparator);

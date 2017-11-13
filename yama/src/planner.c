@@ -183,7 +183,8 @@ tr_datos* evaluateClock(block_info* blockRecived, int master, int clock,
 						newNode->node_id);
 			}
 
-			return evaluateClock(blockRecived, master, yama->clock, planningParams);
+			return evaluateClock(blockRecived, master, yama->clock,
+					planningParams);
 		}
 	} else {
 		//En el caso de que no se encuentre, se deberá utilizar el siguiente Worker que posea una disponibilidad mayor a 0.
@@ -215,7 +216,8 @@ tr_datos* evaluateClock(block_info* blockRecived, int master, int clock,
 						config_get_int_value(yama->config, "NODE_AVAIL"));
 			}
 		}
-		return evaluateClock(blockRecived, master, yama->clock_aux, planningParams);
+		return evaluateClock(blockRecived, master, yama->clock_aux,
+				planningParams);
 	}
 }
 
@@ -242,29 +244,33 @@ tr_datos* doPlanning(block_info* blockRecived, int master,
 }
 
 void* replanTask(int master, int node, t_planningParams* params) {
-	t_list* taskFailed = getTaskFailed(master, node);
-	t_list* replanedTasks = list_create();
+	if ( previousReplanning(master, node) == 1 ) {
+		return abortJob(master, node, "T");
+	} else {
+		t_list* taskFailed = getTaskFailed(master, node);
+		t_list* replanedTasks = list_create();
 
-	int index = 0;
-	for (index = 0; index < list_size(taskFailed); index++) {
-		elem_tabla_estados* elem = list_get(taskFailed, index);
-		block_info* blockInfo = findBlock(elem->block);
-		int node = elem->node;
-		if (elem->node == blockInfo->node1) {
-			node = blockInfo->node2;
-		} else {
-			node = blockInfo->node1;
+		int index = 0;
+		for (index = 0; index < list_size(taskFailed); index++) {
+			elem_tabla_estados* elem = list_get(taskFailed, index);
+			block_info* blockInfo = findBlock(elem->block);
+			int node = elem->node;
+			if (elem->node == blockInfo->node1) {
+				node = blockInfo->node2;
+			} else {
+				node = blockInfo->node1;
+			}
+			tr_datos* dataNode = buildNodePlaned(blockInfo, master, node);
+
+			setInStatusTable('T', master, dataNode->nodo,
+					getBlockId(dataNode->tr_tmp), dataNode->tr_tmp,
+					dataNode->bloque, elem->fileProcess);
+			list_add(replanedTasks, dataNode);
 		}
-		tr_datos* dataNode = buildNodePlaned(blockInfo, master, node);
 
-		setInStatusTable('T', master, dataNode->nodo,
-				getBlockId(dataNode->tr_tmp), dataNode->tr_tmp,
-				dataNode->bloque, elem->fileProcess);
-		list_add(replanedTasks, dataNode);
+		int planigDelay = params->planningDelay;
+		sleep(planigDelay);
+		int replaned = 1;
+		return sortTransformationResponse(replanedTasks, master);
 	}
-
-	int planigDelay = params->planningDelay;
-	sleep(planigDelay);
-	int replaned = 1;
-	return sortTransformationResponse(replanedTasks, master, replaned);
 }
