@@ -38,25 +38,26 @@ int escribirEnDataNode(int idBloque, char* contenido, int socketNodo,
 
 	if (send(socketNodo, &peticion, sizeof(int) * 3, 0) < 0) {
 		log_error(logger, "Error en el envio de escritura (header) a cliente");
-		return -1;
+		return -2;
 	}
 
-	int bytesEnviados=send_all(socketNodo, contenido, finBytes);
+	int bytesEnviados = send_all(socketNodo, contenido, finBytes);
 
 	if (bytesEnviados < 0) {
 		log_error(logger, "Error en el envio a cliente");
-		return -1;
+		return -2;
 	}
 
-	log_info(logger,"Se enviaron %d bytes al nodo", bytesEnviados);
+	log_info(logger, "Se enviaron %d bytes al nodo", bytesEnviados);
 
 }
 
 // Dado un id de bloque y nodo, obtiene el contenido del mismo
 // Este pedido debe invocarse de forma paralela a los diferentes nodos en cuestion (con hilos en el momento de la llamada)
-int leerDeDataNode(int idBloque, int socketNodo, long finBytes, int nroBloque, t_log* logger) {
+int leerDeDataNode(int idBloque, int socketNodo, long finBytes, int nroBloque,
+		t_log* logger) {
 
-	int idNodo=buscarNodoPorSocket(socketNodo);
+	int idNodo = buscarNodoPorSocket(socketNodo);
 
 	log_info(logger,
 			"Enviando peticion a datanode id %d - bloque: %d - finBytes: %d...",
@@ -71,37 +72,18 @@ int leerDeDataNode(int idBloque, int socketNodo, long finBytes, int nroBloque, t
 
 	if (send(socketNodo, &peticion, sizeof(int) * 3, 0) < 0) {
 		log_error(logger, "Error en el envio de lectura (header) a cliente");
-		return -1;
+		return -2;
 	}
 
-
 	// Envio el nro de bloque para identificar a la vuelta
-	send(socketNodo, &nroBloque, sizeof(int), 0);
+	if (send(socketNodo, &nroBloque, sizeof(int), 0) < 0) {
+		log_error(logger, "Error en el envio de lectura (payload) a cliente");
+		return -2;
+	}
 
 	return 0;
 
-	// Espero respuesta
-	/*int resp = 0;
-
-	if (recv(socketNodo, resp, sizeof(int), 0) < 0) {
-		log_error(logger, "Error en la recepcion de info del nodo");
-		return NULL;
-	}
-
-	if (resp == GET_BLOQUE_OK) {
-		// TODO: hacer recvall
-		if (recv(socketNodo, cont, finBytes, 0) < 0) {
-			log_error(logger, "Error en la recepcion de info del nodo");
-			return NULL;
-		}
-		log_info(logger, "Peticion a datanode ok...");
-		return cont;
-	} else
-		return NULL;*/
-
 }
-
-
 
 int send_all(int s, void *buf, int len) {
 	char *ptr = (char*) buf;
@@ -127,7 +109,6 @@ int send_all(int s, void *buf, int len) {
 
 	return n == -1 ? -1 : total; // return -1 on failure, total bytes on success
 }
-
 
 int recv_all(int sockfd, void *buf, size_t len, int flags) {
 	size_t toread = len;

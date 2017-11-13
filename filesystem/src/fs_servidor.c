@@ -658,8 +658,7 @@ void procesarPedidoWorker(t_header pedido, int socketCliente) {
 		escribir = escribirArchivo(fileName, contenido, TEXTO, 0);
 
 		if (escribir == 0) {
-			log_info(logger, "Escritura de %s realizada con exito", fileName);
-			printf("Escritura ok\n");
+			log_info(logger, "Escritura de store final %s realizada con exito", fileName);
 			codop = 'O';
 			if (send(socketCliente, &codop, sizeof(char), 0) < 0) {
 				log_error(logger,

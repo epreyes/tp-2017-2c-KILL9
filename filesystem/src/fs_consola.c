@@ -163,14 +163,22 @@ void ejecutarConsola() {
 		}
 
 		if (strcmp(instruccionConsola, LEERARCHIVO) == 0) {
-			char* result = leerArchivo(param1);
+			int errorCode = 0;
+			char* result = leerArchivo(param1, &errorCode);
 
-			if (result == NULL )
+			switch (errorCode) {
+			case -1:
 				printf("No existe el archivo\n");
-			else {
+				break;
+			case -2:
+				printf("Algun nodo se desconecto\n");
+				break;
+			case 0:
 				printf("%s\n", result);
 				free(result);
+				break;
 			}
+
 		}
 
 		if (strcmp(instruccionConsola, ESCRIBIR_ARCHIVO_LOCAL_YAMA) == 0) {
@@ -216,7 +224,8 @@ void ejecutarConsola() {
 			if (strncmp(param3, "-t", 2) == 0)
 				escribir = escribirArchivo(destino, lect, TEXTO, 0);
 
-			if (strncmp(param3, "-t", 2) != 0 && strncmp(param3, "-b", 2) != 0) {
+			if (strncmp(param3, "-t", 2) != 0
+					&& strncmp(param3, "-b", 2) != 0) {
 				escribir = escribirArchivo(destino, lect, BINARIO,
 						sbuf.st_size);
 			}
@@ -265,6 +274,8 @@ void ejecutarConsola() {
 				printf("No existe el archivo\n");
 			if (resultado == -2)
 				printf("No existe el directorio destino\n");
+			if (resultado == -3)
+				printf("Algun nodo se desconecto\n");
 			if (resultado == 0)
 				printf("Escritura en local ok\n");
 		}

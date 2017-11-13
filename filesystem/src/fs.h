@@ -159,7 +159,7 @@ sem_t semEscritura;
 
 // Lista con informacion de gestion para lectura en paralelo con los nodos
 t_list* lista;
-
+sem_t semLista; // Semaforo para exclusion mutua de la lista de lectura
 
 // Semaforos para conexion de nodos (sin estado previo)
 sem_t nodoInit;
