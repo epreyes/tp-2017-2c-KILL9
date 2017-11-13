@@ -85,7 +85,7 @@ void* processOperation(int master, char op) {
 		log_info(yama->log, "Solicitud de transformación. Job %d.",
 				yama->jobs + master);
 		response = processTransformation(master);
-		//viewTransformationResponse(response);
+		viewStateTable();
 		break;
 	case 'L':
 		log_info(yama->log, "Solicitud de Reducción Local. Job %d.",
@@ -104,6 +104,7 @@ void* processOperation(int master, char op) {
 		break;
 	case 'E':
 		response = processNodeError(master);
+		viewStateTable();
 		break;
 	case 'O':
 		response = processOk(master);

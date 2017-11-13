@@ -204,7 +204,7 @@ int findInProcessTasks(int master, int node_id, int block, char op) {
 			if (op == 'T') {
 				if ((node->node == node_id) && (master == node->master)
 						&& (block == node->node_block) && (op == node->op)
-						&& (node->status == 'P')) {
+						&& (node->status == 'P') && (node->job == master+yama->jobs)) {
 					return index;
 				}
 			} else {
@@ -302,9 +302,9 @@ t_list* getTaskFailed(int master, int node) {
 	for (index = 0; index < list_size(yama->tabla_estados); index++) {
 		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
 		if ((elem->node == node) && (elem->master == master)
-				&& (elem->op == 'T') && (elem->status == 'P')) {
+				&& (elem->op == 'T') && (elem->status == 'P') && (elem->job == yama->jobs+master)) {
 			list_add(tasksFails, elem);
-			updateStatusTable(master, 'T', node, elem->block, 'E');
+			updateStatusTable(master, 'T', node, elem->node_block, 'E');
 		}
 	}
 	return tasksFails;

@@ -33,7 +33,7 @@ void* processNodeError(int master) {
 
 	switch (*(char*) op) {
 	case 'T':
-		log_error(yama->log, "Error en Nodo %d. Comienza replanificacion. Job %d.", node, yama->jobs+master);
+		log_error(yama->log, "Error en Nodo %d. Comienza replanificacion. Job %d.", *(int*)node, yama->jobs+master);
 		t_planningParams* params = malloc(sizeof(t_planningParams));
 		strcpy(params->algoritm, yama->algoritm);
 		params->availBase = yama->availBase;
