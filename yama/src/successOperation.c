@@ -28,7 +28,10 @@ void* processOk(int master) {
 	memcpy(&nodo, buffer, sizeof(int));
 	free(buffer);
 
-	updateStatusTable(master, opCode, nodo, bloque, 'F');
+	int jobIndex = getJobIndex(master, opCode);
+	t_job* job = list_get(yama->tabla_jobs, jobIndex);
+
+	updateStatusTable(master, opCode, nodo, bloque, 'F', job);
 	decreaseNodeCharge(nodo);
 
 	log_info(yama->log, "Operacion %c OK en nodo %d, bloque %d, Master %d.", opCode, nodo, bloque, master);

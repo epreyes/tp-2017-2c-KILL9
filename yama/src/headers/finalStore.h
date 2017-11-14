@@ -14,7 +14,7 @@ void deleteOfGlobalReductionPlanedList(int items, int master);
 
 void viewFinalStoreResponse(void* response);
 
-void* processFinalStore(int master);
+void* processFinalStore(int master, int jobid);
 
 int allGlobalReductionProcesFinish(int master);
 

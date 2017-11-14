@@ -83,7 +83,7 @@ void viewFinalStoreResponse(void* response) {
 }
 
 
-void* processFinalStore(int master) {
+void* processFinalStore(int master, int jobid) {
 	if (allGlobalReductionProcesFinish(master)) {
 		t_list* planed = findGlobalReductionPlaned(master);
 
@@ -110,7 +110,7 @@ void* processFinalStore(int master) {
 				finalStoreRes + sizeof(char) + sizeof(int) + sizeof(char) * 16
 						+ sizeof(int), elem->rg_tmp, sizeof(char) * 24);
 
-		setInStatusTable('S', master, elem->nodo, 0,
+		setInStatusTable(jobid, 'S', master, elem->nodo, 0,
 				elem->rg_tmp, 0, data->fileName);
 		increaseNodeCharge(elem->nodo);
 

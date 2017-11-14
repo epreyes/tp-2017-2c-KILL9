@@ -243,11 +243,13 @@ tr_datos* doPlanning(block_info* blockRecived, int master,
 	return evaluateClock(blockRecived, master, yama->clock, planningParams);
 }
 
-void* replanTask(int master, int node, t_planningParams* params) {
-	if ( previousReplanning(master, node) == 1 ) {
-		return abortJob(master, node, "T");
+void* replanTask(int master, int node, t_planningParams* params, t_job* job, int jobindex) {
+	if ( job->replanificaciones == 1 ) {
+		log_error(yama->log, "No se puede replanificar el nodo %d, Job %d.", node, job->id);
+		job->replanificaciones++;
+		return abortJob(master, node, 'T' , job);
 	} else {
-		t_list* taskFailed = getTaskFailed(master, node);
+		t_list* taskFailed = getTaskFailed(master, node, job);
 		t_list* replanedTasks = list_create();
 		char* filename = malloc(sizeof(char)*28);
 
@@ -264,15 +266,18 @@ void* replanTask(int master, int node, t_planningParams* params) {
 			}
 			tr_datos* dataNode = buildNodePlaned(blockInfo, master, node);
 
-			setInStatusTable('T', master, dataNode->nodo,
+			setInStatusTable(job->id, 'T', master, dataNode->nodo,
 					getBlockId(dataNode->tr_tmp), dataNode->tr_tmp,
 					dataNode->bloque, elem->fileProcess);
 			list_add(replanedTasks, dataNode);
 		}
 
+		job->replanificaciones = 1;
+		list_replace(yama->tabla_jobs, jobindex, job);
+
 		int planigDelay = params->planningDelay;
 		sleep(planigDelay);
-		int replaned = 1;
+
 		return sortTransformationResponse(replanedTasks, master, filename);
 	}
 }

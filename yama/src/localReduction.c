@@ -85,7 +85,7 @@ int allTransformProcesFinish(int master) {
 	return response;
 }
 
-void* processLocalReduction(int master) {
+void* processLocalReduction(int master, int job) {
 	if (allTransformProcesFinish(master)) {
 		t_list* planed = findTransformationPlaned(master);
 
@@ -110,7 +110,7 @@ void* processLocalReduction(int master) {
 					getBlockId(elem->tr_tmp), master);
 			if (!existInStatusTable(yama->jobs + master, 'L',
 					localRedData->nodo)) {
-				setInStatusTable('L', master, localRedData->nodo,
+				setInStatusTable(job, 'L', master, localRedData->nodo,
 						getBlockId(localRedData->rl_tmp), localRedData->rl_tmp,
 						0, elemData->fileName);
 

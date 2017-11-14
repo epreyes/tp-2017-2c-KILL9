@@ -27,9 +27,9 @@ void viewTransformationResponse(void* response) {
 	}
 }
 
-void* processTransformation(int master) {
+void* processTransformation(int master, int jobid) {
 	log_trace(yama->log, "Atendiendo solicitud de Transformación. Job %d.",
-			yama->jobs + master);
+			jobid);
 	/*me traigo la informacion del archivo.*/
 	elem_info_archivo* fsInfo = getFileInfo(master);
 
@@ -38,7 +38,7 @@ void* processTransformation(int master) {
 	} else {
 		/*Creo una lista, que va a ser la respuesta que se le va a mandar al master, sin planificar.*/
 		t_list* nodeList = list_create();
-		nodeList = buildTransformationResponseNodeList(fsInfo, master);
+		nodeList = buildTransformationResponseNodeList(fsInfo, master, jobid);
 
 		return sortTransformationResponse(nodeList, master, fsInfo->filename);
 	}
@@ -54,7 +54,7 @@ void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId) {
 }
 
 t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
-		int master) {
+		int master, int jobid) {
 
 	t_planningParams* planningParams = getPlanningParams();
 
@@ -78,7 +78,7 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 		list_add(nodeList, nodeData);
 
 		//actualizo la tabla de estados con la informacion del nuevo job.
-		setInStatusTable('T', master, nodeData->nodo, blockInfo->block_id,
+		setInStatusTable(jobid, 'T', master, nodeData->nodo, blockInfo->block_id,
 				nodeData->tr_tmp, nodeData->bloque, fsInfo->filename);
 
 		free(blockInfo);

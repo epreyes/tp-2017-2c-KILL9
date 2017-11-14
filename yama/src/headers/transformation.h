@@ -13,14 +13,14 @@
 
 void viewTransformationResponse(void* response);
 
-void* processTransformation(int master);
+void* processTransformation(int master, int jobid);
 
 void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId);
 
 void* sortTransformationResponse(t_list* buffer, int master, char* fsInfo);
 
 t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
-		int master);
+		int master, int jobid);
 
 bool compareTransformationBlocks(void* b1, void* b2);
 

@@ -77,10 +77,19 @@ typedef struct{
 	char algoritm[3];
 } t_planningParams;
 
+typedef struct{
+	int id;
+	int master;
+	char estado;
+	char etapa;
+	int replanificaciones;
+}t_job;
+
 typedef struct {
 	t_config* config;
 	t_list* tabla_nodos;
 	t_list* tabla_estados;
+	t_list* tabla_jobs;
 	t_list* tabla_info_archivos;
 	t_list* tabla_T_planificados;
 	t_list* tabla_LR_planificados;

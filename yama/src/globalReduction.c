@@ -140,7 +140,7 @@ int getLastChargedNode(t_list* planed) {
 	return minNode->nodo;
 }
 
-void* processGlobalReduction(int master) {
+void* processGlobalReduction(int master, int jobid) {
 
 	void* globalReductionRes;
 
@@ -178,7 +178,7 @@ void* processGlobalReduction(int master) {
 
 				getGlobalReductionTmpName(globalRedData, 'G', 0, master);
 				globalRedData->encargado = 'T';
-				setInStatusTable('G', master, globalRedData->nodo, 0,
+				setInStatusTable(jobid, 'G', master, globalRedData->nodo, 0,
 						globalRedData->rg_tmp, 0, data->fileName);
 				increaseNodeCharge(globalRedData->nodo);
 				addToGlobalReductionPlanedTable(master, globalRedData, data->fileName);

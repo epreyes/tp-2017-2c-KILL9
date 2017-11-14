@@ -23,11 +23,11 @@ int existInStatusTable(int job, char op, int node){
 	}
 }
 
-void setInStatusTable(char op, int master, int nodo, int bloque, char* tmpName,
+void setInStatusTable(int job, char op, int master, int nodo, int bloque, char* tmpName,
 		int nodeBlock, char* filename) {
 	elem_tabla_estados* elemStatus = malloc(sizeof(elem_tabla_estados));
 	elemStatus->block = bloque;
-	elemStatus->job = yama->jobs + master;
+	elemStatus->job = job;
 	elemStatus->master = master;
 	elemStatus->node = nodo;
 	elemStatus->node_block = nodeBlock;
@@ -196,7 +196,7 @@ void viewStateTable() {
 	}
 }
 
-int findInProcessTasks(int master, int node_id, int block, char op) {
+int findInProcessTasks(int master, int node_id, int block, char op, t_job* job) {
 	int index = 0;
 	if (!list_is_empty(yama->tabla_estados)) {
 		for (index = 0; index < list_size(yama->tabla_estados); index++) {
@@ -205,7 +205,7 @@ int findInProcessTasks(int master, int node_id, int block, char op) {
 			if (op == 'T') {
 				if ((node->node == node_id) && (master == node->master)
 						&& (block == node->node_block) && (op == node->op)
-						&& (node->status == 'P') && (node->job == master+yama->jobs)) {
+						&& (node->status == 'P') && (node->job == job->id)) {
 					return index;
 				}
 			} else {
@@ -229,15 +229,16 @@ int getBlockId(char* tmpName) {
 }
 
 void updateStatusTable(int master, char opCode, int node, int bloque,
-		char status) {
+		char status, t_job* job) {
 
-	int index = findInProcessTasks(master, node, bloque, opCode);
+	int index = findInProcessTasks(master, node, bloque, opCode, job);
 	elem_tabla_estados* row;
 	if (index > -1) {
 		row = list_get(yama->tabla_estados, index);
 		row->op = opCode;
 		row->status = status;
 		list_replace(yama->tabla_estados, index, row);
+
 	} else {
 		printf(
 				"\nNO PUEDE actualizar master %d, opCode %c, nodo %d, bloque %d, estado %c\n",
@@ -274,27 +275,27 @@ void addToGlobalReductionPlanedTable(int master, rg_datos* nodeData, char* fileN
 	list_add(yama->tabla_GR_planificados, planed);
 }
 
-void updateTasksAborted(int master, int node, int codeOp) {
+void updateTasksAborted(int master, int node, char codeOp, t_job* job) {
 	int index = 0;
 	for (index = 0; index < list_size(yama->tabla_estados); index++) {
 		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
 		if ((elem->node == node) && (elem->master == master)
-				&& (elem->op == codeOp) && (elem->status == 'P')) {
-			updateStatusTable(master, codeOp, node, elem->block, 'A');
+				&& (elem->op == codeOp) && (elem->status == 'P') && (elem->job == job->id)) {
+			updateStatusTable(master, codeOp, node, elem->node_block, 'A', job);
 			sendErrorToFileSystem(elem->fileProcess);
 		}
 	}
 }
 
-t_list* getTaskFailed(int master, int node) {
+t_list* getTaskFailed(int master, int node, t_job* job) {
 	int index = 0;
 	t_list* tasksFails = list_create();
 	for (index = 0; index < list_size(yama->tabla_estados); index++) {
 		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
 		if ((elem->node == node) && (elem->master == master)
-				&& (elem->op == 'T') && (elem->status == 'P') && (elem->job == yama->jobs+master)) {
+				&& (elem->op == 'T') && (elem->status == 'P') && (elem->job == job->id)) {
 			list_add(tasksFails, elem);
-			updateStatusTable(master, 'T', node, elem->node_block, 'E');
+			updateStatusTable(master, 'T', node, elem->node_block, 'E', job);
 		}
 	}
 	return tasksFails;
@@ -331,14 +332,4 @@ t_list* getTaskWithError(int master, int node) {
 		}
 	}
 	return tasksError;
-}
-
-
-int previousReplanning(int master, int node){
-	t_list* tasksFailed = getTaskFailed(master, node);
-	t_list* tasksWithError = getTaskWithError(master, node);
-
-
-
-	return 0;
 }

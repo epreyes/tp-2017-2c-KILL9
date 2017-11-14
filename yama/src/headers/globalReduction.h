@@ -17,7 +17,7 @@ void deleteOfLocalReductionPlanedList(int items, int master);
 void getGlobalReductionTmpName(rg_datos* nodeData, int op, int blockId,
 		int masterId);
 
-void* processGlobalReduction(int master);
+void* processGlobalReduction(int master, int jobid);
 
 int allLocalReductionProcesFinish(int master);
 

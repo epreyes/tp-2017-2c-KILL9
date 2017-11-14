@@ -104,7 +104,8 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 
 		if ((responseCode == 'T') || (responseCode == 'L')
 				|| (responseCode == 'G') || (responseCode == 'S')
-				|| ( (responseCode == 'E')&&(opRq == 'T') )) {
+				|| ( (responseCode == 'E')&&(opRq == 'T') )
+				|| ( (opRq == 'E') && (responseCode = 'A')))  {
 			sendResponse(socket, response);
 		} else {
 			if (responseCode != 'O') {
