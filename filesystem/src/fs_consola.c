@@ -262,6 +262,12 @@ void ejecutarConsola() {
 					printf("El directorio destino no existe\n");
 					log_error(logger, "El directorio destino no existe");
 					break;
+				case ERROR_MISMO_NODO_COPIA:
+					printf(
+							"El bloque copia no debe estar en el mismo nodo que el original\n");
+					log_error(logger,
+							"El bloque copia no debe estar en el mismo nodo que el original");
+					break;
 				}
 
 			}

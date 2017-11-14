@@ -40,12 +40,18 @@ int escribirArchivo(char* path, char* contenido, int tipo, int tamanio) {
 			"Verificando si hay espacio para archivo de %d (*2) bloques...",
 			bloquesNecesarios);
 
+	int errorSeleccionNodos=0;
 // Debe ser *2 para hacer las copias
-	t_list* bl = obtenerBloquesLibres(bloquesNecesarios * 2);
+	t_list* bl = obtenerBloquesLibres(bloquesNecesarios * 2, &errorSeleccionNodos);
+
+	if (errorSeleccionNodos==-1)
+		return ERROR_MISMO_NODO_COPIA;
 
 	if (bl == NULL) {
 		return SIN_ESPACIO;
 	}
+
+
 
 	log_info(logger, "Bloques necesarios para la escritura de %s: %d", path,
 			bloquesNecesarios);
