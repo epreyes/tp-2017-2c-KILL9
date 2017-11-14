@@ -87,6 +87,17 @@ int getJobIndex(int master, char etapa) {
 	return -1;
 }
 
+int existJob(int jobid, int master, char op) {
+	int index = 0;
+	for (index = 0; index < list_size(yama->tabla_jobs); index++) {
+		t_job* job = list_get(yama->tabla_jobs, index);
+		if ((job->id == jobid) && (job->master == master) && (job->etapa == op)) {
+			return index;
+		}
+	}
+	return -1;
+}
+
 /*
  * Proceso la operacion que viene en el header. Si es una transformacion, saco la info de la tabla de archivos, si existe;
  * si no, se la pido al filesystem.
@@ -97,20 +108,21 @@ void* processOperation(int master, char op) {
 	switch (op) {
 	case 'T': {
 		log_trace(yama->log, "Solicitud de transformación. Inicia el Job %d.",
-				yama->jobs + master);
+				yama->jobs);
 
-		if (getJobIndex(master, op) > -1) {
-			char msg[] = "No se pueden ejecutar dos transformaciones provenientes de un mismo Master.";
+		if (existJob(yama->jobs + master, master, op) > -1) {
+			char msg[] =
+					"No se pueden ejecutar dos transformaciones provenientes de un mismo Master.";
 			int len = strlen(msg);
-			response = malloc(sizeof(char)+sizeof(int)+len);
+			response = malloc(sizeof(char) + sizeof(int) + len);
 			memcpy(response, "D", sizeof(char));
-			memcpy(response+sizeof(char), &len, sizeof(int));
-			memcpy(response+sizeof(char)+sizeof(int), msg, len);
+			memcpy(response + sizeof(char), &len, sizeof(int));
+			memcpy(response + sizeof(char) + sizeof(int), msg, len);
 		} else {
 			t_job* job = malloc(sizeof(t_job));
 			job->estado = 'P';
 			job->etapa = 'T';
-			job->id = master + yama->jobs;
+			job->id = yama->jobs;
 			job->replanificaciones = 0;
 			job->master = master;
 			list_add(yama->tabla_jobs, job);

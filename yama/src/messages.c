@@ -7,45 +7,36 @@
 
 #include "headers/yama.h"
 
-char* sendResponseMsg(int master, int bytes, void* response) {
+void sendResponseMsg(int master, int bytes, void* response, t_job* job) {
 	char op;
 	memcpy(&op, response, sizeof(char));
 
-	if( op == 'R'){
-		op == 'T';
-	}
-
-	t_job* job = list_get(yama->tabla_jobs, getJobIndex(master, op));
-
-	char* msg;
 	switch (op) {
 	case 'T':
-		asprintf(&msg, "Respuesta de Transformacion: enviados %d bytes. Job %d.",
+		log_trace(yama->log, "Respuesta de Transformacion: enviados %d bytes. Job %d.",
 				bytes,job->id);
 		break;
 	case 'L':
-		asprintf(&msg, "Respuesta de reduccion Local: enviados %d bytes. Job %d.",
+		log_trace(yama->log, "Respuesta de reduccion Local: enviados %d bytes. Job %d.",
 				bytes,job->id);
 		break;
 	case 'G':
-		asprintf(&msg, "Respuesta de reduccion Global: enviados %d bytes. Job %d.", bytes,
+		log_trace(yama->log, "Respuesta de reduccion Global: enviados %d bytes. Job %d.", bytes,
 				job->id);
 		break;
 	case 'S':
-		asprintf(&msg, "Respuesta de Almacenamiento Final: enviados %d bytes. Job %d.", bytes,
+		log_trace(yama->log, "Respuesta de Almacenamiento Final: enviados %d bytes. Job %d.", bytes,
 				job->id);
 		break;
 	case 'E':
-			asprintf(&msg, "Error: enviados %d bytes. Job %d.", bytes,
+			log_trace(yama->log, "Error: enviados %d bytes. Job %d.", bytes,
 					job->id);
 			break;
 	case 'R':
-				asprintf(&msg, "Respuesta de Replanificacion: enviados %d bytes. Job %d.", bytes,
+				log_trace(yama->log, "Respuesta de Replanificacion: enviados %d bytes. Job %d.", bytes,
 						job->id);
 				break;
 	}
-
-	return msg;
 }
 
 char* printPlannigLogInfo(char* var, int value) {

@@ -249,6 +249,8 @@ void* replanTask(int master, int node, t_planningParams* params, t_job* job,
 		log_error(yama->log, "No se puede replanificar el nodo %d, Job %d.",
 				node, job->id);
 		job->replanificaciones++;
+		job->estado = 'E';
+		list_replace(yama->tabla_jobs, jobindex, job);
 		return abortJob(master, node, 'T', job);
 	} else {
 		t_list* taskFailed = getTaskFailed(master, node, job);

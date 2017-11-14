@@ -75,12 +75,12 @@ int getSizeToSend(void* masterRS) {
 	return size;
 }
 
-int sendResponse(int master, void* masterRS) {
+int sendResponse(int master, void* masterRS, t_job* job) {
 
 	int bytesSent = send(master, masterRS, getSizeToSend(masterRS), 0);
 
 	if (bytesSent > 0) {
-		log_trace(yama->log, sendResponseMsg(master, bytesSent, masterRS));
+		sendResponseMsg(master, bytesSent, masterRS, job);
 		free(masterRS);
 	} else {
 		log_error(yama->log, "Error al enviar la respuesta al Master (%d).",
@@ -112,15 +112,17 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 		char responseCode;
 		memcpy(&responseCode, response, sizeof(char));
 
+		t_job* job = list_get(yama->tabla_jobs, getJobIndex(socket, opRq));
+
 		if ((responseCode == 'T') || (responseCode == 'L')
 				|| (responseCode == 'G') || (responseCode == 'S')
 				|| ((responseCode == 'E') && (opRq == 'T'))
 				|| ((opRq == 'E') && (responseCode = 'A'))
 				|| (responseCode == 'R')) {
-			sendResponse(socket, response);
+			sendResponse(socket, response, job);
 		} else {
 			if (responseCode != 'O') {
-				showErrorMessage(response);
+				showErrorMessage(response, job);
 			}
 		}
 

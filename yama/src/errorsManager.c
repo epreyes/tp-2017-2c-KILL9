@@ -56,10 +56,10 @@ void* processNodeError(int master) {
 	case 'G':
 	case 'S': {
 		log_trace(yama->log, "Recivo error en operacion %c. Job %d.",
-				*(char*) op, yama->jobs + master);
+				*(char*) op, job->id);
 		response = abortJob(master, *(int*) node, *(char*) op, job);
 		log_error(yama->log, "Se aborta job %d. Master %d.",
-				yama->jobs + master, master);
+				job->id, master);
 		job->estado = 'E';
 		list_replace(yama->tabla_jobs, jobIndex, job);
 	}
