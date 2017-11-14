@@ -40,7 +40,7 @@ void* processTransformation(int master) {
 		t_list* nodeList = list_create();
 		nodeList = buildTransformationResponseNodeList(fsInfo, master);
 
-		return sortTransformationResponse(nodeList, master);
+		return sortTransformationResponse(nodeList, master, fsInfo->filename);
 	}
 }
 
@@ -81,16 +81,13 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 		setInStatusTable('T', master, nodeData->nodo, blockInfo->block_id,
 				nodeData->tr_tmp, nodeData->bloque, fsInfo->filename);
 
-		//creo el elemento para agregar a la tabla de planificados.
-		addToTransformationPlanedTable(master, nodeData, fsInfo->filename);
-
 		free(blockInfo);
 	}
 
 	return nodeList;
 }
 
-void* sortTransformationResponse(t_list* buffer, int master) {
+void* sortTransformationResponse(t_list* buffer, int master, char* fileName) {
 	bool (*comparator)(void*, void*);
 	comparator = &compareTransformationBlocks;
 	list_sort(buffer, comparator);
@@ -107,7 +104,8 @@ void* sortTransformationResponse(t_list* buffer, int master) {
 	int index = 0;
 	for (index = 0; index < *blocks; index++) {
 		tr_datos* data = list_get(buffer, index);
-
+		//creo el elemento para agregar a la tabla de planificados.
+		addToTransformationPlanedTable(master, data, fileName);
 		memcpy(
 				sortedBuffer + sizeof(char) + sizeof(int)
 						+ (index * sizeof(tr_datos)), data, sizeof(tr_datos));

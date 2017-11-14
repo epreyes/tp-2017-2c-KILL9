@@ -249,10 +249,12 @@ void* replanTask(int master, int node, t_planningParams* params) {
 	} else {
 		t_list* taskFailed = getTaskFailed(master, node);
 		t_list* replanedTasks = list_create();
+		char* filename = malloc(sizeof(char)*28);
 
 		int index = 0;
 		for (index = 0; index < list_size(taskFailed); index++) {
 			elem_tabla_estados* elem = list_get(taskFailed, index);
+			strcpy(filename, elem->fileProcess);
 			block_info* blockInfo = findBlock(elem->block);
 			int node = elem->node;
 			if (elem->node == blockInfo->node1) {
@@ -271,6 +273,6 @@ void* replanTask(int master, int node, t_planningParams* params) {
 		int planigDelay = params->planningDelay;
 		sleep(planigDelay);
 		int replaned = 1;
-		return sortTransformationResponse(replanedTasks, master);
+		return sortTransformationResponse(replanedTasks, master, filename);
 	}
 }

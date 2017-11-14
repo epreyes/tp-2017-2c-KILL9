@@ -123,7 +123,9 @@ int getLastChargedNode(t_list* planed) {
 			elem_tabla_nodos* elemNodeMin = list_get(yama->tabla_nodos, findNode( minNode->nodo ));
 
 			//tomo el segundo elemento planificado para compararlo contra el primero.
-			rl_datos* elem = list_get(planed, index);
+			elem_tabla_planificados* elemPlaned = list_get(planed, index);
+			rl_datos* elem = malloc(sizeof(rl_datos));
+			memcpy(elem, elemPlaned->data, sizeof(rl_datos));
 
 			//traigo el nodo de ese elemento planificado.
 			elem_tabla_nodos* nextNodeElem = list_get(yama->tabla_nodos, findNode( elem->nodo ));
