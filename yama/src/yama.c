@@ -80,7 +80,7 @@ int getJobIndex(int master, char etapa) {
 	int index = 0;
 	for (index = 0; index < list_size(yama->tabla_jobs); index++) {
 		t_job* job = list_get(yama->tabla_jobs, index);
-		if ((job->master == master) && (job->etapa == etapa)) {
+		if ((job->master == master) && (job->etapa == etapa) && (job->estado == 'P')) {
 			return index;
 		}
 	}

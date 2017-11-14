@@ -37,6 +37,8 @@ void* processOk(int master) {
 	log_info(yama->log, "Operacion %c OK en nodo %d, bloque %d, Master %d.", opCode, nodo, bloque, master);
 
 	if( opCode == 'S' ){
+		job->estado = 'F';
+		list_replace(yama->tabla_jobs, jobIndex, job);
 		log_trace(yama->log, "Job %d Finalizado con exito. Master %d.", master+yama->jobs, master);
 	}
 
