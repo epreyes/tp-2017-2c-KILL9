@@ -57,7 +57,7 @@ void* processNodeError(int master) {
 	case 'S': {
 		log_trace(yama->log, "Recivo error en operacion %c. Job %d.",
 				op, job->id);
-		response = abortJob(master, *(int*) node, *(char*) op, job);
+		response = abortJob(master, node, op, job);
 		log_error(yama->log, "Se aborta job %d. Master %d.",
 				job->id, master);
 		job->estado = 'E';

@@ -215,7 +215,7 @@ int findInProcessTasks(int master, int node_id, int block, char op, t_job* job) 
 				}
 			} else {
 				if ((node->node == node_id) && (master == node->master)
-						&& (op == node->op) && (node->status == 'P')) {
+						&& (op == node->op) && (node->status == 'P') && (node->job == job->id)) {
 					return index;
 				}
 			}
@@ -235,6 +235,8 @@ int getBlockId(char* tmpName) {
 
 void updateStatusTable(int master, char opCode, int node, int bloque,
 		char status, t_job* job) {
+
+	viewStateTable();
 
 	int index = findInProcessTasks(master, node, bloque, opCode, job);
 	elem_tabla_estados* row;

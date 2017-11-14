@@ -53,7 +53,7 @@ void loadConfigs(){
 
 
 void createLoggers(){
-	char* LOG_PATH = "../logs/worker.log";
+	char* LOG_PATH = "logs/worker.log";
 	if(logger = log_create(LOG_PATH,"worker",1,LOG_LEVEL_TRACE)){
 		log_info(logger, "Logger inicializado");
 	}else{

@@ -110,7 +110,7 @@ void* processOperation(int master, char op) {
 		log_trace(yama->log, "Solicitud de transformación. Inicia el Job %d.",
 				yama->jobs);
 
-		if (existJob(yama->jobs + master, master, op) > -1) {
+		if (existJob(yama->jobs, master, op) > -1) {
 			char msg[] =
 					"No se pueden ejecutar dos transformaciones provenientes de un mismo Master.";
 			int len = strlen(msg);
