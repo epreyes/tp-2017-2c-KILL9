@@ -108,7 +108,7 @@ void* processLocalReduction(int master, int job) {
 			strcpy(localRedData->tr_tmp, elem->tr_tmp);
 			getLocalReductionTmpName(localRedData, 'L',
 					getBlockId(elem->tr_tmp), master);
-			if (!existInStatusTable(yama->jobs + master, 'L',
+			if (!existInStatusTable(job, 'L',
 					localRedData->nodo)) {
 				setInStatusTable(job, 'L', master, localRedData->nodo,
 						getBlockId(localRedData->rl_tmp), localRedData->rl_tmp,

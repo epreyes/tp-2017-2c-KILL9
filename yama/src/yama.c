@@ -101,7 +101,7 @@ void* processOperation(int master, char op) {
 		t_job* job = malloc(sizeof(t_job));
 		job->estado = 'P';
 		job->etapa = 'T';
-		job->id = 753;//master + yama->jobs;
+		job->id = master + yama->jobs;
 		job->replanificaciones = 0;
 		job->master = master;
 		list_add(yama->tabla_jobs, job);
