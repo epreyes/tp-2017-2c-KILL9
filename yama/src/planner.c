@@ -243,15 +243,17 @@ tr_datos* doPlanning(block_info* blockRecived, int master,
 	return evaluateClock(blockRecived, master, yama->clock, planningParams);
 }
 
-void* replanTask(int master, int node, t_planningParams* params, t_job* job, int jobindex) {
-	if ( job->replanificaciones == 1 ) {
-		log_error(yama->log, "No se puede replanificar el nodo %d, Job %d.", node, job->id);
+void* replanTask(int master, int node, t_planningParams* params, t_job* job,
+		int jobindex) {
+	if (job->replanificaciones == 1) {
+		log_error(yama->log, "No se puede replanificar el nodo %d, Job %d.",
+				node, job->id);
 		job->replanificaciones++;
-		return abortJob(master, node, 'T' , job);
+		return abortJob(master, node, 'T', job);
 	} else {
 		t_list* taskFailed = getTaskFailed(master, node, job);
 		t_list* replanedTasks = list_create();
-		char* filename = malloc(sizeof(char)*28);
+		char* filename = malloc(sizeof(char) * 28);
 
 		int index = 0;
 		for (index = 0; index < list_size(taskFailed); index++) {
@@ -259,11 +261,21 @@ void* replanTask(int master, int node, t_planningParams* params, t_job* job, int
 			strcpy(filename, elem->fileProcess);
 			block_info* blockInfo = findBlock(elem->block);
 			int node = elem->node;
-			if (elem->node == blockInfo->node1) {
-				node = blockInfo->node2;
+
+			if (blockInfo->node1 != 'X' && blockInfo->node2 != 'X') {
+				if (elem->node == blockInfo->node1) {
+					node = blockInfo->node2;
+				} else {
+					node = blockInfo->node1;
+				}
 			} else {
-				node = blockInfo->node1;
+				log_error(yama->log,
+						"No se puede replanificar el nodo %d, Job %d. No existe duplicado.",
+						node, job->id);
+				job->replanificaciones++;
+				return abortJob(master, node, 'T', job);
 			}
+
 			tr_datos* dataNode = buildNodePlaned(blockInfo, master, node);
 
 			setInStatusTable(job->id, 'T', master, dataNode->nodo,
@@ -278,6 +290,6 @@ void* replanTask(int master, int node, t_planningParams* params, t_job* job, int
 		int planigDelay = params->planningDelay;
 		sleep(planigDelay);
 
-		return sortTransformationResponse(replanedTasks, master, filename);
+		return sortTransformationResponse(replanedTasks, master, filename, job);
 	}
 }

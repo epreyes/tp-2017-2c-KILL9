@@ -98,14 +98,24 @@ void* processOperation(int master, char op) {
 	case 'T': {
 		log_trace(yama->log, "Solicitud de transformación. Inicia el Job %d.",
 				yama->jobs + master);
-		t_job* job = malloc(sizeof(t_job));
-		job->estado = 'P';
-		job->etapa = 'T';
-		job->id = master + yama->jobs;
-		job->replanificaciones = 0;
-		job->master = master;
-		list_add(yama->tabla_jobs, job);
-		response = processTransformation(master, job->id);
+
+		if (getJobIndex(master, op) > -1) {
+			char msg[] = "No se pueden ejecutar dos transformaciones provenientes de un mismo Master.";
+			int len = strlen(msg);
+			response = malloc(sizeof(char)+sizeof(int)+len);
+			memcpy(response, "D", sizeof(char));
+			memcpy(response+sizeof(char), &len, sizeof(int));
+			memcpy(response+sizeof(char)+sizeof(int), msg, len);
+		} else {
+			t_job* job = malloc(sizeof(t_job));
+			job->estado = 'P';
+			job->etapa = 'T';
+			job->id = master + yama->jobs;
+			job->replanificaciones = 0;
+			job->master = master;
+			list_add(yama->tabla_jobs, job);
+			response = processTransformation(master, job);
+		}
 	}
 		break;
 	case 'L': {
@@ -145,8 +155,6 @@ void* processOperation(int master, char op) {
 	default:
 		response = invalidRequest(master, "Error: Invalid operation.");
 	}
-
-	viewStateTable();
 
 	return response;
 }

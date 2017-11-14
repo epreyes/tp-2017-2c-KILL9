@@ -38,7 +38,6 @@ void* processOk(int master) {
 
 	if( opCode == 'S' ){
 		log_trace(yama->log, "Job %d Finalizado con exito. Master %d.", master+yama->jobs, master);
-		viewStateTable();
 	}
 
 	buffer = malloc(sizeof(char));

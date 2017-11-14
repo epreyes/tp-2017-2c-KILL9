@@ -50,7 +50,6 @@ int getSizeToSend(void* masterRS) {
 		size = (blocks * sizeof(rl_datos)) + sizeof(char) + sizeof(int);
 		break;
 	case 'G':
-
 		size = (blocks * grSize) + sizeof(char) + sizeof(int);
 		break;
 	case 'S':
@@ -62,6 +61,15 @@ int getSizeToSend(void* masterRS) {
 	case 'E':
 		size = sizeof(char);
 		break;
+	case 'R': {
+		char opCode;
+		memcpy(&opCode, masterRS+sizeof(char), sizeof(char));
+
+		int blocks;
+		memcpy(&blocks, masterRS+sizeof(char)+sizeof(char), sizeof(int));
+		size = (2*sizeof(char))+sizeof(int)+(sizeof(tr_datos)*blocks);
+	}
+		break;
 	}
 
 	return size;
@@ -70,11 +78,13 @@ int getSizeToSend(void* masterRS) {
 int sendResponse(int master, void* masterRS) {
 
 	int bytesSent = send(master, masterRS, getSizeToSend(masterRS), 0);
+
 	if (bytesSent > 0) {
 		log_trace(yama->log, sendResponseMsg(master, bytesSent, masterRS));
 		free(masterRS);
 	} else {
-		log_error(yama->log, "Error al enviar la respuesta al Master (%d).", master);
+		log_error(yama->log, "Error al enviar la respuesta al Master (%d).",
+				master);
 	}
 	return bytesSent;
 }
@@ -104,8 +114,9 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 
 		if ((responseCode == 'T') || (responseCode == 'L')
 				|| (responseCode == 'G') || (responseCode == 'S')
-				|| ( (responseCode == 'E')&&(opRq == 'T') )
-				|| ( (opRq == 'E') && (responseCode = 'A')))  {
+				|| ((responseCode == 'E') && (opRq == 'T'))
+				|| ((opRq == 'E') && (responseCode = 'A'))
+				|| (responseCode == 'R')) {
 			sendResponse(socket, response);
 		} else {
 			if (responseCode != 'O') {
@@ -145,7 +156,8 @@ void exploreActivity(fd_set* mastersListTemp, fd_set* mastersList) {
 void waitMastersConnections() {
 
 	if (yama->yama_server.status > -1) {
-		log_info(yama->log, "YAMA listo para recibir solicitudes de Masters.", getpid());
+		log_info(yama->log, "YAMA listo para recibir solicitudes de Masters.",
+				getpid());
 
 		/* creo las listas de sockets entrantes que seran monitoreadas */
 		fd_set mastersList;
@@ -162,7 +174,7 @@ void waitMastersConnections() {
 			mastersListTemp = mastersList;
 			activity = select(yama->yama_server.higherSocketDesc + 1,
 					&mastersListTemp, NULL, NULL, NULL);
-			if( errno == EINTR ){
+			if ( errno == EINTR) {
 				continue;
 			}
 			if (activity == -1) {

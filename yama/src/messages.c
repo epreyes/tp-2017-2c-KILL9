@@ -11,28 +11,38 @@ char* sendResponseMsg(int master, int bytes, void* response) {
 	char op;
 	memcpy(&op, response, sizeof(char));
 
+	if( op == 'R'){
+		op == 'T';
+	}
+
+	t_job* job = list_get(yama->tabla_jobs, getJobIndex(master, op));
+
 	char* msg;
 	switch (op) {
 	case 'T':
 		asprintf(&msg, "Respuesta de Transformacion: enviados %d bytes. Job %d.",
-				bytes, yama->jobs + master);
+				bytes,job->id);
 		break;
 	case 'L':
 		asprintf(&msg, "Respuesta de reduccion Local: enviados %d bytes. Job %d.",
-				bytes, yama->jobs + master);
+				bytes,job->id);
 		break;
 	case 'G':
 		asprintf(&msg, "Respuesta de reduccion Global: enviados %d bytes. Job %d.", bytes,
-				yama->jobs + master);
+				job->id);
 		break;
 	case 'S':
 		asprintf(&msg, "Respuesta de Almacenamiento Final: enviados %d bytes. Job %d.", bytes,
-				yama->jobs + master);
+				job->id);
 		break;
 	case 'E':
 			asprintf(&msg, "Error: enviados %d bytes. Job %d.", bytes,
-					yama->jobs + master);
+					job->id);
 			break;
+	case 'R':
+				asprintf(&msg, "Respuesta de Replanificacion: enviados %d bytes. Job %d.", bytes,
+						job->id);
+				break;
 	}
 
 	return msg;

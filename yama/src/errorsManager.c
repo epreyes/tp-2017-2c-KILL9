@@ -60,7 +60,6 @@ void* processNodeError(int master) {
 		response = abortJob(master, *(int*) node, *(char*) op, job);
 		log_error(yama->log, "Se aborta job %d. Master %d.",
 				yama->jobs + master, master);
-		viewStateTable();
 		job->estado = 'E';
 		list_replace(yama->tabla_jobs, jobIndex, job);
 	}
@@ -79,7 +78,7 @@ void showErrorMessage(void* response) {
 	char* msg = malloc(sizeMsg);
 	memcpy(msg, response + sizeof(char) + sizeof(int), sizeMsg);
 
-	log_error("%s", msg);
+	log_error(yama->log, "%s", msg);
 }
 
 void* processErrorMessage(int master, char* errorMessage) {

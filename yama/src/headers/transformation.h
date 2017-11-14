@@ -13,11 +13,11 @@
 
 void viewTransformationResponse(void* response);
 
-void* processTransformation(int master, int jobid);
+void* processTransformation(int master, t_job* job);
 
 void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId);
 
-void* sortTransformationResponse(t_list* buffer, int master, char* fsInfo);
+void* sortTransformationResponse(t_list* buffer, int master, char* fsInfo, t_job* job);
 
 t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 		int master, int jobid);
