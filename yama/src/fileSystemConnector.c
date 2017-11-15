@@ -196,14 +196,14 @@ elem_info_archivo* getFileInfo(int master, t_job* job) {
 			elem_info_archivo* fileInfo = malloc(sizeof(elem_info_archivo));
 			strcpy(fileInfo->filename, fileName);
 
-			int* size = malloc(sizeof(int));
-			memcpy(size, fsInfo, sizeof(int));
-			fileInfo->sizeInfo = *size;
+			int size;
+			memcpy(&size, fsInfo, sizeof(int));
+			fileInfo->sizeInfo = size;
 
-			fileInfo->info = malloc(*size);
-			memcpy(fileInfo->info, fsInfo + sizeof(int), *size);
+			fileInfo->info = malloc(size);
+			memcpy(fileInfo->info, fsInfo + sizeof(int), size);
 
-			fileInfo->blocks = *size / sizeof(block_info);
+			fileInfo->blocks = size / sizeof(block_info);
 
 			list_add(yama->tabla_info_archivos, fileInfo);
 

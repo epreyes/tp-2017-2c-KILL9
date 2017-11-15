@@ -19,9 +19,9 @@ void getGlobalReductionTmpName(rg_datos* nodeData, int op, int blockId,
 
 void* processGlobalReduction(int master, int jobid);
 
-int allLocalReductionProcesFinish(int master);
+int allLocalReductionProcesFinish(int master, int jobid);
 
-t_list* findLocalReductionPlaned(int master);
+t_list* findLocalReductionPlaned(int master, int jobid);
 
 int getLastChargedNode(t_list* planed);
 

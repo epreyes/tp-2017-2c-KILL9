@@ -6,12 +6,12 @@
  */
 #include "headers/finalStore.h"
 
-int allGlobalReductionProcesFinish(int master) {
+int allGlobalReductionProcesFinish(int master, int jobid) {
 	int response = 0;
 	int index = 0;
 	for (index = 0; index < list_size(yama->tabla_estados); index++) {
 		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
-		if (elem->master == master && elem->op == 'G') {
+		if (elem->job == jobid && elem->master == master && elem->op == 'G') {
 			if (elem->status == 'P' || elem->status == 'E') {
 				response = 0;
 				return response;
@@ -84,7 +84,7 @@ void viewFinalStoreResponse(void* response) {
 
 
 void* processFinalStore(int master, int jobid) {
-	if (allGlobalReductionProcesFinish(master)) {
+	if (allGlobalReductionProcesFinish(master, jobid)) {
 		t_list* planed = findGlobalReductionPlaned(master);
 
 		elem_tabla_GR_planificados* data = list_get(planed, 0);

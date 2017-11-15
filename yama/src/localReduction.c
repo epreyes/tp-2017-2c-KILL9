@@ -25,14 +25,14 @@ void deleteOfPlanedList(int items, int master) {
 	}
 }
 
-t_list* findTransformationPlaned(int master) {
+t_list* findTransformationPlaned(int master, int jobid) {
 	t_list* planed_list = list_create();
 	int itemsToRemove = 0;
 
 	int i = 0;
 	for (i = 0; i < list_size(yama->tabla_T_planificados); i++) {
 		elem_tabla_planificados* elem = list_get(yama->tabla_T_planificados, i);
-		if (elem->master == master) {
+		if (elem->job == jobid && elem->master == master) {
 			list_add(planed_list, elem);
 			itemsToRemove++;
 		}
@@ -68,12 +68,12 @@ void getLocalReductionTmpName(rl_datos* nodeData, int op, int blockId,
 	strcpy(nodeData->rl_tmp, name);
 }
 
-int allTransformProcesFinish(int master) {
+int allTransformProcesFinish(int master, int jobid) {
 	int response = 0;
 	int index = 0;
 	for (index = 0; index < list_size(yama->tabla_estados); index++) {
 		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
-		if (elem->master == master && elem->op == 'T') {
+		if ( elem->job == jobid && elem->master == master && elem->op == 'T') {
 			if (elem->status == 'P' || elem->status == 'E') {
 				response = 0;
 				return response;
@@ -86,8 +86,8 @@ int allTransformProcesFinish(int master) {
 }
 
 void* processLocalReduction(int master, int job) {
-	if (allTransformProcesFinish(master)) {
-		t_list* planed = findTransformationPlaned(master);
+	if (allTransformProcesFinish(master, job)) {
+		t_list* planed = findTransformationPlaned(master, job);
 
 		void* localReductionRes = malloc(
 				sizeof(char) + sizeof(int)
@@ -115,7 +115,7 @@ void* processLocalReduction(int master, int job) {
 						0, elemData->fileName);
 
 				//creo el elemento para agregar a la tabla de planificados.
-				addToLocalReductionPlanedTable(master, localRedData, elemData->fileName);
+				addToLocalReductionPlanedTable(master, localRedData, elemData->fileName, job);
 				increaseNodeCharge(localRedData->nodo);
 			}
 

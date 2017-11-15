@@ -16,7 +16,7 @@ void viewFinalStoreResponse(void* response);
 
 void* processFinalStore(int master, int jobid);
 
-int allGlobalReductionProcesFinish(int master);
+int allGlobalReductionProcesFinish(int master, int jobid);
 
 t_list* findGlobalReductionPlaned(int master);
 

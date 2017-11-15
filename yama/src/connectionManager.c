@@ -81,11 +81,11 @@ int sendResponse(int master, void* masterRS, t_job* job) {
 
 	if (bytesSent > 0) {
 		sendResponseMsg(master, bytesSent, masterRS, job);
-		free(masterRS);
 	} else {
 		log_error(yama->log, "Error al enviar la respuesta al Master (%d).",
 				master);
 	}
+	free(masterRS);
 	return bytesSent;
 }
 
@@ -95,6 +95,7 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 	/* Si recibo -1 o 0, el cliente se desconecto o hubo un error */
 	if (nbytes <= 0) {
 		if (nbytes == 0) {
+			abortInProcessJobs(socket);
 			log_trace(yama->log, "Master %d desconectado!", socket);
 		} else {
 			log_error(yama->log, "Error al recibir mensajes de master.");

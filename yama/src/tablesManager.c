@@ -147,6 +147,7 @@ void addToNodeList(void* fsInfo) {
 			}
 		}
 	}
+	free(nodes);
 }
 
 void increaseNodeCharge(int node_id) {
@@ -186,19 +187,52 @@ void updateNodeList(char op, int node_id) {
 	}
 }
 
+char* getStageName(char op){
+	switch(op){
+	case 'T':
+		return "Transformación";
+		break;
+	case 'L':
+		return "Reducción Local";
+		break;
+	case 'G':
+			return "Reducción Global";
+			break;
+	case 'S':
+			return "Almacenamiento Final";
+			break;
+	}
+}
+
+char* getStatusName(char status){
+	switch(status){
+		case 'P':
+			return "En proceso";
+			break;
+		case 'F':
+					return "Finalizado Ok";
+					break;
+		case 'E':
+					return "Error";
+					break;
+	}
+}
+
 void viewStateTable() {
 	t_list* stateTable = yama->tabla_estados;
-	printf("\nLa cantidad de entradas de la tabla es: %d\n",
-			list_size(stateTable));
+	printf("\n\n");
+	log_debug(yama->log, "----------------------- Tabla de estados -----------------------");
+	log_debug(yama->log,  "Cantidad de entradas: %d", list_size(stateTable));
+	log_debug(yama->log,  "----------------------------------------------------------------");
 	int i = 0;
 	while (i < list_size(stateTable)) {
 		elem_tabla_estados* row = list_get(stateTable, i);
 		i++;
-		printf(
-				"Row:\nJob=%d - Master=%d - Block=%d - Node=%d - Node_block=%d - Oper=%c - Temp=%s - Status=%c (%s)\n",
-				row->job, row->master, row->block, row->node, row->node_block,
-				row->op, row->tmp, row->status, row->fileProcess);
+		log_debug(yama->log,  "Job: %d - Master: %d - Nodo: %d - Bloque: %d - Etapa: %s - Archivo Temporal: %s - Estado: %s",
+					row->job, row->master, row->node, row->block, getStageName(row->op), row->tmp, getStatusName(row->status));
+		log_debug(yama->log,  "----------------------------------------------------------------------------------------------------------");
 	}
+	log_debug(yama->log,  "----------------------- Fin Tabla de estados -----------------------");
 }
 
 int findInProcessTasks(int master, int node_id, int block, char op, t_job* job) {
@@ -208,9 +242,9 @@ int findInProcessTasks(int master, int node_id, int block, char op, t_job* job) 
 			elem_tabla_estados* node = list_get(yama->tabla_estados, index);
 
 			if (op == 'T') {
-				if ((node->node == node_id) && (master == node->master)
+				if ((node->job == job->id) && (node->node == node_id) && (master == node->master)
 						&& (block == node->node_block) && (op == node->op)
-						&& (node->status == 'P') && (node->job == job->id)) {
+						&& (node->status == 'P')) {
 					return index;
 				}
 			} else {
@@ -251,8 +285,9 @@ void updateStatusTable(int master, char opCode, int node, int bloque,
 }
 
 void addToTransformationPlanedTable(int master, tr_datos* nodeData,
-		char* fileName) {
+		char* fileName, int jobid) {
 	elem_tabla_planificados* planed = malloc(sizeof(elem_tabla_planificados));
+	planed->job = jobid;
 	strcpy(planed->fileName, fileName);
 	planed->data = malloc(sizeof(tr_datos));
 	memcpy(planed->data, nodeData, sizeof(tr_datos));
@@ -261,9 +296,10 @@ void addToTransformationPlanedTable(int master, tr_datos* nodeData,
 }
 
 void addToLocalReductionPlanedTable(int master, rl_datos* nodeData,
-		char* fileName) {
+		char* fileName, int jobid) {
 	elem_tabla_LR_planificados* planed = malloc(
 			sizeof(elem_tabla_LR_planificados));
+	planed->job = jobid;
 	planed->data = malloc(sizeof(rl_datos));
 	memcpy(planed->data, nodeData, sizeof(rl_datos));
 	planed->master = master;
@@ -272,9 +308,10 @@ void addToLocalReductionPlanedTable(int master, rl_datos* nodeData,
 }
 
 void addToGlobalReductionPlanedTable(int master, rg_datos* nodeData,
-		char* fileName) {
+		char* fileName, int jobid) {
 	elem_tabla_GR_planificados* planed = malloc(
 			sizeof(elem_tabla_GR_planificados));
+	planed->job = jobid;
 	planed->data = malloc(sizeof(rg_datos));
 	strcpy(planed->fileName, fileName);
 	memcpy(planed->data, nodeData, sizeof(rg_datos));

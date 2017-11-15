@@ -51,8 +51,10 @@ void* processTransformation(int master, t_job* job) {
 		t_list* nodeList = list_create();
 		nodeList = buildTransformationResponseNodeList(fsInfo, master, job->id);
 
-		return sortTransformationResponse(nodeList, master, fsInfo->filename,
+		void* response = sortTransformationResponse(nodeList, master, fsInfo->filename,
 				job);
+		free(fsInfo);
+		return response;
 	}
 }
 
@@ -131,7 +133,7 @@ void* sortTransformationResponse(t_list* buffer, int master, char* fileName,
 	for (index = 0; index < blocks; index++) {
 		tr_datos* data = list_get(buffer, index);
 		//creo el elemento para agregar a la tabla de planificados.
-		addToTransformationPlanedTable(master, data, fileName);
+		addToTransformationPlanedTable(master, data, fileName, job->id);
 		memcpy(
 				sortedBuffer + sizeAdded + (index * sizeof(tr_datos)), data, sizeof(tr_datos));
 	}

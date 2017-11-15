@@ -78,12 +78,13 @@ void* getResponse(int master, char request) {
 
 int getJobIndex(int master, char etapa) {
 	int index = 0;
-	if( etapa == 'R' ){
+	if (etapa == 'R') {
 		etapa = 'T';
 	}
 	for (index = 0; index < list_size(yama->tabla_jobs); index++) {
 		t_job* job = list_get(yama->tabla_jobs, index);
-		if ((job->master == master) && (job->etapa == etapa) && (job->estado == 'P')) {
+		if ((job->master == master) && (job->etapa == etapa)
+				&& (job->estado == 'P')) {
 			return index;
 		}
 	}
@@ -94,11 +95,33 @@ int existJob(int jobid, int master, char op) {
 	int index = 0;
 	for (index = 0; index < list_size(yama->tabla_jobs); index++) {
 		t_job* job = list_get(yama->tabla_jobs, index);
-		if ((job->id == jobid) && (job->master == master) && (job->etapa == op)) {
+		if ((job->id == jobid) && (job->master == master)
+				&& (job->etapa == op)) {
 			return index;
 		}
 	}
 	return -1;
+}
+
+void abortInProcessJobs(int master) {
+	//aborto el job para el master que se desconecto, si es que tenia pendientes.
+	int index = 0;
+	for (index = 0; index < list_size(yama->tabla_jobs); index++) {
+		t_job* job = list_get(yama->tabla_jobs, index);
+		if ((job->master == master) && (job->estado == 'P')) {
+			job->estado = 'E';
+			list_replace(yama->tabla_jobs, index, job);
+
+			int j = 0;
+			for(j = 0; j < list_size(yama->tabla_estados); j++){
+				elem_tabla_estados* elem = list_get(yama->tabla_estados, j);
+				if( elem->master == master && elem->status == 'P'){
+					elem->status = 'E';
+					list_replace(yama->tabla_estados, j, elem);
+				}
+			}
+		}
+	}
 }
 
 /*
@@ -170,6 +193,6 @@ void* processOperation(int master, char op) {
 	default:
 		response = invalidRequest(master, "Error: Invalid operation.");
 	}
-
+	viewStateTable();
 	return response;
 }

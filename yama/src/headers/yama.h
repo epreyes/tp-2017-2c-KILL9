@@ -54,18 +54,21 @@ typedef struct {
 } elem_tabla_estados;
 
 typedef struct{
+	int job;
 	tr_datos* data;
 	int master;
 	char fileName[28];
 }elem_tabla_planificados;
 
 typedef struct{
+	int job;
 	rl_datos* data;
 	int master;
 	char fileName[28];
 }elem_tabla_LR_planificados;
 
 typedef struct{
+	int job;
 	rg_datos* data;
 	int master;
 	char fileName[28];
@@ -124,5 +127,11 @@ void viewConfig();
  * si no, se la pido al filesystem.
  * */
 void* processOperation(int master, char op);
+
+void abortInProcessJobs(int master);
+
+int existJob(int jobid, int master, char op);
+
+int getJobIndex(int master, char etapa);
 
 #endif /* YAMA_H_ */
