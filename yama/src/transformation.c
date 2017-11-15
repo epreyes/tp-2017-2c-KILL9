@@ -42,7 +42,7 @@ void* processTransformation(int master, t_job* job) {
 	log_trace(yama->log, "Atendiendo solicitud de Transformación. Job %d.",
 			job->id);
 	/*me traigo la informacion del archivo.*/
-	elem_info_archivo* fsInfo = getFileInfo(master);
+	elem_info_archivo* fsInfo = getFileInfo(master, job);
 
 	if ((*(char*) fsInfo) == 'E') {
 		return fsInfo;

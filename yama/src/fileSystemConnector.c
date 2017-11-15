@@ -21,8 +21,9 @@ void sendErrorToFileSystem(char* name) {
 		log_info(yama->log, "La conexion con el filesystem fue exitosa!");
 		/*creo el buffer que contendra la solicitud al filesystem*/
 		name = string_substring_from(name, 8);
-		int buffersize = sizeof(int) + sizeof(char) + sizeof(int) + strlen(name)+1;
-		int sizename = strlen(name)+1;
+		int buffersize = sizeof(int) + sizeof(char) + sizeof(int) + strlen(name)
+				+ 1;
+		int sizename = strlen(name) + 1;
 
 		void* buffer = malloc(buffersize);
 		int handShake = 10;
@@ -32,14 +33,16 @@ void sendErrorToFileSystem(char* name) {
 		memcpy(buffer + sizeof(int) + sizeof(char) + sizeof(int), name,
 				sizename);
 
-		if( send(fs_client.socket_server_id, buffer, buffersize, 0) > 0 ){
-			log_trace(yama->log, "Se envió notificación de error en job al filesystem, para desbloquear archivo.");
+		if (send(fs_client.socket_server_id, buffer, buffersize, 0) > 0) {
+			log_trace(yama->log,
+					"Se envió notificación de error en job al filesystem, para desbloquear archivo.");
+		} else {
+			log_error(yama->log,
+					"Error al enviar notificación de fallo al filesystem.");
 		}
-		else{
-			log_error(yama->log, "Error al enviar notificación de fallo al filesystem.");
-		}
-	}else{
-		log_error(yama->log, "No se puede conectar al filesystem %s:%d.", fs_ip, fs_port);
+	} else {
+		log_error(yama->log, "No se puede conectar al filesystem %s:%d.", fs_ip,
+				fs_port);
 	}
 	disconnectClient(&fs_client);
 }
@@ -147,7 +150,7 @@ int findFile(char* fileName) {
 	return -1;
 }
 
-elem_info_archivo* getFileInfo(int master) {
+elem_info_archivo* getFileInfo(int master, t_job* job) {
 	elem_info_archivo* info = NULL;
 
 	/*recivo del master el tamanio del nombre del archivo.*/
@@ -168,14 +171,14 @@ elem_info_archivo* getFileInfo(int master) {
 	free(buff);
 
 	log_info(yama->log, "Solicitando informacion del archivo: %s. Job %d.",
-			fileName, yama->jobs + master);
+			fileName, job->id);
 
 	int fileIndex = findFile(fileName);
 
 	/*Si ya tengo la info del archivo, en la lista, la saco de ahi.*/
 	if (fileIndex >= 0) {
 		log_info(yama->log, "Obteniendo informacion de cache. Job %d.",
-				yama->jobs + master);
+				job->id);
 		elem_info_archivo* fileInfo = list_get(yama->tabla_info_archivos,
 				fileIndex);
 		info = fileInfo;
@@ -184,7 +187,7 @@ elem_info_archivo* getFileInfo(int master) {
 	/*Si no tengo la informacion en la tabla, se la pido al filesystem*/
 	else {
 		log_info(yama->log, "Obteniendo informacion del filesystem. Job %d.",
-				yama->jobs + master);
+				job->id);
 		void* fsInfo = getFileSystemInfo(fileName);
 
 		if ((*(char*) fsInfo) == 'E') {

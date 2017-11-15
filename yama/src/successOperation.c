@@ -39,7 +39,7 @@ void* processOk(int master) {
 	if( opCode == 'S' ){
 		job->estado = 'F';
 		list_replace(yama->tabla_jobs, jobIndex, job);
-		log_trace(yama->log, "Job %d Finalizado con exito. Master %d.", master+yama->jobs, master);
+		log_trace(yama->log, "Job %d Finalizado con exito. Master %d.", job->id, master);
 	}
 
 	buffer = malloc(sizeof(char));

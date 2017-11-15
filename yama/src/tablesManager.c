@@ -235,9 +235,6 @@ int getBlockId(char* tmpName) {
 
 void updateStatusTable(int master, char opCode, int node, int bloque,
 		char status, t_job* job) {
-
-	viewStateTable();
-
 	int index = findInProcessTasks(master, node, bloque, opCode, job);
 	elem_tabla_estados* row;
 	if (index > -1) {
@@ -331,18 +328,4 @@ block_info* findBlock(int block) {
 	}
 
 	return NULL;
-}
-
-t_list* getTaskWithError(int master, int node) {
-	int index = 0;
-	t_list* tasksError = list_create();
-	for (index = 0; index < list_size(yama->tabla_estados); index++) {
-		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
-		if ((elem->node == node) && (elem->master == master)
-				&& (elem->op == 'T') && (elem->status == 'E')
-				&& (elem->job == yama->jobs + master)) {
-			list_add(tasksError, elem);
-		}
-	}
-	return tasksError;
 }

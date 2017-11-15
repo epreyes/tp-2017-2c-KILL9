@@ -63,11 +63,11 @@ int getSizeToSend(void* masterRS) {
 		break;
 	case 'R': {
 		char opCode;
-		memcpy(&opCode, masterRS+sizeof(char), sizeof(char));
+		memcpy(&opCode, masterRS + sizeof(char), sizeof(char));
 
 		int blocks;
-		memcpy(&blocks, masterRS+sizeof(char)+sizeof(char), sizeof(int));
-		size = (2*sizeof(char))+sizeof(int)+(sizeof(tr_datos)*blocks);
+		memcpy(&blocks, masterRS + sizeof(char) + sizeof(char), sizeof(int));
+		size = (2 * sizeof(char)) + sizeof(int) + (sizeof(tr_datos) * blocks);
 	}
 		break;
 	}
@@ -113,6 +113,9 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 		memcpy(&responseCode, response, sizeof(char));
 
 		t_job* job = list_get(yama->tabla_jobs, getJobIndex(socket, opRq));
+		if (responseCode == 'R') {
+			job = list_get(yama->tabla_jobs, getJobIndex(socket, responseCode));
+		}
 
 		if ((responseCode == 'T') || (responseCode == 'L')
 				|| (responseCode == 'G') || (responseCode == 'S')
