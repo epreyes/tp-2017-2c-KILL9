@@ -38,6 +38,7 @@ if(replanification=='F'){
 	};
 	free(buffer);
 }
+replanification = 'F';
 //ESPERANDO RESPUESTA DE YAMA
 	int i=0;
 	char code;
@@ -72,7 +73,6 @@ void checkReplanification(int node){
 
 	log_warning(logger, "Reportado a YAMA, a la espera de replanificación...");
 	readBuffer(masterSocket,sizeof(char),&code);
-	printf("DATOS LEIDOS\n");
 	if(code!='R'){
 		log_error(logger, "Nodo %d: No es posible replanificar, se aborta la tarea", node);
 		abortJob = 'T';
@@ -194,6 +194,8 @@ int transformFile(char* filename){
 	int totalRecords;
 
 	yamaAnswer=sendTRequest(filename);
+
+	printf("\n\nREPLANIF:%c\n\n", replanification);
 
 	if(!yamaAnswer){
 		log_error(logger, "TRANSFORMACIÓN ABORTADA");
