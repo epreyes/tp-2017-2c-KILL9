@@ -74,7 +74,7 @@ int allTransformProcesFinish(int master, int jobid) {
 	for (index = 0; index < list_size(yama->tabla_estados); index++) {
 		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
 		if ( elem->job == jobid && elem->master == master && elem->op == 'T') {
-			if (elem->status == 'P' || elem->status == 'E') {
+			if (elem->status == 'P') {
 				response = 0;
 				return response;
 			} else {

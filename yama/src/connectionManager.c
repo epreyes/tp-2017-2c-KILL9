@@ -108,24 +108,38 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 	else {
 		//proceso el request y obtengo la respuesta
 		void* response = getResponse(socket, *(char*) request);
-		char opRq = *(char*) request;
+		char opRequested = *(char*) request;
 
-		char responseCode;
-		memcpy(&responseCode, response, sizeof(char));
+		char stage;
+		memcpy(&stage, response, sizeof(char));
 
-		t_job* job = list_get(yama->tabla_jobs, getJobIndex(socket, opRq));
-		if (responseCode == 'R') {
-			job = list_get(yama->tabla_jobs, getJobIndex(socket, responseCode));
+		char status = 'P';
+		t_job* job = list_get(yama->tabla_jobs, getJobIndex(socket, stage, status));
+
+		if (stage == 'A') {
+			memcpy(&opRequested, response + sizeof(char), sizeof(char));
+			status = 'E';
+			job = list_get(yama->tabla_jobs, getJobIndex(socket, opRequested, status));
 		}
 
-		if ((responseCode == 'T') || (responseCode == 'L')
-				|| (responseCode == 'G') || (responseCode == 'S')
-				|| ((responseCode == 'E') && (opRq == 'T'))
-				|| ((opRq == 'E') && (responseCode = 'A'))
-				|| (responseCode == 'R')) {
+		if (stage == 'R') {
+			memcpy(&opRequested, response + sizeof(char), sizeof(char));
+			status = 'P';
+			job = list_get(yama->tabla_jobs, getJobIndex(socket, opRequested, status));
+		}
+
+
+
+		if ( (stage == 'T') ||
+			 (stage == 'L') ||
+			 (stage == 'G') ||
+			 (stage == 'S') ||
+			 (stage == 'A') ||
+			 (stage == 'R') ||
+			 (stage == 'E') ) {
 			sendResponse(socket, response, job);
 		} else {
-			if (responseCode != 'O') {
+			if (stage != 'O') {
 				showErrorMessage(response, job);
 			}
 		}

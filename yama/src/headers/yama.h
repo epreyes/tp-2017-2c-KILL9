@@ -132,6 +132,6 @@ void abortInProcessJobs(int master);
 
 int existJob(int jobid, int master, char op);
 
-int getJobIndex(int master, char etapa);
+int getJobIndex(int master, char etapa, char estado);
 
 #endif /* YAMA_H_ */

@@ -31,7 +31,7 @@ void* processNodeError(int master) {
 	int node;
 	recv(master, &node, sizeof(int), 0);
 
-	int jobIndex = getJobIndex(master, op);
+	int jobIndex = getJobIndex(master, op, 'P');
 	t_job* job = list_get(yama->tabla_jobs, jobIndex);
 
 	switch (op) {

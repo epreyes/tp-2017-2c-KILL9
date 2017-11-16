@@ -53,7 +53,7 @@ void* processTransformation(int master, t_job* job) {
 
 		void* response = sortTransformationResponse(nodeList, master, fsInfo->filename,
 				job);
-		free(fsInfo);
+
 		return response;
 	}
 }

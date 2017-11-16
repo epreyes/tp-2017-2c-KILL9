@@ -28,7 +28,7 @@ void* processOk(int master) {
 	memcpy(&nodo, buffer, sizeof(int));
 	free(buffer);
 
-	int jobIndex = getJobIndex(master, opCode);
+	int jobIndex = getJobIndex(master, opCode, 'P');
 	t_job* job = list_get(yama->tabla_jobs, jobIndex);
 
 	updateStatusTable(master, opCode, nodo, bloque, 'F', job);

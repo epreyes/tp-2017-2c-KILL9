@@ -187,8 +187,8 @@ void updateNodeList(char op, int node_id) {
 	}
 }
 
-char* getStageName(char op){
-	switch(op){
+char* getStageName(char op) {
+	switch (op) {
 	case 'T':
 		return "Transformación";
 		break;
@@ -196,43 +196,50 @@ char* getStageName(char op){
 		return "Reducción Local";
 		break;
 	case 'G':
-			return "Reducción Global";
-			break;
+		return "Reducción Global";
+		break;
 	case 'S':
-			return "Almacenamiento Final";
-			break;
+		return "Almacenamiento Final";
+		break;
 	}
 }
 
-char* getStatusName(char status){
-	switch(status){
-		case 'P':
-			return "En proceso";
-			break;
-		case 'F':
-					return "Finalizado Ok";
-					break;
-		case 'E':
-					return "Error";
-					break;
+char* getStatusName(char status) {
+	switch (status) {
+	case 'P':
+		return "En proceso";
+		break;
+	case 'F':
+		return "Finalizado Ok";
+		break;
+	case 'E':
+		return "Error";
+		break;
+	case 'A':
+		return "Abortado";
+		break;
 	}
 }
 
 void viewStateTable() {
 	t_list* stateTable = yama->tabla_estados;
 	printf("\n\n");
-	log_debug(yama->log, "----------------------- Tabla de estados -----------------------");
-	log_debug(yama->log,  "Cantidad de entradas: %d", list_size(stateTable));
-	log_debug(yama->log,  "----------------------------------------------------------------");
+	log_debug(yama->log,
+			"----------------------- Tabla de estados -----------------------");
+	log_debug(yama->log, "Cantidad de entradas: %d", list_size(stateTable));
+	log_debug(yama->log,
+			"----------------------------------------------------------------");
 	int i = 0;
 	while (i < list_size(stateTable)) {
 		elem_tabla_estados* row = list_get(stateTable, i);
 		i++;
-		log_debug(yama->log,  "Job: %d - Master: %d - Nodo: %d - Bloque: %d - Etapa: %s - Archivo Temporal: %s - Estado: %s",
-					row->job, row->master, row->node, row->block, getStageName(row->op), row->tmp, getStatusName(row->status));
-		log_debug(yama->log,  "----------------------------------------------------------------------------------------------------------");
+		log_debug(yama->log,
+				"Job: %d - Master: %d - Nodo: %d - Bloque: %d - Etapa: %s - Archivo Temporal: %s - Estado: %s",
+				row->job, row->master, row->node, row->block,
+				getStageName(row->op), row->tmp, getStatusName(row->status));
 	}
-	log_debug(yama->log,  "----------------------- Fin Tabla de estados -----------------------");
+	log_debug(yama->log,
+			"----------------------- Fin Tabla de estados -----------------------");
 }
 
 int findInProcessTasks(int master, int node_id, int block, char op, t_job* job) {
@@ -242,14 +249,16 @@ int findInProcessTasks(int master, int node_id, int block, char op, t_job* job) 
 			elem_tabla_estados* node = list_get(yama->tabla_estados, index);
 
 			if (op == 'T') {
-				if ((node->job == job->id) && (node->node == node_id) && (master == node->master)
+				if ((node->job == job->id) && (node->node == node_id)
+						&& (master == node->master)
 						&& (block == node->node_block) && (op == node->op)
 						&& (node->status == 'P')) {
 					return index;
 				}
 			} else {
 				if ((node->node == node_id) && (master == node->master)
-						&& (op == node->op) && (node->status == 'P') && (node->job == job->id)) {
+						&& (op == node->op) && (node->status == 'P')
+						&& (node->job == job->id)) {
 					return index;
 				}
 			}
@@ -326,7 +335,7 @@ void updateTasksAborted(int master, int node, char codeOp, t_job* job) {
 		if ((elem->node == node) && (elem->master == master)
 				&& (elem->op == codeOp) && (elem->status == 'P')
 				&& (elem->job == job->id)) {
-			updateStatusTable(master, codeOp, node, elem->node_block, 'A', job);
+			updateStatusTable(master, codeOp, node, elem->node_block, 'E', job);
 			sendErrorToFileSystem(elem->fileProcess);
 		}
 	}

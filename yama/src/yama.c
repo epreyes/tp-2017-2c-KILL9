@@ -76,15 +76,21 @@ void* getResponse(int master, char request) {
 	return processOperation(master, request);
 }
 
-int getJobIndex(int master, char etapa) {
+int getJobIndex(int master, char etapa, char estado) {
 	int index = 0;
-	if (etapa == 'R') {
+
+	if (etapa == 'E') {
 		etapa = 'T';
 	}
 	for (index = 0; index < list_size(yama->tabla_jobs); index++) {
 		t_job* job = list_get(yama->tabla_jobs, index);
 		if ((job->master == master) && (job->etapa == etapa)
-				&& (job->estado == 'P')) {
+				&& (job->estado == estado)) {
+
+			if (etapa == 'E') {
+					job->estado = 'E';
+					list_replace(yama->tabla_jobs, index, job);
+				}
 			return index;
 		}
 	}
@@ -157,7 +163,7 @@ void* processOperation(int master, char op) {
 	}
 		break;
 	case 'L': {
-		int jobIndex = getJobIndex(master, 'T');
+		int jobIndex = getJobIndex(master, 'T', 'P');
 		t_job* job = list_get(yama->tabla_jobs, jobIndex);
 		log_trace(yama->log, "Solicitud de Reducción Local. Job %d.", job->id);
 		response = processLocalReduction(master, job->id);
@@ -166,7 +172,7 @@ void* processOperation(int master, char op) {
 	}
 		break;
 	case 'G': {
-		int jobIndex = getJobIndex(master, 'L');
+		int jobIndex = getJobIndex(master, 'L', 'P');
 		t_job* job = list_get(yama->tabla_jobs, jobIndex);
 		log_trace(yama->log, "Solicitud de Reducción Global. Job %d", job->id);
 		response = processGlobalReduction(master, job->id);
@@ -175,7 +181,7 @@ void* processOperation(int master, char op) {
 	}
 		break;
 	case 'S': {
-		int jobIndex = getJobIndex(master, 'G');
+		int jobIndex = getJobIndex(master, 'G', 'P');
 		t_job* job = list_get(yama->tabla_jobs, jobIndex);
 		log_trace(yama->log, "Solicitud de Almacenamiento Final. Job %d.",
 				job->id);
