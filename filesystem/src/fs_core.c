@@ -1199,6 +1199,8 @@ int obtenerBloquesNecesarios(char* contenido, int tipo, int tamanio) {
 // Los devuelve balanceados. Si la funcion de escritura falla por algun motivo en los nodos (que no sea faltante de bloques) debe rollbackearse las estructuras administrativas
 // Si no hay bloques disponibles para la escritura del archivo, devuelve nulo.
 
+// TODO: la copia no debe estar en el mismo nodo
+
 t_list* obtenerBloquesLibres(int cantBloques, int* error) {
 
 	t_list* res = list_create();
@@ -1212,15 +1214,15 @@ t_list* obtenerBloquesLibres(int cantBloques, int* error) {
 	// En el unico caso que se puede dar es que haya un solo nodo conectado.
 
 	int nodoSeleccionadoAnterior = -1;
-	bool abortarPorMismoNodo = false;
+	int saltearNodo = 0;
 
 	for (j = 0; j < cantBloques; j++) {
 
-		if (abortarPorMismoNodo)
-			break;
-
 		t = decidirNodo(nodos->nodos);
-		t_nodo* nodo = list_get(t, nod);
+		t_nodo* nodo = list_get(t, nod + saltearNodo);
+
+		// Reseteo si se seteo el salteo de nodo
+		saltearNodo = 0;
 
 		t_bitarray* bitMapBloque = obtenerBitMapBloques(nodo->id);
 
@@ -1240,7 +1242,8 @@ t_list* obtenerBloquesLibres(int cantBloques, int* error) {
 
 			t_idNodoBloque* registro = list_find(res, (void*) estaEnAuxiliar);
 
-			if (!bitarray_test_bit(bitMapBloque, i) && registro == NULL ) {
+			if (!bitarray_test_bit(bitMapBloque, i) && registro == NULL
+					&& i < nodo->libre) {
 
 				nb = malloc(sizeof(t_idNodoBloque));
 				nb->idBloque = i;
@@ -1248,29 +1251,34 @@ t_list* obtenerBloquesLibres(int cantBloques, int* error) {
 				log_debug(logger, "Bloque: %d - Nodo: %d", i, nodo->id);
 
 				// Verificando que j sea impar me aseguro que el id de bloque en cuestion es la copia (los pares son originales)
-				if (nodoSeleccionadoAnterior == nodo->id && ( (j % 2) != 0) ) {
-					log_error(logger,
-							"El nodo para la copia es el mismo que el nodo para el original, abortando operacion de escritura");
-					abortarPorMismoNodo = true;
+				if (nodoSeleccionadoAnterior == nodo->id && ((j % 2) != 0)) {
+
+					// Reintento copiar en el siguiente mas liviano (Si existe solo un nodo, va a hacer tantos intentos como bloques tenga el archivo)
+					log_info(logger,
+							"El nodo para la copia es el mismo que el nodo para el original, intentando en proximo nodo");
+
+					saltearNodo = 1;
+
+					j--;
 					break;
-				} else
+
+				} else {
 					nodoSeleccionadoAnterior = nodo->id;
+					nodo->libre--;
 
-				nodo->libre--;
+					list_add(res, nb);
+					break;
 
-				list_add(res, nb);
-				break;
+				}
+
 			}
 		}
 
 	}
 
-	if (abortarPorMismoNodo)
-		*error=-1;
-
 	// Rollbackeo si no alcanza o se aborto por mismo nodo
 
-	if (list_size(res) != cantBloques || abortarPorMismoNodo) {
+	if (list_size(res) != cantBloques) {
 
 		int j = 0;
 		int i = 0;

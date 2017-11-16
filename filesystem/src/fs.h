@@ -108,6 +108,7 @@ typedef struct {
 	sem_t lecturaOk;
 	int finBytes;
 	char* lectura;
+	int lectFallo;
 } t_lectura;
 
 

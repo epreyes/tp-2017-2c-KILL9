@@ -290,6 +290,19 @@ void *connection_handler_nodo(void *socket_desc) {
 
 			int nodoId = buscarNodoPorSocket(socketCliente);
 
+			// Busco el nodo en la lista, y le seteo lectFallo en 1 y posteo el semaforo para pasar al proximo for
+
+			/*int z = 0;
+			for (z = 0; z < list_size(lista); z++) {
+				t_lectura* lect = malloc(sizeof(t_lectura));
+				if (lect->idNodo == nodoId) {
+					lect->lectFallo = 1;
+					sem_post(&lect->lecturaOk);
+
+				}
+
+			}*/
+
 			// Buscar los archivos que tienen referencia a este nodo y eliminarle una instancia
 			// ****************************+
 			int i = 0;
