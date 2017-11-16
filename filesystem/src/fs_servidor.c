@@ -68,8 +68,8 @@ void* lanzarHiloServidor() {
 		log_debug(logger, "Se recibio handshake %d", handshak);
 		codigoHandshake = handshak;
 
-		if (codigoHandshake != YAMA_HSK && codigoHandshake != NODE_HSK
-				&& codigoHandshake != WORKER_HSK) {
+		if (codigoHandshake != YAMA_HSK&& codigoHandshake != NODE_HSK
+		&& codigoHandshake != WORKER_HSK) {
 			log_error(logger, "Codigo incorrecto de Handshake.");
 			continue;
 		}
@@ -158,7 +158,7 @@ void* lanzarHiloServidor() {
 
 				t_nodo* nodoAnterior = nodoPerteneceAEstadoAnterior(id_nodo);
 
-				if (nodoAnterior == NULL) {
+				if (nodoAnterior == NULL ) {
 					// Rechazo conexion de nodo
 					int hsk = ACCESODENEGADO;
 
@@ -289,6 +289,19 @@ void *connection_handler_nodo(void *socket_desc) {
 					socketCliente);
 
 			int nodoId = buscarNodoPorSocket(socketCliente);
+
+			// Busco el nodo en la lista, y le seteo lectFallo en 1 y posteo el semaforo para pasar al proximo for
+
+			/*int z = 0;
+			for (z = 0; z < list_size(lista); z++) {
+				t_lectura* lect = malloc(sizeof(t_lectura));
+				if (lect->idNodo == nodoId) {
+					lect->lectFallo = 1;
+					sem_post(&lect->lecturaOk);
+
+				}
+
+			}*/
 
 			// Buscar los archivos que tienen referencia a este nodo y eliminarle una instancia
 			// ****************************+
@@ -477,7 +490,7 @@ void procesarPedidoYama(t_header pedido, int socketCliente) {
 		int i = 0;
 		int offset = 0;
 		int cantReg = 0;
-		if (info == NULL) {
+		if (info == NULL ) {
 			log_error(logger, "No se pudo obtener la info de archivo: %s",
 					buffer);
 			t_header resp;
@@ -582,14 +595,17 @@ void procesarPedidoNodo(int codop, int socket) {
 		recv(socket, &tamBuff, sizeof(int), 0);
 		recv(socket, &nroBloque, sizeof(int), 0);
 
-		idNodo=buscarNodoPorSocket(socket);
+		idNodo = buscarNodoPorSocket(socket);
 
 		for (i = 0; i < list_size(lista); i++) {
 			t_lectura* lect = list_get(lista, i);
 			if (lect->nroBloque == nroBloque) {
-				log_info(logger,"Se recibio respuesta del nodo %d bloque nro %d", idNodo, nroBloque);
-				lect->lectura=malloc(tamBuff);
-				int bytesRecibidos=recv_all(socket, lect->lectura, tamBuff, 0);
+				log_info(logger,
+						"Se recibio respuesta del nodo %d bloque nro %d",
+						idNodo, nroBloque);
+				lect->lectura = malloc(tamBuff);
+				int bytesRecibidos = recv_all(socket, lect->lectura, tamBuff,
+						0);
 				sem_post(&lect->lecturaOk);
 			}
 		}
@@ -658,8 +674,8 @@ void procesarPedidoWorker(t_header pedido, int socketCliente) {
 		escribir = escribirArchivo(fileName, contenido, TEXTO, 0);
 
 		if (escribir == 0) {
-			log_info(logger, "Escritura de %s realizada con exito", fileName);
-			printf("Escritura ok\n");
+			log_info(logger, "Escritura de store final %s realizada con exito",
+					fileName);
 			codop = 'O';
 			if (send(socketCliente, &codop, sizeof(char), 0) < 0) {
 				log_error(logger,
@@ -696,6 +712,11 @@ void procesarPedidoWorker(t_header pedido, int socketCliente) {
 			case NO_EXISTE_DIR_DESTINO:
 				log_error(logger, "El directorio destino no existe");
 				break;
+			case ERROR_MISMO_NODO_COPIA:
+				log_error(logger,
+						"El bloque copia no debe estar en el mismo nodo que el original");
+				break;
+
 			}
 
 		}

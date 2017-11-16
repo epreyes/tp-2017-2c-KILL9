@@ -14,7 +14,7 @@
 #include "nodoUtils.h"
 
 int escribirArchivo(char* path, char* contenido, int tipo, int tamanio);
-char* leerArchivo(char* path);
+char* leerArchivo(char* path, int* codigoError);
 int copiarDesdeYamaALocal(char* origen, char* destino);
 
 #endif /* FS_COMANDOS_H_ */

@@ -9,10 +9,11 @@
 #define CONNECTIONMANAGER_H_
 
 #include <tplibraries/sockets/socket.h>
+#include "yama.h"
 
 Client acceptMasterConnection(Server* server, fd_set* masterList, int hightSd);
 
-int sendResponse(int master, void* masterRS);
+int sendResponse(int master, void* masterRS, t_job* job);
 
 int getMasterMessage(int socket, fd_set* mastersList);
 

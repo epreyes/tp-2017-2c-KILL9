@@ -10,6 +10,7 @@
 //=============YAMA_REQUEST=============================//
 transform_rs* sendTRequest(char* fileName){
 
+if(replanification=='F'){
 //PREPARO PAQUETE
 	transform_rq* data;
 	data = malloc(sizeof(transform_rq));
@@ -36,16 +37,18 @@ transform_rs* sendTRequest(char* fileName){
 		return NULL;
 	};
 	free(buffer);
-
+}
+replanification = 'F';
 //ESPERANDO RESPUESTA DE YAMA
 	int i=0;
-	transform_rs* yamaAnswer=malloc(sizeof(transform_rs));
+	char code;
 
-	readBuffer(masterSocket, sizeof(char), &(yamaAnswer->code));
-	if(yamaAnswer->code!='T'){
-		log_warning(logger,"El archivo solicitado no existe");
+	readBuffer(masterSocket, sizeof(char), &(code));
+	if(code!='T'){
+		log_warning(logger,"El archivo solicitado no existe o yamafs se encuentra desconectado.");
 		exit(1);
 	}
+	transform_rs* yamaAnswer=malloc(sizeof(transform_rs));
 	readBuffer(masterSocket, sizeof(int), &(yamaAnswer->bocksQuantity));
 	yamaAnswer->blockData = malloc(sizeof(tr_datos)*(yamaAnswer->bocksQuantity));
 
@@ -182,9 +185,7 @@ void *runTransformThread(void* data){
 //==============MAIN===========================================//
 
 int transformFile(char* filename){
-	replanification = 'F';
 	parallelAux = 0;
-
 	int blockCounter=0,recordCounter=0, nodeCounter=0, threadIndex=0, nodo;
 	block* blocks = NULL;
 	pthread_t *threads = NULL; 						//creo array de hilos dinámico
@@ -193,6 +194,8 @@ int transformFile(char* filename){
 	int totalRecords;
 
 	yamaAnswer=sendTRequest(filename);
+
+	printf("\n\nREPLANIF:%c\n\n", replanification);
 
 	if(!yamaAnswer){
 		log_error(logger, "TRANSFORMACIÓN ABORTADA");
@@ -206,7 +209,8 @@ int transformFile(char* filename){
 	tr_datos* yamaBlocks = malloc(sizeBlocks);
 	memcpy(yamaBlocks, yamaAnswer->blockData, sizeBlocks);
 
-	log_info(logger, "Transformación iniciada...");
+	log_info(logger, "Datos de yama obtenidos. %d bloques a transformar", totalRecords);
+	log_info(logger, "Iniciando transformación...");
 
 
 	while(recordCounter<totalRecords){
@@ -259,7 +263,10 @@ int transformFile(char* filename){
 
 
 //EJECUTO REPLANIFICACIÓN--------
-	if(replanification == 'T') transformFile(filename);
+	if(replanification == 'T'){
+		log_info(logger,"Replanificación confirmada, iniciando transformación de pendientes");
+		transformFile(filename);
+	}
 
 	if(abortJob=='0'){
 		log_trace(logger, "TRANSFORMACIÓN FINALIZADA");

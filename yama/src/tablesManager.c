@@ -7,35 +7,36 @@
 
 #include "headers/tablesManager.h"
 
-int existInStatusTable(int job, char op, int node){
+int existInStatusTable(int job, char op, int node) {
 	if (!list_is_empty(yama->tabla_estados)) {
 		int index = 0;
-			for (index = 0; index < list_size(yama->tabla_estados); index++) {
-				elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
-				if ( elem->job == job && elem->node == node && elem->op == op && elem->status == 'P' ) {
-					return 1;
-				}
+		for (index = 0; index < list_size(yama->tabla_estados); index++) {
+			elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
+			if (elem->job == job && elem->node == node && elem->op == op
+					&& elem->status == 'P') {
+				return 1;
 			}
-			return 0;
 		}
-	else{
+		return 0;
+	} else {
 		return 0;
 	}
 }
 
-void setInStatusTable(char op, int master, int nodo, int bloque, char* tmpName,
-		int nodeBlock) {
+void setInStatusTable(int job, char op, int master, int nodo, int bloque,
+		char* tmpName, int nodeBlock, char* filename) {
 	elem_tabla_estados* elemStatus = malloc(sizeof(elem_tabla_estados));
 	elemStatus->block = bloque;
-	elemStatus->job = yama->jobs + master;
+	elemStatus->job = job;
 	elemStatus->master = master;
 	elemStatus->node = nodo;
 	elemStatus->node_block = nodeBlock;
 	elemStatus->op = op;
 	elemStatus->status = 'P';
 	strcpy(elemStatus->tmp, tmpName);
+	strcpy(elemStatus->fileProcess, filename);
 
-	addNewRowStatusTable(elemStatus);
+	list_add(yama->tabla_estados, elemStatus);
 }
 
 int findNode(int node_id) {
@@ -57,7 +58,8 @@ void viewNodeTable() {
 	int index = 0;
 	for (index = 0; index < list_size(yama->tabla_nodos); index++) {
 		elem_tabla_nodos* node = list_get(yama->tabla_nodos, index);
-		printf("ID: %d, Disponibilidad: %d, Tareas en Progreso: %d, Tareas Finalizadas: %d\n",
+		printf(
+				"ID: %d, Disponibilidad: %d, Tareas en Progreso: %d, Tareas Finalizadas: %d\n",
 				node->node_id, node->availability, node->tasks_in_progress,
 				node->tasts_done);
 	}
@@ -126,7 +128,9 @@ void addToNodeList(void* fsInfo) {
 			node->tasks_in_progress = 0;
 			node->tasts_done = 0;
 			node->errors = 0;
-			list_add(yama->tabla_nodos, node);
+			if (strcmp(b->node1_ip, "xxx") != 0) {
+				list_add(yama->tabla_nodos, node);
+			}
 		}
 
 		position = findNode(b->node2);
@@ -138,9 +142,12 @@ void addToNodeList(void* fsInfo) {
 			node->node_id = b->node2;
 			node->tasks_in_progress = 0;
 			node->tasts_done = 0;
-			list_add(yama->tabla_nodos, node);
+			if (strcmp(b->node2_ip, "xxx") != 0) {
+				list_add(yama->tabla_nodos, node);
+			}
 		}
 	}
+	free(nodes);
 }
 
 void increaseNodeCharge(int node_id) {
@@ -180,36 +187,78 @@ void updateNodeList(char op, int node_id) {
 	}
 }
 
+char* getStageName(char op) {
+	switch (op) {
+	case 'T':
+		return "Transformación";
+		break;
+	case 'L':
+		return "Reducción Local";
+		break;
+	case 'G':
+		return "Reducción Global";
+		break;
+	case 'S':
+		return "Almacenamiento Final";
+		break;
+	}
+}
+
+char* getStatusName(char status) {
+	switch (status) {
+	case 'P':
+		return "En proceso";
+		break;
+	case 'F':
+		return "Finalizado Ok";
+		break;
+	case 'E':
+		return "Error";
+		break;
+	case 'A':
+		return "Abortado";
+		break;
+	}
+}
+
 void viewStateTable() {
 	t_list* stateTable = yama->tabla_estados;
-	printf("\nLa cantidad de entradas de la tabla es: %d\n",
-			list_size(stateTable));
+	printf("\n\n");
+	log_debug(yama->log,
+			"----------------------- Tabla de estados -----------------------");
+	log_debug(yama->log, "Cantidad de entradas: %d", list_size(stateTable));
+	log_debug(yama->log,
+			"----------------------------------------------------------------");
 	int i = 0;
 	while (i < list_size(stateTable)) {
 		elem_tabla_estados* row = list_get(stateTable, i);
 		i++;
-		printf(
-				"Row:\nJob=%d - Master=%d - Block=%d - Node=%d - Node_block=%d - Oper=%c - Temp=%s - Status=%c\n",
-				row->job, row->master, row->block, row->node, row->node_block,
-				row->op, row->tmp, row->status);
+		log_debug(yama->log,
+				"Job: %d - Master: %d - Nodo: %d - Bloque: %d - Etapa: %s - Archivo Temporal: %s - Estado: %s",
+				row->job, row->master, row->node, row->block,
+				getStageName(row->op), row->tmp, getStatusName(row->status));
 	}
+	log_debug(yama->log,
+			"----------------------- Fin Tabla de estados -----------------------");
 }
 
-int findInProcessTasks(int master, int node_id, int block, char op) {
+int findInProcessTasks(int master, int node_id, int block, char op, t_job* job) {
 	int index = 0;
 	if (!list_is_empty(yama->tabla_estados)) {
 		for (index = 0; index < list_size(yama->tabla_estados); index++) {
 			elem_tabla_estados* node = list_get(yama->tabla_estados, index);
 
 			if (op == 'T') {
-				if ((node->node == node_id) && (master == node->master)
+				if ((node->job == job->id) && (node->node == node_id)
+						&& (master == node->master)
 						&& (block == node->node_block) && (op == node->op)
 						&& (node->status == 'P')) {
 					return index;
 				}
 			} else {
 				if ((node->node == node_id) && (master == node->master)
-						&& (op == node->op) && (node->status == 'P')) {
+						&& (op == node->op) && (node->status == 'P')
+						&& (node->job == job->id)) {
 					return index;
 				}
 			}
@@ -227,31 +276,16 @@ int getBlockId(char* tmpName) {
 	return code;
 }
 
-void addNewRowStatusTable(elem_tabla_estados* elem) {
-	elem_tabla_estados* row;
-
-	row = malloc(sizeof(elem_tabla_estados));
-	row->master = elem->master;
-	row->op = elem->op;
-	row->status = elem->status;
-	row->job = elem->job;
-	row->node = elem->node;
-	row->node_block = elem->node_block;
-	row->block = elem->block;
-	strcpy(row->tmp, elem->tmp);
-	list_add(yama->tabla_estados, row);
-}
-
 void updateStatusTable(int master, char opCode, int node, int bloque,
-		char status) {
-
-	int index = findInProcessTasks(master, node, bloque, opCode);
+		char status, t_job* job) {
+	int index = findInProcessTasks(master, node, bloque, opCode, job);
 	elem_tabla_estados* row;
 	if (index > -1) {
 		row = list_get(yama->tabla_estados, index);
 		row->op = opCode;
 		row->status = status;
 		list_replace(yama->tabla_estados, index, row);
+
 	} else {
 		printf(
 				"\nNO PUEDE actualizar master %d, opCode %c, nodo %d, bloque %d, estado %c\n",
@@ -259,52 +293,64 @@ void updateStatusTable(int master, char opCode, int node, int bloque,
 	}
 }
 
-void addToTransformationPlanedTable(int master, tr_datos* nodeData) {
+void addToTransformationPlanedTable(int master, tr_datos* nodeData,
+		char* fileName, int jobid) {
 	elem_tabla_planificados* planed = malloc(sizeof(elem_tabla_planificados));
+	planed->job = jobid;
+	strcpy(planed->fileName, fileName);
 	planed->data = malloc(sizeof(tr_datos));
 	memcpy(planed->data, nodeData, sizeof(tr_datos));
 	planed->master = master;
 	list_add(yama->tabla_T_planificados, planed);
 }
 
-void addToLocalReductionPlanedTable(int master, rl_datos* nodeData) {
+void addToLocalReductionPlanedTable(int master, rl_datos* nodeData,
+		char* fileName, int jobid) {
 	elem_tabla_LR_planificados* planed = malloc(
 			sizeof(elem_tabla_LR_planificados));
+	planed->job = jobid;
 	planed->data = malloc(sizeof(rl_datos));
 	memcpy(planed->data, nodeData, sizeof(rl_datos));
 	planed->master = master;
+	strcpy(planed->fileName, fileName);
 	list_add(yama->tabla_LR_planificados, planed);
 }
 
-void addToGlobalReductionPlanedTable(int master, rg_datos* nodeData) {
+void addToGlobalReductionPlanedTable(int master, rg_datos* nodeData,
+		char* fileName, int jobid) {
 	elem_tabla_GR_planificados* planed = malloc(
 			sizeof(elem_tabla_GR_planificados));
+	planed->job = jobid;
 	planed->data = malloc(sizeof(rg_datos));
+	strcpy(planed->fileName, fileName);
 	memcpy(planed->data, nodeData, sizeof(rg_datos));
 	planed->master = master;
 	list_add(yama->tabla_GR_planificados, planed);
 }
 
-void updateTasksAborted(int master, int node, int codeOp) {
+void updateTasksAborted(int master, int node, char codeOp, t_job* job) {
 	int index = 0;
 	for (index = 0; index < list_size(yama->tabla_estados); index++) {
 		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
 		if ((elem->node == node) && (elem->master == master)
-				&& (elem->op == codeOp) && (elem->status == 'P')) {
-			updateStatusTable(master, codeOp, node, elem->block, 'A');
+				&& (elem->op == codeOp) && (elem->status == 'P')
+				&& (elem->job == job->id)) {
+			updateStatusTable(master, codeOp, node, elem->node_block, 'E', job);
+			sendErrorToFileSystem(elem->fileProcess);
 		}
 	}
 }
 
-t_list* getTaskFailed(int master, int node) {
+t_list* getTaskFailed(int master, int node, t_job* job) {
 	int index = 0;
 	t_list* tasksFails = list_create();
 	for (index = 0; index < list_size(yama->tabla_estados); index++) {
 		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
 		if ((elem->node == node) && (elem->master == master)
-				&& (elem->op == 'T') && (elem->status == 'P')) {
+				&& (elem->op == 'T') && (elem->status == 'P')
+				&& (elem->job == job->id)) {
 			list_add(tasksFails, elem);
-			updateStatusTable(master, 'T', node, elem->block, 'E');
+			updateStatusTable(master, 'T', node, elem->node_block, 'E', job);
 		}
 	}
 	return tasksFails;
@@ -329,4 +375,3 @@ block_info* findBlock(int block) {
 
 	return NULL;
 }
-

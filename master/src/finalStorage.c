@@ -124,7 +124,7 @@ int saveResult(char* fileName){
 		log_trace(logger, "ALMACENAMIENTO FINALIZADO");
 		return EXIT_SUCCESS;
 	}else{
-		log_error(logger, "ALMACENAIENTO ABORTADO");
+		log_error(logger, "ALMACENAMIENTO ABORTADO");
 		return EXIT_FAILURE;
 	}
 }

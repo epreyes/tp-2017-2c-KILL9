@@ -45,5 +45,8 @@ typedef struct
 #define TAMANIO_RENGLON_INVALIDO 204
 #define NO_EXISTE_DIR_DESTINO 205
 #define FS_SIN_FORMATO 206
+#define ERROR_MISMO_NODO_COPIA 207
+
 
 #endif /* ESTRUCTURAS_H_ */
+

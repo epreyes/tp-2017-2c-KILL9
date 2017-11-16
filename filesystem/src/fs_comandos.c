@@ -40,10 +40,15 @@ int escribirArchivo(char* path, char* contenido, int tipo, int tamanio) {
 			"Verificando si hay espacio para archivo de %d (*2) bloques...",
 			bloquesNecesarios);
 
+	int errorSeleccionNodos = 0;
 // Debe ser *2 para hacer las copias
-	t_list* bl = obtenerBloquesLibres(bloquesNecesarios * 2);
+	t_list* bl = obtenerBloquesLibres(bloquesNecesarios * 2,
+			&errorSeleccionNodos);
 
-	if (bl == NULL) {
+	if (errorSeleccionNodos == -1)
+		return ERROR_MISMO_NODO_COPIA;
+
+	if (bl == NULL ) {
 		return SIN_ESPACIO;
 	}
 
@@ -485,13 +490,14 @@ int escribirArchivo(char* path, char* contenido, int tipo, int tamanio) {
 }
 
 // Lee un archivo almacenado en el fs yama
-char* leerArchivo(char* path) {
+char* leerArchivo(char* path, int* codigoError) {
 
 	t_archivoInfo* archivo = obtenerArchivoInfo(path);
 
-	if (archivo == NULL) {
+	if (archivo == NULL ) {
 		// No existe el archivo
-		return NULL;
+		*codigoError = -1;
+		return NULL ;
 	}
 
 	// Preparo lista t_lectura
@@ -503,6 +509,7 @@ char* leerArchivo(char* path) {
 		lect->nroBloque = bi->nroBloque;
 		lect->idNodo = atoi(bi->idNodo0); // TODO: Siempre busco en la primera copia, debe distribuirse
 		lect->finBytes = bi->finBytes;
+		lect->lectFallo = 0;
 		sem_init(&lect->lecturaOk, 0, 0);
 		list_add(lista, lect);
 	}
@@ -513,13 +520,23 @@ char* leerArchivo(char* path) {
 	int i = 0;
 	// Envio peticiones a los diferentes datanodes
 	for (i = 0; i < list_size(archivo->bloques); i++) {
-		t_bloqueInfo* bi = list_get(archivo->bloques, i);
-		t_lectura* lect = list_get(lista, i);
 
+		t_bloqueInfo* bi = list_get(archivo->bloques, i);
+
+		sem_wait(&semLista);
+		t_lectura* lect = list_get(lista, i);
 		t_nodo* nodo = buscarNodoPorId_(lect->idNodo);
+		sem_post(&semLista);
 
 		int lectura = leerDeDataNode(bi->idBloque0, nodo->socketNodo,
 				bi->finBytes, bi->nroBloque, logger);
+
+		if (lectura == -2) {
+			log_error(logger,
+					"Hubo un error leyendo los bloques del archivo (posiblemente algun datanode caido)");
+			*codigoError = -2;
+			return NULL ;
+		}
 
 	}
 
@@ -529,6 +546,22 @@ char* leerArchivo(char* path) {
 		t_lectura* lect = list_get(lista, i);
 		sem_wait(&lect->lecturaOk);
 	}
+
+	// Chequeo si hubo alguna falla
+	// Si hubo, tomo otra estrategia de lectura y continuo con la lectura
+	// Si falla la ultima estrategia->	error de lectura
+
+	/*int z = 0;
+	for (z = 0; z < list_size(lista); z++) {
+		t_lectura* lect = malloc(sizeof(t_lectura));
+
+		if (lect->lectFallo == 1) {
+			log_error(logger, "Error en la lectura");
+			return NULL ;
+
+		}
+
+	}*/
 
 	log_info(logger,
 			"Se recibio la respuesta de todos los nodos involucrados, armando resultado final.");
@@ -541,6 +574,12 @@ char* leerArchivo(char* path) {
 
 	}
 
+	for (i = 0; i < list_size(archivo->bloques); i++) {
+		t_lectura* lect = list_get(lista, i);
+		free(lect->lectura);
+		free(lect);
+	}
+
 	list_destroy(lista);
 	free(archivo);
 
@@ -551,14 +590,21 @@ char* leerArchivo(char* path) {
 int copiarDesdeYamaALocal(char* origen, char* destino) {
 
 	t_archivoInfo* aInfo = obtenerArchivoInfo(origen);
-	if (aInfo == NULL) {
+	if (aInfo == NULL ) {
 		return -1;
 	}
 
-	char* lectura = leerArchivo(origen);
+	int errorCode = 0;
+	char* lectura = leerArchivo(origen, &errorCode);
 
-	if (lectura == NULL)
+	switch (errorCode) {
+	case -1:
+		printf("No existe el archivo\n");
 		return -1;
+	case -2:
+		printf("Algun nodo se desconecto\n");
+		return -3;
+	}
 
 	int fd, offset;
 	struct stat sbuf;
@@ -582,9 +628,9 @@ int copiarDesdeYamaALocal(char* origen, char* destino) {
 
 	// mapeo a memoria
 	destinoArchivo = mmap((caddr_t) 0, aInfo->tamanio, PROT_READ | PROT_WRITE,
-	MAP_SHARED, fd, 0);
+			MAP_SHARED, fd, 0);
 
-	if (destinoArchivo == NULL) {
+	if (destinoArchivo == NULL ) {
 		perror("error en map\n");
 		exit(1);
 	}

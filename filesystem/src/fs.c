@@ -50,7 +50,7 @@ void cargarArchivoDeConfiguracion(t_fs *fs, char *configPath) {
 	fs->config = NULL;
 	fs->config = config_create(configPath);
 
-	if (fs->config == NULL) {
+	if (fs->config == NULL ) {
 		printf("No existe el archivo de configuracion\n");
 		exit(1);
 	}
@@ -122,9 +122,9 @@ void iniciarFS() {
 	}
 
 	inicioTablaDirectorios = mmap((caddr_t) 0, sbuf.st_size,
-	PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+			PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
-	if (inicioTablaDirectorios == NULL) {
+	if (inicioTablaDirectorios == NULL ) {
 		perror("error en map\n");
 		exit(1);
 	}
@@ -239,7 +239,7 @@ void obtenerNodosUnaInstanciaArchivos() {
 					pathMetadata);
 
 			// No deberia pasar
-			if (archInfo == NULL) {
+			if (archInfo == NULL ) {
 				log_error(logger,
 						"No se encontro el archivo de metadata en inicializacion");
 				exit(1);
@@ -300,4 +300,5 @@ void iniciarSemaforos() {
 	sem_init(&nodoInit, 0, 0);
 	sem_init(&listaNodos, 0, 1);
 	sem_init(&semTablaArchivos, 0, 1);
+	sem_init(&semLista, 0, 1);
 }

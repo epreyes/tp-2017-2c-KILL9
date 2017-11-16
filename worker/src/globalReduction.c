@@ -9,7 +9,9 @@
 
 char* obtainNodeFile(rg_node datos){
 //ESTABLEZCO CONEXIÓN CON OTRO WORKER PARA PEDIR TMP
-	openNodeConnection(datos.node, datos.ip, datos.port);
+	if(!openNodeConnection(datos.node, datos.ip, datos.port)){
+		return NULL;
+	};
 //ENVIO DATOS
 	int bufferSize = sizeof(char)+28;
 	void* buffer = malloc(bufferSize);
@@ -114,7 +116,7 @@ void globalReduction(){
 	char* scriptName = regenerateScript(datos.file,script_reduction,'R',socket_master);
 
 	rl_tmp* rlFilesNames = malloc((datos.nodesQuantity+1)*sizeof(rl_tmp)); //+1 por el del anfitrion
-
+	rl_tmp auxFile;
 //genero todos los temps, los guardo y devuelvo el nombre
 	for(i=0;i<(datos.nodesQuantity);++i){
 		strcpy(rlFilesNames[i],obtainNodeFile(datos.nodes[i]));

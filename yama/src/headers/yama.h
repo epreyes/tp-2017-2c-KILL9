@@ -50,21 +50,28 @@ typedef struct {
 	char op;
 	char status;
 	char tmp[28];
+	char fileProcess[28];
 } elem_tabla_estados;
 
 typedef struct{
+	int job;
 	tr_datos* data;
 	int master;
+	char fileName[28];
 }elem_tabla_planificados;
 
 typedef struct{
+	int job;
 	rl_datos* data;
 	int master;
+	char fileName[28];
 }elem_tabla_LR_planificados;
 
 typedef struct{
+	int job;
 	rg_datos* data;
 	int master;
+	char fileName[28];
 }elem_tabla_GR_planificados;
 
 typedef struct{
@@ -73,10 +80,19 @@ typedef struct{
 	char algoritm[3];
 } t_planningParams;
 
+typedef struct{
+	int id;
+	int master;
+	char estado;
+	char etapa;
+	int replanificaciones;
+}t_job;
+
 typedef struct {
 	t_config* config;
 	t_list* tabla_nodos;
 	t_list* tabla_estados;
+	t_list* tabla_jobs;
 	t_list* tabla_info_archivos;
 	t_list* tabla_T_planificados;
 	t_list* tabla_LR_planificados;
@@ -111,5 +127,11 @@ void viewConfig();
  * si no, se la pido al filesystem.
  * */
 void* processOperation(int master, char op);
+
+void abortInProcessJobs(int master);
+
+int existJob(int jobid, int master, char op);
+
+int getJobIndex(int master, char etapa, char estado);
 
 #endif /* YAMA_H_ */

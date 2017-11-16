@@ -15,6 +15,6 @@ void* getFileSystemInfo(char* name);
 
 int findFile(char* fileName);
 
-elem_info_archivo* getFileInfo(int master);
+elem_info_archivo* getFileInfo(int master, t_job* job);
 
 #endif /* SRC_HEADERS_FILESYSTEMCONNECTOR_H_ */

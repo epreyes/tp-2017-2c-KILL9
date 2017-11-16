@@ -34,6 +34,7 @@ int main(int argc, char* argv[]){
 
 
 //PROCESO
+	replanification = 'F';
 	transformFile(argv[3]);				//RUN TRANSFORMATION
 	if(abortJob!='T'){
 		runLocalReduction();			//RUN LOCAL REDUCTION
@@ -43,7 +44,6 @@ int main(int argc, char* argv[]){
 				saveResult(argv[4]);	//RUN FINAL STORAGE
 		}
 	}
-	closeConnections();
 
 //IMPRIMO MÉTRICAS
 	gettimeofday(&end,NULL);
@@ -51,6 +51,7 @@ int main(int argc, char* argv[]){
 	printMetrics(masterMetrics);
 
 //FINALIZO
+	closeConnections();
 	fclose(script_transform);
 	fclose(script_reduction);
 	config_destroy(config);

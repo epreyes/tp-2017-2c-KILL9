@@ -170,6 +170,8 @@ void get_block(int client_socket, t_leerBloque* t_bloque) {
 	log_info(infoLogger, "Fin envio datos del bloque");
 
 	log_info(infoLogger, "Fin lectura bloque archivo ");
+	free(buffer);
+	sleep(3);
 }
 
 /*****************************************************
@@ -194,5 +196,11 @@ void set_block(int client_socket, t_leerBloque* t_bloque) {
 	}
 	else
 		log_info(infoLogger, "FIN  : escritura de un bloque del archivo ");
+
+
+	// Libero t_bloque
+	free(t_bloque->contenido);
+	free(t_bloque);
+
 }
 

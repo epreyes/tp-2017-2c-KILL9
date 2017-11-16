@@ -15,7 +15,7 @@ int obtenerUltimoIndiceDirValido() {
 	t_directorio* dir = inicioTablaDirectorios;
 	dir++; // Salteo raiz
 
-	while (dir != NULL) {
+	while (dir != NULL ) {
 		if (dir->padre == -1)
 			return dir->indice;
 
@@ -180,9 +180,9 @@ int formatear() {
 	}
 
 	inicioTablaDirectorios = mmap((caddr_t) 0, sbuf.st_size,
-	PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+			PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
-	if (inicioTablaDirectorios == NULL) {
+	if (inicioTablaDirectorios == NULL ) {
 		perror("error en map\n");
 		exit(1);
 	}
@@ -255,7 +255,7 @@ t_bitarray* obtenerBitMapBloques(int idNodo) {
 
 	}
 
-	return NULL;
+	return NULL ;
 }
 
 // Dado un path devuelve el indice del directorio padre
@@ -401,7 +401,7 @@ t_list* listarArchivos(char* path) {
 		indiceDir = obtenerIndiceDir(path);
 
 	if (indiceDir == -1)
-		return NULL;
+		return NULL ;
 
 	if (strncmp(path, "./", 2) == 0)
 		indiceDir = 0;
@@ -476,9 +476,9 @@ void crearBitMapBloquesNodo(t_nodo* nodo) {
 	}
 
 	bloquesBitMap = mmap((caddr_t) 0, sbuf.st_size, PROT_READ | PROT_WRITE,
-	MAP_SHARED, fd, 0);
+			MAP_SHARED, fd, 0);
 
-	if (bloquesBitMap == NULL) {
+	if (bloquesBitMap == NULL ) {
 		perror("error en map\n");
 		exit(1);
 	}
@@ -526,7 +526,7 @@ t_bitarray* obtenerBitMapBloquesNodo(t_nodo* nodo) {
 	bloquesBitMap = mmap((caddr_t) 0, sbuf.st_size, PROT_READ, MAP_SHARED, fd,
 			0);
 
-	if (bloquesBitMap == NULL) {
+	if (bloquesBitMap == NULL ) {
 		perror("error en map\n");
 		exit(1);
 	}
@@ -580,13 +580,13 @@ int existeArchivo(char* path) {
 t_archivoInfo* obtenerArchivoInfo(char* path) {
 
 	if (!estaFormateado())
-		return NULL;
+		return NULL ;
 
 	t_archivoInfo* tInfo = malloc(sizeof(t_archivoInfo));
 
 	if (existeArchivo(path) == -1) {
 		log_debug(logger, "No existe el archivo %s", path);
-		return NULL;
+		return NULL ;
 	}
 
 	char* dirArchivo = obtenerDirArchivo(path);
@@ -607,10 +607,10 @@ t_archivoInfo* obtenerArchivoInfo(char* path) {
 
 	t_config * metadata = config_create(dirMetadata);
 
-	if (metadata == NULL) {
+	if (metadata == NULL ) {
 		log_error(logger, "No se pudo abrir la metadata de archivo %s",
 				dirMetadata);
-		return NULL;
+		return NULL ;
 	}
 
 	if (config_has_property(metadata, "TAMANIO")) {
@@ -643,7 +643,7 @@ t_archivoInfo* obtenerArchivoInfo(char* path) {
 
 	char* arch = mmap((caddr_t) 0, sbuf.st_size, PROT_READ, MAP_SHARED, fd, 0);
 
-	if (arch == NULL) {
+	if (arch == NULL ) {
 		perror("error en map\n");
 		exit(1);
 	}
@@ -689,7 +689,7 @@ t_archivoInfo* obtenerArchivoInfo(char* path) {
 					config_get_string_value(metadata, bloqueInfo));
 
 			t_nodo* nodod = buscarNodoPorId_(atoi(bi->idNodo0));
-			if (nodod != NULL) {
+			if (nodod != NULL ) {
 				bi->dirWorker0 = malloc(20);
 				memcpy(bi->dirWorker0, nodod->direccion, 20);
 			} else {
@@ -713,7 +713,7 @@ t_archivoInfo* obtenerArchivoInfo(char* path) {
 					config_get_string_value(metadata, bloqueInfo));
 
 			t_nodo* nodod = buscarNodoPorId_(atoi(bi->idNodo1));
-			if (nodod != NULL) {
+			if (nodod != NULL ) {
 				bi->dirWorker1 = malloc(20);
 				memcpy(bi->dirWorker1, nodod->direccion, 20);
 			} else {
@@ -755,10 +755,10 @@ t_archivoInfo* obtenerArchivoInfoPorMetadata(char* dirMetadata) {
 
 	t_archivoInfo* tInfo = malloc(sizeof(t_archivoInfo));
 
-	if (metadata == NULL) {
+	if (metadata == NULL ) {
 		log_error(logger, "No se pudo abrir la metadata de archivo %s",
 				dirMetadata);
-		return NULL;
+		return NULL ;
 	}
 
 	if (config_has_property(metadata, "TAMANIO")) {
@@ -791,7 +791,7 @@ t_archivoInfo* obtenerArchivoInfoPorMetadata(char* dirMetadata) {
 
 	char* arch = mmap((caddr_t) 0, sbuf.st_size, PROT_READ, MAP_SHARED, fd, 0);
 
-	if (arch == NULL) {
+	if (arch == NULL ) {
 		perror("error en map\n");
 		exit(1);
 	}
@@ -1114,9 +1114,9 @@ int crearArchivoMetadata(t_list* bloquesInfo, char* path, int tipo, int tamanio)
 
 // mapeo a memoria
 	archivoMetadata = mmap((caddr_t) 0, sbuf.st_size, PROT_READ | PROT_WRITE,
-	MAP_SHARED, fd, 0);
+			MAP_SHARED, fd, 0);
 
-	if (archivoMetadata == NULL) {
+	if (archivoMetadata == NULL ) {
 		perror("error en map\n");
 		exit(1);
 	}
@@ -1143,7 +1143,7 @@ int obtenerBloquesNecesarios(char* contenido, int tipo, int tamanio) {
 	char* p = contenido;
 	int i = 0; // Comienzo desde el bloque 0
 
-	if (contenido == NULL)
+	if (contenido == NULL )
 		return -1;
 
 	if (tipo == TEXTO) {
@@ -1201,7 +1201,7 @@ int obtenerBloquesNecesarios(char* contenido, int tipo, int tamanio) {
 
 // TODO: la copia no debe estar en el mismo nodo
 
-t_list* obtenerBloquesLibres(int cantBloques) {
+t_list* obtenerBloquesLibres(int cantBloques, int* error) {
 
 	t_list* res = list_create();
 	t_list* t = list_create();
@@ -1209,14 +1209,24 @@ t_list* obtenerBloquesLibres(int cantBloques) {
 	int nod = 0;
 
 	int j = 0;
+
+	// Guardo el nodo seleccionado anterior. El proximo siempre es la copia (por diseño). Entonces este no debe coincidir con el anterior
+	// En el unico caso que se puede dar es que haya un solo nodo conectado.
+
+	int nodoSeleccionadoAnterior = -1;
+	int saltearNodo = 0;
+
 	for (j = 0; j < cantBloques; j++) {
 
 		t = decidirNodo(nodos->nodos);
-		t_nodo* nodo = list_get(t, nod);
+		t_nodo* nodo = list_get(t, nod + saltearNodo);
+
+		// Reseteo si se seteo el salteo de nodo
+		saltearNodo = 0;
 
 		t_bitarray* bitMapBloque = obtenerBitMapBloques(nodo->id);
 
-		if (bitMapBloque == NULL) {
+		if (bitMapBloque == NULL ) {
 			log_error(logger, "No se pudo abrir el bitmap de bloques");
 			exit(1);
 		}
@@ -1232,23 +1242,43 @@ t_list* obtenerBloquesLibres(int cantBloques) {
 
 			t_idNodoBloque* registro = list_find(res, (void*) estaEnAuxiliar);
 
-			if (!bitarray_test_bit(bitMapBloque, i) && registro == NULL) {
+			if (!bitarray_test_bit(bitMapBloque, i) && registro == NULL
+					&& i < nodo->libre) {
 
 				nb = malloc(sizeof(t_idNodoBloque));
 				nb->idBloque = i;
 				nb->idNodo = nodo->id;
 				log_debug(logger, "Bloque: %d - Nodo: %d", i, nodo->id);
-				nodo->libre--;
 
-				list_add(res, nb);
-				break;
+				// Verificando que j sea impar me aseguro que el id de bloque en cuestion es la copia (los pares son originales)
+				if (nodoSeleccionadoAnterior == nodo->id && ((j % 2) != 0)) {
+
+					// Reintento copiar en el siguiente mas liviano (Si existe solo un nodo, va a hacer tantos intentos como bloques tenga el archivo)
+					log_info(logger,
+							"El nodo para la copia es el mismo que el nodo para el original, intentando en proximo nodo");
+
+					saltearNodo = 1;
+
+					j--;
+					break;
+
+				} else {
+					nodoSeleccionadoAnterior = nodo->id;
+					nodo->libre--;
+
+					list_add(res, nb);
+					break;
+
+				}
+
 			}
 		}
 
 	}
 
+	// Rollbackeo si no alcanza o se aborto por mismo nodo
+
 	if (list_size(res) != cantBloques) {
-// No alcanza, deshacer cambios hechos en nodos tomando la lista res
 
 		int j = 0;
 		int i = 0;
@@ -1266,7 +1296,7 @@ t_list* obtenerBloquesLibres(int cantBloques) {
 			}
 		}
 
-		return NULL;
+		return NULL ;
 	}
 
 	return res;
@@ -1319,7 +1349,7 @@ int obtenerEstadoArchivo(char* path) {
 
 	t_config * metadata = config_create(dirMetadata);
 
-	if (metadata == NULL) {
+	if (metadata == NULL ) {
 		log_error(logger, "No se pudo abrir la metadata de archivo %s",
 				dirMetadata);
 		return -1;
