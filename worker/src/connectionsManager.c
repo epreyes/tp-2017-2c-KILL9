@@ -49,8 +49,8 @@ void loadServer(void) {
 			//si estoy en el proceso hijo, atiendo solicitud
 			if (pid == 0) {
 				socket_master = clientSocket;
-				while (readClientBuffer() > 0)
-					;
+				while (readClientBuffer() > 0);
+				exit(1);
 			}
 		} else {
 			log_error(logger, "Error al establecer conexión con Cliente");
