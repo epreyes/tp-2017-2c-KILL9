@@ -108,15 +108,21 @@ void process_request_file_system(int client_socket) {
 	t_leerBloque* t_bloque;
 	int cod_op;
 	while (1) {
-		//recibirMensaje(fileSystemSocket, &cod_op, 4, infoLogger);
 		t_bloque = recibirPaquete(client_socket);
+		if(t_bloque == NULL){
+			log_error(infoLogger,"Error al recibir datos de FS");
+			close(client_socket);
+			return;
+
+		}
+
 		switch (t_bloque->idOperacion) {
 		case GET_BLOQUE:
 			log_info(infoLogger, "Codigo operacion GET_BLOQUE");
 			get_block(client_socket, t_bloque);
 			break;
 		case SET_BLOQUE:
-			log_info(infoLogger, "Codigo operacion GET_BLOQUE");
+			log_info(infoLogger, "Codigo operacion SET_BLOQUE");
 			set_block(client_socket, t_bloque);
 			break;
 		default:
