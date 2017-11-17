@@ -229,6 +229,9 @@ int formatear() {
 		for (j = 0; j < ba->size; j++)
 			bitarray_clean_bit(ba, j);
 
+		nodo->libre = nodo->total;
+		actualizarConfigNodoEnBin(nodo);
+
 	}
 
 	log_info(logger, "Formateado de disco ok");
