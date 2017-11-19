@@ -195,8 +195,6 @@ int transformFile(char* filename){
 
 	yamaAnswer=sendTRequest(filename);
 
-	printf("\n\nREPLANIF:%c\n\n", replanification);
-
 	if(!yamaAnswer){
 		log_error(logger, "TRANSFORMACIÓN ABORTADA");
 		return EXIT_FAILURE;
@@ -266,13 +264,13 @@ int transformFile(char* filename){
 	if(replanification == 'T'){
 		log_info(logger,"Replanificación confirmada, iniciando transformación de pendientes");
 		transformFile(filename);
-	}
-
-	if(abortJob=='0'){
-		log_trace(logger, "TRANSFORMACIÓN FINALIZADA");
-		return EXIT_SUCCESS;
 	}else{
-		log_error(logger, "TRANSFORMACIÓN ABORTADA");
-		return EXIT_FAILURE;
+		if(abortJob=='0'){
+			log_trace(logger, "TRANSFORMACIÓN FINALIZADA");
+			return EXIT_SUCCESS;
+		}else{
+			log_error(logger, "TRANSFORMACIÓN ABORTADA");
+			return EXIT_FAILURE;
+		}
 	}
 }

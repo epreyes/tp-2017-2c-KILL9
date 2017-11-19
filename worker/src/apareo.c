@@ -40,7 +40,7 @@ void mergeFiles(char* Aname, char* Bname, char *Cname){
 
 	if((A=fopen(Aname+1,"r"))==NULL)log_info(logger,"No se encuentra el archivo %s", Aname);
 	if((B=fopen(Bname+1,"r"))==NULL)log_info(logger,"No se encuentra el archivo %s", Bname);
-	if((C=fopen(Cname,"w"))==NULL)log_info(logger,"No se pudo crear el archivo %s", Cname);
+	if((C=fopen(Cname+1,"w"))==NULL)log_info(logger,"No se pudo crear el archivo %s", Cname);
 
 
 	log_info(logger,"Archivos preparados para el apareo");

@@ -75,6 +75,15 @@ char* generateScriptName(char operation, int master){
 	return name;
 }
 
+char* generateAuxFile(){
+	char* name = malloc(sizeof(char)*28);
+	long timestamp = current_timestamp();
+	asprintf(&name, "/tmp/%ld-RL-MIXFILES",timestamp);
+	return name;
+}
+
+
+
 int readBuffer(int socket,int size,void* destiny){
 	void* buffer = malloc(size);
 	int bytesReaded = recv(socket, buffer, size, MSG_WAITALL);

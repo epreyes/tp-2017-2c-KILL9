@@ -107,7 +107,7 @@ int openNodeConnection(int node, char* ip, int port) {
 int readClientBuffer() {
 	char operation;
 	if (readBuffer(socket_master, sizeof(char), &operation) == 0) {
-
+		printf("SOLICITUD:%c",operation);
 		switch (operation) {
 		case 'T':
 			log_trace(logger, "Master %d: Solicitud de transformación recibida",
