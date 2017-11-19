@@ -107,7 +107,7 @@ int openNodeConnection(int node, char* ip, int port) {
 int readClientBuffer() {
 	char operation;
 	if (readBuffer(socket_master, sizeof(char), &operation) == 0) {
-		printf("SOLICITUD:%c",operation);
+		printf("\nSOLICITUD:%c\n",operation);
 		switch (operation) {
 		case 'T':
 			log_trace(logger, "Master %d: Solicitud de transformación recibida",
@@ -136,10 +136,8 @@ int readClientBuffer() {
 			return 1;
 			break;
 		case 'R':
-			log_trace(logger,
-					"Worker %d: Solicitud de archivo temporal recibida",
-					socket_worker);
-			sendNodeFile(socket_worker);
+			log_trace(logger, "Worker %d: Solicitud de archivo temporal recibida",socket_master);
+			sendNodeFile(socket_master);
 			return 1;
 			break;
 		default:

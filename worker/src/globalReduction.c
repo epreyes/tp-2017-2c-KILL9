@@ -9,15 +9,20 @@
 
 char* obtainNodeFile(rg_node datos){
 //ESTABLEZCO CONEXIÓN CON OTRO WORKER PARA PEDIR TMP
-	if(!openNodeConnection(datos.node, datos.ip, datos.port)){
+	if(openNodeConnection(datos.node, datos.ip, datos.port)){
+		log_warning(logger,"No se puedo conectar");
 		return NULL;
 	};
+	printf("\nFILE:%s\n",datos.rl_tmp);
 //ENVIO DATOS
-	int bufferSize = sizeof(char)+28;
+	char code = 'R';
+	int bufferSize = sizeof(char)*29;
 	void* buffer = malloc(bufferSize);
-	memcpy(buffer,'R',sizeof(char));
+	memcpy(buffer,&code,sizeof(char));
 	memcpy(buffer+sizeof(char),&(datos.rl_tmp),28);
+	log_info(logger,"Solicitando archivo %s al nodo %d",datos.rl_tmp,datos.node);
 	send(socket_nodes[datos.node],buffer,bufferSize,0);
+	log_info(logger,"Solicitud enviada al socket %d",socket_nodes[datos.node]);
 	free(buffer);
 
 //OBTENGO RESPUESTA
@@ -37,12 +42,12 @@ char* obtainNodeFile(rg_node datos){
 void sendNodeFile(int worker){
 //OBTENGO DATOS
 	char fileName[28];
-	readBuffer(worker,sizeof(char)*28,fileName);
+	readBuffer(worker,sizeof(char)*28,&fileName);
 	log_trace(logger,"Worker %d Solicitó el archivo %s", worker, fileName);
 
 //RECUPERO ARCHIVO SOLICITADO
 	char* fileContent = NULL;
-	fileContent=serializeFile(fileName);
+	fileContent=serializeFile(fileName+1);
 
 //PREPARO PAQUETE
 	nodeData_rs* answer = malloc(sizeof(nodeData_rs));
