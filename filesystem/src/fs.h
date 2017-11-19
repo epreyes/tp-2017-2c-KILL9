@@ -50,6 +50,7 @@ typedef struct {
 	int libre;
 	char* direccion; // Direccion del worker
 	int socketNodo;
+	int activo; // Para eliminacion logica
 } t_nodo;
 
 typedef struct {

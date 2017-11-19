@@ -272,7 +272,7 @@ t_bitarray* obtenerBitMapBloques(int idNodo) {
 		for (j = 0; j < list_size(nodosBitMap); j++) {
 			t_nodosBitMap* nbm = list_get(nodosBitMap, j);
 
-			if (nbm->idNodo == idNodo) {
+			if (nbm->idNodo == idNodo && nodo->activo == 1) {
 				return nbm->bitMapBloques;
 			}
 		}
@@ -713,12 +713,18 @@ t_archivoInfo* obtenerArchivoInfo(char* path) {
 					config_get_string_value(metadata, bloqueInfo));
 
 			t_nodo* nodod = buscarNodoPorId_(atoi(bi->idNodo0));
-			if (nodod != NULL) {
-				bi->dirWorker0 = malloc(20);
+
+			bi->dirWorker0 = malloc(20);
+
+			if (nodod == NULL)
+				log_info(logger,
+						"Hay un nodo que todavia no se conecto, no se puede obtener la info del worker");
+			else {
 				memcpy(bi->dirWorker0, nodod->direccion, 20);
-			} else {
-				bi->dirWorker0 = malloc(20);
-				memcpy(bi->dirWorker0, "xxx:123", 7);
+
+				if (nodod->activo == 0)
+					log_debug(logger,
+							"Enviando info de nodo que no esta conectado");
 			}
 
 		}
@@ -737,13 +743,13 @@ t_archivoInfo* obtenerArchivoInfo(char* path) {
 					config_get_string_value(metadata, bloqueInfo));
 
 			t_nodo* nodod = buscarNodoPorId_(atoi(bi->idNodo1));
-			if (nodod != NULL) {
-				bi->dirWorker1 = malloc(20);
-				memcpy(bi->dirWorker1, nodod->direccion, 20);
-			} else {
-				bi->dirWorker1 = malloc(20);
-				memcpy(bi->dirWorker1, "xxx:123", 7);
-			}
+
+			bi->dirWorker1 = malloc(20);
+			memcpy(bi->dirWorker1, nodod->direccion, 20);
+			if (nodod->activo == 0)
+				log_debug(logger,
+						"Enviando info de nodo que no esta conectado");
+
 		}
 
 		free(bloqueInfo);
@@ -1223,12 +1229,18 @@ int obtenerBloquesNecesarios(char* contenido, int tipo, int tamanio) {
 // Los devuelve balanceados. Si la funcion de escritura falla por algun motivo en los nodos (que no sea faltante de bloques) debe rollbackearse las estructuras administrativas
 // Si no hay bloques disponibles para la escritura del archivo, devuelve nulo.
 
-// TODO: la copia no debe estar en el mismo nodo
-
 t_list* obtenerBloquesLibres(int cantBloques, int* error) {
 
 	t_list* res = list_create();
 	t_list* t = list_create();
+	t_list* nodosActivos = list_create();
+
+	int k = 0;
+	for (k = 0; k < list_size(nodos->nodos); k++) {
+		t_nodo* nodo = list_get(nodos->nodos, k);
+		if (nodo->activo == 1)
+			list_add(nodosActivos, nodo);
+	}
 
 	int nod = 0;
 
@@ -1242,8 +1254,19 @@ t_list* obtenerBloquesLibres(int cantBloques, int* error) {
 
 	for (j = 0; j < cantBloques; j++) {
 
-		t = decidirNodo(nodos->nodos);
-		t_nodo* nodo = list_get(t, nod + saltearNodo);
+		t = decidirNodo(nodosActivos);
+
+		int offnodo = nod + saltearNodo;
+
+		t_nodo* nodo;
+		if ((offnodo + 1) <= list_size(nodosActivos))
+			nodo = list_get(t, offnodo);
+		else {
+
+			log_error(logger,
+					"No existen nodos disponibles para la escritura pedida");
+			break;
+		}
 
 		// Reseteo si se seteo el salteo de nodo
 		saltearNodo = 0;
