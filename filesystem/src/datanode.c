@@ -17,17 +17,19 @@ int escribirEnDataNode(int idBloque, char* contenido, int socketNodo,
 
 	if (DATANODE_DUMMY == 1) {
 		log_info(logger,
-				"Enviando peticion a datanode %d - bloque: %d - finBytes: %d...",
-				socketNodo, idBloque, finBytes);
+				"Enviando peticion a datanode %d - bloque: %d - finBytes: %d - socketNodo: %d",
+				socketNodo, idBloque, finBytes, socketNodo);
 
 		log_info(logger, "Peticion a datanode ok...");
 
 		return 0;
 	}
 
+	int idNodo = buscarNodoPorSocket(socketNodo);
+
 	log_info(logger,
-			"Enviando peticion a datanode %d - bloque: %d - finBytes: %d...",
-			socketNodo, idBloque, finBytes);
+			"Enviando peticion a datanode %d - bloque: %d - finBytes: %d - socketNodo: %d",
+			idNodo, idBloque, finBytes, socketNodo);
 
 	t_escribirBloque peticion;
 	peticion.idOperacion = SET_BLOQUE;

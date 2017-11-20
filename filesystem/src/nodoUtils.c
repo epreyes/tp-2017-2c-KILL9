@@ -159,7 +159,7 @@ int buscarNodoPorSocket(int socketNodo) {
 	int i = 0;
 	for (i = 0; i < list_size(nodos->nodos); i++) {
 		t_nodo* nod = list_get(nodos->nodos, i);
-		if (nod->socketNodo == socketNodo)
+		if (nod->socketNodo == socketNodo && nod->activo == 1)
 			return nod->id;
 	}
 	return -1;
@@ -171,7 +171,7 @@ int buscarNodoPorId(int idNodo) {
 	int i = 0;
 	for (i = 0; i < list_size(nodos->nodos); i++) {
 		t_nodo* nod = list_get(nodos->nodos, i);
-		if (nod->id == idNodo)
+		if (nod->id == idNodo && nod->activo == 1)
 			return nod->id;
 	}
 	return -1;
@@ -179,11 +179,24 @@ int buscarNodoPorId(int idNodo) {
 }
 
 // Devuelve la info de un nodo por id de nodo
+// Si el nodo no esta activo, devuelve la informacion igualmente (se usa para obtenerArchivosInfo)
 t_nodo* buscarNodoPorId_(int idNodo) {
 	int i = 0;
 	for (i = 0; i < list_size(nodos->nodos); i++) {
 		t_nodo* nod = list_get(nodos->nodos, i);
 		if (nod->id == idNodo)
+			return nod;
+	}
+	return NULL;
+
+}
+
+
+t_nodo* buscarNodoPorId_2(int idNodo) {
+	int i = 0;
+	for (i = 0; i < list_size(nodos->nodos); i++) {
+		t_nodo* nod = list_get(nodos->nodos, i);
+		if (nod->id == idNodo && nod->activo == 1)
 			return nod;
 	}
 	return NULL;

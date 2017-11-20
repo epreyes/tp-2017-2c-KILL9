@@ -525,7 +525,7 @@ char* leerArchivo(char* path, int* codigoError) {
 
 		sem_wait(&semLista);
 		t_lectura* lect = list_get(lista, i);
-		t_nodo* nodo = buscarNodoPorId_(lect->idNodo);
+		t_nodo* nodo = buscarNodoPorId_2(lect->idNodo);
 		sem_post(&semLista);
 
 		int lectura = leerDeDataNode(bi->idBloque0, nodo->socketNodo,

@@ -68,8 +68,8 @@ void* lanzarHiloServidor() {
 		log_debug(logger, "Se recibio handshake %d", handshak);
 		codigoHandshake = handshak;
 
-		if (codigoHandshake != YAMA_HSK&& codigoHandshake != NODE_HSK
-		&& codigoHandshake != WORKER_HSK) {
+		if (codigoHandshake != YAMA_HSK && codigoHandshake != NODE_HSK
+				&& codigoHandshake != WORKER_HSK) {
 			log_error(logger, "Codigo incorrecto de Handshake.");
 			continue;
 		}
@@ -123,6 +123,8 @@ void* lanzarHiloServidor() {
 				}
 
 				// Agrego el nodo en memoria
+				// Buscarlo en la lista y setearle activo 1 para no repetirlo
+
 				t_nodo* nodo = malloc(sizeof(t_nodo));
 				nodo->id = id_nodo;
 				nodo->libre = block_quantity;  // inicialmente es el total
@@ -136,14 +138,22 @@ void* lanzarHiloServidor() {
 				nodo->direccion[data_size] = '\0';
 
 				nodo->socketNodo = new_fd;
+				nodo->activo = 1;
 
 				log_info(logger,
 						"Nuevo nodo conectado - id: %d - total bloques: %d - direccion worker: %s",
 						id_nodo, block_quantity, worker);
 
-				sem_wait(&listaNodos);
-				list_add(nodos->nodos, nodo);
-				sem_post(&listaNodos);
+				t_nodo* nodAnt = buscarNodoPorId_(id_nodo);
+				if (nodAnt != NULL) {
+					// Estuvo conectado antes->actualizo
+					nodAnt->activo = 1;
+					nodAnt->socketNodo = new_fd;
+				} else {
+					sem_wait(&listaNodos);
+					list_add(nodos->nodos, nodo);
+					sem_post(&listaNodos);
+				}
 
 				// Guardo nodo en nodos.bin
 				guardarConfigNodoEnBin();
@@ -158,7 +168,7 @@ void* lanzarHiloServidor() {
 
 				t_nodo* nodoAnterior = nodoPerteneceAEstadoAnterior(id_nodo);
 
-				if (nodoAnterior == NULL ) {
+				if (nodoAnterior == NULL) {
 					// Rechazo conexion de nodo
 					int hsk = ACCESODENEGADO;
 
@@ -202,6 +212,7 @@ void* lanzarHiloServidor() {
 					}
 
 					// Agrego el nodo en memoria
+					// Buscarlo en la lista y setearle activo 1 para no repetirlo
 
 					t_nodo* nodo = malloc(sizeof(t_nodo));
 					nodo->id = id_nodo;
@@ -211,6 +222,7 @@ void* lanzarHiloServidor() {
 					memcpy(nodo->direccion, worker, data_size);
 					nodo->direccion[data_size] = '\0';
 					nodo->socketNodo = new_fd;
+					nodo->activo = 1;
 
 					free(nodoAnterior);
 
@@ -219,9 +231,16 @@ void* lanzarHiloServidor() {
 							nodo->id, nodo->total, nodo->libre, nodo->direccion,
 							new_fd);
 
-					sem_wait(&listaNodos);
-					list_add(nodos->nodos, nodo);
-					sem_post(&listaNodos);
+					t_nodo* nodAnt = buscarNodoPorId_(id_nodo);
+					if (nodAnt != NULL) {
+						// Estuvo conectado antes->actualizo
+						nodAnt->activo = 1;
+						nodAnt->socketNodo = new_fd;
+					} else {
+						sem_wait(&listaNodos);
+						list_add(nodos->nodos, nodo);
+						sem_post(&listaNodos);
+					}
 
 					// Genero bitmap de gestion de bloques (si no existe)
 					crearBitMapBloquesNodo(nodo);
@@ -293,15 +312,15 @@ void *connection_handler_nodo(void *socket_desc) {
 			// Busco el nodo en la lista, y le seteo lectFallo en 1 y posteo el semaforo para pasar al proximo for
 
 			/*int z = 0;
-			for (z = 0; z < list_size(lista); z++) {
-				t_lectura* lect = malloc(sizeof(t_lectura));
-				if (lect->idNodo == nodoId) {
-					lect->lectFallo = 1;
-					sem_post(&lect->lecturaOk);
+			 for (z = 0; z < list_size(lista); z++) {
+			 t_lectura* lect = malloc(sizeof(t_lectura));
+			 if (lect->idNodo == nodoId) {
+			 lect->lectFallo = 1;
+			 sem_post(&lect->lecturaOk);
 
-				}
+			 }
 
-			}*/
+			 }*/
 
 			// Buscar los archivos que tienen referencia a este nodo y eliminarle una instancia
 			// ****************************+
@@ -403,7 +422,8 @@ void *connection_handler_nodo(void *socket_desc) {
 			for (j = 0; j < list_size(nodos->nodos); j++) {
 				t_nodo* nod = list_get(nodos->nodos, j);
 				if (nod->id == nodoId) {
-					list_remove(nodos->nodos, j);
+					//list_remove(nodos->nodos, j);
+					nod->activo = 0;
 					break;
 				}
 
@@ -490,7 +510,7 @@ void procesarPedidoYama(t_header pedido, int socketCliente) {
 		int i = 0;
 		int offset = 0;
 		int cantReg = 0;
-		if (info == NULL ) {
+		if (info == NULL) {
 			log_error(logger, "No se pudo obtener la info de archivo: %s",
 					buffer);
 			t_header resp;
