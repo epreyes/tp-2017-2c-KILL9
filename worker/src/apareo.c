@@ -32,16 +32,23 @@ void readWord(char *word, FILE *file, int* endFile){
 }
 
 
-void mergeFiles(char* Aname, char* Bname, char *Cname){
-	char word1[128], word2[128];
+int mergeFiles(char* Aname, char* Bname, char *Cname){
+	char word1[256], word2[256];
 	int endFile1=0, endFile2=0;
 
 	FILE *A,*B,*C;
 
-	if((A=fopen(Aname+1,"r"))==NULL)log_info(logger,"No se encuentra el archivo %s", Aname);
-	if((B=fopen(Bname+1,"r"))==NULL)log_info(logger,"No se encuentra el archivo %s", Bname);
-	if((C=fopen(Cname+1,"w"))==NULL)log_info(logger,"No se pudo crear el archivo %s", Cname);
+	if((A=fopen(Aname+1,"r"))==NULL)log_warning(logger,"No se encuentra el archivo %s", Aname);
+	if((B=fopen(Bname+1,"r"))==NULL)log_warning(logger,"No se encuentra el archivo %s", Bname);
+	if((C=fopen(Cname+1,"w"))==NULL)log_warning(logger,"No se pudo crear el archivo %s", Cname);
 
+	if(!A || !B || !C){
+		fclose(A);
+		fclose(B);
+		fclose(C);
+		log_error(logger,"No es posible continuar con el Apareo");
+		return EXIT_FAILURE;
+	}
 
 	log_info(logger,"Archivos preparados para el apareo");
 
@@ -61,4 +68,5 @@ void mergeFiles(char* Aname, char* Bname, char *Cname){
 	fclose(B);
 	fclose(C);
 	log_info(logger,"Apareo finalizado entre %s y %s", Aname, Bname);
+	return EXIT_SUCCESS;
 };

@@ -129,6 +129,7 @@ char* generateFile(char* fileContent, char operation, int socket){
 	FILE* file = fopen(fileName,"w");
 	if(file == NULL){
 		log_error(logger,"Error al crear el archivo %s", fileName);
+		return NULL;
 		//abortar y comunicar a Master
 	}
 	fputs(fileContent,file);
@@ -137,6 +138,26 @@ char* generateFile(char* fileContent, char operation, int socket){
 	log_info(logger,"Archivo almacenado en \"%s\"", fileName);
 	return fileName;
 };
+
+
+
+char* generateBinFile(char* fileContent){
+	char* fileName = generateAuxFile();
+	FILE* file = fopen(fileName+1,"w");
+	if(file == NULL){
+		log_error(logger,"Error al crear el archivo %s", fileName);
+		return NULL;
+	}
+	fputs(fileContent,file);
+	fclose(file);
+
+	log_info(logger,"Archivo tmp del contenido almacenado en \"%s\"", fileName);
+	return fileName;
+};
+
+
+
+
 
 static void
 check (int test, const char * message, ...)

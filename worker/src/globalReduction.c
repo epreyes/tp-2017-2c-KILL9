@@ -10,7 +10,7 @@
 char* obtainNodeFile(rg_node datos){
 //ESTABLEZCO CONEXIÓN CON OTRO WORKER PARA PEDIR TMP
 	if(openNodeConnection(datos.node, datos.ip, datos.port)){
-		log_warning(logger,"No se puedo conectar");
+		log_warning(logger,"No se pudo conectar con el Nodo %d", datos.node);
 		return NULL;
 	};
 	printf("\nFILE:%s\n",datos.rl_tmp);
@@ -20,9 +20,8 @@ char* obtainNodeFile(rg_node datos){
 	void* buffer = malloc(bufferSize);
 	memcpy(buffer,&code,sizeof(char));
 	memcpy(buffer+sizeof(char),&(datos.rl_tmp),28);
-	log_info(logger,"Solicitando archivo %s al nodo %d",datos.rl_tmp,datos.node);
+	log_info(logger,"Solicitando archivo %s al nodo %d(socket:%d)",datos.rl_tmp,datos.node,socket_nodes[datos.node]);
 	send(socket_nodes[datos.node],buffer,bufferSize,0);
-	log_info(logger,"Solicitud enviada al socket %d",socket_nodes[datos.node]);
 	free(buffer);
 
 //OBTENGO RESPUESTA
@@ -33,7 +32,7 @@ char* obtainNodeFile(rg_node datos){
 	readBuffer(socket_nodes[datos.node],nodeAnswer.fileSize,&(nodeAnswer.file));
 	free(nodeAnswer.file);
 	close(socket_nodes[datos.node]);
-
+	log_info(logger,"Archivo obtenido, conexión con nodo %d(socket:%d) finalizada",datos.node,socket_nodes[datos.node]);
 //GENERO ARCHIVO Y DEVUELVO EL NOMBRE
 	return generateFile(nodeAnswer.file, 'G',socket_nodes[datos.node]);
 }
@@ -57,7 +56,7 @@ void sendNodeFile(int worker){
 	strcpy(answer->file, fileContent);
 
 //SERIALIZO RESPUESTA
-	log_trace(logger, "Enviando archivo %s a worker %d", worker);
+	log_trace(logger, "Enviando archivo %s a worker por socket %d", worker);
 	int bufferSize = sizeof(char)+sizeof(int)+(answer->fileSize);
 	void* buffer = malloc(bufferSize);
 	memcpy(buffer,&(answer->code),sizeof(char));
