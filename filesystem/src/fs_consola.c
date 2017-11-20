@@ -52,10 +52,15 @@ void ejecutarConsola() {
 		}
 
 		// Comando de prueba
-		if (strcmp(instruccionConsola, "copy1") == 0) {
+		if (strcmp(instruccionConsola, "copy") == 0) {
 			strcpy(instruccionConsola, "cpfrom");
-			strcpy(param1, "/home/utnso/test.txt");
+			strcpy(param1, "/home/utnso/w.txt");
 			strcpy(param2, ".");
+		}
+
+		if (strcmp(instruccionConsola, "read") == 0) {
+			strcpy(instruccionConsola, "cat");
+			strcpy(param1, "w.txt");
 		}
 
 		if (strcmp(instruccionConsola, INFOARCHIVO) == 0) {

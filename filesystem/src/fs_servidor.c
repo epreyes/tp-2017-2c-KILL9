@@ -312,15 +312,17 @@ void *connection_handler_nodo(void *socket_desc) {
 			// Busco el nodo en la lista, y le seteo lectFallo en 1 y posteo el semaforo para pasar al proximo for
 
 			sem_wait(&semLista);
-			int z = 0;
-			for (z = 0; z < list_size(lista); z++) {
-				t_lectura* lect = list_get(lista,z);
-				//if (lect->idNodo == nodoId) {
+			if (lista != NULL && list_size(lista)>0) {
+				int z = 0;
+				for (z = 0; z < list_size(lista); z++) {
+					t_lectura* lect = list_get(lista, z);
 					lect->lectFallo = 1;
-					log_info(logger,"El nodo %d se desconecto durante una lectura, marcandolo como falla", lect->idNodo);
+					log_info(logger,
+							"El nodo %d se desconecto durante una lectura, marcandolo como falla y reseteando la lectura",
+							nodoId);
 					sem_post(&lect->lecturaOk);
 
-				//}
+				}
 
 			}
 			sem_post(&semLista);
