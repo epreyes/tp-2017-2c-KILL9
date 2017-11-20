@@ -210,11 +210,15 @@ void obtenerNodosUnaInstanciaArchivos() {
 
 	for (i = 0; i < MAX_DIR_FS; i++) {
 
-		if (dir->padre == -1 && dir->indice != 0)
+		if (dir->padre == -1 && dir->indice != 0) {
+			dir++;
 			continue;
+		}
 		t_list* archivos = (t_list*) listarArchivos(dir->nombre);
-		if (list_size(archivos) == 0)
+		if (list_size(archivos) == 0) {
+			dir++;
 			continue;
+		}
 
 		int j = 0;
 

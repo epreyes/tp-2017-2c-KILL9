@@ -112,6 +112,20 @@ typedef struct {
 	int lectFallo;
 } t_lectura;
 
+// Estructura usada para armar el resultado de lectura
+typedef struct {
+	int nroBloque;
+	int idNodo; // nodo a leer
+	int nodo1;
+	int nodo2;
+} t_nodoSelect;
+
+// Estructura usada para seleccionar el nodo a leer
+typedef struct {
+	int idNodo;
+	int uso;
+} t_nodoSelect_;
+
 
 // Puntero al inicio de la tabla de directorios
 t_directorio* inicioTablaDirectorios;

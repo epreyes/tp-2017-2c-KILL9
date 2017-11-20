@@ -16,5 +16,6 @@
 int escribirArchivo(char* path, char* contenido, int tipo, int tamanio);
 char* leerArchivo(char* path, int* codigoError);
 int copiarDesdeYamaALocal(char* origen, char* destino);
+t_list* obtenerNodosALeer(t_list* bloques);
 
 #endif /* FS_COMANDOS_H_ */

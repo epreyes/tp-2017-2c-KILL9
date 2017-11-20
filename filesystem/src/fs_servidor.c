@@ -311,16 +311,19 @@ void *connection_handler_nodo(void *socket_desc) {
 
 			// Busco el nodo en la lista, y le seteo lectFallo en 1 y posteo el semaforo para pasar al proximo for
 
-			/*int z = 0;
-			 for (z = 0; z < list_size(lista); z++) {
-			 t_lectura* lect = malloc(sizeof(t_lectura));
-			 if (lect->idNodo == nodoId) {
-			 lect->lectFallo = 1;
-			 sem_post(&lect->lecturaOk);
+			sem_wait(&semLista);
+			int z = 0;
+			for (z = 0; z < list_size(lista); z++) {
+				t_lectura* lect = list_get(lista,z);
+				//if (lect->idNodo == nodoId) {
+					lect->lectFallo = 1;
+					log_info(logger,"El nodo %d se desconecto durante una lectura, marcandolo como falla", lect->idNodo);
+					sem_post(&lect->lecturaOk);
 
-			 }
+				//}
 
-			 }*/
+			}
+			sem_post(&semLista);
 
 			// Buscar los archivos que tienen referencia a este nodo y eliminarle una instancia
 			// ****************************+
@@ -329,12 +332,16 @@ void *connection_handler_nodo(void *socket_desc) {
 
 			for (i = 0; i < MAX_DIR_FS; i++) {
 
-				if (dir->padre == -1 && dir->indice != 0)
+				if (dir->padre == -1 && dir->indice != 0) {
+					dir++;
 					continue;
+				}
 
 				t_list* archivosInit = (t_list*) listarArchivos(dir->nombre);
-				if (list_size(archivosInit) == 0)
+				if (list_size(archivosInit) == 0) {
+					dir++;
 					continue;
+				}
 
 				int j = 0;
 
@@ -765,12 +772,16 @@ int habilitarBloques(t_nodo* nodo) {
 
 	for (i = 0; i < MAX_DIR_FS; i++) {
 
-		if (dir->padre == -1 && dir->indice != 0)
+		if (dir->padre == -1 && dir->indice != 0) {
+			dir++;
 			continue;
+		}
 
 		t_list* archivosInit = (t_list*) listarArchivos(dir->nombre);
-		if (list_size(archivosInit) == 0)
+		if (list_size(archivosInit) == 0) {
+			dir++;
 			continue;
+		}
 
 		int j = 0;
 

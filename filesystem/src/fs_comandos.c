@@ -48,7 +48,7 @@ int escribirArchivo(char* path, char* contenido, int tipo, int tamanio) {
 	if (errorSeleccionNodos == -1)
 		return ERROR_MISMO_NODO_COPIA;
 
-	if (bl == NULL ) {
+	if (bl == NULL) {
 		return SIN_ESPACIO;
 	}
 
@@ -494,11 +494,13 @@ char* leerArchivo(char* path, int* codigoError) {
 
 	t_archivoInfo* archivo = obtenerArchivoInfo(path);
 
-	if (archivo == NULL ) {
+	if (archivo == NULL) {
 		// No existe el archivo
 		*codigoError = -1;
-		return NULL ;
+		return NULL;
 	}
+
+	t_list* nodosALeer = obtenerNodosALeer(archivo->bloques);
 
 	// Preparo lista t_lectura
 	lista = list_create();
@@ -506,8 +508,15 @@ char* leerArchivo(char* path, int* codigoError) {
 	for (j = 0; j < list_size(archivo->bloques); j++) {
 		t_bloqueInfo* bi = list_get(archivo->bloques, j);
 		t_lectura* lect = malloc(sizeof(t_lectura));
+
+		t_nodoSelect* res = list_get(nodosALeer, j);
+
 		lect->nroBloque = bi->nroBloque;
-		lect->idNodo = atoi(bi->idNodo0); // TODO: Siempre busco en la primera copia, debe distribuirse
+		//lect->idNodo = atoi(bi->idNodo0); // TODO: Siempre busco en la primera copia, debe distribuirse
+
+		lect->idNodo = res->idNodo;
+		log_debug(logger, "Nodo seleccionado para leer de id: %d", res->idNodo);
+
 		lect->finBytes = bi->finBytes;
 		lect->lectFallo = 0;
 		sem_init(&lect->lecturaOk, 0, 0);
@@ -528,6 +537,13 @@ char* leerArchivo(char* path, int* codigoError) {
 		t_nodo* nodo = buscarNodoPorId_2(lect->idNodo);
 		sem_post(&semLista);
 
+		if (nodo == NULL) {
+			log_error(logger,
+					"No se pudo hacer la lectura porque uno de los nodos esta caido. Reiniciando lectura con los nodos disponibles...");
+			*codigoError = -2;
+			return NULL;
+		}
+
 		int lectura = leerDeDataNode(bi->idBloque0, nodo->socketNodo,
 				bi->finBytes, bi->nroBloque, logger);
 
@@ -535,7 +551,7 @@ char* leerArchivo(char* path, int* codigoError) {
 			log_error(logger,
 					"Hubo un error leyendo los bloques del archivo (posiblemente algun datanode caido)");
 			*codigoError = -2;
-			return NULL ;
+			return NULL;
 		}
 
 	}
@@ -548,31 +564,40 @@ char* leerArchivo(char* path, int* codigoError) {
 	}
 
 	// Chequeo si hubo alguna falla
-	// Si hubo, tomo otra estrategia de lectura y continuo con la lectura
-	// Si falla la ultima estrategia->	error de lectura
+	// Si hubo, reseteo la lectura con otra estrategia de nodos
 
-	/*int z = 0;
+	int z = 0;
+	sem_wait(&semLista);
 	for (z = 0; z < list_size(lista); z++) {
-		t_lectura* lect = malloc(sizeof(t_lectura));
+		t_lectura* lect = list_get(lista, z);
 
 		if (lect->lectFallo == 1) {
-			log_error(logger, "Error en la lectura");
-			return NULL ;
+
+			log_error(logger,
+					"Error en la lectura, algun nodo se desconecto, reseteando lectura con otra estrategia de nodos");
+			*codigoError = -2;
+			sem_post(&semLista);
+			return NULL;
 
 		}
 
-	}*/
+	}
+	sem_post(&semLista);
 
 	log_info(logger,
 			"Se recibio la respuesta de todos los nodos involucrados, armando resultado final.");
 
 	// Armo respuesta final
+
+	sem_wait(&semLista);
+
 	for (i = 0; i < list_size(archivo->bloques); i++) {
 		t_lectura* lect = list_get(lista, i);
 		memcpy(respuesta + offset, lect->lectura, lect->finBytes);
 		offset += lect->finBytes;
-
 	}
+
+	sem_post(&semLista);
 
 	for (i = 0; i < list_size(archivo->bloques); i++) {
 		t_lectura* lect = list_get(lista, i);
@@ -586,11 +611,109 @@ char* leerArchivo(char* path, int* codigoError) {
 	return respuesta;
 }
 
+// Obtiene la lista de nodos a leer optima
+// TODO: chequear caso que no tenga una copia (porque se le borro con rm)
+t_list* obtenerNodosALeer(t_list* bloques) {
+
+	t_list* resultado = list_create();
+	t_list* nodosSinRepetir = list_create();
+
+	// Creo lista de resultados
+	int j = 0;
+	for (j = 0; j < list_size(bloques); j++) {
+		t_bloqueInfo* bi = list_get(bloques, j);
+		t_nodoSelect* ns = malloc(sizeof(t_nodoSelect));
+		ns->nroBloque = bi->nroBloque;
+		ns->nodo1 = atoi(bi->idNodo0);
+		ns->nodo2 = atoi(bi->idNodo1);
+		list_add(resultado, ns);
+	}
+
+	// Creo lista de nodos involucrados sin repetir
+
+	j = 0;
+	for (j = 0; j < list_size(bloques); j++) {
+		t_bloqueInfo* bi = list_get(bloques, j);
+
+		t_nodoSelect_* ns = malloc(sizeof(t_nodoSelect_));
+		ns->idNodo = atoi(bi->idNodo0);
+		ns->uso = 0;
+
+		int l = 0;
+		int existe = 0;
+		for (l = 0; l < list_size(nodosSinRepetir); l++) {
+			t_nodoSelect_* nsr = list_get(nodosSinRepetir, l);
+			if (nsr->idNodo == ns->idNodo) {
+				existe = 1;
+				break;
+			}
+		}
+
+		if (existe == 0)
+			list_add(nodosSinRepetir, ns);
+
+		ns = malloc(sizeof(t_nodoSelect_));
+		ns->idNodo = atoi(bi->idNodo1);
+		ns->uso = 0;
+
+		l = 0;
+		existe = 0;
+		for (l = 0; l < list_size(nodosSinRepetir); l++) {
+			t_nodoSelect_* nsr = list_get(nodosSinRepetir, l);
+			if (nsr->idNodo == ns->idNodo) {
+				existe = 1;
+				break;
+			}
+		}
+
+		if (existe == 0)
+			list_add(nodosSinRepetir, ns);
+
+	}
+
+	int i = 0;
+	int k = 0;
+
+	int encontro = 0;
+
+	// Selecciono nodos
+	for (i = 0; i < list_size(resultado); i++) {
+		encontro = 0;
+		for (k = 0; k < list_size(nodosSinRepetir); k++) {
+			t_nodoSelect_* nid = list_get(nodosSinRepetir, k);
+			t_nodoSelect* res = list_get(resultado, i);
+			if (nid->uso == 0
+					&& (res->nodo1 == nid->idNodo || res->nodo2 == nid->idNodo)) {
+				nid->uso = 1;
+				res->idNodo = nid->idNodo;
+				encontro = 1;
+				break;
+			}
+		}
+
+		// Si no encontro nodo sin uso en 0->reseteo todos y vuelvo a buscar
+		if (encontro == 0) {
+			i--;
+			k = 0;
+			for (k = 0; k < list_size(nodosSinRepetir); k++) {
+				t_nodoSelect_* nid = list_get(nodosSinRepetir, k);
+				nid->uso = 0;
+			}
+		}
+
+	}
+
+	list_destroy(nodosSinRepetir);
+
+	return resultado;
+
+}
+
 // Copia un archivo de yama al fs nativo
 int copiarDesdeYamaALocal(char* origen, char* destino) {
 
 	t_archivoInfo* aInfo = obtenerArchivoInfo(origen);
-	if (aInfo == NULL ) {
+	if (aInfo == NULL) {
 		return -1;
 	}
 
@@ -628,9 +751,9 @@ int copiarDesdeYamaALocal(char* origen, char* destino) {
 
 	// mapeo a memoria
 	destinoArchivo = mmap((caddr_t) 0, aInfo->tamanio, PROT_READ | PROT_WRITE,
-			MAP_SHARED, fd, 0);
+	MAP_SHARED, fd, 0);
 
-	if (destinoArchivo == NULL ) {
+	if (destinoArchivo == NULL) {
 		perror("error en map\n");
 		exit(1);
 	}
