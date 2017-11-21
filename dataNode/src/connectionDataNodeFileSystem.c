@@ -129,16 +129,14 @@ void process_request_file_system(int client_socket) {
 			log_error(infoLogger, "Error con el codigo de operacion recibido");
 			break;
 		}
-		// break;
 	}
-	//exit(EXIT_SUCCESS);
 	log_info(infoLogger, "Fin -> request del fileSystem");
 }
 /*****************************************************
  *	Implementacion para leer un bloque de un archivo   *
  ******************************************************/
 void get_block(int client_socket, t_leerBloque* t_bloque) {
-	log_info(infoLogger, "Iniciando lectura  bloque archivo ");
+	log_info(infoLogger, "Iniciando lectura  bloque archivo %d \n",t_bloque ->idBloque);
 	int cod_resp=GET_BLOQUE_OK;
 	int num_block;
 	int nroBloque=0;
@@ -175,7 +173,7 @@ void get_block(int client_socket, t_leerBloque* t_bloque) {
 	send(fileSystemSocket, buffer, block_cant, MSG_WAITALL);
 	log_info(infoLogger, "Fin envio datos del bloque");
 
-	log_info(infoLogger, "Fin lectura bloque archivo ");
+	log_info(infoLogger, "Fin lectura  bloque archivo %d \n",t_bloque ->idBloque);
 	free(buffer);
 	sleep(3);
 }
@@ -184,7 +182,7 @@ void get_block(int client_socket, t_leerBloque* t_bloque) {
  *	Implementacion escritura de un bloque del archivo*
  ******************************************************/
 void set_block(int client_socket, t_leerBloque* t_bloque) {
-	log_info(infoLogger, "INICIO : escritura de un bloque del archivo ");
+	log_info(infoLogger, "Iniciando escritura  bloque archivo %d \n",t_bloque ->idBloque);
 
 	t_bloque->contenido=malloc(sizeof(char)* t_bloque->finByte);
     recv(client_socket, t_bloque->contenido,sizeof(char)* t_bloque->finByte, MSG_WAITALL);
@@ -200,10 +198,9 @@ void set_block(int client_socket, t_leerBloque* t_bloque) {
 		log_error(infoLogger, "error enviando Mensanje a fileSystem\n");
 		exit(EXIT_FAILURE);
 	}
-	else
-		log_info(infoLogger, "FIN  : escritura de un bloque del archivo ");
-
-
+	else{
+		log_info(infoLogger, "Fin escritura bloque archivo %d \n",t_bloque ->idBloque);
+	}
 	// Libero t_bloque
 	free(t_bloque->contenido);
 	free(t_bloque);
