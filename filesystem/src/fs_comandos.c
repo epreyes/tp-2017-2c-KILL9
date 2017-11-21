@@ -631,22 +631,21 @@ char* leerArchivo(char* path, int* codigoError) {
 		offset += lect->finBytes;
 	}
 
-
-	for (i = 0; i < list_size(archivo->bloques); i++) {
-		t_lectura* lect = list_get(lista, i);
-		free(lect->lectura);
-		free(lect);
-	}
+	list_destroy_and_destroy_elements(lista, eliminarItemLectura);
 
 	sem_post(&semLista);
 
-
-	list_destroy(lista);
-	lista=NULL;
+	lista = NULL;
 	list_destroy(nodosExc);
 	free(archivo);
 
 	return respuesta;
+}
+
+void* eliminarItemLectura(t_lectura* lect) {
+	free(lect->lectura);
+	free(lect);
+	return 0;
 }
 
 // Obtiene la lista de nodos a leer optima. Excluye los nodos de la lista nodosExcluir
@@ -699,12 +698,13 @@ t_list* obtenerNodosALeer(t_list* bloques, t_list* nodosExcluir) {
 
 	}
 
-	log_debug("Nodos sin repetir: %d - nodos a excluir: %d", list_size(nodosSinRepetir),  list_size(nodosExcluir));
-	if (list_size(nodosSinRepetir) == list_size(nodosExcluir)) {
-		list_destroy(nodosSinRepetir);
-		return NULL;
-	}
+	log_debug(logger, "Nodos sin repetir: %d - nodos a excluir: %d",
+			list_size(nodosSinRepetir), list_size(nodosExcluir));
 
+	/*	if (list_size(nodosSinRepetir) == list_size(nodosExcluir)) {
+	 list_destroy(nodosSinRepetir);
+	 return NULL;
+	 }*/
 
 	list_clean(nodosSinRepetir);
 
@@ -787,10 +787,17 @@ t_list* obtenerNodosALeer(t_list* bloques, t_list* nodosExcluir) {
 	int k = 0;
 
 	int encontro = 0;
+	int iteraciones=0;
 
 	// Selecciono nodos
 	for (i = 0; i < list_size(resultado); i++) {
 		encontro = 0;
+		iteraciones++;
+		if (iteraciones>list_size(resultado)*2) {
+			log_debug(logger,"Iteraciones: %d", iteraciones);
+			return NULL;
+		}
+
 		for (k = 0; k < list_size(nodosSinRepetir); k++) {
 			t_nodoSelect_* nid = list_get(nodosSinRepetir, k);
 			t_nodoSelect* res = list_get(resultado, i);
@@ -803,6 +810,7 @@ t_list* obtenerNodosALeer(t_list* bloques, t_list* nodosExcluir) {
 			}
 		}
 
+
 		// Si no encontro nodo sin uso en 0->reseteo todos y vuelvo a buscar
 		if (encontro == 0) {
 			i--;
@@ -814,6 +822,7 @@ t_list* obtenerNodosALeer(t_list* bloques, t_list* nodosExcluir) {
 		}
 
 	}
+	log_debug(logger,"Iteraciones: %d", iteraciones);
 
 	list_destroy(nodosSinRepetir);
 

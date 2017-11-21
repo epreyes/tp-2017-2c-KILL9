@@ -312,7 +312,7 @@ void *connection_handler_nodo(void *socket_desc) {
 			// Busco el nodo en la lista, y le seteo lectFallo en 1 y posteo el semaforo para pasar al proximo for
 
 			sem_wait(&semLista);
-			if (lista != NULL && list_size(lista)>0) {
+			if (lista != NULL && list_size(lista) > 0) {
 				int z = 0;
 				for (z = 0; z < list_size(lista); z++) {
 					t_lectura* lect = list_get(lista, z);
@@ -609,13 +609,15 @@ void procesarPedidoNodo(int codop, int socket) {
 	int idNodo = 0;
 	log_info(logger, "Se recibio codigo %d del nodo", codop);
 
+	idNodo = buscarNodoPorSocket(socket);
+
 	switch (codop) {
 
 	case SET_BLOQUE_OK:
 
 		sem_post(&semEscritura);
 
-		log_info(logger, "Escritura en nodo ok");
+		log_info(logger, "Escritura en nodo %d ok", idNodo);
 
 		break;
 
@@ -624,8 +626,7 @@ void procesarPedidoNodo(int codop, int socket) {
 		recv(socket, &tamBuff, sizeof(int), 0);
 		recv(socket, &nroBloque, sizeof(int), 0);
 
-		idNodo = buscarNodoPorSocket(socket);
-
+		sem_wait(&semLista);
 		for (i = 0; i < list_size(lista); i++) {
 			t_lectura* lect = list_get(lista, i);
 			if (lect->nroBloque == nroBloque) {
@@ -635,11 +636,14 @@ void procesarPedidoNodo(int codop, int socket) {
 				lect->lectura = malloc(tamBuff);
 				int bytesRecibidos = recv_all(socket, lect->lectura, tamBuff,
 						0);
+
+
 				sem_post(&lect->lecturaOk);
 			}
 		}
+		sem_post(&semLista);
 
-		log_info(logger, "Lectura en nodo ok");
+		log_info(logger, "Lectura en nodo %d ok", idNodo);
 
 		break;
 
