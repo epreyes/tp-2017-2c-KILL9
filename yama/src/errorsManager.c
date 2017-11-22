@@ -7,7 +7,7 @@
 
 #include "headers/errorsManager.h"
 
-void* abortJob(int master, int node, char op) {
+void* abortJob(int master, int node, char op, t_job* job) {
 	int size = sizeof(char) * 2 + sizeof(int);
 	void* abort = malloc(size);
 	char code = 'A';
@@ -17,7 +17,7 @@ void* abortJob(int master, int node, char op) {
 	memcpy(abort + sizeof(char), &opCode, sizeof(char));
 	memcpy(abort + sizeof(char) + sizeof(char), &node_id, sizeof(int));
 
-	updateTasksAborted(master, node, op);
+	updateTasksAborted(master, node, op, job);
 
 	return abort;
 }
@@ -25,47 +25,70 @@ void* abortJob(int master, int node, char op) {
 void* processNodeError(int master) {
 	void* response;
 
-	void* op = malloc(sizeof(int));
-	recv(master, op, sizeof(char), 0);
+	char op;
+	recv(master, &op, sizeof(char), 0);
 
-	void* node = malloc(sizeof(int));
-	recv(master, node, sizeof(int), 0);
+	int node;
+	recv(master, &node, sizeof(int), 0);
 
-	switch (*(char*) op) {
-	case 'T':
-		log_error(yama->log, "Error en Nodo %d. Comienza replanificacion. Job %d.", node, yama->jobs+master);
-		response = replanTask(master, *(int*) node);
-		log_info(yama->log, "Enviando informacion de replanificacion.");
+	int jobIndex = getJobIndex(master, op, 'P');
+	t_job* job = list_get(yama->tabla_jobs, jobIndex);
+
+	switch (op) {
+	case 'T': {
+		log_error(yama->log,
+				"Error en Nodo %d. Comienza replanificacion. Job %d.",
+				node, job->id);
+		t_planningParams* params = getPlanningParams();
+		strcpy(params->algoritm, yama->algoritm);
+		params->availBase = yama->availBase;
+		params->planningDelay = yama->planningDelay;
+		deleteFromPlanedTable(master, node);
+		response = replanTask(master, node, params, job, jobIndex);
+		if( job->replanificaciones == 1 ){
+			log_info(yama->log, "Enviando informacion de replanificacion.");
+		}else{
+			log_info(yama->log, "Enviando informacion de Job Abortado.");
+		}
+
+	}
 		break;
 	case 'L':
 	case 'G':
-		response = abortJob(master, *(int*) node, *(char*) op);
-		log_error(yama->log, "Se aborta job %d. Master %d.", yama->jobs+master, master);
+	case 'S': {
+		log_trace(yama->log, "Recivo error en operacion %c. Job %d.",
+				op, job->id);
+		response = abortJob(master, node, op, job);
+		log_error(yama->log, "Se aborta job %d. Master %d.",
+				job->id, master);
+		job->estado = 'E';
+		list_replace(yama->tabla_jobs, jobIndex, job);
+	}
 		break;
 	}
 	return response;
 }
 
-void showErrorMessage(void* response){
+void showErrorMessage(void* response) {
 	char code;
 	memcpy(&code, response, sizeof(char));
 
 	int sizeMsg;
-	memcpy(&sizeMsg, response+sizeof(char), sizeof(int));
+	memcpy(&sizeMsg, response + sizeof(char), sizeof(int));
 
 	char* msg = malloc(sizeMsg);
-	memcpy(msg, response+sizeof(char)+sizeof(int), sizeMsg);
+	memcpy(msg, response + sizeof(char) + sizeof(int), sizeMsg);
 
-	printf("\n%s\n", msg);
+	log_error(yama->log, "%s", msg);
 }
 
-void* processErrorMessage(int master, char* errorMessage){
+void* processErrorMessage(int master, char* errorMessage) {
 	int msgSize = strlen(errorMessage);
-	void* response = malloc(sizeof(char)+sizeof(int)+msgSize);
+	void* response = malloc(sizeof(char) + sizeof(int) + msgSize);
 
 	memcpy(response, "X", sizeof(char));
-	memcpy(response+sizeof(char), &msgSize, sizeof(int));
-	memcpy(response+sizeof(char)+sizeof(int), errorMessage, msgSize);
+	memcpy(response + sizeof(char), &msgSize, sizeof(int));
+	memcpy(response + sizeof(char) + sizeof(int), errorMessage, msgSize);
 
 	return response;
 }

@@ -68,15 +68,15 @@ void deleteOfLocalReductionPlanedList(int items, int master) {
 	}
 }
 
-t_list* findLocalReductionPlaned(int master) {
+t_list* findLocalReductionPlaned(int master, int jobid) {
 	int itemsToRemove = 0;
 	t_list* planed_list = list_create();
 	int i = 0;
 	for (i = 0; i < list_size(yama->tabla_LR_planificados); i++) {
 		elem_tabla_LR_planificados* elem = list_get(yama->tabla_LR_planificados,
 				i);
-		if (elem->master == master) {
-			list_add(planed_list, elem->data);
+		if (elem->job == jobid && elem->master == master) {
+			list_add(planed_list, elem);
 			itemsToRemove++;
 		}
 	}
@@ -91,14 +91,15 @@ void getGlobalReductionTmpName(rg_datos* nodeData, int op, int blockId,
 	asprintf(&name, "%s%ld-RG-M%03d", "/tmp/", timestamp, masterId);
 
 	strcpy(nodeData->rg_tmp, name);
+	free(name);
 }
 
-int allLocalReductionProcesFinish(int master) {
+int allLocalReductionProcesFinish(int master, int jobid) {
 	int response = 0;
 	int index = 0;
 	for (index = 0; index < list_size(yama->tabla_estados); index++) {
 		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
-		if (elem->master == master && elem->op == 'L') {
+		if ( elem->job == jobid && elem->master == master && elem->op == 'L') {
 			if (elem->status == 'P' || elem->status == 'E') {
 				response = 0;
 				return response;
@@ -112,7 +113,9 @@ int allLocalReductionProcesFinish(int master) {
 
 int getLastChargedNode(t_list* planed) {
 
-	rl_datos* minNode = list_get(planed, 0);
+	elem_tabla_planificados* data = list_get(planed, 0);
+	rl_datos* minNode = malloc(sizeof(rl_datos));
+	memcpy(minNode, data->data, sizeof(rl_datos));
 
 	if (list_size(planed) > 1) {
 		int index = 1;
@@ -121,7 +124,9 @@ int getLastChargedNode(t_list* planed) {
 			elem_tabla_nodos* elemNodeMin = list_get(yama->tabla_nodos, findNode( minNode->nodo ));
 
 			//tomo el segundo elemento planificado para compararlo contra el primero.
-			rl_datos* elem = list_get(planed, index);
+			elem_tabla_planificados* elemPlaned = list_get(planed, index);
+			rl_datos* elem = malloc(sizeof(rl_datos));
+			memcpy(elem, elemPlaned->data, sizeof(rl_datos));
 
 			//traigo el nodo de ese elemento planificado.
 			elem_tabla_nodos* nextNodeElem = list_get(yama->tabla_nodos, findNode( elem->nodo ));
@@ -130,18 +135,22 @@ int getLastChargedNode(t_list* planed) {
 			if( elemNodeMin->tasks_in_progress > nextNodeElem->tasks_in_progress){
 				minNode = elem;
 			}
+
+			free(elem);
 		}
 
 	}
-	return minNode->nodo;
+	int minNodeId = minNode->nodo;
+	free(minNode);
+	return minNodeId;
 }
 
-void* processGlobalReduction(int master) {
+void* processGlobalReduction(int master, int jobid) {
 
 	void* globalReductionRes;
 
-	if (allLocalReductionProcesFinish(master)) {
-		t_list* planed = findLocalReductionPlaned(master);
+	if (allLocalReductionProcesFinish(master, jobid)) {
+		t_list* planed = findLocalReductionPlaned(master, jobid);
 
 		int tamData = sizeof(int) * 2 + (sizeof(char) * 69);
 
@@ -159,22 +168,27 @@ void* processGlobalReduction(int master) {
 
 		int index = 0;
 		for (index = 0; index < list_size(planed); index++) {
-			rl_datos* elem = list_get(planed, index);
+
+			elem_tabla_planificados* data = list_get(planed, index);
+			rl_datos* elem = malloc(sizeof(rl_datos));
+			memcpy(elem, data->data, sizeof(rl_datos));
 			rg_datos* globalRedData = malloc(sizeof(rg_datos));
 			globalRedData->nodo = elem->nodo;
 			globalRedData->port = elem->port;
 			strcpy(globalRedData->ip, elem->ip);
 			strcpy(globalRedData->rl_tmp, elem->rl_tmp);
 
+			free(elem);
+
 			if (enchargeSeted == 0
 					&& globalRedData->nodo == enchargeNode) {
 
 				getGlobalReductionTmpName(globalRedData, 'G', 0, master);
 				globalRedData->encargado = 'T';
-				setInStatusTable('G', master, globalRedData->nodo, 0,
-						globalRedData->rg_tmp, 0);
+				setInStatusTable(jobid, 'G', master, globalRedData->nodo, 0,
+						globalRedData->rg_tmp, 0, data->fileName);
 				increaseNodeCharge(globalRedData->nodo);
-				addToGlobalReductionPlanedTable(master, globalRedData);
+				addToGlobalReductionPlanedTable(master, globalRedData, data->fileName, jobid);
 				enchargeSeted = 1;
 			} else {
 				getGlobalReductionTmpName(globalRedData, 'G', 0, master);
@@ -201,9 +215,14 @@ void* processGlobalReduction(int master) {
 							+ 24 * sizeof(char), &(globalRedData->encargado),
 					sizeof(char));
 
+
+			free(globalRedData);
 		}
 		memcpy(globalReductionRes + sizeof(char) + sizeof(int), dataGR,
 				tamData * list_size(planed));
+
+		free(dataGR);
+
 		return globalReductionRes;
 	} else {
 		log_warning(yama->log,

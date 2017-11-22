@@ -50,6 +50,7 @@ typedef struct {
 	int libre;
 	char* direccion; // Direccion del worker
 	int socketNodo;
+	int activo; // Para eliminacion logica
 } t_nodo;
 
 typedef struct {
@@ -108,7 +109,22 @@ typedef struct {
 	sem_t lecturaOk;
 	int finBytes;
 	char* lectura;
+	int lectFallo;
 } t_lectura;
+
+// Estructura usada para armar el resultado de lectura
+typedef struct {
+	int nroBloque;
+	int idNodo; // nodo a leer
+	int nodo1;
+	int nodo2;
+} t_nodoSelect;
+
+// Estructura usada para seleccionar el nodo a leer
+typedef struct {
+	int idNodo;
+	int uso;
+} t_nodoSelect_;
 
 
 // Puntero al inicio de la tabla de directorios
@@ -159,7 +175,7 @@ sem_t semEscritura;
 
 // Lista con informacion de gestion para lectura en paralelo con los nodos
 t_list* lista;
-
+sem_t semLista; // Semaforo para exclusion mutua de la lista de lectura
 
 // Semaforos para conexion de nodos (sin estado previo)
 sem_t nodoInit;

@@ -25,5 +25,7 @@ int readBuffer(int socket,int size,void* destiny);
 char* serializeFile(char* fileName);
 void map_data_node();
 char* getBlockData(int blockNumber,int size);
+char* generateAuxFile();
+char* generateBinFile();
 
 #endif /* HEADERS_UTILS_H_ */

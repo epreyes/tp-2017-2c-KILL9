@@ -80,17 +80,19 @@ void imprimirEstadoNodos() {
 		t_nodo* nod = list_get(nodos->nodos, i);
 		t_bitarray* bm = obtenerBitMapBloques(nod->id);
 
-		printf("nodo %d | tamanio: %d | libre: %d\n", nod->id, nod->total,
-				nod->libre);
+		printf("nodo %d | tamanio: %d | libre: %d - activo: %d - socket: %d\n", nod->id,
+				nod->total, nod->libre, nod->activo, nod->socketNodo);
 
 		int j = 0;
-		for (j = 0; j < bm->size; j++) {
-			if (bitarray_test_bit(bm, j))
-				printf("1");
-			else
-				printf("0");
+		if (nod->activo == 1) {
+			for (j = 0; j < bm->size; j++) {
+				if (bitarray_test_bit(bm, j))
+					printf("1");
+				else
+					printf("0");
+			}
+			printf("\n");
 		}
-		printf("\n");
 
 	}
 	printf("Espacio total: %d bytes\n", nodos->tamanio * TAMANIO_BLOQUE);

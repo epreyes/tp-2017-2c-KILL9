@@ -49,8 +49,8 @@ void loadServer(void) {
 			//si estoy en el proceso hijo, atiendo solicitud
 			if (pid == 0) {
 				socket_master = clientSocket;
-				while (readClientBuffer() > 0)
-					;
+				while (readClientBuffer() > 0);
+				exit(1);
 			}
 		} else {
 			log_error(logger, "Error al establecer conexión con Cliente");
@@ -67,20 +67,16 @@ void openFileSystemConnection(void) {
 	struct sockaddr_in fileSystemAddr;
 	char* fileSystem_ip = config_get_string_value(config, "IP_FILESYSTEM");
 	int fileSystem_port = config_get_int_value(config, "PUERTO_FILESYSTEM");
-
 	fileSystemAddr.sin_family = AF_INET;
 	fileSystemAddr.sin_addr.s_addr = inet_addr(fileSystem_ip);
 	fileSystemAddr.sin_port = htons(fileSystem_port);
 
 	socket_filesystem = socket(AF_INET, SOCK_STREAM, 0);
-	if (connect(socket_filesystem, (void*) &fileSystemAddr,
-			sizeof(fileSystemAddr)) != 0) {
-		log_warning(logger, "No se pudo conectar con Filesystem (%s:%d)",
-				fileSystem_ip, fileSystem_port);
-		exit(1);	//ver como manejar
+	if (connect(socket_filesystem, (void*) &fileSystemAddr, sizeof(fileSystemAddr)) != 0) {
+		log_warning(logger, "No se pudo conectar con Filesystem (%s:%d)", fileSystem_ip, fileSystem_port);
+		exit(1);
 	};
-	log_info(logger, "Conexión con Filesystem establecida (%s:%d)",
-			fileSystem_ip, fileSystem_port);
+	log_info(logger, "Conexión con Filesystem establecida (%s:%d)", fileSystem_ip, fileSystem_port);
 }
 
 //=======================NODE=============================================
@@ -111,7 +107,7 @@ int openNodeConnection(int node, char* ip, int port) {
 int readClientBuffer() {
 	char operation;
 	if (readBuffer(socket_master, sizeof(char), &operation) == 0) {
-
+		printf("\nSOLICITUD:%c\n",operation);
 		switch (operation) {
 		case 'T':
 			log_trace(logger, "Master %d: Solicitud de transformación recibida",
@@ -140,10 +136,8 @@ int readClientBuffer() {
 			return 1;
 			break;
 		case 'R':
-			log_trace(logger,
-					"Worker %d: Solicitud de archivo temporal recibida",
-					socket_worker);
-			sendNodeFile(socket_worker);
+			log_trace(logger, "Worker %d: Solicitud de archivo temporal recibida",socket_master);
+			sendNodeFile(socket_master);
 			return 1;
 			break;
 		default:

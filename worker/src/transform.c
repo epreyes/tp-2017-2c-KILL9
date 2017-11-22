@@ -61,24 +61,30 @@ void transformation(){
 char transformBlock(int position, int size, char temporal[28], char* scriptName){
 	log_info(logger,"Bloque %d: Transformando...", position);
 
+
 //OBTENGO CONTENIDO DEL BLOQUE DEL .BIN
 	char* blockContent = NULL;
 	blockContent = malloc(size);
 	asprintf(&blockContent, "\"Contenido del bloque %d\"",position); //Eliminar cuando se implemente lectura de .BIN
 
-	/*LECTURA DEL BLOQUE CON VALIDACIÓN
+//LECTURA DEL BLOQUE CON VALIDACIÓN
 	blockContent = getBlockData(position, size);
 		if(!blockContent){
 			log_error(logger,"Bloque %d: No se pudo leer el contenido del bloque");
 			free(blockContent);
 			return 'E';
 		}
-	*/
+//GUARDO EL CONTENIDO EN UN TEMPORAL
+	char* contentFileName;
+	contentFileName=generateBinFile(blockContent);
+
 //GENERO COMANDO PARA TRANSFORMACIÓN
 	char* command;
-	command = malloc(size+26+12+28+1+3+4);
-	asprintf(&command, "echo %s | %s | sort > %s",blockContent, scriptName, temporal+1);
+	command = malloc(size+26+12+28+1+3+3);
+	asprintf(&command, "cat %s | %s | sort > %s",contentFileName+1, scriptName, temporal+1);
+	printf("Comando: %s",command);
 	free(blockContent);
+	free(contentFileName);
 
 //EJECUTO COMANDO Y ATAJO EL ERROR
 	if (system(command)!=0){

@@ -27,7 +27,7 @@ t_bitarray* obtenerBitMapBloquesNodo(t_nodo* nodo); // Debe deprecarse
 
 t_bitarray* obtenerBitMapBloques(int idNodo);
 
-t_list* obtenerBloquesLibres(int cantBloques);
+t_list* obtenerBloquesLibres(int cantBloques, int* error);
 char* obtenerIdNodo(char* cadena);
 int obtenerIdBloque(char* cadena);
 int obtenerBloquesNecesarios(char* contenido, int tipo, int tamanio);

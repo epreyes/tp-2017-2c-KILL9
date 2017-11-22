@@ -158,13 +158,34 @@ int formatear() {
 
 	// Elimino archivos de metadata que existan
 
-	if (system("rm metadata/archivos -r") != 0)
+	char* comando = string_new();
+	//string_append(&comando, "rm -r metadata");
+
+	if (system(comando) != 0)
 		return -1;
 
-	if (system("mkdir metadata/archivos -p") != 0)
+	comando = string_new();
+
+	string_append(&comando, "rm ");
+	string_append(&comando, fs->m_archivos);
+	string_append(&comando, " -r");
+
+	if (system(comando) != 0)
 		return -1;
 
-	if (system("truncate -s 0MB metadata/directorios.dat") != 0)
+	comando = string_new();
+	string_append(&comando, "mkdir ");
+	string_append(&comando, fs->m_archivos);
+	string_append(&comando, " -p");
+
+	if (system(comando) != 0)
+		return -1;
+
+	comando = string_new();
+	string_append(&comando, "truncate -s 0MB ");
+	string_append(&comando, fs->m_directorios);
+
+	if (system(comando) != 0)
 		return -1;
 
 	if ((fd = open(archivo, O_RDWR)) == -1) {
@@ -222,12 +243,15 @@ int formatear() {
 
 		// limpio bitmaps
 
-		log_info(logger, "Limpiando nodo id: %d (worker %s)", nodo->id,
-				nodo->direccion);
+		log_info(logger, "Limpiando nodo id: %d (worker %s) (%d)", nodo->id,
+				nodo->direccion, ba->size);
 
 		int j = 0;
 		for (j = 0; j < ba->size; j++)
 			bitarray_clean_bit(ba, j);
+
+		nodo->libre = nodo->total;
+		actualizarConfigNodoEnBin(nodo);
 
 	}
 
@@ -248,7 +272,7 @@ t_bitarray* obtenerBitMapBloques(int idNodo) {
 		for (j = 0; j < list_size(nodosBitMap); j++) {
 			t_nodosBitMap* nbm = list_get(nodosBitMap, j);
 
-			if (nbm->idNodo == nodo->id) {
+			if (nbm->idNodo == idNodo && nodo->activo == 1) {
 				return nbm->bitMapBloques;
 			}
 		}
@@ -689,12 +713,18 @@ t_archivoInfo* obtenerArchivoInfo(char* path) {
 					config_get_string_value(metadata, bloqueInfo));
 
 			t_nodo* nodod = buscarNodoPorId_(atoi(bi->idNodo0));
-			if (nodod != NULL) {
-				bi->dirWorker0 = malloc(20);
+
+			bi->dirWorker0 = malloc(20);
+
+			if (nodod == NULL)
+				log_info(logger,
+						"Hay un nodo que todavia no se conecto, no se puede obtener la info del worker");
+			else {
 				memcpy(bi->dirWorker0, nodod->direccion, 20);
-			} else {
-				bi->dirWorker0 = malloc(20);
-				memcpy(bi->dirWorker0, "xxx:123", 7);
+
+				if (nodod->activo == 0)
+					log_debug(logger,
+							"Enviando info de nodo que no esta conectado");
 			}
 
 		}
@@ -713,13 +743,19 @@ t_archivoInfo* obtenerArchivoInfo(char* path) {
 					config_get_string_value(metadata, bloqueInfo));
 
 			t_nodo* nodod = buscarNodoPorId_(atoi(bi->idNodo1));
-			if (nodod != NULL) {
-				bi->dirWorker1 = malloc(20);
-				memcpy(bi->dirWorker1, nodod->direccion, 20);
+
+			bi->dirWorker1 = malloc(20);
+
+			if (nodod == NULL) {
+				log_info(logger,
+						"Hay un nodo que todavia no se conecto, no se puede obtener la info del worker");
 			} else {
-				bi->dirWorker1 = malloc(20);
-				memcpy(bi->dirWorker1, "xxx:123", 7);
+				memcpy(bi->dirWorker1, nodod->direccion, 20);
+				if (nodod->activo == 0)
+					log_debug(logger,
+							"Enviando info de nodo que no esta conectado");
 			}
+
 		}
 
 		free(bloqueInfo);
@@ -1199,20 +1235,47 @@ int obtenerBloquesNecesarios(char* contenido, int tipo, int tamanio) {
 // Los devuelve balanceados. Si la funcion de escritura falla por algun motivo en los nodos (que no sea faltante de bloques) debe rollbackearse las estructuras administrativas
 // Si no hay bloques disponibles para la escritura del archivo, devuelve nulo.
 
-// TODO: la copia no debe estar en el mismo nodo
-
-t_list* obtenerBloquesLibres(int cantBloques) {
+t_list* obtenerBloquesLibres(int cantBloques, int* error) {
 
 	t_list* res = list_create();
 	t_list* t = list_create();
+	t_list* nodosActivos = list_create();
+
+	int k = 0;
+	for (k = 0; k < list_size(nodos->nodos); k++) {
+		t_nodo* nodo = list_get(nodos->nodos, k);
+		if (nodo->activo == 1)
+			list_add(nodosActivos, nodo);
+	}
 
 	int nod = 0;
 
 	int j = 0;
+
+	// Guardo el nodo seleccionado anterior. El proximo siempre es la copia (por diseño). Entonces este no debe coincidir con el anterior
+	// En el unico caso que se puede dar es que haya un solo nodo conectado.
+
+	int nodoSeleccionadoAnterior = -1;
+	int saltearNodo = 0;
+
 	for (j = 0; j < cantBloques; j++) {
 
-		t = decidirNodo(nodos->nodos);
-		t_nodo* nodo = list_get(t, nod);
+		t = decidirNodo(nodosActivos);
+
+		int offnodo = nod + saltearNodo;
+
+		t_nodo* nodo;
+		if ((offnodo + 1) <= list_size(nodosActivos))
+			nodo = list_get(t, offnodo);
+		else {
+
+			log_error(logger,
+					"No existen nodos disponibles para la escritura pedida");
+			break;
+		}
+
+		// Reseteo si se seteo el salteo de nodo
+		saltearNodo = 0;
 
 		t_bitarray* bitMapBloque = obtenerBitMapBloques(nodo->id);
 
@@ -1232,23 +1295,43 @@ t_list* obtenerBloquesLibres(int cantBloques) {
 
 			t_idNodoBloque* registro = list_find(res, (void*) estaEnAuxiliar);
 
-			if (!bitarray_test_bit(bitMapBloque, i) && registro == NULL) {
+			if (!bitarray_test_bit(bitMapBloque, i) && registro == NULL
+					&& i < nodo->total) {
 
 				nb = malloc(sizeof(t_idNodoBloque));
 				nb->idBloque = i;
 				nb->idNodo = nodo->id;
 				log_debug(logger, "Bloque: %d - Nodo: %d", i, nodo->id);
-				nodo->libre--;
 
-				list_add(res, nb);
-				break;
+				// Verificando que j sea impar me aseguro que el id de bloque en cuestion es la copia (los pares son originales)
+				if (nodoSeleccionadoAnterior == nodo->id && ((j % 2) != 0)) {
+
+					// Reintento copiar en el siguiente mas liviano (Si existe solo un nodo, va a hacer tantos intentos como bloques tenga el archivo)
+					log_info(logger,
+							"El nodo para la copia es el mismo que el nodo para el original, intentando en proximo nodo");
+
+					saltearNodo = 1;
+
+					j--;
+					break;
+
+				} else {
+					nodoSeleccionadoAnterior = nodo->id;
+					nodo->libre--;
+
+					list_add(res, nb);
+					break;
+
+				}
+
 			}
 		}
 
 	}
 
+	// Rollbackeo si no alcanza o se aborto por mismo nodo
+
 	if (list_size(res) != cantBloques) {
-// No alcanza, deshacer cambios hechos en nodos tomando la lista res
 
 		int j = 0;
 		int i = 0;

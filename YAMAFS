@@ -1,0 +1,54 @@
+#!/bin/bash
+
+while true
+do
+clear
+echo -e " \e[1m\e[95m-------------------------------------------------------------------\e[0m"
+echo "                        -    YAMA FS    -                          "
+echo -e " \e[1m\e[95m-------------------------------------------------------------------\e[0m"
+
+echo -e " \n Welcome to YAMA administration tool. Select the module to install\n"
+echo -e "\t
+         1) YAMA\n\t
+         2) FS\n\t
+         3) MASTER\n\t
+         4) NODE\n\t
+         5) ALL\n\t
+         6) Exit\n\n"
+
+read -p " Please, select an option to continue: "  OPTION
+
+case $OPTION in
+
+    1) # YAMA
+	clear
+	cd yama
+	./install.sh;;
+
+    2) # FS
+	clear
+	cd filesystem
+	./install.sh;;
+
+    3) # MASTER
+	clear
+	cd master
+	./install.sh;;
+
+    4) # NODE
+	clear
+	cd node
+	./install.sh;;
+
+    5) # ALL
+        clear
+	./makeall.sh;;
+    6) #EXIT
+	echo -e " \n Goodbye\n"
+	break;;
+
+    *) #OTHERWISE
+	clear
+	echo "invalid option";;
+esac
+done

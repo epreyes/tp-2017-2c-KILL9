@@ -9,12 +9,18 @@
 
 char* obtainNodeFile(rg_node datos){
 //ESTABLEZCO CONEXIÓN CON OTRO WORKER PARA PEDIR TMP
-	openNodeConnection(datos.node, datos.ip, datos.port);
+	if(openNodeConnection(datos.node, datos.ip, datos.port)){
+		log_warning(logger,"No se pudo conectar con el Nodo %d", datos.node);
+		return NULL;
+	};
+	printf("\nFILE:%s\n",datos.rl_tmp);
 //ENVIO DATOS
-	int bufferSize = sizeof(char)+28;
+	char code = 'R';
+	int bufferSize = sizeof(char)*29;
 	void* buffer = malloc(bufferSize);
-	memcpy(buffer,'R',sizeof(char));
+	memcpy(buffer,&code,sizeof(char));
 	memcpy(buffer+sizeof(char),&(datos.rl_tmp),28);
+	log_info(logger,"Solicitando archivo %s al nodo %d(socket:%d)",datos.rl_tmp,datos.node,socket_nodes[datos.node]);
 	send(socket_nodes[datos.node],buffer,bufferSize,0);
 	free(buffer);
 
@@ -26,7 +32,7 @@ char* obtainNodeFile(rg_node datos){
 	readBuffer(socket_nodes[datos.node],nodeAnswer.fileSize,&(nodeAnswer.file));
 	free(nodeAnswer.file);
 	close(socket_nodes[datos.node]);
-
+	log_info(logger,"Archivo obtenido, conexión con nodo %d(socket:%d) finalizada",datos.node,socket_nodes[datos.node]);
 //GENERO ARCHIVO Y DEVUELVO EL NOMBRE
 	return generateFile(nodeAnswer.file, 'G',socket_nodes[datos.node]);
 }
@@ -35,12 +41,12 @@ char* obtainNodeFile(rg_node datos){
 void sendNodeFile(int worker){
 //OBTENGO DATOS
 	char fileName[28];
-	readBuffer(worker,sizeof(char)*28,fileName);
+	readBuffer(worker,sizeof(char)*28,&fileName);
 	log_trace(logger,"Worker %d Solicitó el archivo %s", worker, fileName);
 
 //RECUPERO ARCHIVO SOLICITADO
 	char* fileContent = NULL;
-	fileContent=serializeFile(fileName);
+	fileContent=serializeFile(fileName+1);
 
 //PREPARO PAQUETE
 	nodeData_rs* answer = malloc(sizeof(nodeData_rs));
@@ -50,7 +56,7 @@ void sendNodeFile(int worker){
 	strcpy(answer->file, fileContent);
 
 //SERIALIZO RESPUESTA
-	log_trace(logger, "Enviando archivo %s a worker %d", worker);
+	log_trace(logger, "Enviando archivo %s a worker por socket %d", worker);
 	int bufferSize = sizeof(char)+sizeof(int)+(answer->fileSize);
 	void* buffer = malloc(bufferSize);
 	memcpy(buffer,&(answer->code),sizeof(char));
@@ -66,12 +72,12 @@ void sendNodeFile(int worker){
 }
 
 //========RESPONDO A MASTER================
-void answerMaster(){
+void answerMaster(char result){
 	int bufferSize = sizeof(char);
 	rg_node_rs* answer = malloc(sizeof(rg_node_rs));
 	void* buffer = malloc(bufferSize);
 
-	answer->result = 'O';
+	answer->result = result;
 	log_info(logger,"Enviando resultado de Reducción Global a Master");
 
 	memcpy(buffer,&(answer->result),sizeof(char));
@@ -97,7 +103,6 @@ void globalReduction(){
 	readBuffer(socket_master,24,&(datos.rg_tmp));					//archivo RG
 	printf("%s %s\n",datos.rg_tmp,datos.rl_tmp);
 
-	char* scriptName = regenerateScript(datos.file,script_reduction,'R',socket_master);
 
 //OBTENIENDO DATOS DE LOS OTROS NODOS
 	readBuffer(socket_master,sizeof(int),&(datos.nodesQuantity));	//cantidad de NODOS
@@ -112,22 +117,24 @@ void globalReduction(){
 	}
 	log_info(logger,"Master %d: Datos de Reducción Global obtenidos",socket_master);
 
+	char* scriptName = regenerateScript(datos.file,script_reduction,'R',socket_master);
 
 	rl_tmp* rlFilesNames = malloc((datos.nodesQuantity+1)*sizeof(rl_tmp)); //+1 por el del anfitrion
-
-/*
-	//genero todos los temps, los guardo y devuelvo el nombre
+	rl_tmp auxFile;
+//genero todos los temps, los guardo y devuelvo el nombre
 	for(i=0;i<(datos.nodesQuantity);++i){
 		strcpy(rlFilesNames[i],obtainNodeFile(datos.nodes[i]));
 		printf("FILE:%s\n",rlFilesNames[i]);
 	}
+	printf("obteniendo archivos\n");
 	strcpy(rlFilesNames[datos.nodesQuantity], datos.rl_tmp);				//pongo último el del anfitrion
 	printf("FILE:%s\n",rlFilesNames[datos.nodesQuantity]);
 	//Aplico reducción (reutilizo funct de redloc)
-	reduceFiles(datos.nodesQuantity+1,rlFilesNames, script_reduction, datos.rg_tmp);
 
-*/
-	answerMaster(); //agregar error
+	char result = reduceFiles(datos.nodesQuantity+1,rlFilesNames, scriptName, datos.rg_tmp);
+
+	answerMaster(result);
 	free(datos.file);
 	free(datos.nodes);
+	log_trace(logger,"Reducción global finalizada");
 };

@@ -17,7 +17,7 @@ char *minorWord(char* word1, char* word2);
 
 void readWord(char *word, FILE *file, int* endFile);
 
-void mergeFiles(char* Aname,char* Bname, char *Cname);
+int mergeFiles(char* Aname,char* Bname, char *Cname);
 
 
 #endif /* HEADERS_APAREO_H_ */

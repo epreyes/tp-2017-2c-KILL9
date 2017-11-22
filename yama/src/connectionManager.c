@@ -50,7 +50,6 @@ int getSizeToSend(void* masterRS) {
 		size = (blocks * sizeof(rl_datos)) + sizeof(char) + sizeof(int);
 		break;
 	case 'G':
-
 		size = (blocks * grSize) + sizeof(char) + sizeof(int);
 		break;
 	case 'S':
@@ -62,20 +61,31 @@ int getSizeToSend(void* masterRS) {
 	case 'E':
 		size = sizeof(char);
 		break;
+	case 'R': {
+		char opCode;
+		memcpy(&opCode, masterRS + sizeof(char), sizeof(char));
+
+		int blocks;
+		memcpy(&blocks, masterRS + sizeof(char) + sizeof(char), sizeof(int));
+		size = (2 * sizeof(char)) + sizeof(int) + (sizeof(tr_datos) * blocks);
+	}
+		break;
 	}
 
 	return size;
 }
 
-int sendResponse(int master, void* masterRS) {
+int sendResponse(int master, void* masterRS, t_job* job) {
 
 	int bytesSent = send(master, masterRS, getSizeToSend(masterRS), 0);
+
 	if (bytesSent > 0) {
-		log_info(yama->log, sendResponseMsg(master, bytesSent, masterRS));
-		free(masterRS);
+		sendResponseMsg(master, bytesSent, masterRS, job);
 	} else {
-		log_error(yama->log, "Error sending response to master.");
+		log_error(yama->log, "Error al enviar la respuesta al Master (%d).",
+				master);
 	}
+	free(masterRS);
 	return bytesSent;
 }
 
@@ -85,7 +95,8 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 	/* Si recibo -1 o 0, el cliente se desconecto o hubo un error */
 	if (nbytes <= 0) {
 		if (nbytes == 0) {
-			log_info(yama->log, "Master %d desconectado!", socket);
+			abortInProcessJobs(socket);
+			log_trace(yama->log, "Master %d desconectado!", socket);
 		} else {
 			log_error(yama->log, "Error al recibir mensajes de master.");
 		}
@@ -97,17 +108,39 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 	else {
 		//proceso el request y obtengo la respuesta
 		void* response = getResponse(socket, *(char*) request);
+		char opRequested = *(char*) request;
 
-		char responseCode;
-		memcpy(&responseCode, response, sizeof(char));
+		char stage;
+		memcpy(&stage, response, sizeof(char));
 
-		if ((responseCode == 'T') || (responseCode == 'L')
-				|| (responseCode == 'G') || (responseCode == 'S')
-				|| (responseCode == 'E')) {
-			sendResponse(socket, response);
+		char status = 'P';
+		t_job* job = list_get(yama->tabla_jobs, getJobIndex(socket, stage, status));
+
+		if (stage == 'A') {
+			memcpy(&opRequested, response + sizeof(char), sizeof(char));
+			status = 'E';
+			job = list_get(yama->tabla_jobs, getJobIndex(socket, opRequested, status));
+		}
+
+		if (stage == 'R') {
+			memcpy(&opRequested, response + sizeof(char), sizeof(char));
+			status = 'P';
+			job = list_get(yama->tabla_jobs, getJobIndex(socket, opRequested, status));
+		}
+
+
+
+		if ( (stage == 'T') ||
+			 (stage == 'L') ||
+			 (stage == 'G') ||
+			 (stage == 'S') ||
+			 (stage == 'A') ||
+			 (stage == 'R') ||
+			 (stage == 'E') ) {
+			sendResponse(socket, response, job);
 		} else {
-			if (responseCode != 'O') {
-				showErrorMessage(response);
+			if (stage != 'O') {
+				showErrorMessage(response, job);
 			}
 		}
 
@@ -130,7 +163,7 @@ void exploreActivity(fd_set* mastersListTemp, fd_set* mastersList) {
 				client = acceptMasterConnection(&(yama->yama_server),
 						&(*mastersList), hightSd);
 
-				log_info(yama->log, "Master %d conectado!", client.socket_id);
+				log_trace(yama->log, "Master %d conectado!", client.socket_id);
 			}
 			/* Si hubo actividad en otro socket, recibo el mensage */
 			else {
@@ -143,7 +176,8 @@ void exploreActivity(fd_set* mastersListTemp, fd_set* mastersList) {
 void waitMastersConnections() {
 
 	if (yama->yama_server.status > -1) {
-		log_info(yama->log, "Proceso YAMA (id: %d) listo para recibir solicitudes de Masters.", getpid());
+		log_info(yama->log, "YAMA listo para recibir solicitudes de Masters.",
+				getpid());
 
 		/* creo las listas de sockets entrantes que seran monitoreadas */
 		fd_set mastersList;
@@ -160,7 +194,7 @@ void waitMastersConnections() {
 			mastersListTemp = mastersList;
 			activity = select(yama->yama_server.higherSocketDesc + 1,
 					&mastersListTemp, NULL, NULL, NULL);
-			if( errno == EINTR ){
+			if ( errno == EINTR) {
 				continue;
 			}
 			if (activity == -1) {

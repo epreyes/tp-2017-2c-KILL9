@@ -9,6 +9,7 @@
 #include "headers/tablesManager.h"
 #include "headers/transformation.h"
 #include <string.h>
+#include <unistd.h>
 
 int getMaxWorkload(Yama* yama) {
 	int max = 0;
@@ -182,7 +183,8 @@ tr_datos* evaluateClock(block_info* blockRecived, int master, int clock,
 						newNode->node_id);
 			}
 
-			return evaluateClock(blockRecived, master, yama->clock, planningParams);
+			return evaluateClock(blockRecived, master, yama->clock,
+					planningParams);
 		}
 	} else {
 		//En el caso de que no se encuentre, se deberá utilizar el siguiente Worker que posea una disponibilidad mayor a 0.
@@ -214,7 +216,8 @@ tr_datos* evaluateClock(block_info* blockRecived, int master, int clock,
 						config_get_int_value(yama->config, "NODE_AVAIL"));
 			}
 		}
-		return evaluateClock(blockRecived, master, yama->clock_aux, planningParams);
+		return evaluateClock(blockRecived, master, yama->clock_aux,
+				planningParams);
 	}
 }
 
@@ -236,35 +239,59 @@ tr_datos* doPlanning(block_info* blockRecived, int master,
 		log_info(yama->log, "Retardo = %d", planigDelay);
 	}
 
-	usleep(planigDelay);
+	sleep(planigDelay);
 	return evaluateClock(blockRecived, master, yama->clock, planningParams);
 }
 
-void* replanTask(int master, int node) {
-	t_list* taskFailed = getTaskFailed(master, node);
-	t_list* replanedTasks = list_create();
+void* replanTask(int master, int node, t_planningParams* params, t_job* job,
+		int jobindex) {
+	if (job->replanificaciones == 1) {
+		log_error(yama->log, "No se puede replanificar el nodo %d, Job %d.",
+				node, job->id);
+		job->replanificaciones++;
+		job->estado = 'E';
+		list_replace(yama->tabla_jobs, jobindex, job);
+		return abortJob(master, node, 'T', job);
+	} else {
+		t_list* taskFailed = getTaskFailed(master, node, job);
+		t_list* replanedTasks = list_create();
+		char* filename = malloc(sizeof(char) * 28);
 
-	int index = 0;
-	for (index = 0; index < list_size(taskFailed); index++) {
-		elem_tabla_estados* elem = list_get(taskFailed, index);
-		block_info* blockInfo = findBlock(elem->block);
-		int node = elem->node;
-		if (elem->node == blockInfo->node1) {
-			node = blockInfo->node2;
-		} else {
-			node = blockInfo->node1;
+		int index = 0;
+		for (index = 0; index < list_size(taskFailed); index++) {
+			elem_tabla_estados* elem = list_get(taskFailed, index);
+			strcpy(filename, elem->fileProcess);
+			block_info* blockInfo = findBlock(elem->block);
+			int node = elem->node;
+
+			if (blockInfo->node1 != 'X' && blockInfo->node2 != 'X') {
+				if (elem->node == blockInfo->node1) {
+					node = blockInfo->node2;
+				} else {
+					node = blockInfo->node1;
+				}
+			} else {
+				log_error(yama->log,
+						"No se puede replanificar el nodo %d, Job %d. No existe duplicado.",
+						node, job->id);
+				job->replanificaciones++;
+				return abortJob(master, node, 'T', job);
+			}
+
+			tr_datos* dataNode = buildNodePlaned(blockInfo, master, node);
+
+			setInStatusTable(job->id, 'T', master, dataNode->nodo,
+					getBlockId(dataNode->tr_tmp), dataNode->tr_tmp,
+					dataNode->bloque, elem->fileProcess);
+			list_add(replanedTasks, dataNode);
 		}
-		tr_datos* dataNode = buildNodePlaned(blockInfo, master, node);
 
-		setInStatusTable('T', master, dataNode->nodo,
-				getBlockId(dataNode->tr_tmp), dataNode->tr_tmp,
-				dataNode->bloque);
-		list_add(replanedTasks, dataNode);
+		job->replanificaciones = 1;
+		list_replace(yama->tabla_jobs, jobindex, job);
+
+		int planigDelay = params->planningDelay;
+		sleep(planigDelay);
+
+		return sortTransformationResponse(replanedTasks, master, filename, job);
 	}
-
-	int planigDelay = config_get_int_value(yama->config,
-			"RETARDO_PLANIFICACION");
-	usleep(planigDelay);
-
-	return sortTransformationResponse(replanedTasks, master);
 }

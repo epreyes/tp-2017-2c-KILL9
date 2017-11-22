@@ -52,12 +52,12 @@ void loadScripts(char* transformScript, char* reductionScript){
 	script_transform=fopen(transformScript,"r");
 	script_reduction=fopen(reductionScript,"r");
 //---valído existencia de los archivos
-	if(script_transform==NULL || script_reduction==NULL){
-		log_error(logger,"no existe el archivo de transformación solicitado");
+	if(script_transform==NULL){
+		log_error(logger,"No existe el archivo de transformación solicitado");
 		exit(1);
 	}
-	if(script_transform==NULL || script_reduction==NULL){
-		log_error(logger,"no existe el archivo de reduccion solicitado");
+	if(script_reduction==NULL){
+		log_error(logger,"No existe el archivo de reduccion solicitado");
 		exit(1);
 	}
 }
@@ -65,7 +65,7 @@ void loadScripts(char* transformScript, char* reductionScript){
 //------------------------------
 
 void loadConfigs(){
-	char* CONFIG_PATH = "../properties/master.properties";
+	char* CONFIG_PATH = "properties/master.properties";
 	config = config_create(CONFIG_PATH);
 	if(!(config_has_property(config,"YAMA_IP"))|| !(config_has_property(config,"YAMA_PUERTO"))){
 		log_error(logger,"error en el archivo de configuración");
@@ -76,7 +76,7 @@ void loadConfigs(){
 
 
 void createLoggers(){
-	char* LOG_PATH = "../logs/master.log";
+	char* LOG_PATH = "logs/master.log";
 	logger = log_create(LOG_PATH,"master",1,LOG_LEVEL_TRACE);
 }
 
@@ -150,3 +150,13 @@ void increaseMetricsError(int* metric){
 	metric[0]++;
 	pthread_mutex_unlock(&errors);
 };
+/*
+void abortJob(){
+	closeConnections();
+	fclose(script_transform);
+	fclose(script_reduction);
+	config_destroy(config);
+	log_destroy(logger);
+	exit(1);
+}
+*/

@@ -14,6 +14,12 @@ void ejecutarConsola() {
 	char param1[100];
 	char param2[100];
 	char param3[2];
+
+	instruccionConsola[0] = '\0';
+	param1[0] = '\0';
+	param2[0] = '\0';
+	param3[0] = '\0';
+
 	printf("FS Yama\nTipear ayuda para ver los comandos disponibles\n");
 	while (1) {
 		printf(">");
@@ -45,12 +51,50 @@ void ejecutarConsola() {
 			continue;
 		}
 
+		// Comando de prueba
+		if (strcmp(instruccionConsola, "copy") == 0) {
+			strcpy(instruccionConsola, "cpfrom");
+			strcpy(param1, "/home/utnso/w.txt");
+			strcpy(param2, ".");
+		}
+
+		if (strcmp(instruccionConsola, "read") == 0) {
+			strcpy(instruccionConsola, "cat");
+			strcpy(param1, "w.txt");
+		}
+
 		if (strcmp(instruccionConsola, INFOARCHIVO) == 0) {
 
+			if (param1[0] == '\0') {
+				printf("Falta parametro archivo\n");
+				instruccionConsola[0] = '\0';
+				param1[0] = '\0';
+				param2[0] = '\0';
+				continue;
+			}
+
 			int estadoArchivo = obtenerEstadoArchivo(param1);
+			t_archivoInfo* info;
+			int i = 0;
 			switch (estadoArchivo) {
 			case 0:
-				printf("Online\n");
+				info = obtenerArchivoInfo(param1);
+				printf("%s: Online\n", param1);
+				printf("Tamanio: %d bytes (", info->tamanio);
+
+				if (info->tipo == BINARIO)
+					printf("BINARIO)\n");
+				else
+					printf("TEXTO)\n");
+
+				for (i = 0; i < list_size(info->bloques); i++) {
+					t_bloqueInfo* bi = list_get(info->bloques, i);
+					printf("Nro Bloque %d : Nodo %d - IdBloque %d\n",
+							bi->nroBloque, atoi(bi->idNodo0), bi->idBloque0);
+					printf("Nro Bloque %d (copia) : Nodo %d - IdBloque %d\n",
+							bi->nroBloque, atoi(bi->idNodo1), bi->idBloque1);
+				}
+				free(info);
 				break;
 			case -1:
 				printf("No existe el archivo\n");
@@ -63,6 +107,7 @@ void ejecutarConsola() {
 			instruccionConsola[0] = '\0';
 			param1[0] = '\0';
 			param2[0] = '\0';
+
 			continue;
 		}
 
@@ -163,14 +208,22 @@ void ejecutarConsola() {
 		}
 
 		if (strcmp(instruccionConsola, LEERARCHIVO) == 0) {
-			char* result = leerArchivo(param1);
+			int errorCode = 0;
+			char* result = leerArchivo(param1, &errorCode);
 
-			if (result == NULL )
+			switch (errorCode) {
+			case -1:
 				printf("No existe el archivo\n");
-			else {
+				break;
+			case -2:
+				printf("Algun nodo se desconecto\n");
+				break;
+			case 0:
 				printf("%s\n", result);
 				free(result);
+				break;
 			}
+
 		}
 
 		if (strcmp(instruccionConsola, ESCRIBIR_ARCHIVO_LOCAL_YAMA) == 0) {
@@ -195,7 +248,7 @@ void ejecutarConsola() {
 			char* lect = mmap((caddr_t) 0, sbuf.st_size, PROT_READ, MAP_SHARED,
 					fd, 0);
 
-			if (lect == NULL ) {
+			if (lect == NULL) {
 				perror("error en map\n");
 				exit(1);
 			}
@@ -216,7 +269,8 @@ void ejecutarConsola() {
 			if (strncmp(param3, "-t", 2) == 0)
 				escribir = escribirArchivo(destino, lect, TEXTO, 0);
 
-			if (strncmp(param3, "-t", 2) != 0 && strncmp(param3, "-b", 2) != 0) {
+			if (strncmp(param3, "-t", 2) != 0
+					&& strncmp(param3, "-b", 2) != 0) {
 				escribir = escribirArchivo(destino, lect, BINARIO,
 						sbuf.st_size);
 			}
@@ -253,6 +307,12 @@ void ejecutarConsola() {
 					printf("El directorio destino no existe\n");
 					log_error(logger, "El directorio destino no existe");
 					break;
+				case ERROR_MISMO_NODO_COPIA:
+					printf(
+							"El bloque copia no debe estar en el mismo nodo que el original\n");
+					log_error(logger,
+							"El bloque copia no debe estar en el mismo nodo que el original");
+					break;
 				}
 
 			}
@@ -265,6 +325,8 @@ void ejecutarConsola() {
 				printf("No existe el archivo\n");
 			if (resultado == -2)
 				printf("No existe el directorio destino\n");
+			if (resultado == -3)
+				printf("Algun nodo se desconecto\n");
 			if (resultado == 0)
 				printf("Escritura en local ok\n");
 		}

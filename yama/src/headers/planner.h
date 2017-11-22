@@ -15,7 +15,7 @@ void addAvailBase(int avail);
 
 void updateAvailability(char* algoritm, int avail);
 
-void* replanTask(int master, int node);
+void* replanTask(int master, int node, t_planningParams* params, t_job* job, int jobindex);
 
 int getMaxWorkload(Yama* yama);
 

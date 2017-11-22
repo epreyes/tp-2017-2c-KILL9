@@ -123,6 +123,8 @@ void* lanzarHiloServidor() {
 				}
 
 				// Agrego el nodo en memoria
+				// Buscarlo en la lista y setearle activo 1 para no repetirlo
+
 				t_nodo* nodo = malloc(sizeof(t_nodo));
 				nodo->id = id_nodo;
 				nodo->libre = block_quantity;  // inicialmente es el total
@@ -136,14 +138,22 @@ void* lanzarHiloServidor() {
 				nodo->direccion[data_size] = '\0';
 
 				nodo->socketNodo = new_fd;
+				nodo->activo = 1;
 
 				log_info(logger,
 						"Nuevo nodo conectado - id: %d - total bloques: %d - direccion worker: %s",
 						id_nodo, block_quantity, worker);
 
-				sem_wait(&listaNodos);
-				list_add(nodos->nodos, nodo);
-				sem_post(&listaNodos);
+				t_nodo* nodAnt = buscarNodoPorId_(id_nodo);
+				if (nodAnt != NULL) {
+					// Estuvo conectado antes->actualizo
+					nodAnt->activo = 1;
+					nodAnt->socketNodo = new_fd;
+				} else {
+					sem_wait(&listaNodos);
+					list_add(nodos->nodos, nodo);
+					sem_post(&listaNodos);
+				}
 
 				// Guardo nodo en nodos.bin
 				guardarConfigNodoEnBin();
@@ -202,6 +212,7 @@ void* lanzarHiloServidor() {
 					}
 
 					// Agrego el nodo en memoria
+					// Buscarlo en la lista y setearle activo 1 para no repetirlo
 
 					t_nodo* nodo = malloc(sizeof(t_nodo));
 					nodo->id = id_nodo;
@@ -211,6 +222,7 @@ void* lanzarHiloServidor() {
 					memcpy(nodo->direccion, worker, data_size);
 					nodo->direccion[data_size] = '\0';
 					nodo->socketNodo = new_fd;
+					nodo->activo = 1;
 
 					free(nodoAnterior);
 
@@ -219,9 +231,16 @@ void* lanzarHiloServidor() {
 							nodo->id, nodo->total, nodo->libre, nodo->direccion,
 							new_fd);
 
-					sem_wait(&listaNodos);
-					list_add(nodos->nodos, nodo);
-					sem_post(&listaNodos);
+					t_nodo* nodAnt = buscarNodoPorId_(id_nodo);
+					if (nodAnt != NULL) {
+						// Estuvo conectado antes->actualizo
+						nodAnt->activo = 1;
+						nodAnt->socketNodo = new_fd;
+					} else {
+						sem_wait(&listaNodos);
+						list_add(nodos->nodos, nodo);
+						sem_post(&listaNodos);
+					}
 
 					// Genero bitmap de gestion de bloques (si no existe)
 					crearBitMapBloquesNodo(nodo);
@@ -290,6 +309,24 @@ void *connection_handler_nodo(void *socket_desc) {
 
 			int nodoId = buscarNodoPorSocket(socketCliente);
 
+			// Busco el nodo en la lista, y le seteo lectFallo en 1 y posteo el semaforo para pasar al proximo for
+
+			sem_wait(&semLista);
+			if (lista != NULL && list_size(lista) > 0) {
+				int z = 0;
+				for (z = 0; z < list_size(lista); z++) {
+					t_lectura* lect = list_get(lista, z);
+					lect->lectFallo = 1;
+					log_info(logger,
+							"El nodo %d se desconecto durante una lectura, marcandolo como falla y reseteando la lectura",
+							nodoId);
+					sem_post(&lect->lecturaOk);
+
+				}
+
+			}
+			sem_post(&semLista);
+
 			// Buscar los archivos que tienen referencia a este nodo y eliminarle una instancia
 			// ****************************+
 			int i = 0;
@@ -297,12 +334,16 @@ void *connection_handler_nodo(void *socket_desc) {
 
 			for (i = 0; i < MAX_DIR_FS; i++) {
 
-				if (dir->padre == -1 && dir->indice != 0)
+				if (dir->padre == -1 && dir->indice != 0) {
+					dir++;
 					continue;
+				}
 
 				t_list* archivosInit = (t_list*) listarArchivos(dir->nombre);
-				if (list_size(archivosInit) == 0)
+				if (list_size(archivosInit) == 0) {
+					dir++;
 					continue;
+				}
 
 				int j = 0;
 
@@ -390,7 +431,8 @@ void *connection_handler_nodo(void *socket_desc) {
 			for (j = 0; j < list_size(nodos->nodos); j++) {
 				t_nodo* nod = list_get(nodos->nodos, j);
 				if (nod->id == nodoId) {
-					list_remove(nodos->nodos, j);
+					//list_remove(nodos->nodos, j);
+					nod->activo = 0;
 					break;
 				}
 
@@ -567,13 +609,15 @@ void procesarPedidoNodo(int codop, int socket) {
 	int idNodo = 0;
 	log_info(logger, "Se recibio codigo %d del nodo", codop);
 
+	idNodo = buscarNodoPorSocket(socket);
+
 	switch (codop) {
 
 	case SET_BLOQUE_OK:
 
 		sem_post(&semEscritura);
 
-		log_info(logger, "Escritura en nodo ok");
+		log_info(logger, "Escritura en nodo %d ok", idNodo);
 
 		break;
 
@@ -582,19 +626,24 @@ void procesarPedidoNodo(int codop, int socket) {
 		recv(socket, &tamBuff, sizeof(int), 0);
 		recv(socket, &nroBloque, sizeof(int), 0);
 
-		idNodo=buscarNodoPorSocket(socket);
-
+		sem_wait(&semLista);
 		for (i = 0; i < list_size(lista); i++) {
 			t_lectura* lect = list_get(lista, i);
 			if (lect->nroBloque == nroBloque) {
-				log_info(logger,"Se recibio respuesta del nodo %d bloque nro %d", idNodo, nroBloque);
-				lect->lectura=malloc(tamBuff);
-				int bytesRecibidos=recv_all(socket, lect->lectura, tamBuff, 0);
+				log_info(logger,
+						"Se recibio respuesta del nodo %d bloque nro %d",
+						idNodo, nroBloque);
+				lect->lectura = malloc(tamBuff);
+				int bytesRecibidos = recv_all(socket, lect->lectura, tamBuff,
+						0);
+
+
 				sem_post(&lect->lecturaOk);
 			}
 		}
+		sem_post(&semLista);
 
-		log_info(logger, "Lectura en nodo ok");
+		log_info(logger, "Lectura en nodo %d ok", idNodo);
 
 		break;
 
@@ -658,8 +707,8 @@ void procesarPedidoWorker(t_header pedido, int socketCliente) {
 		escribir = escribirArchivo(fileName, contenido, TEXTO, 0);
 
 		if (escribir == 0) {
-			log_info(logger, "Escritura de %s realizada con exito", fileName);
-			printf("Escritura ok\n");
+			log_info(logger, "Escritura de store final %s realizada con exito",
+					fileName);
 			codop = 'O';
 			if (send(socketCliente, &codop, sizeof(char), 0) < 0) {
 				log_error(logger,
@@ -696,6 +745,11 @@ void procesarPedidoWorker(t_header pedido, int socketCliente) {
 			case NO_EXISTE_DIR_DESTINO:
 				log_error(logger, "El directorio destino no existe");
 				break;
+			case ERROR_MISMO_NODO_COPIA:
+				log_error(logger,
+						"El bloque copia no debe estar en el mismo nodo que el original");
+				break;
+
 			}
 
 		}
@@ -724,12 +778,16 @@ int habilitarBloques(t_nodo* nodo) {
 
 	for (i = 0; i < MAX_DIR_FS; i++) {
 
-		if (dir->padre == -1 && dir->indice != 0)
+		if (dir->padre == -1 && dir->indice != 0) {
+			dir++;
 			continue;
+		}
 
 		t_list* archivosInit = (t_list*) listarArchivos(dir->nombre);
-		if (list_size(archivosInit) == 0)
+		if (list_size(archivosInit) == 0) {
+			dir++;
 			continue;
+		}
 
 		int j = 0;
 

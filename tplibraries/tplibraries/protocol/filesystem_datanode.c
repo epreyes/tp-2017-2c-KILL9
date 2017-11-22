@@ -20,11 +20,15 @@ t_leerBloque* recibirPaquete(int fd) {
 	if (ret == 0) {
 		return NULL;
 	}
-	recv(fd, &paqueteRecivido->idBloque, sizeof(int), MSG_WAITALL);
-//	printf("idb: %d\n",paqueteRecivido->idBloque);
-	recv(fd, &paqueteRecivido->finByte, sizeof(int), MSG_WAITALL);
-//	printf("finb: %d\n",paqueteRecivido->finByte);
-//	paqueteRecivido->contenido=malloc(sizeof(char)* paqueteRecivido->finByte);
-//	recv(fd, paqueteRecivido->contenido,sizeof(char)* paqueteRecivido->finByte, MSG_WAITALL);
+	ret =recv(fd, &paqueteRecivido->idBloque, sizeof(int), MSG_WAITALL);
+
+	if (ret == 0) {
+		return NULL;
+	}
+	 ret = recv(fd, &paqueteRecivido->finByte, sizeof(int), MSG_WAITALL);
+
+	if (ret == 0) {
+		return NULL;
+	}
 	return paqueteRecivido;
 }

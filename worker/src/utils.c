@@ -38,6 +38,7 @@ char* regenerateScript(char* fileContent, FILE* script, char operation, int sock
 
 void loadConfigs(){
 	char* CONFIG_PATH = "properties/worker.properties";
+
 	if(!(config = config_create(CONFIG_PATH))){
 		log_error(logger, "No se pudo cargar el archivo de configuración");
 		exit(1);
@@ -52,7 +53,7 @@ void loadConfigs(){
 
 
 void createLoggers(){
-	char* LOG_PATH = "../logs/worker.log";
+	char* LOG_PATH = "logs/worker.log";
 	if(logger = log_create(LOG_PATH,"worker",1,LOG_LEVEL_TRACE)){
 		log_info(logger, "Logger inicializado");
 	}else{
@@ -73,6 +74,15 @@ char* generateScriptName(char operation, int master){
 	asprintf(&name, "tmp_scripts/%c%d-%ld",operation,master,timestamp);
 	return name;
 }
+
+char* generateAuxFile(){
+	char* name = malloc(sizeof(char)*28);
+	long timestamp = current_timestamp();
+	asprintf(&name, "/tmp/%ld-RL-MIXFILES",timestamp);
+	return name;
+}
+
+
 
 int readBuffer(int socket,int size,void* destiny){
 	void* buffer = malloc(size);
@@ -119,6 +129,7 @@ char* generateFile(char* fileContent, char operation, int socket){
 	FILE* file = fopen(fileName,"w");
 	if(file == NULL){
 		log_error(logger,"Error al crear el archivo %s", fileName);
+		return NULL;
 		//abortar y comunicar a Master
 	}
 	fputs(fileContent,file);
@@ -127,6 +138,26 @@ char* generateFile(char* fileContent, char operation, int socket){
 	log_info(logger,"Archivo almacenado en \"%s\"", fileName);
 	return fileName;
 };
+
+
+
+char* generateBinFile(char* fileContent){
+	char* fileName = generateAuxFile();
+	FILE* file = fopen(fileName+1,"w");
+	if(file == NULL){
+		log_error(logger,"Error al crear el archivo %s", fileName);
+		return NULL;
+	}
+	fputs(fileContent,file);
+	fclose(file);
+
+	log_info(logger,"Archivo tmp del contenido almacenado en \"%s\"", fileName);
+	return fileName;
+};
+
+
+
+
 
 static void
 check (int test, const char * message, ...)

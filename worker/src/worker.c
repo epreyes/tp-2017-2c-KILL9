@@ -14,11 +14,11 @@
 int main(){
 	createLoggers();
 	loadConfigs();
-	//map_data_node();
+	map_data_node();
 	generateTempsFolder();
+	//openFileSystemConnection();
 	loadServer();
 	//-------------
-	//openFileSystemConnection();
 	log_destroy(logger);
 	config_destroy(config);
 	return EXIT_SUCCESS;

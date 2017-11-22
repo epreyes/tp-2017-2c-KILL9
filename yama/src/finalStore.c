@@ -6,12 +6,12 @@
  */
 #include "headers/finalStore.h"
 
-int allGlobalReductionProcesFinish(int master) {
+int allGlobalReductionProcesFinish(int master, int jobid) {
 	int response = 0;
 	int index = 0;
 	for (index = 0; index < list_size(yama->tabla_estados); index++) {
 		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
-		if (elem->master == master && elem->op == 'G') {
+		if (elem->job == jobid && elem->master == master && elem->op == 'G') {
 			if (elem->status == 'P' || elem->status == 'E') {
 				response = 0;
 				return response;
@@ -48,7 +48,7 @@ t_list* findGlobalReductionPlaned(int master) {
 		elem_tabla_GR_planificados* elem = list_get(yama->tabla_GR_planificados,
 				i);
 		if (elem->master == master) {
-			list_add(planed_list, elem->data);
+			list_add(planed_list, elem);
 			itemsToRemove++;
 		}
 	}
@@ -83,11 +83,14 @@ void viewFinalStoreResponse(void* response) {
 }
 
 
-void* processFinalStore(int master) {
-	if (allGlobalReductionProcesFinish(master)) {
+void* processFinalStore(int master, int jobid) {
+	if (allGlobalReductionProcesFinish(master, jobid)) {
 		t_list* planed = findGlobalReductionPlaned(master);
 
-		rg_datos* elem = list_get(planed, 0);
+		elem_tabla_GR_planificados* data = list_get(planed, 0);
+
+		rg_datos* elem = malloc(sizeof(rg_datos));
+		memcpy(elem, data->data, sizeof(rg_datos));
 
 		int fsSize = sizeof(char) * 41 + sizeof(int) * 2;
 
@@ -107,10 +110,11 @@ void* processFinalStore(int master) {
 				finalStoreRes + sizeof(char) + sizeof(int) + sizeof(char) * 16
 						+ sizeof(int), elem->rg_tmp, sizeof(char) * 24);
 
-		setInStatusTable('S', master, elem->nodo, 0,
-				elem->rg_tmp, 0);
+		setInStatusTable(jobid, 'S', master, elem->nodo, 0,
+				elem->rg_tmp, 0, data->fileName);
 		increaseNodeCharge(elem->nodo);
 
+		free(elem);
 		return finalStoreRes;
 	} else {
 		log_warning(yama->log, "La reducción global debe terminar antes de empezar el almacenamiento final.");
