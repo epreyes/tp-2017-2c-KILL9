@@ -33,7 +33,7 @@ void viewTransformationResponse(void* response) {
 		memcpy(data,
 				response + sizeAdded + (i * sizeof(tr_datos)),
 				sizeof(tr_datos));
-		printf("\n%d - %d - %s - %d\n", data->bloque, data->nodo, data->ip,
+		printf("\nRespuesta de transformacion-> bloque: %d - nodo: %d - ip: %s - puerto: %d\n", data->bloque, data->nodo, data->ip,
 				data->port);
 	}
 }
@@ -65,6 +65,7 @@ void getTmpName(tr_datos* nodeData, int op, int blockId, int masterId) {
 			blockId);
 
 	strcpy(nodeData->tr_tmp, name);
+	free(name);
 }
 
 t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
@@ -88,6 +89,10 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 
 		//Planifico
 		tr_datos* nodeData = doPlanning(blockInfo, master, planningParams);
+
+		free(planningParams);
+		printf("\nPlanifico -> Bloque: %d - Nodo: %d - Ip: %s - Puerto: %d - Temporal: %s\n", nodeData->bloque, nodeData->nodo, nodeData->ip, nodeData->port, nodeData->tr_tmp);
+
 		//agrego a la lista de respuesta
 		list_add(nodeList, nodeData);
 

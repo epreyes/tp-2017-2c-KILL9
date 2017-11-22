@@ -103,8 +103,13 @@ void* getFileSystemInfo(char* name) {
 					MSG_WAITALL) > 0) {
 						fsInfo = malloc(sizeof(int) + infoSize);
 						memcpy(fsInfo, &infoSize, sizeof(int));
+
 						memcpy(fsInfo + sizeof(int), buffer, infoSize);
+
+						block_info* info = (block_info*)buffer;
+
 						free(buffer);
+						//showFSInfo( fsInfo );
 						addToNodeList(fsInfo);
 					} else {
 						log_error(yama->log,
@@ -148,6 +153,31 @@ int findFile(char* fileName) {
 	}
 
 	return -1;
+}
+
+/*int block_id;
+		int node1;
+		char node1_ip[15];
+		int node1_port;
+		int node1_block;
+
+		int node2;
+		char node2_ip[15];
+		int node2_port;
+		int node2_block;
+		int end_block;*/
+
+void showFSInfo(void* fsInfo ){
+	int blocks;
+	memcpy(&blocks, fsInfo, sizeof(int));
+	printf("\nRecibo del FS %d bloques.\n");
+	int index = 0;
+	for(index = 0; index < blocks ; index++){
+		block_info* info = malloc(sizeof(block_info));
+		memcpy( info, fsInfo+sizeof(int)+(index*sizeof(block_info)), sizeof(block_info) );
+		printf("Bloque id: %d - finDeBloque: %d | nodo1: %d - nodo1_ip: %s - nodo1_port: %d | nodo2: %d - nodo2_ip: %s - nodo2_port: %d\n",
+				info->block_id, info->end_block, info->node1, info->node1_ip, info->node1_port, info->node2, info->node2_ip, info->node2_port);
+	}
 }
 
 elem_info_archivo* getFileInfo(int master, t_job* job) {

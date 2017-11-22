@@ -80,6 +80,17 @@ void viewPlannedTable() {
 	}
 }
 
+void deleteFromPlanedTable(int master, int node) {
+	int index = 0;
+	for (index = 0; index < list_size(yama->tabla_T_planificados); index++) {
+		elem_tabla_planificados* planed = list_get(yama->tabla_T_planificados,
+				index);
+		if( planed->master == master && planed->data->nodo == node){
+			list_remove(yama->tabla_T_planificados, index);
+		}
+	}
+}
+
 void viewFileInfo() {
 	printf(
 			"\nLa cantidad de entradas de la tabla de informacion de archivos: %d\n",
@@ -146,7 +157,9 @@ void addToNodeList(void* fsInfo) {
 				list_add(yama->tabla_nodos, node);
 			}
 		}
+		free(b);
 	}
+	free(size);
 	free(nodes);
 }
 
@@ -202,6 +215,7 @@ char* getStageName(char op) {
 		return "Almacenamiento Final";
 		break;
 	}
+	return "";
 }
 
 char* getStatusName(char status) {
@@ -219,6 +233,7 @@ char* getStatusName(char status) {
 		return "Abortado";
 		break;
 	}
+	return "";
 }
 
 void viewStateTable() {

@@ -91,6 +91,7 @@ void getGlobalReductionTmpName(rg_datos* nodeData, int op, int blockId,
 	asprintf(&name, "%s%ld-RG-M%03d", "/tmp/", timestamp, masterId);
 
 	strcpy(nodeData->rg_tmp, name);
+	free(name);
 }
 
 int allLocalReductionProcesFinish(int master, int jobid) {
@@ -134,10 +135,14 @@ int getLastChargedNode(t_list* planed) {
 			if( elemNodeMin->tasks_in_progress > nextNodeElem->tasks_in_progress){
 				minNode = elem;
 			}
+
+			free(elem);
 		}
 
 	}
-	return minNode->nodo;
+	int minNodeId = minNode->nodo;
+	free(minNode);
+	return minNodeId;
 }
 
 void* processGlobalReduction(int master, int jobid) {
@@ -172,6 +177,8 @@ void* processGlobalReduction(int master, int jobid) {
 			globalRedData->port = elem->port;
 			strcpy(globalRedData->ip, elem->ip);
 			strcpy(globalRedData->rl_tmp, elem->rl_tmp);
+
+			free(elem);
 
 			if (enchargeSeted == 0
 					&& globalRedData->nodo == enchargeNode) {
@@ -208,9 +215,14 @@ void* processGlobalReduction(int master, int jobid) {
 							+ 24 * sizeof(char), &(globalRedData->encargado),
 					sizeof(char));
 
+
+			free(globalRedData);
 		}
 		memcpy(globalReductionRes + sizeof(char) + sizeof(int), dataGR,
 				tamData * list_size(planed));
+
+		free(dataGR);
+
 		return globalReductionRes;
 	} else {
 		log_warning(yama->log,

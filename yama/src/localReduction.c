@@ -58,14 +58,12 @@ void viewLocalReductionResponse(void* response) {
 	}
 }
 
-void getLocalReductionTmpName(rl_datos* nodeData, int op, int blockId,
-		int masterId) {
+char* getLocalReductionTmpName(int blockId, int masterId) {
 	char* name;
 	long timestamp = current_timestamp();
-	asprintf(&name, "%s%ld-%c-M%03d-B%03d", "/tmp/", timestamp, op, masterId,
-			blockId);
+	asprintf(&name, "%s%ld-L-M%03d-N%03d", "/tmp/", timestamp, masterId, blockId);
 
-	strcpy(nodeData->rl_tmp, name);
+	return name;
 }
 
 int allTransformProcesFinish(int master, int jobid) {
@@ -97,6 +95,9 @@ void* processLocalReduction(int master, int job) {
 		memcpy(localReductionRes + sizeof(char), &size, sizeof(int));
 
 		int index = 0;
+		int actualNode = -1;
+		char name[28];
+
 		for (index = 0; index < list_size(planed); index++) {
 			elem_tabla_planificados* elemData = list_get(planed, index);
 			tr_datos* elem = malloc(sizeof(tr_datos));
@@ -106,8 +107,15 @@ void* processLocalReduction(int master, int job) {
 			localRedData->port = elem->port;
 			strcpy(localRedData->ip, elem->ip);
 			strcpy(localRedData->tr_tmp, elem->tr_tmp);
-			getLocalReductionTmpName(localRedData, 'L',
-					getBlockId(elem->tr_tmp), master);
+
+			if( actualNode != elem->nodo ){
+				actualNode = elem->nodo;
+				strcpy( name, getLocalReductionTmpName(elem->nodo, master) );
+			}
+			strcpy(localRedData->rl_tmp, name);
+
+			free(elem);
+
 			if (!existInStatusTable(job, 'L',
 					localRedData->nodo)) {
 				setInStatusTable(job, 'L', master, localRedData->nodo,
@@ -123,6 +131,8 @@ void* processLocalReduction(int master, int job) {
 					localReductionRes + sizeof(char) + sizeof(int)
 							+ (index * sizeof(rl_datos)), localRedData,
 					sizeof(rl_datos));
+
+			free(localRedData);
 		}
 		return localReductionRes;
 	} else {
