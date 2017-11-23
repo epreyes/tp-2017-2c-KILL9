@@ -63,6 +63,16 @@ void ejecutarConsola() {
 			strcpy(param1, "w.txt");
 		}
 
+		if (strcmp(instruccionConsola, ELIMINAR) == 0) {
+
+			int eliminar = eliminarBloque(param1, atoi(param2), atoi(param3));
+			if (eliminar == -1)
+				printf("No se pudo eliminar el bloque\n");
+			else
+				printf("Eliminacion de bloque ok\n");
+
+		}
+
 		if (strcmp(instruccionConsola, INFOARCHIVO) == 0) {
 
 			if (param1[0] == '\0') {
@@ -121,6 +131,28 @@ void ejecutarConsola() {
 			continue;
 		}
 
+		if (strcmp(instruccionConsola, MD5SUM) == 0) {
+
+			if (param1[0] == '\0') {
+				printf("Falta parametro archivo\n");
+				instruccionConsola[0] = '\0';
+				param1[0] = '\0';
+				continue;
+			}
+
+			char* md5 = obtenerMd5(param1);
+
+			if (md5 == NULL ) {
+				printf("No existe el archivo indicado por parametro\n");
+			} else {
+				printf("hash: %s\n", md5);
+
+			}
+			instruccionConsola[0] = '\0';
+			param1[0] = '\0';
+
+		}
+
 		if (strcmp(instruccionConsola, CREAR_DIRECTORIO) == 0) {
 
 			if (param1[0] == '\0') {
@@ -174,6 +206,11 @@ void ejecutarConsola() {
 			printf("Copia un archivo de yama a un directorio del fs nativo\n");
 			printf("cat [PathArchivoYama]\n");
 			printf("Muestra el contenido de un archivo por consola\n");
+			printf("md5sum [PathArchivoYama]\n");
+			printf("Obtiene el hash md5 del archivo indicado\n");
+			printf("infoarchivo [PathArchivoYama]\n");
+			printf("Obtiene la composicion de bloques y nodos del archivo\n");
+
 		}
 
 		// Nuevos comandos
@@ -248,7 +285,7 @@ void ejecutarConsola() {
 			char* lect = mmap((caddr_t) 0, sbuf.st_size, PROT_READ, MAP_SHARED,
 					fd, 0);
 
-			if (lect == NULL) {
+			if (lect == NULL ) {
 				perror("error en map\n");
 				exit(1);
 			}

@@ -17,6 +17,8 @@
 #define ESTADONODOS "estadoNodos"
 #define LEERARCHIVO "cat"
 #define COPIARDEYAMAALOCAL "cpto"
+#define ELIMINAR "rm"
+#define MD5SUM "md5sum"
 
 #include "fs_comandos.h"
 

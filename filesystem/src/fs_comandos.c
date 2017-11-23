@@ -48,7 +48,7 @@ int escribirArchivo(char* path, char* contenido, int tipo, int tamanio) {
 	if (errorSeleccionNodos == -1)
 		return ERROR_MISMO_NODO_COPIA;
 
-	if (bl == NULL) {
+	if (bl == NULL ) {
 		return SIN_ESPACIO;
 	}
 
@@ -496,10 +496,10 @@ char* leerArchivo(char* path, int* codigoError) {
 
 	int reiniciar = 0;
 
-	if (archivo == NULL) {
+	if (archivo == NULL ) {
 		// No existe el archivo
 		*codigoError = -1;
-		return NULL;
+		return NULL ;
 	}
 
 	char* respuesta;
@@ -513,11 +513,11 @@ char* leerArchivo(char* path, int* codigoError) {
 
 		t_list* nodosALeer = obtenerNodosALeer(archivo->bloques, nodosExc);
 
-		if (nodosALeer == NULL) {
+		if (nodosALeer == NULL ) {
 			log_error(logger,
 					"No hay nodos conectados para realizar la lectura pedida");
 			*codigoError = -2;
-			return NULL;
+			return NULL ;
 		}
 
 		// Preparo lista t_lectura
@@ -554,7 +554,7 @@ char* leerArchivo(char* path, int* codigoError) {
 			t_nodo* nodo = buscarNodoPorId_2(lect->idNodo);
 			sem_post(&semLista);
 
-			if (nodo == NULL) {
+			if (nodo == NULL ) {
 
 				// Si los excluidos son todos los de las peticiones (y no estan conectados)->aborto lectura, caso contrario reintento lectura
 
@@ -573,7 +573,7 @@ char* leerArchivo(char* path, int* codigoError) {
 				log_error(logger,
 						"Hubo un error leyendo los bloques del archivo (posiblemente algun datanode caido)");
 				*codigoError = -2;
-				return NULL;
+				return NULL ;
 			}
 
 		}
@@ -605,7 +605,7 @@ char* leerArchivo(char* path, int* codigoError) {
 						"Error en la lectura, algun nodo se desconecto, reseteando lectura con otra estrategia de nodos");
 				*codigoError = -2;
 				sem_post(&semLista);
-				return NULL;
+				return NULL ;
 
 			}
 
@@ -787,15 +787,15 @@ t_list* obtenerNodosALeer(t_list* bloques, t_list* nodosExcluir) {
 	int k = 0;
 
 	int encontro = 0;
-	int iteraciones=0;
+	int iteraciones = 0;
 
 	// Selecciono nodos
 	for (i = 0; i < list_size(resultado); i++) {
 		encontro = 0;
 		iteraciones++;
-		if (iteraciones>list_size(resultado)*2) {
-			log_debug(logger,"Iteraciones: %d", iteraciones);
-			return NULL;
+		if (iteraciones > list_size(resultado) * 2) {
+			log_debug(logger, "Iteraciones: %d", iteraciones);
+			return NULL ;
 		}
 
 		for (k = 0; k < list_size(nodosSinRepetir); k++) {
@@ -810,7 +810,6 @@ t_list* obtenerNodosALeer(t_list* bloques, t_list* nodosExcluir) {
 			}
 		}
 
-
 		// Si no encontro nodo sin uso en 0->reseteo todos y vuelvo a buscar
 		if (encontro == 0) {
 			i--;
@@ -822,7 +821,7 @@ t_list* obtenerNodosALeer(t_list* bloques, t_list* nodosExcluir) {
 		}
 
 	}
-	log_debug(logger,"Iteraciones: %d", iteraciones);
+	log_debug(logger, "Iteraciones: %d", iteraciones);
 
 	list_destroy(nodosSinRepetir);
 
@@ -834,7 +833,7 @@ t_list* obtenerNodosALeer(t_list* bloques, t_list* nodosExcluir) {
 int copiarDesdeYamaALocal(char* origen, char* destino) {
 
 	t_archivoInfo* aInfo = obtenerArchivoInfo(origen);
-	if (aInfo == NULL) {
+	if (aInfo == NULL ) {
 		return -1;
 	}
 
@@ -872,9 +871,9 @@ int copiarDesdeYamaALocal(char* origen, char* destino) {
 
 	// mapeo a memoria
 	destinoArchivo = mmap((caddr_t) 0, aInfo->tamanio, PROT_READ | PROT_WRITE,
-	MAP_SHARED, fd, 0);
+			MAP_SHARED, fd, 0);
 
-	if (destinoArchivo == NULL) {
+	if (destinoArchivo == NULL ) {
 		perror("error en map\n");
 		exit(1);
 	}
@@ -883,5 +882,204 @@ int copiarDesdeYamaALocal(char* origen, char* destino) {
 	memcpy(destinoArchivo, lectura, aInfo->tamanio);
 
 	return 0;
+
+}
+
+// Elimina un bloque de un nodo, eliminando la referencia del archivo indicado
+int eliminarBloque(char* pathArchivo, int nroBloque, int nroCopia) {
+
+	// Primero identifico a que archivo pertence el bloque a eliminar
+	// Elimino una instancia del bloque del archivo en la lista tablaArchivos (mientras me quede 1 instancia del bloque)
+
+	t_archivoInfo* archInfo = obtenerArchivoInfo(pathArchivo);
+
+	if (archInfo == NULL ) {
+		return -1;
+	}
+
+	char* dirArchivo = obtenerDirArchivo(pathArchivo);
+
+	// Traduzco a path nativo (porque la lista de archivos tiene los archivos en este formato)
+	int indiceDir = 0;
+	if (strncmp(pathArchivo, "./", 2) == 0)
+		indiceDir = 0;
+	else
+		indiceDir = obtenerIndiceDir(dirArchivo);
+
+	char *dirMetadata = string_new();
+
+	string_append(&dirMetadata, fs->m_archivos);
+	string_append(&dirMetadata, string_itoa(indiceDir));
+	string_append(&dirMetadata, "/");
+	string_append(&dirMetadata, obtenerNombreArchivo(pathArchivo));
+	string_append(&dirMetadata, ".csv");
+
+	int k = 0;
+	for (k = 0; k < list_size(archInfo->bloques); k++) {
+
+		t_bloqueInfo* bi = list_get(archInfo->bloques, k);
+
+		if ((bi->nroBloque == nroBloque)) {
+
+			// Busco en la lista de archivos el archivo que corresponda con el bloque indicado a eliminar (idBloque, idNodo)
+			int y = 0;
+			int z = 0;
+
+			sem_wait(&semTablaArchivos);
+
+			for (y = 0; y < list_size(tablaArchivos); y++) {
+				t_archivoInit* lb = list_get(tablaArchivos, y);
+				if (strcmp(lb->identificador, dirMetadata) == 0) {
+					// Busco su bloque (en lb) y elimino una instancia (mientras no quede 0)
+					int elimino = 0;
+					for (z = 0; z < list_size(lb->bloques); z++) {
+						t_bloqueInit* bli = list_get(lb->bloques, z);
+
+						if (bli->nroBloque == nroBloque) {
+
+							// Elimino solo si tiene mas de 1 instancia
+							if (bli->cantInstancias > 1) {
+								bli->cantInstancias -= 1;
+								elimino = 1;
+								free(archInfo);
+								log_info(logger,
+										"Eliminando nro bloque %d - copia %d",
+										nroBloque, nroCopia);
+
+								// Elimino de metadata
+								log_info(logger,
+										"Abriendo archivo de metadata para eliminar: %s",
+										dirMetadata);
+								eliminarBloqueArchivoMd(dirMetadata, nroBloque,
+										nroCopia);
+
+								free(dirMetadata);
+
+								log_info(logger,
+										"Se elimino bloque de metadata de archivo");
+
+								return 0;
+
+							}
+
+						}
+
+					}
+
+					if (elimino == 0) {
+						// No se puede eliminar
+						log_error(logger,
+								"No se pudo eliminar el bloque pedido, es el unico del archivo");
+						free(dirMetadata);
+						free(archInfo);
+						return -1;
+					}
+
+				}
+
+			}
+
+			sem_post(&semTablaArchivos);
+
+		}
+
+	}
+
+	free(dirMetadata);
+	free(archInfo);
+
+	log_error(logger, "No se pudo eliminar el bloque pedido porque no existe");
+
+	return -1;
+
+}
+
+// Elimina una entrada de bloque de un archivo de su metadata
+void eliminarBloqueArchivoMd(char* dirMetadata, int nroBloque, int nroCopia) {
+	t_config * metadata = config_create(dirMetadata);
+
+	if (metadata == NULL ) {
+		log_error(logger, "No se pudo abrir la metadata de archivo %s",
+				dirMetadata);
+		return;
+	}
+
+	char* bloque = string_new();
+	string_append(&bloque, "BLOQUE");
+	string_append(&bloque, string_itoa(nroBloque));
+	string_append(&bloque, "COPIA");
+	string_append(&bloque, string_itoa(nroCopia));
+
+	if (config_has_property(metadata, bloque)) {
+
+		config_remove_key(metadata, bloque);
+		config_save(metadata);
+
+	} else {
+		return;
+	}
+
+}
+
+void config_remove_key(t_config * config, char *key) {
+	log_debug(logger, "Eliminado clave de archivo: %s", key);
+	dictionary_remove(config->properties, key);
+
+}
+
+char* obtenerMd5(char* pathArchivo) {
+
+	t_archivoInfo* archInfo = obtenerArchivoInfo(pathArchivo);
+
+	if (archInfo == NULL )
+		return NULL;
+
+	int escribir = copiarDesdeYamaALocal(pathArchivo, "/tmp");
+
+	char* tmpsalida = string_new();
+	string_append(&tmpsalida, "/tmp/");
+	string_append(&tmpsalida, obtenerNombreArchivo(pathArchivo));
+
+	char* comando = malloc(26 + strlen(tmpsalida));
+
+	asprintf(&comando, "md5sum %s > /tmp/md5temporal", tmpsalida);
+
+	log_info(logger, "Ejecutando comando %s", comando);
+
+	system(comando);
+	free(comando);
+
+	int fd;
+
+	if ((fd = open("/tmp/md5temporal", O_RDWR)) == -1) {
+
+		log_error(logger, "No se pudo abrir el archivo: %s", tmpsalida);
+		exit(1);
+
+	}
+
+	struct stat sbuf;
+
+	if (stat(tmpsalida, &sbuf) == -1) {
+		perror("stat");
+		exit(1);
+	}
+
+	char* md5 = malloc(sizeof(char) * sbuf.st_size);
+
+
+	md5 = mmap((caddr_t) 0, sbuf.st_size, PROT_READ, MAP_SHARED, fd, 0);
+
+	if (md5 == NULL ) {
+		perror("error en map\n");
+		exit(1);
+	}
+
+	log_info(logger, "Md5sum de archivo obtenido: %s (%d)", md5,
+			sizeof(char) * sbuf.st_size);
+
+	free(tmpsalida);
+
+	return md5;
 
 }
