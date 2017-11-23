@@ -22,7 +22,7 @@
 
 #include "messages.h"
 
-static char* CONFIG_PATH = "./config/yamaConfig.properties";
+static char* CONFIG_PATH = "./config/yama.properties";
 static char* LOG_PATH = "./log/yama.log";
 
 typedef struct {

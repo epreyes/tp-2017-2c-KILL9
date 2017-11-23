@@ -135,8 +135,6 @@ int getLastChargedNode(t_list* planed) {
 			if( elemNodeMin->tasks_in_progress > nextNodeElem->tasks_in_progress){
 				minNode = elem;
 			}
-
-			free(elem);
 		}
 
 	}

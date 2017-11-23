@@ -239,7 +239,10 @@ tr_datos* doPlanning(block_info* blockRecived, int master,
 		log_info(yama->log, "Retardo = %d", planigDelay);
 	}
 
-	sleep(planigDelay);
+	long planingDelay = planningParams->planningDelay * 1000;
+	printf("\nvalor para el sleep %ld\n", planingDelay);
+	usleep(planingDelay);
+
 	return evaluateClock(blockRecived, master, yama->clock, planningParams);
 }
 
@@ -289,8 +292,9 @@ void* replanTask(int master, int node, t_planningParams* params, t_job* job,
 		job->replanificaciones = 1;
 		list_replace(yama->tabla_jobs, jobindex, job);
 
-		int planigDelay = params->planningDelay;
-		sleep(planigDelay);
+		long planingDelay = params->planningDelay * 1000;
+		printf("\nvalor para el sleep %ld\n", planingDelay);
+		usleep(planingDelay);
 
 		return sortTransformationResponse(replanedTasks, master, filename, job);
 	}
