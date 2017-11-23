@@ -90,7 +90,7 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 		//Planifico
 		tr_datos* nodeData = doPlanning(blockInfo, master, planningParams);
 
-		free(planningParams);
+
 		printf("\nPlanifico -> Bloque: %d - Nodo: %d - Ip: %s - Puerto: %d - Temporal: %s\n", nodeData->bloque, nodeData->nodo, nodeData->ip, nodeData->port, nodeData->tr_tmp);
 
 		//agrego a la lista de respuesta
@@ -103,7 +103,7 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 
 		free(blockInfo);
 	}
-
+	free(planningParams);
 	return nodeList;
 }
 
