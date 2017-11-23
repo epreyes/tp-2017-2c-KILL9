@@ -35,13 +35,12 @@ void* processOk(int master) {
 	decreaseNodeCharge(nodo);
 
 	log_info(yama->log, "Operacion %c OK en nodo %d, bloque %d, Master %d.", opCode, nodo, bloque, master);
-
+	viewNodeTable();
 	if( opCode == 'S' ){
 		job->estado = 'F';
 		list_replace(yama->tabla_jobs, jobIndex, job);
 		log_trace(yama->log, "Job %d Finalizado con exito. Master %d.", job->id, master);
-		viewNodeTable();
-		viewStateTable();
+		deleteNodeErrors();
 	}
 
 	buffer = malloc(sizeof(char));

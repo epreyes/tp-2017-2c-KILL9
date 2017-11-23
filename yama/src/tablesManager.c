@@ -59,9 +59,9 @@ void viewNodeTable() {
 	for (index = 0; index < list_size(yama->tabla_nodos); index++) {
 		elem_tabla_nodos* node = list_get(yama->tabla_nodos, index);
 		printf(
-				"ID: %d, Disponibilidad: %d, Tareas en Progreso: %d, Tareas Finalizadas: %d\n",
+				"ID: %d, Disponibilidad: %d, Tareas en Progreso: %d, Tareas Finalizadas: %d, errores: %d\n",
 				node->node_id, node->availability, node->tasks_in_progress,
-				node->tasts_done);
+				node->tasts_done, node->errors);
 	}
 	printf("----------------------------------------------\n");
 }
@@ -80,7 +80,7 @@ void viewPlannedTable() {
 	}
 }
 
-void deleteOfPlanedListByNode(int items, int node, int  master) {
+void deleteOfPlanedListByNode(int items, int node, int master) {
 	int i = 0;
 	for (i = 0; i < items; i++) {
 		int j = 0;
@@ -102,12 +102,12 @@ void deleteFromPlanedTable(int master, int node) {
 	for (index = 0; index < list_size(yama->tabla_T_planificados); index++) {
 		elem_tabla_planificados* planed = list_get(yama->tabla_T_planificados,
 				index);
-		if( planed->master == master && planed->data->nodo == node){
+		if (planed->master == master && planed->data->nodo == node) {
 			list_add(itemsToRemove, planed);
 		}
 	}
 
-	deleteOfPlanedListByNode( list_size(itemsToRemove), node, master);
+	deleteOfPlanedListByNode(list_size(itemsToRemove), node, master);
 }
 
 void viewFileInfo() {
@@ -172,6 +172,7 @@ void addToNodeList(void* fsInfo) {
 			node->node_id = b->node2;
 			node->tasks_in_progress = 0;
 			node->tasts_done = 0;
+			node->errors = 0;
 			if (strcmp(b->node2_ip, "xxx") != 0) {
 				list_add(yama->tabla_nodos, node);
 			}
@@ -187,6 +188,29 @@ void increaseNodeCharge(int node_id) {
 	elem_tabla_nodos* node = list_get(yama->tabla_nodos, index);
 	node->availability--;
 	node->tasks_in_progress++;
+	if (node->errors > 0) {
+		node->errors = 0;
+	}
+	list_replace(yama->tabla_nodos, index, node);
+}
+
+void deleteNodeErrors() {
+	int index = 0;
+	if (!list_is_empty(yama->tabla_nodos)) {
+		for (index = 0; index < list_size(yama->tabla_nodos); index++) {
+			elem_tabla_nodos* node = list_get(yama->tabla_nodos, index);
+			node->errors = 0;
+			list_replace(yama->tabla_nodos, index, node);
+		}
+	}
+}
+
+void increaseNodeError(int node_id) {
+	int index = findNode(node_id);
+	elem_tabla_nodos* node = list_get(yama->tabla_nodos, index);
+	node->availability = 0;
+	node->tasks_in_progress = 0;
+	node->errors++;
 	list_replace(yama->tabla_nodos, index, node);
 }
 
@@ -364,13 +388,17 @@ void addToGlobalReductionPlanedTable(int master, rg_datos* nodeData,
 
 void updateTasksAborted(int master, int node, char codeOp, t_job* job) {
 	int index = 0;
+	int sentError = 0;
 	for (index = 0; index < list_size(yama->tabla_estados); index++) {
 		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
 		if ((elem->node == node) && (elem->master == master)
 				&& (elem->op == codeOp) && (elem->status == 'P')
 				&& (elem->job == job->id)) {
 			updateStatusTable(master, codeOp, node, elem->node_block, 'E', job);
-			sendErrorToFileSystem(elem->fileProcess);
+			if( sentError == 0){
+				sendErrorToFileSystem(elem->fileProcess);
+				sentError = 1;
+			}
 		}
 	}
 }
