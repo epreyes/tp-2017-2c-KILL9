@@ -40,6 +40,8 @@ void* processOk(int master) {
 		job->estado = 'F';
 		list_replace(yama->tabla_jobs, jobIndex, job);
 		log_trace(yama->log, "Job %d Finalizado con exito. Master %d.", job->id, master);
+		viewNodeTable();
+		viewStateTable();
 	}
 
 	buffer = malloc(sizeof(char));

@@ -44,7 +44,9 @@ void* processNodeError(int master) {
 		params->availBase = yama->availBase;
 		params->planningDelay = yama->planningDelay;
 		deleteFromPlanedTable(master, node);
+
 		response = replanTask(master, node, params, job, jobIndex);
+
 		if( job->replanificaciones == 1 ){
 			log_info(yama->log, "Enviando informacion de replanificacion.");
 		}else{

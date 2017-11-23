@@ -293,7 +293,6 @@ void* replanTask(int master, int node, t_planningParams* params, t_job* job,
 		list_replace(yama->tabla_jobs, jobindex, job);
 
 		long planingDelay = params->planningDelay * 1000;
-		printf("\nvalor para el sleep %ld\n", planingDelay);
 		usleep(planingDelay);
 
 		return sortTransformationResponse(replanedTasks, master, filename, job);

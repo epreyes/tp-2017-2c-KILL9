@@ -80,15 +80,34 @@ void viewPlannedTable() {
 	}
 }
 
+void deleteOfPlanedListByNode(int items, int node, int  master) {
+	int i = 0;
+	for (i = 0; i < items; i++) {
+		int j = 0;
+		for (j = 0; j < list_size(yama->tabla_T_planificados); j++) {
+			elem_tabla_planificados* elem = list_get(yama->tabla_T_planificados,
+					j);
+			if (elem->data->nodo == node && elem->master == master) {
+				list_remove(yama->tabla_T_planificados, j);
+				break;
+			}
+		}
+
+	}
+}
+
 void deleteFromPlanedTable(int master, int node) {
 	int index = 0;
+	t_list* itemsToRemove = list_create();
 	for (index = 0; index < list_size(yama->tabla_T_planificados); index++) {
 		elem_tabla_planificados* planed = list_get(yama->tabla_T_planificados,
 				index);
 		if( planed->master == master && planed->data->nodo == node){
-			list_remove(yama->tabla_T_planificados, index);
+			list_add(itemsToRemove, planed);
 		}
 	}
+
+	deleteOfPlanedListByNode( list_size(itemsToRemove), node, master);
 }
 
 void viewFileInfo() {
