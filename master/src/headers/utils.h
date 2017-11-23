@@ -30,4 +30,6 @@ int sendErrorToYama(char opCode, int node);
 
 void increaseMetricsError(int* metric);
 
+void abort();
+
 #endif /* HEADERS_UTILS_H_ */

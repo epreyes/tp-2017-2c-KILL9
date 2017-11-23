@@ -15,8 +15,7 @@ int main(){
 	createLoggers();
 	loadConfigs();
 	map_data_node();
-	generateTempsFolder();
-	//openFileSystemConnection();
+	//generateTempsFolder();
 	loadServer();
 	//-------------
 	log_destroy(logger);

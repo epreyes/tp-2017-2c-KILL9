@@ -107,7 +107,6 @@ char* serializeFile(char* fileName){
 	if(file==NULL){
 		log_warning(logger,"El archivo %s no existe",fileName);
 	}
-
 //---obtengo el tamaño del archivo
 	fseek(file,0,SEEK_END);
 	fileSize = ftell(file)+1;

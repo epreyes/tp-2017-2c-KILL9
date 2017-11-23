@@ -9,6 +9,8 @@
 
 char* obtainNodeFile(rg_node datos){
 //ESTABLEZCO CONEXIÓN CON OTRO WORKER PARA PEDIR TMP
+	char* file=NULL;
+
 	if(openNodeConnection(datos.node, datos.ip, datos.port)){
 		log_warning(logger,"No se pudo conectar con el Nodo %d", datos.node);
 		return NULL;
@@ -23,18 +25,24 @@ char* obtainNodeFile(rg_node datos){
 	log_info(logger,"Solicitando archivo %s al nodo %d(socket:%d)",datos.rl_tmp,datos.node,socket_nodes[datos.node]);
 	send(socket_nodes[datos.node],buffer,bufferSize,0);
 	free(buffer);
-
 //OBTENGO RESPUESTA
 	nodeData_rs nodeAnswer;
 	readBuffer(socket_nodes[datos.node],sizeof(char),&(nodeAnswer.code));
 	readBuffer(socket_nodes[datos.node],sizeof(int),&(nodeAnswer.fileSize));
 	nodeAnswer.file = malloc(nodeAnswer.fileSize);
-	readBuffer(socket_nodes[datos.node],nodeAnswer.fileSize,&(nodeAnswer.file));
-	free(nodeAnswer.file);
-	close(socket_nodes[datos.node]);
+	readBuffer(socket_nodes[datos.node],(nodeAnswer.fileSize),nodeAnswer.file);
 	log_info(logger,"Archivo obtenido, conexión con nodo %d(socket:%d) finalizada",datos.node,socket_nodes[datos.node]);
+//	file = generateFile(nodeAnswer.file, 'G',socket_nodes[datos.node]);
+	file = generateBinFile(nodeAnswer.file);
+
+	log_info(logger,"Archivo generado");
+	//cierro conexión con otro worker
+	close(socket_nodes[datos.node]);
+	free(nodeAnswer.file);
 //GENERO ARCHIVO Y DEVUELVO EL NOMBRE
-	return generateFile(nodeAnswer.file, 'G',socket_nodes[datos.node]);
+	return file;
+/*
+*/
 }
 
 //======PASO ARCHIVO TMP A OTRO WORKER================
@@ -42,12 +50,12 @@ void sendNodeFile(int worker){
 //OBTENGO DATOS
 	char fileName[28];
 	readBuffer(worker,sizeof(char)*28,&fileName);
-	log_trace(logger,"Worker %d Solicitó el archivo %s", worker, fileName);
+	log_trace(logger,"Worker (socket:%d) Solicitó el archivo %s", worker, fileName);
 
 //RECUPERO ARCHIVO SOLICITADO
 	char* fileContent = NULL;
 	fileContent=serializeFile(fileName+1);
-
+	log_trace(logger,"Archivo serializado");
 //PREPARO PAQUETE
 	nodeData_rs* answer = malloc(sizeof(nodeData_rs));
 	answer->code = 'R';
@@ -56,13 +64,15 @@ void sendNodeFile(int worker){
 	strcpy(answer->file, fileContent);
 
 //SERIALIZO RESPUESTA
-	log_trace(logger, "Enviando archivo %s a worker por socket %d", worker);
+	log_trace(logger, "Enviando archivo %s a worker por socket %d", fileName, worker);
 	int bufferSize = sizeof(char)+sizeof(int)+(answer->fileSize);
 	void* buffer = malloc(bufferSize);
 	memcpy(buffer,&(answer->code),sizeof(char));
 	memcpy(buffer+sizeof(char),&(answer->fileSize),sizeof(int));
 	memcpy(buffer+sizeof(char)+sizeof(int),answer->file,answer->fileSize);
-	send(socket,buffer,bufferSize,0);
+
+	send(worker,buffer,bufferSize,0);
+	log_trace(logger, "Archivo %s enviado a worker (socket: %d)", fileName, worker);
 
 //LIBERO MEMORIA
 	free(fileContent);

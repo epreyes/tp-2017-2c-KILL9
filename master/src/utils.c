@@ -150,8 +150,8 @@ void increaseMetricsError(int* metric){
 	metric[0]++;
 	pthread_mutex_unlock(&errors);
 };
-/*
-void abortJob(){
+
+void abort(){
 	closeConnections();
 	fclose(script_transform);
 	fclose(script_reduction);
@@ -159,4 +159,3 @@ void abortJob(){
 	log_destroy(logger);
 	exit(1);
 }
-*/

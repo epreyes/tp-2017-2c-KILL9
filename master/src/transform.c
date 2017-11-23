@@ -46,7 +46,7 @@ replanification = 'F';
 	readBuffer(masterSocket, sizeof(char), &(code));
 	if(code!='T'){
 		log_warning(logger,"El archivo solicitado no existe o yamafs se encuentra desconectado.");
-		exit(1);
+		abort();
 	}
 	transform_rs* yamaAnswer=malloc(sizeof(transform_rs));
 	readBuffer(masterSocket, sizeof(int), &(yamaAnswer->bocksQuantity));
@@ -109,7 +109,6 @@ void *runTransformThread(void* data){
 	counter+=nodeData->fileSize;
 	memcpy(buffer+counter,&(nodeData->blocksSize),sizeof(int));
 	counter+=sizeof(int);
-
 	for (i = 0; i < (datos->blocksCount); ++i){
 		memcpy(buffer+counter+(i*sizeof(block)),&(datos->blocks[i].pos),sizeof(int));
 		memcpy(buffer+counter+sizeof(int)+i*sizeof(block),&(datos->blocks[i].size),sizeof(int));
@@ -130,7 +129,6 @@ void *runTransformThread(void* data){
 		checkReplanification(datos->node);
 		return NULL;
 	};
-
 	log_trace(logger,"Nodo %d: Transformación iniciada", datos->node);
 
 //METRICS
@@ -175,10 +173,12 @@ void *runTransformThread(void* data){
 		printf("\t nodo:%d \t pos:%d  \t tam:%d\n", datos[0].node, datos[0].blocks[i].pos, datos[0].blocks[i].size);
 	}
 */
-	free(buffer);
+	//free(datos);
 	free(nodeData->file);
 	free(nodeData);
+	free(buffer);
 	free(scriptString);
+
 	return NULL;
 }
 
@@ -257,10 +257,11 @@ int transformFile(char* filename){
 	free(dataThreads);
 	free(threads);
 	free(blocks);
+	free(yamaAnswer->blockData);
 	free(yamaAnswer);
 
 
-//EJECUTO REPLANIFICACIÓN--------
+//EJECUTO REPLANIFICACIÓN-------S-
 	if(replanification == 'T'){
 		log_info(logger,"Replanificación confirmada, iniciando transformación de pendientes");
 		transformFile(filename);
