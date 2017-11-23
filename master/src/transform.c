@@ -213,7 +213,7 @@ int transformFile(char* filename){
 
 	while(recordCounter<totalRecords){
 		nodo = yamaBlocks[recordCounter].nodo;	//init first key
-		while(yamaBlocks[recordCounter].nodo==nodo && recordCounter<totalRecords){
+		while(recordCounter<totalRecords && yamaBlocks[recordCounter].nodo==nodo){
 			blocks=(block *) realloc(blocks,(sizeof(block)*(blockCounter+1)));
 			blocks[blockCounter].pos = yamaBlocks[recordCounter].bloque;
 			blocks[blockCounter].size = yamaBlocks[recordCounter].tamanio;
@@ -259,6 +259,7 @@ int transformFile(char* filename){
 	free(blocks);
 	free(yamaAnswer->blockData);
 	free(yamaAnswer);
+	free(yamaBlocks);
 
 
 //EJECUTO REPLANIFICACIÓN-------S-

@@ -102,6 +102,7 @@ void *runLocalRedThread(void* data){
 	};
 	log_info(logger,"Nodo %d: Datos de reducción local enviados", datos->node);
 	log_trace(logger,"Nodo %d: Reducción local iniciada", datos->node);
+	free(scriptString);
 	free(nodeData->file);
 	free(nodeData);
 	free(buffer);
@@ -181,7 +182,7 @@ int runLocalReduction(){
 
 	while(recordCounter<totalRecords){
 		nodo = items[recordCounter].nodo;	//init first key
-		while(items[recordCounter].nodo==nodo && recordCounter<totalRecords){
+		while(recordCounter<totalRecords && items[recordCounter].nodo==nodo){
 			tr_tmps=(tr_tmp *) realloc(tr_tmps,(sizeof(tr_tmp)*(tmpsCounter+1)));
 			strcpy(tr_tmps[tmpsCounter],items[recordCounter].tr_tmp);
 			tmpsCounter++;
@@ -203,6 +204,7 @@ int runLocalReduction(){
 		nodeCounter++;
 		tmpsCounter = 0;
 	}
+	free(items);
 
 //EJECUTO HILOS DE WORKERS
 	for(threadIndex=0;threadIndex<nodeCounter;++threadIndex)
@@ -224,7 +226,7 @@ int runLocalReduction(){
 	free(tr_tmps);
 	free(dataThreads);
 	free(threads);
-	free(items);
+	free(yamaAnswer->blockData);
 	free(yamaAnswer);
 
 //FINALIZO

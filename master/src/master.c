@@ -42,6 +42,8 @@ int main(int argc, char* argv[]){
 			runGlobalReduction();		//RUN GLOBAL REDUCTION
 			if(abortJob!='G')
 				saveResult(argv[4]);	//RUN FINAL STORAGE
+/*
+*/
 		}
 	}
 

@@ -112,6 +112,7 @@ int sendNodeRequest(dataThread_GR* datos){
 	log_trace(logger,"Nodo %d: Reducción Global Iniciada", datos->leadNode);
 
 	free(buffer);
+	free(scriptString);
 	free(nodeData->file);
 	free(nodeData);
 	//METRICS
@@ -194,6 +195,7 @@ int runGlobalReduction(){
 
 	free(dataThread->brothersData);
 	free(dataThread);
+	free(yamaAnswer->blocksData);
 	free(yamaAnswer);
 	free(items);
 
