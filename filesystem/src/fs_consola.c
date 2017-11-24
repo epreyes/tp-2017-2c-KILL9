@@ -195,7 +195,7 @@ void ejecutarConsola() {
 			printf(
 					"cpfrom [PathArchivoOrigenFsNativo] [PathDirDestinoFsYama] [-b/-t]\n");
 			printf(
-					"-Copia un archivo del fs nativo a un directorio del fs yama. Por defecto copia en binario si no se especifica tipo\n");
+					"-Copia un archivo del fs nativo a un directorio del fs yama. Por defecto copia en texto si no se especifica tipo\n");
 			printf("mkdir [directorio]\n");
 			printf("-Crea un directorio\n");
 			printf("ls [path]\n");
@@ -308,9 +308,7 @@ void ejecutarConsola() {
 
 			if (strncmp(param3, "-t", 2) != 0
 					&& strncmp(param3, "-b", 2) != 0) {
-				escribir = escribirArchivo(destino, lect, BINARIO,
-						sbuf.st_size);
-			}
+				escribir = escribirArchivo(destino, lect, TEXTO, 0);			}
 
 			if (escribir == 0) {
 				log_info(logger, "Escritura de %s realizada con exito", param1);
