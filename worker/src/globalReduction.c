@@ -33,7 +33,7 @@ char* obtainNodeFile(rg_node datos){
 	readBuffer(socket_nodes[datos.node],(nodeAnswer.fileSize),nodeAnswer.file);
 	log_info(logger,"Archivo obtenido, conexión con nodo %d(socket:%d) finalizada",datos.node,socket_nodes[datos.node]);
 //	file = generateFile(nodeAnswer.file, 'G',socket_nodes[datos.node]);
-	file = generateBinFile(nodeAnswer.file);
+	file = generateGLFile(nodeAnswer.file,datos.rl_tmp);
 
 	log_info(logger,"Archivo generado");
 	//cierro conexión con otro worker

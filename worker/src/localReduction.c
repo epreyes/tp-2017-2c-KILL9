@@ -54,14 +54,13 @@ char reduceFiles(int filesQuantity, tmp_tr* filesNames, char* script, char* redu
 	int i=0;
 	char file1[28], file2[28], mergedFile[28];
 
-	log_info(logger,"Iniciando apareo de archivos");
-
+	log_info(logger,"Iniciando etapa de reducción");
 //OBTENGO EL PRIMERO
 	strcpy(file1,filesNames[i]);
-	strcpy(mergedFile,file1+1);//VALIDO POR SI SOLO HAY UNO
-
+	strcpy(mergedFile,file1);//VALIDO POR SI SOLO HAY UNO
 //MERGEO TODOS LOS TEMPORALES
 	for (i = 1; i < filesQuantity; ++i){
+	log_info(logger,"Iniciando apareo de archivos");
 		strcpy(file2,filesNames[i]);
 		strcpy(mergedFile, generateAuxFile());
 			printf("\nFILE1:%s\nFILE2:%s\n",file1,file2);
@@ -71,15 +70,15 @@ char reduceFiles(int filesQuantity, tmp_tr* filesNames, char* script, char* redu
 		};
 			printf("\nMERGEDFILE:%s\n",mergedFile);
 		strcpy(file1,mergedFile);
-	}
 	log_info(logger,"Apareo de archivos finalizado");
+	}
 	log_info(logger,"Preparando para ejecución de reducción");
 
 //GENERO COMANDO PARA EJECUTAR REDUCCION
 	char* command = NULL;
-	command = malloc(strlen(mergedFile)+strlen(script)+strlen(reducedFileName)+13);
-	asprintf(&command,"cat %s | %s > %s",mergedFile+1,script,reducedFileName+1);
-	printf("\nCOMANDO\n:%s", command);
+	command = malloc(strlen(mergedFile)+strlen(script)+strlen(reducedFileName)+15);
+	asprintf(&command,"cat %s | ./%s > %s",mergedFile+1,script,reducedFileName+1);
+	printf("\nCOMANDO:%s", command);
 
 //EJECUTO REDUCCION
 	if (system(command)!=0){

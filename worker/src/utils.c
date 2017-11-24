@@ -82,7 +82,12 @@ char* generateAuxFile(){
 	return name;
 }
 
-
+char* generateBlockFileName(int pos){
+	char* name = malloc(sizeof(char)*28);
+	long timestamp = current_timestamp();
+	asprintf(&name, "/tmp/%ld-TMP-BLOCK%d",timestamp,pos);
+	return name;
+}
 
 int readBuffer(int socket,int size,void* destiny){
 	void* buffer = malloc(size);
@@ -140,8 +145,8 @@ char* generateFile(char* fileContent, char operation, int socket){
 
 
 
-char* generateBinFile(char* fileContent){
-	char* fileName = generateAuxFile();
+char* generateBlockFile(char* fileContent, int pos){
+	char* fileName = generateBlockFileName(pos);
 	FILE* file = fopen(fileName+1,"w");
 	if(file == NULL){
 		log_error(logger,"Error al crear el archivo %s", fileName);
@@ -149,12 +154,21 @@ char* generateBinFile(char* fileContent){
 	}
 	fputs(fileContent,file);
 	fclose(file);
-
 	log_info(logger,"Archivo tmp del contenido almacenado en \"%s\"", fileName);
 	return fileName;
 };
 
-
+char* generateGLFile(char* fileContent, char* name){
+	FILE* file = fopen(name+1,"w");
+	if(file == NULL){
+		log_error(logger,"Error al crear el archivo %s", name);
+		return NULL;
+	}
+	fputs(fileContent,file);
+	fclose(file);
+	log_info(logger,"Archivo tmp del contenido almacenado en \"%s\"", name);
+	return name;
+};
 
 
 
@@ -204,7 +218,16 @@ void map_data_node() {
 	 }
 	 check (mapped_data_node == MAP_FAILED, "mmap %s failed: %s",dataBinName, strerror (errno));
 
-	log_info(logger,"Fin mapeo de archivo en memoria \n");
+	 /* Mostrar infoArchivo */
+	 int i;
+	 char c;
+	 for (i = 0; i < 50; i++) {
+		 c = ((char *) mapped_data_node)[i];
+		 putchar(c);
+	 }
+
+
+	 log_info(logger,"Fin mapeo de archivo en memoria \n");
 }
 
 /*****************************************************
@@ -216,7 +239,18 @@ char* getBlockData(int blockNumber, int sizeByte) {
 	void * buffer = malloc(sizeByte);
 
 	void * pos = mapped_data_node + blockNumber * BLOCK_SIZE;
+
+	printf("BLOCK_SIZE:\n",BLOCK_SIZE);
+
 	memcpy(buffer, pos, sizeByte);
+	/* Mostrar infoArchivo */
+		 int i;
+		 char c;
+		 for (i = 0; i < 50; i++) {
+			 c = ((char *) buffer)[i];
+			 putchar(c);
+		 }
+
 	log_info(logger, "Fin lectura bloque archivo ");
 	return (char *) buffer;
 }
