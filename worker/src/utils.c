@@ -218,15 +218,6 @@ void map_data_node() {
 	 }
 	 check (mapped_data_node == MAP_FAILED, "mmap %s failed: %s",dataBinName, strerror (errno));
 
-	 /* Mostrar infoArchivo */
-	 int i;
-	 char c;
-	 for (i = 0; i < 50; i++) {
-		 c = ((char *) mapped_data_node)[i];
-		 putchar(c);
-	 }
-
-
 	 log_info(logger,"Fin mapeo de archivo en memoria \n");
 }
 
@@ -240,16 +231,7 @@ char* getBlockData(int blockNumber, int sizeByte) {
 
 	void * pos = mapped_data_node + blockNumber * BLOCK_SIZE;
 
-	printf("BLOCK_SIZE:\n",BLOCK_SIZE);
-
 	memcpy(buffer, pos, sizeByte);
-	/* Mostrar infoArchivo */
-		 int i;
-		 char c;
-		 for (i = 0; i < 50; i++) {
-			 c = ((char *) buffer)[i];
-			 putchar(c);
-		 }
 
 	log_info(logger, "Fin lectura bloque archivo ");
 	return (char *) buffer;

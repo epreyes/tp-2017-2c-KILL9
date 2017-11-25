@@ -70,3 +70,38 @@ int mergeFiles(char* Aname, char* Bname, char *Cname){
 	log_info(logger,"Apareo finalizado entre %s y %s", Aname, Bname);
 	return EXIT_SUCCESS;
 };
+
+int mergeBySystem(int filesCuantity, tmp_tr* files, char* mergedFile){
+
+	log_error(logger, "mergeBySystem");
+	typedef char space[29];
+
+	char* command = NULL;
+	char filesList[300]; //= malloc(filesCuantity*(sizeof(tmp_tr)+1));
+	filesList[0]='\0';
+	space filesB[filesCuantity];
+	int i;
+
+	log_error(logger, "mergeBySystem");
+
+	for(i=0;i<filesCuantity;i++){
+		strcpy(filesB[i], strcat(files[i]+1," "));
+		strcpy(filesList, strcat(filesList, filesB[i]));
+		log_info(logger,"%s",filesList);
+	}
+
+	command = malloc(29*filesCuantity+100);
+	asprintf(&command,"cat %s| sort > %s", filesList, mergedFile+1);
+	log_error(logger, "%s",command);
+
+//EJECUTO REDUCCION
+	if (system(command)!=0){
+		log_error(logger,"Apareo de archivos finalizado");
+		free(command);
+		return EXIT_FAILURE;
+	}else{
+		log_trace(logger,"Reducción de archivos finalizada");
+		free(command);
+		return EXIT_SUCCESS;
+	}
+};

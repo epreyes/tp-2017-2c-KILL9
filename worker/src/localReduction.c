@@ -58,6 +58,11 @@ char reduceFiles(int filesQuantity, tmp_tr* filesNames, char* script, char* redu
 //OBTENGO EL PRIMERO
 	strcpy(file1,filesNames[i]);
 	strcpy(mergedFile,file1);//VALIDO POR SI SOLO HAY UNO
+	if(filesQuantity>1){
+		strcpy(mergedFile, generateAuxFile());
+		mergeBySystem(filesQuantity, filesNames, mergedFile);
+	}
+		/*
 //MERGEO TODOS LOS TEMPORALES
 	for (i = 1; i < filesQuantity; ++i){
 	log_info(logger,"Iniciando apareo de archivos");
@@ -72,6 +77,7 @@ char reduceFiles(int filesQuantity, tmp_tr* filesNames, char* script, char* redu
 		strcpy(file1,mergedFile);
 	log_info(logger,"Apareo de archivos finalizado");
 	}
+*/
 	log_info(logger,"Preparando para ejecución de reducción");
 
 //GENERO COMANDO PARA EJECUTAR REDUCCION
