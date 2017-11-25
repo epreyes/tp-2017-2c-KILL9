@@ -47,6 +47,8 @@ typedef struct
 #define FS_SIN_FORMATO 206
 #define ERROR_MISMO_NODO_COPIA 207
 
+#define DIRECTORIO_NO_VACIO 208
+
 
 #endif /* ESTRUCTURAS_H_ */
 

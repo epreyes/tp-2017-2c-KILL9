@@ -65,11 +65,50 @@ void ejecutarConsola() {
 
 		if (strcmp(instruccionConsola, ELIMINAR) == 0) {
 
-			int eliminar = eliminarBloque(param1, atoi(param2), atoi(param3));
-			if (eliminar == -1)
-				printf("No se pudo eliminar el bloque\n");
-			else
-				printf("Eliminacion de bloque ok\n");
+			if (strncmp(param1, "-d", 2) != 0) {
+
+				int eliminar = eliminarArchivo(param1);
+
+				switch (eliminar) {
+				case 0:
+					printf("Eliminacion de archivo ok\n");
+					log_info(logger, "Eliminacion de archivo ok: %s", param1);
+					break;
+				case -1:
+					printf("No existe el archivo a eliminar\n");
+					log_error(logger, "No existe el archivo a eliminar: %s",
+							param1);
+					break;
+				}
+
+			}
+
+			if (strncmp(param1, "-d", 2) == 0) {
+				int eliminar = eliminarDirectorio(param2);
+
+				switch (eliminar) {
+				case 0:
+					printf("Eliminacion de directorio ok\n");
+					log_info(logger, "Eliminacion de directorio ok: %s",
+							param2);
+					break;
+				case DIRECTORIO_NO_VACIO:
+					printf("Directorio no vacio, no se pudo eliminar\n");
+					log_error(logger,
+							"Directorio no vacio, no se pudo eliminar: %s",
+							param2);
+					break;
+				case NO_EXISTE_DIR_DESTINO:
+					printf("No existe el directorio a eliminar\n");
+					log_error(logger, "No existe el directorio a eliminar: %s",
+							param2);
+					break;
+				}
+
+			}
+
+			param1[0] = '\0';
+			param2[0] = '\0';
 
 		}
 
@@ -142,7 +181,7 @@ void ejecutarConsola() {
 
 			char* md5 = obtenerMd5(param1);
 
-			if (md5 == NULL ) {
+			if (md5 == NULL) {
 				printf("No existe el archivo indicado por parametro\n");
 			} else {
 				printf("hash: %s\n", md5);
@@ -241,7 +280,13 @@ void ejecutarConsola() {
 				printf("%s\n", list_get(l, j));
 			}
 
-			list_destroy(l);
+			void* eliminarItem(char* item) {
+				free(item);
+				return 0;
+			}
+
+			list_destroy_and_destroy_elements(l, eliminarItem);
+
 		}
 
 		if (strcmp(instruccionConsola, LEERARCHIVO) == 0) {
@@ -260,6 +305,8 @@ void ejecutarConsola() {
 				free(result);
 				break;
 			}
+
+			param1[0] = '\0';
 
 		}
 
@@ -285,7 +332,7 @@ void ejecutarConsola() {
 			char* lect = mmap((caddr_t) 0, sbuf.st_size, PROT_READ, MAP_SHARED,
 					fd, 0);
 
-			if (lect == NULL ) {
+			if (lect == NULL) {
 				perror("error en map\n");
 				exit(1);
 			}
@@ -308,7 +355,8 @@ void ejecutarConsola() {
 
 			if (strncmp(param3, "-t", 2) != 0
 					&& strncmp(param3, "-b", 2) != 0) {
-				escribir = escribirArchivo(destino, lect, TEXTO, 0);			}
+				escribir = escribirArchivo(destino, lect, TEXTO, 0);
+			}
 
 			if (escribir == 0) {
 				log_info(logger, "Escritura de %s realizada con exito", param1);
@@ -352,6 +400,10 @@ void ejecutarConsola() {
 
 			}
 
+			param1[0] = '\0';
+			param2[0] = '\0';
+			param3[0] = '\0';
+
 		}
 
 		if (strcmp(instruccionConsola, COPIARDEYAMAALOCAL) == 0) {
@@ -364,12 +416,18 @@ void ejecutarConsola() {
 				printf("Algun nodo se desconecto\n");
 			if (resultado == 0)
 				printf("Escritura en local ok\n");
+
+			param1[0] = '\0';
+			param2[0] = '\0';
 		}
 
-		instruccionConsola[0] = '\0';
-		param1[0] = '\0';
-		param2[0] = '\0';
+		if (strcmp(instruccionConsola, COPIARDEYAMAALOCAL) == 0) {
 
+			instruccionConsola[0] = '\0';
+			param1[0] = '\0';
+			param2[0] = '\0';
+
+		}
 	}
-}
 
+}

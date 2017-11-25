@@ -48,7 +48,7 @@ int escribirArchivo(char* path, char* contenido, int tipo, int tamanio) {
 	if (errorSeleccionNodos == -1)
 		return ERROR_MISMO_NODO_COPIA;
 
-	if (bl == NULL ) {
+	if (bl == NULL) {
 		return SIN_ESPACIO;
 	}
 
@@ -496,10 +496,10 @@ char* leerArchivo(char* path, int* codigoError) {
 
 	int reiniciar = 0;
 
-	if (archivo == NULL ) {
+	if (archivo == NULL) {
 		// No existe el archivo
 		*codigoError = -1;
-		return NULL ;
+		return NULL;
 	}
 
 	char* respuesta;
@@ -513,11 +513,11 @@ char* leerArchivo(char* path, int* codigoError) {
 
 		t_list* nodosALeer = obtenerNodosALeer(archivo->bloques, nodosExc);
 
-		if (nodosALeer == NULL ) {
+		if (nodosALeer == NULL) {
 			log_error(logger,
 					"No hay nodos conectados para realizar la lectura pedida");
 			*codigoError = -2;
-			return NULL ;
+			return NULL;
 		}
 
 		// Preparo lista t_lectura
@@ -554,7 +554,7 @@ char* leerArchivo(char* path, int* codigoError) {
 			t_nodo* nodo = buscarNodoPorId_2(lect->idNodo);
 			sem_post(&semLista);
 
-			if (nodo == NULL ) {
+			if (nodo == NULL) {
 
 				// Si los excluidos son todos los de las peticiones (y no estan conectados)->aborto lectura, caso contrario reintento lectura
 
@@ -573,7 +573,7 @@ char* leerArchivo(char* path, int* codigoError) {
 				log_error(logger,
 						"Hubo un error leyendo los bloques del archivo (posiblemente algun datanode caido)");
 				*codigoError = -2;
-				return NULL ;
+				return NULL;
 			}
 
 		}
@@ -605,7 +605,7 @@ char* leerArchivo(char* path, int* codigoError) {
 						"Error en la lectura, algun nodo se desconecto, reseteando lectura con otra estrategia de nodos");
 				*codigoError = -2;
 				sem_post(&semLista);
-				return NULL ;
+				return NULL;
 
 			}
 
@@ -795,7 +795,7 @@ t_list* obtenerNodosALeer(t_list* bloques, t_list* nodosExcluir) {
 		iteraciones++;
 		if (iteraciones > list_size(resultado) * 2) {
 			log_debug(logger, "Iteraciones: %d", iteraciones);
-			return NULL ;
+			return NULL;
 		}
 
 		for (k = 0; k < list_size(nodosSinRepetir); k++) {
@@ -833,7 +833,7 @@ t_list* obtenerNodosALeer(t_list* bloques, t_list* nodosExcluir) {
 int copiarDesdeYamaALocal(char* origen, char* destino) {
 
 	t_archivoInfo* aInfo = obtenerArchivoInfo(origen);
-	if (aInfo == NULL ) {
+	if (aInfo == NULL) {
 		return -1;
 	}
 
@@ -871,9 +871,9 @@ int copiarDesdeYamaALocal(char* origen, char* destino) {
 
 	// mapeo a memoria
 	destinoArchivo = mmap((caddr_t) 0, aInfo->tamanio, PROT_READ | PROT_WRITE,
-			MAP_SHARED, fd, 0);
+	MAP_SHARED, fd, 0);
 
-	if (destinoArchivo == NULL ) {
+	if (destinoArchivo == NULL) {
 		perror("error en map\n");
 		exit(1);
 	}
@@ -893,7 +893,7 @@ int eliminarBloque(char* pathArchivo, int nroBloque, int nroCopia) {
 
 	t_archivoInfo* archInfo = obtenerArchivoInfo(pathArchivo);
 
-	if (archInfo == NULL ) {
+	if (archInfo == NULL) {
 		return -1;
 	}
 
@@ -998,7 +998,7 @@ int eliminarBloque(char* pathArchivo, int nroBloque, int nroCopia) {
 void eliminarBloqueArchivoMd(char* dirMetadata, int nroBloque, int nroCopia) {
 	t_config * metadata = config_create(dirMetadata);
 
-	if (metadata == NULL ) {
+	if (metadata == NULL) {
 		log_error(logger, "No se pudo abrir la metadata de archivo %s",
 				dirMetadata);
 		return;
@@ -1029,9 +1029,7 @@ void config_remove_key(t_config * config, char *key) {
 
 char* obtenerMd5(char* pathArchivo) {
 
-	t_archivoInfo* archInfo = obtenerArchivoInfo(pathArchivo);
-
-	if (archInfo == NULL )
+	if (existeArchivo(pathArchivo) == -1)
 		return NULL;
 
 	int escribir = copiarDesdeYamaALocal(pathArchivo, "/tmp");
@@ -1067,10 +1065,9 @@ char* obtenerMd5(char* pathArchivo) {
 
 	char* md5 = malloc(sizeof(char) * sbuf.st_size);
 
-
 	md5 = mmap((caddr_t) 0, sbuf.st_size, PROT_READ, MAP_SHARED, fd, 0);
 
-	if (md5 == NULL ) {
+	if (md5 == NULL) {
 		perror("error en map\n");
 		exit(1);
 	}
@@ -1083,3 +1080,139 @@ char* obtenerMd5(char* pathArchivo) {
 	return md5;
 
 }
+
+// Elimina un directorio. Debe estar vacio
+int eliminarDirectorio(char* path) {
+
+	if (!existeDirectorio(path)) {
+		return NO_EXISTE_DIR_DESTINO;
+	}
+
+	t_list* archivos = list_create();
+	archivos = listarArchivos(path);
+
+	if (list_size(archivos) > 0) {
+
+		void* eliminarItem(char* item) {
+			free(item);
+			return 0;
+		}
+
+		list_destroy_and_destroy_elements(archivos, eliminarItem);
+
+		return DIRECTORIO_NO_VACIO;
+	}
+
+	int indiceDir = obtenerIndiceDir(path);
+	log_debug(logger,
+			"Indice de directorio obtenido para eliminacion de directorio: %d",
+			indiceDir);
+
+	int i = 0;
+	t_directorio* dir = inicioTablaDirectorios;
+
+	dir++;
+
+	for (i = 1; i < MAX_DIR_FS; i++) {
+		if (dir->indice == indiceDir) {
+			dir->padre = -1;
+			memset(dir->nombre, '\0', 256);
+			return 0;
+		}
+		dir++;
+	}
+
+	return NO_EXISTE_DIR_DESTINO;
+
+}
+
+// Elimina un archivo. Implica eliminacion de metadata y limpieza de los bits de bloques usados
+int eliminarArchivo(char* pathArchivo) {
+
+	if (existeArchivo(pathArchivo) == -1)
+		return -1;
+
+	t_archivoInfo* archInfo = obtenerArchivoInfo(pathArchivo);
+
+	if (archInfo == NULL) {
+		return -1;
+	}
+
+	char* comando = string_new();
+
+	char* dirArchivo = obtenerDirArchivo(pathArchivo);
+
+	int indiceDir = 0;
+	if (strncmp(pathArchivo, "./", 2) == 0)
+		indiceDir = 0;
+	else
+		indiceDir = obtenerIndiceDir(dirArchivo);
+
+	char *dirMetadata = string_new();
+
+	string_append(&dirMetadata, fs->m_archivos);
+	string_append(&dirMetadata, string_itoa(indiceDir));
+	string_append(&dirMetadata, "/");
+	string_append(&dirMetadata, obtenerNombreArchivo(pathArchivo));
+	string_append(&dirMetadata, ".csv");
+
+	string_append(&comando, "rm ");
+	string_append(&comando, dirMetadata);
+
+	if (system(comando) != 0) {
+		log_error(logger, "Error ejecutando system rm");
+		return -1;
+	}
+
+	// Limpio el bitmap
+	int i = 0;
+	int j = 0;
+
+	int cantBloques=list_size(archInfo->bloques);
+
+	for (i = 0; i < cantBloques; i++) {
+		t_bloqueInfo* bi = list_get(archInfo->bloques, i);
+
+		for (j = 0; j < list_size(nodos->nodos); j++) {
+			t_nodo* nodo = list_get(nodos->nodos, j);
+
+			if (nodo->id == atoi(bi->idNodo0)) {
+
+				t_bitarray* ba = obtenerBitMapBloques(nodo->id);
+
+				log_info(logger,
+						"Limpiando bloque en nodo id: %d - idbloque: %d",
+						nodo->id, bi->idBloque0);
+
+				bitarray_clean_bit(ba, bi->idBloque0);
+
+				nodo->libre++;
+				actualizarConfigNodoEnBin(nodo);
+			}
+
+			if (nodo->id == atoi(bi->idNodo1)) {
+
+				t_bitarray* ba = obtenerBitMapBloques(nodo->id);
+
+				log_info(logger,
+						"Limpiando bloque en nodo id: %d - idbloque: %d",
+						nodo->id, bi->idBloque1);
+
+				bitarray_clean_bit(ba, bi->idBloque1);
+
+				nodo->libre++;
+				actualizarConfigNodoEnBin(nodo);
+			}
+
+		}
+
+	}
+
+	free(comando);
+	free(dirMetadata);
+	free(dirArchivo);
+
+	return 0;
+
+}
+

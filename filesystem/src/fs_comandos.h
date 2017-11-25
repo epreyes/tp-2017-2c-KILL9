@@ -25,5 +25,7 @@ int eliminarBloque(char* pathArchivo, int nroBloque, int nroCopia);
 void eliminarBloqueArchivoMd(char* dirMetadata, int nroBloque, int nroCopia);
 void config_remove_key(t_config * config, char *key);
 char* obtenerMd5(char* pathArchivo);
+int eliminarDirectorio(char* path);
+int eliminarArchivo(char* pathArchivo);
 
 #endif /* FS_COMANDOS_H_ */
