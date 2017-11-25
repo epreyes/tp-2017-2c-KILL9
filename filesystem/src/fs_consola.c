@@ -249,6 +249,8 @@ void ejecutarConsola() {
 			printf("Obtiene el hash md5 del archivo indicado\n");
 			printf("infoarchivo [PathArchivoYama]\n");
 			printf("Obtiene la composicion de bloques y nodos del archivo\n");
+			printf("rm [PathArchivoYama] | rm -d [PathDirectorioYama]\n");
+			printf("Elimina un archivo o un directorio\n");
 
 		}
 
