@@ -236,11 +236,10 @@ tr_datos* doPlanning(block_info* blockRecived, int master,
 		log_info(yama->log,
 				"----------------- Planificacion -----------------");
 		log_info(yama->log, "Clock = Nodo %d", nodoClock->node_id);
-		log_info(yama->log, "Retardo = %d", planigDelay);
+		log_info(yama->log, "Retardo = %d ms", planigDelay);
 	}
 
 	long planingDelay = planningParams->planningDelay * 1000;
-	printf("\nvalor para el sleep %ld\n", planingDelay);
 	usleep(planingDelay);
 
 	return evaluateClock(blockRecived, master, yama->clock, planningParams);
@@ -267,28 +266,12 @@ void* replanTask(int master, int node, t_planningParams* params, t_job* job,
 			block_info* blockInfo = findBlock(elem->block);
 			int node = elem->node;
 
-			/*if (blockInfo->node1 != 'X' && blockInfo->node2 != 'X') {
-				if (elem->node == blockInfo->node1) {
-					node = blockInfo->node2;
-				} else {
-					node = blockInfo->node1;
-				}
-			} else {
-				log_error(yama->log,
-						"No se puede replanificar el nodo %d, Job %d. No existe duplicado.",
-						node, job->id);
-				job->replanificaciones++;
-				return abortJob(master, node, 'T', job);
-			}
-			*/
-			tr_datos* dataNode = doPlanning(blockInfo, master, params);//buildNodePlaned(blockInfo, master, node);
+			tr_datos* dataNode = doPlanning(blockInfo, master, params);
 
 			setInStatusTable(job->id, 'T', master, dataNode->nodo,
 					getBlockId(dataNode->tr_tmp), dataNode->tr_tmp,
 					dataNode->bloque, elem->fileProcess);
 
-			//increaseNodeCharge( dataNode->nodo );
-			viewNodeTable();
 			list_add(replanedTasks, dataNode);
 		}
 

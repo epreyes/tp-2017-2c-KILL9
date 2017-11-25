@@ -81,6 +81,15 @@ int sendResponse(int master, void* masterRS, t_job* job) {
 
 	if (bytesSent > 0) {
 		sendResponseMsg(master, bytesSent, masterRS, job);
+
+		/*Muestro Estado de nodos*/
+		printf("\n");
+		viewNodeTable();
+
+		/*Muestro Tabla de Estados*/
+		printf("\n");
+		viewStateTable();
+
 	} else {
 		log_error(yama->log, "Error al enviar la respuesta al Master (%d).",
 				master);
@@ -114,29 +123,25 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 		memcpy(&stage, response, sizeof(char));
 
 		char status = 'P';
-		t_job* job = list_get(yama->tabla_jobs, getJobIndex(socket, stage, status));
+		t_job* job = list_get(yama->tabla_jobs,
+				getJobIndex(socket, stage, status));
 
 		if (stage == 'A') {
 			memcpy(&opRequested, response + sizeof(char), sizeof(char));
 			status = 'E';
-			job = list_get(yama->tabla_jobs, getJobIndex(socket, opRequested, status));
+			job = list_get(yama->tabla_jobs,
+					getJobIndex(socket, opRequested, status));
 		}
 
 		if (stage == 'R') {
 			memcpy(&opRequested, response + sizeof(char), sizeof(char));
 			status = 'P';
-			job = list_get(yama->tabla_jobs, getJobIndex(socket, opRequested, status));
+			job = list_get(yama->tabla_jobs,
+					getJobIndex(socket, opRequested, status));
 		}
 
-
-
-		if ( (stage == 'T') ||
-			 (stage == 'L') ||
-			 (stage == 'G') ||
-			 (stage == 'S') ||
-			 (stage == 'A') ||
-			 (stage == 'R') ||
-			 (stage == 'E') ) {
+		if ((stage == 'T') || (stage == 'L') || (stage == 'G') || (stage == 'S')
+				|| (stage == 'A') || (stage == 'R') || (stage == 'E')) {
 			sendResponse(socket, response, job);
 		} else {
 			if (stage != 'O') {
@@ -192,13 +197,16 @@ void waitMastersConnections() {
 		/* bucle para monitorear conexiones */
 		while (TRUE) {
 			mastersListTemp = mastersList;
+
 			activity = select(yama->yama_server.higherSocketDesc + 1,
 					&mastersListTemp, NULL, NULL, NULL);
-			if ( errno == EINTR) {
-				continue;
-			}
+
 			if (activity == -1) {
-				log_error(yama->log, "Error monitoreando conexiones.");
+				if ( errno == EINTR) {
+					continue;
+				} else {
+					log_error(yama->log, "Error monitoreando conexiones.");
+				}
 			} else {
 				/* exploro la actividad reciente */
 				exploreActivity(&mastersListTemp, &mastersList);

@@ -282,22 +282,18 @@ char* getStatusName(char status) {
 void viewStateTable() {
 	t_list* stateTable = yama->tabla_estados;
 	printf("\n\n");
-	log_debug(yama->log,
-			"----------------------- Tabla de estados -----------------------");
-	log_debug(yama->log, "Cantidad de entradas: %d", list_size(stateTable));
-	log_debug(yama->log,
-			"----------------------------------------------------------------");
+	printf("------------------------------------------------------- Tabla de estados -------------------------------------------------------\n");
+	printf("Cantidad de entradas: %d\n", list_size(stateTable));
+	printf("--------------------------------------------------------------------------------------------------------------------------------\n");
 	int i = 0;
 	while (i < list_size(stateTable)) {
 		elem_tabla_estados* row = list_get(stateTable, i);
 		i++;
-		log_debug(yama->log,
-				"Job: %d - Master: %d - Nodo: %d - Bloque: %d - Etapa: %s - Archivo Temporal: %s - Estado: %s",
+		printf("Job: %d - Master: %d - Nodo: %d - Bloque: %d - Etapa: %s - Archivo Temporal: %s - Estado: %s\n",
 				row->job, row->master, row->node, row->block,
 				getStageName(row->op), row->tmp, getStatusName(row->status));
+		printf("--------------------------------------------------------------------------------------------------------------------------------\n");
 	}
-	log_debug(yama->log,
-			"----------------------- Fin Tabla de estados -----------------------");
 }
 
 int findInProcessTasks(int master, int node_id, int block, char op, t_job* job) {
