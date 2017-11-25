@@ -74,13 +74,13 @@ char transformBlock(int position, int size, char temporal[28], char* scriptName)
 //GUARDO EL CONTENIDO EN UN TEMPORAL
 	char* contentFileName;
 	contentFileName=generateBlockFile(blockContent,position);
+	free(blockContent);
 
 //GENERO COMANDO PARA TRANSFORMACIÓN
 	char* command;
 	command = malloc(size+26+12+28+1+3+3+2);
 	asprintf(&command, "cat %s | ./%s | sort > %s",contentFileName+1, scriptName, temporal+1);
 	printf("Comando: %s\n",command);
-	free(blockContent);
 	free(contentFileName);
 
 //EJECUTO COMANDO Y ATAJO EL ERROR
