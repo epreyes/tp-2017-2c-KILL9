@@ -8,6 +8,15 @@
 #include "headers/successOperation.h"
 #include "headers/tablesManager.h"
 
+char* getOpName(char op){
+	switch(op){
+	case 'T': return "Transformacion"; break;
+	case 'L': return "Reduccion Local"; break;
+	case 'G': return "Reduccion Global"; break;
+	case 'S': return "Almacenamiento Final"; break;
+	}
+}
+
 void* processOk(int master) {
 
 	void* buffer = malloc(sizeof(char));
@@ -34,8 +43,8 @@ void* processOk(int master) {
 	updateStatusTable(master, opCode, nodo, bloque, 'F', job);
 	decreaseNodeCharge(nodo);
 
-	log_info(yama->log, "Operacion %c OK en nodo %d, bloque %d, Master %d.", opCode, nodo, bloque, master);
-	viewNodeTable();
+	log_info(yama->log, "Etapa de %s Terminada con exito, en nodo %d, bloque %d, Master %d.", getOpName(opCode), nodo, bloque, master);
+
 	if( opCode == 'S' ){
 		job->estado = 'F';
 		list_replace(yama->tabla_jobs, jobIndex, job);
