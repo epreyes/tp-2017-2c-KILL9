@@ -52,6 +52,8 @@ echo 'Compilando worker'
 echo '-------------------------------------------------------'
 cd worker
 make all
+mkdir tmp
+mkdir tmp_scripts
 cd ..
 
 
