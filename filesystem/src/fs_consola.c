@@ -449,15 +449,3 @@ void ejecutarConsola() {
 	}
 
 }
-
-void* hiloTR() {
-
-	while (1) {
-		imprimirEstadoNodosTR();
-		int i = 0;
-		for (i = 0; i < 7; i++)
-			printf("%c", 8);
-		sleep(1);
-	}
-
-}
