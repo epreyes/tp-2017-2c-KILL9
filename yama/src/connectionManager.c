@@ -43,14 +43,24 @@ int getSizeToSend(void* masterRS) {
 	int fsSize = sizeof(char) * 40 + sizeof(int) * 2;
 
 	switch (op) {
-	case 'T':
+	case 'T': {
+		int blocks;
+		memcpy(&blocks, masterRS + sizeof(char), sizeof(int));
 		size = (blocks * sizeof(tr_datos)) + sizeof(char) + sizeof(int);
+	}
+
 		break;
-	case 'L':
+	case 'L': {
+		int blocks;
+		memcpy(&blocks, masterRS + sizeof(char), sizeof(int));
 		size = (blocks * sizeof(rl_datos)) + sizeof(char) + sizeof(int);
+	}
 		break;
-	case 'G':
+	case 'G': {
+		int blocks;
+		memcpy(&blocks, masterRS + sizeof(char), sizeof(int));
 		size = (blocks * grSize) + sizeof(char) + sizeof(int);
+	}
 		break;
 	case 'S':
 		size = fsSize + sizeof(char);
