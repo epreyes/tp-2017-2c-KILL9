@@ -19,23 +19,14 @@ char* getOpName(char op){
 
 void* processOk(int master) {
 
-	void* buffer = malloc(sizeof(char));
-	recv(master, buffer, sizeof(char), 0);
 	char opCode;
-	memcpy(&opCode, buffer, sizeof(char));
-	free(buffer);
+	recv(master, &opCode, sizeof(char), 0);
 
-	buffer = malloc(sizeof(int));
-	recv(master, buffer, sizeof(int), 0);
 	int bloque;
-	memcpy(&bloque, buffer, sizeof(int));
-	free(buffer);
+	recv(master, &bloque, sizeof(int), 0);
 
-	buffer = malloc(sizeof(int));
-	recv(master, buffer, sizeof(int), 0);
 	int nodo;
-	memcpy(&nodo, buffer, sizeof(int));
-	free(buffer);
+	recv(master, &nodo, sizeof(int), 0);
 
 	int jobIndex = getJobIndex(master, opCode, 'P');
 	t_job* job = list_get(yama->tabla_jobs, jobIndex);
@@ -52,8 +43,5 @@ void* processOk(int master) {
 		deleteNodeErrors();
 	}
 
-	buffer = malloc(sizeof(char));
-	memcpy(buffer, "O", sizeof(char));
-
-	return buffer;
+	return "O";
 }

@@ -60,8 +60,6 @@ void* processTransformation(int master, t_job* job) {
 		void* response = sortTransformationResponse(nodeList, master, fsInfo->filename,
 				job);
 
-		list_destroy_and_destroy_elements(nodeList, &destroyNodeList);
-
 		return response;
 	}
 }
@@ -116,6 +114,10 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 	return nodeList;
 }
 
+void destroyBuffer(void* elem){
+	free(elem);
+}
+
 void* sortTransformationResponse(t_list* buffer, int master, char* fileName,
 		t_job* job) {
 	bool (*comparator)(void*, void*);
@@ -151,6 +153,8 @@ void* sortTransformationResponse(t_list* buffer, int master, char* fileName,
 		memcpy(
 				sortedBuffer + sizeAdded + (index * sizeof(tr_datos)), data, sizeof(tr_datos));
 	}
+
+	list_destroy_and_destroy_elements(buffer, &destroyBuffer);
 
 	return sortedBuffer;
 }

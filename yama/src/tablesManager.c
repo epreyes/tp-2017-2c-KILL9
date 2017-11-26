@@ -96,6 +96,11 @@ void deleteOfPlanedListByNode(int items, int node, int master) {
 	}
 }
 
+void deleteItems(void* elem){
+	free(((elem_tabla_planificados*)elem)->data);
+	free(elem);
+}
+
 void deleteFromPlanedTable(int master, int node) {
 	int index = 0;
 	t_list* itemsToRemove = list_create();
@@ -108,6 +113,7 @@ void deleteFromPlanedTable(int master, int node) {
 	}
 
 	deleteOfPlanedListByNode(list_size(itemsToRemove), node, master);
+	list_destroy_and_destroy_elements(itemsToRemove, &deleteItems);
 }
 
 void viewFileInfo() {
@@ -426,8 +432,10 @@ block_info* findBlock(int block) {
 			memcpy(blockInfo, info + (j * sizeof(block_info)),
 					sizeof(block_info));
 			if (blockInfo->block_id == block) {
+				free(info);
 				return blockInfo;
 			}
+			free(blockInfo);
 		}
 		free(info);
 	}

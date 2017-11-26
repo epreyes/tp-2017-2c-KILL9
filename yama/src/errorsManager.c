@@ -49,6 +49,8 @@ void* processNodeError(int master) {
 		response = replanTask(master, node, params, job, jobIndex);
 		viewNodeTable();
 
+		free(params);
+
 		if( job->replanificaciones == 1 ){
 			log_info(yama->log, "Enviando informacion de replanificacion.");
 		}else{

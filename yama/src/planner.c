@@ -244,6 +244,10 @@ tr_datos* doPlanning(block_info* blockRecived, int master,
 	return evaluateClock(blockRecived, master, yama->clock, planningParams);
 }
 
+void destroyTaskFailedTable(void* elem){
+	free(elem);
+}
+
 void* replanTask(int master, int node, t_planningParams* params, t_job* job,
 		int jobindex) {
 	if (job->replanificaciones == 1) {
@@ -256,7 +260,7 @@ void* replanTask(int master, int node, t_planningParams* params, t_job* job,
 	} else {
 		t_list* taskFailed = getTaskFailed(master, node, job);
 		t_list* replanedTasks = list_create();
-		char* filename = malloc(sizeof(char) * 28);
+		char* filename[30];
 
 		int index = 0;
 		for (index = 0; index < list_size(taskFailed); index++) {
@@ -266,13 +270,15 @@ void* replanTask(int master, int node, t_planningParams* params, t_job* job,
 			int node = elem->node;
 
 			tr_datos* dataNode = doPlanning(blockInfo, master, params);
-
+			free(blockInfo);
 			setInStatusTable(job->id, 'T', master, dataNode->nodo,
 					getBlockId(dataNode->tr_tmp), dataNode->tr_tmp,
 					dataNode->bloque, elem->fileProcess);
 
 			list_add(replanedTasks, dataNode);
 		}
+
+		list_destroy(taskFailed);
 
 		job->replanificaciones = 1;
 		list_replace(yama->tabla_jobs, jobindex, job);

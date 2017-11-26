@@ -80,6 +80,8 @@ void* getFileSystemInfo(char* name) {
 		memcpy(buffer + sizeof(int) + sizeof(char) + sizeof(int), name,
 				sizename);
 
+		free(name);
+
 		int infoSize = 0;
 		int bytesSend = send(fs_client.socket_server_id, buffer, buffersize, 0);
 		if (bytesSend > 0) {

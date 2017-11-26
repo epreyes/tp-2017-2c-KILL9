@@ -146,6 +146,7 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 		} else {
 			if (stage != 'O') {
 				showErrorMessage(response, job);
+				free(response);
 			}
 		}
 
