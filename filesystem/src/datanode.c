@@ -62,8 +62,8 @@ int leerDeDataNode(int idBloque, int socketNodo, long finBytes, int nroBloque,
 	int idNodo = buscarNodoPorSocket(socketNodo);
 
 	log_info(logger,
-			"Enviando peticion a datanode id %d - bloque: %d - finBytes: %d...",
-			idNodo, idBloque, finBytes);
+			"Enviando peticion a datanode %d - nroBloque: %d - idBloque: %d - finBytes: %d...",
+			idNodo, nroBloque , idBloque, finBytes);
 
 	t_leerBloque peticion;
 	peticion.idOperacion = GET_BLOQUE;

@@ -530,9 +530,8 @@ char* leerArchivo(char* path, int* codigoError) {
 			t_nodoSelect* res = list_get(nodosALeer, j);
 
 			lect->nroBloque = bi->nroBloque;
-			//lect->idNodo = atoi(bi->idNodo0); // TODO: Siempre busco en la primera copia, debe distribuirse
-
 			lect->idNodo = res->idNodo;
+
 			log_debug(logger, "Nodo seleccionado para leer de id: %d",
 					res->idNodo);
 
@@ -566,7 +565,13 @@ char* leerArchivo(char* path, int* codigoError) {
 				break;
 			}
 
-			int lectura = leerDeDataNode(bi->idBloque0, nodo->socketNodo,
+			int idBloque = 0;
+			if (atoi(bi->idNodo0) == nodo->id)
+				idBloque = bi->idBloque0;
+			if (atoi(bi->idNodo1) == nodo->id)
+				idBloque = bi->idBloque1;
+
+			int lectura = leerDeDataNode(idBloque, nodo->socketNodo,
 					bi->finBytes, bi->nroBloque, logger);
 
 			if (lectura == -2) {
@@ -631,21 +636,22 @@ char* leerArchivo(char* path, int* codigoError) {
 		offset += lect->finBytes;
 	}
 
-	list_destroy_and_destroy_elements(lista, eliminarItemLectura);
+	void* eliminarItemLectura(t_lectura* lect) {
+		free(lect->lectura);
+		free(lect);
+		return 0;
+	}
+
+	list_destroy_and_destroy_elements(lista, (void*) eliminarItemLectura);
+
+	lista = NULL;
 
 	sem_post(&semLista);
 
-	lista = NULL;
 	list_destroy(nodosExc);
 	free(archivo);
 
 	return respuesta;
-}
-
-void* eliminarItemLectura(t_lectura* lect) {
-	free(lect->lectura);
-	free(lect);
-	return 0;
 }
 
 // Obtiene la lista de nodos a leer optima. Excluye los nodos de la lista nodosExcluir
@@ -701,11 +707,6 @@ t_list* obtenerNodosALeer(t_list* bloques, t_list* nodosExcluir) {
 	log_debug(logger, "Nodos sin repetir: %d - nodos a excluir: %d",
 			list_size(nodosSinRepetir), list_size(nodosExcluir));
 
-	/*	if (list_size(nodosSinRepetir) == list_size(nodosExcluir)) {
-	 list_destroy(nodosSinRepetir);
-	 return NULL;
-	 }*/
-
 	list_clean(nodosSinRepetir);
 
 	// Creo lista de resultados
@@ -714,8 +715,10 @@ t_list* obtenerNodosALeer(t_list* bloques, t_list* nodosExcluir) {
 		t_bloqueInfo* bi = list_get(bloques, j);
 		t_nodoSelect* ns = malloc(sizeof(t_nodoSelect));
 		ns->nroBloque = bi->nroBloque;
+
 		ns->nodo1 = atoi(bi->idNodo0);
 		ns->nodo2 = atoi(bi->idNodo1);
+
 		list_add(resultado, ns);
 	}
 
@@ -880,6 +883,12 @@ int copiarDesdeYamaALocal(char* origen, char* destino) {
 
 	// Escribo archivo
 	memcpy(destinoArchivo, lectura, aInfo->tamanio);
+
+	// Libero
+	munmap(destinoArchivo, aInfo->tamanio);
+	free(lectura);
+	free(aInfo);
+	free(dest);
 
 	return 0;
 
@@ -1168,7 +1177,7 @@ int eliminarArchivo(char* pathArchivo) {
 	int i = 0;
 	int j = 0;
 
-	int cantBloques=list_size(archInfo->bloques);
+	int cantBloques = list_size(archInfo->bloques);
 
 	for (i = 0; i < cantBloques; i++) {
 		t_bloqueInfo* bi = list_get(archInfo->bloques, i);
