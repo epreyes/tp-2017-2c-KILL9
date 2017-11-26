@@ -18,6 +18,7 @@ void* abortJob(int master, int node, char op, t_job* job) {
 	memcpy(abort + sizeof(char) + sizeof(char), &node_id, sizeof(int));
 
 	updateTasksAborted(master, node, op, job);
+	deleteNodeErrors();
 
 	return abort;
 }
