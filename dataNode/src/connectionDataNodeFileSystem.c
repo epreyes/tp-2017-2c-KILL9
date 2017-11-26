@@ -153,17 +153,6 @@ void get_block(int client_socket, t_leerBloque* t_bloque) {
 	void * pos = mapped_data_node + num_block * block_size;
 	memcpy(buffer, pos, block_cant);
 
-	/**tmp :solo para mostrar info*/
-	printf("Informacion a enviar al FILESYSTEM \n");
-	int i;
-	for (i = 0; i < block_cant; i++) {
-		char c;
-		c = ((char *) buffer)[i];
-		putchar(c);
-	}
-	printf("Fin Informacion a enviar al FILESYSTEM \n");
-	/*Fin : tmp */
-
 	//Envio los datos del bloque
 	log_info(infoLogger, "Envio los datos del bloque");
 	send(fileSystemSocket, &cod_resp, sizeof(int),0);
@@ -175,7 +164,6 @@ void get_block(int client_socket, t_leerBloque* t_bloque) {
 
 	log_info(infoLogger, "Fin lectura  bloque archivo %d \n",t_bloque ->idBloque);
 	free(buffer);
-	sleep(3);
 }
 
 /*****************************************************
