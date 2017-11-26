@@ -23,6 +23,7 @@
 #include "fs_comandos.h"
 
 void ejecutarConsola();
+void* hiloTR();
 
 #endif /* FS_CONSOLA_H_ */
 

@@ -124,25 +124,37 @@ void ejecutarConsola() {
 
 			int estadoArchivo = obtenerEstadoArchivo(param1);
 			t_archivoInfo* info;
+			int cantBloques;
 			int i = 0;
 			switch (estadoArchivo) {
 			case 0:
 				info = obtenerArchivoInfo(param1);
+
+				cantBloques = list_size(info->bloques);
+
 				printf("%s: Online\n", param1);
-				printf("Tamanio: %d bytes (", info->tamanio);
+				printf("Tamanio: %d bytes (%d bloques) (", info->tamanio,
+						cantBloques);
 
 				if (info->tipo == BINARIO)
 					printf("BINARIO)\n");
 				else
 					printf("TEXTO)\n");
 
-				for (i = 0; i < list_size(info->bloques); i++) {
+				int tamanio=0;
+				for (i = 0; i < cantBloques; i++) {
 					t_bloqueInfo* bi = list_get(info->bloques, i);
-					printf("Nro Bloque %d : Nodo %d - IdBloque %d\n",
-							bi->nroBloque, atoi(bi->idNodo0), bi->idBloque0);
+					printf(
+							"Nro Bloque %d : Nodo %d - IdBloque %d - finBloque: %d\n",
+							bi->nroBloque, atoi(bi->idNodo0), bi->idBloque0,
+							bi->finBytes);
 					printf("Nro Bloque %d (copia) : Nodo %d - IdBloque %d\n",
-							bi->nroBloque, atoi(bi->idNodo1), bi->idBloque1);
+							bi->nroBloque, atoi(bi->idNodo1), bi->idBloque1,
+							bi->finBytes);
+					tamanio+=bi->finBytes;
+
 				}
+				printf("Suma de bloques: %d\n", tamanio);
 				free(info);
 				break;
 			case -1:
@@ -323,6 +335,7 @@ void ejecutarConsola() {
 				instruccionConsola[0] = '\0';
 				param1[0] = '\0';
 				param2[0] = '\0';
+				param3[0] = '\0';
 				continue;
 			}
 
@@ -362,6 +375,9 @@ void ejecutarConsola() {
 
 			if (escribir == 0) {
 				log_info(logger, "Escritura de %s realizada con exito", param1);
+
+				munmap(lect, sbuf.st_size);
+
 				printf("Escritura ok\n");
 			} else {
 				switch (escribir) {
@@ -430,6 +446,18 @@ void ejecutarConsola() {
 			param2[0] = '\0';
 
 		}
+	}
+
+}
+
+void* hiloTR() {
+
+	while (1) {
+		imprimirEstadoNodosTR();
+		int i = 0;
+		for (i = 0; i < 7; i++)
+			printf("%c", 8);
+		sleep(1);
 	}
 
 }
