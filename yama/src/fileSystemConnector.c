@@ -108,7 +108,6 @@ void* getFileSystemInfo(char* name) {
 
 						block_info* info = (block_info*)buffer;
 
-						free(buffer);
 						//showFSInfo( fsInfo );
 						addToNodeList(fsInfo);
 					} else {
@@ -117,7 +116,7 @@ void* getFileSystemInfo(char* name) {
 						fsInfo = malloc(sizeof(char));
 						memcpy(fsInfo, "E", sizeof(char));
 					}
-
+					free(buffer);
 				}
 			} else {
 				log_warning(yama->log, "No existe el archivo solicitado.");
@@ -203,7 +202,7 @@ elem_info_archivo* getFileInfo(int master, t_job* job) {
 	log_info(yama->log, "Solicitando informacion del archivo: %s. Job %d.",
 			fileName, job->id);
 
-	int fileIndex = findFile(fileName);
+	int fileIndex = -1;//findFile(fileName);
 
 	/*Si ya tengo la info del archivo, en la lista, la saco de ahi.*/
 	if (fileIndex >= 0) {
@@ -236,6 +235,8 @@ elem_info_archivo* getFileInfo(int master, t_job* job) {
 			fileInfo->blocks = size / sizeof(block_info);
 
 			list_add(yama->tabla_info_archivos, fileInfo);
+
+			free(fsInfo);
 
 			info = fileInfo;
 			return info;

@@ -83,6 +83,12 @@ int allTransformProcesFinish(int master, int jobid) {
 	return response;
 }
 
+void destroyTablePlanned(void* elem){
+	log_error(yama->log, "Destruyendo tabla planificados");
+	free(((elem_tabla_planificados*)elem)->data);
+	free(elem);
+}
+
 void* processLocalReduction(int master, int job) {
 	if (allTransformProcesFinish(master, job)) {
 		t_list* planed = findTransformationPlaned(master, job);
@@ -134,10 +140,12 @@ void* processLocalReduction(int master, int job) {
 
 			free(localRedData);
 		}
+
+		list_destroy_and_destroy_elements(planed, &destroyTablePlanned);
 		return localReductionRes;
 	} else {
 		log_warning(yama->log, "Todas las transformaciones deben terminar antes de empezar las reducciones locales.");
-		return NULL;
+		return "E";
 	}
 
 }

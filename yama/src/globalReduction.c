@@ -143,6 +143,11 @@ int getLastChargedNode(t_list* planed) {
 	return minNodeId;
 }
 
+void destroyLRPlanedList(void* elem){
+	free(((elem_tabla_LR_planificados*)elem)->data);
+	free(elem);
+}
+
 void* processGlobalReduction(int master, int jobid) {
 
 	void* globalReductionRes;
@@ -220,6 +225,8 @@ void* processGlobalReduction(int master, int jobid) {
 				tamData * list_size(planed));
 
 		free(dataGR);
+
+		list_destroy_and_destroy_elements(planed, &destroyLRPlanedList);
 
 		return globalReductionRes;
 	} else {

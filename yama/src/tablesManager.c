@@ -429,6 +429,7 @@ block_info* findBlock(int block) {
 				return blockInfo;
 			}
 		}
+		free(info);
 	}
 
 	return NULL;

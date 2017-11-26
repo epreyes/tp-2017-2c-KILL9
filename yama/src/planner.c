@@ -232,7 +232,6 @@ tr_datos* doPlanning(block_info* blockRecived, int master,
 	int planigDelay = planningParams->planningDelay;
 
 	if (yama->debug == 1) {
-		printf("\n");
 		log_info(yama->log,
 				"----------------- Planificacion -----------------");
 		log_info(yama->log, "Clock = Nodo %d", nodoClock->node_id);

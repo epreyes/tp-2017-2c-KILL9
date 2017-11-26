@@ -38,6 +38,12 @@ void viewTransformationResponse(void* response) {
 	}
 }
 
+void destroyNodeList(void* elem){
+	log_error(yama->log, "Destruyendo Lista Temporal de nodos.");
+	free(elem);
+}
+
+
 void* processTransformation(int master, t_job* job) {
 	log_trace(yama->log, "Atendiendo solicitud de Transformación. Job %d.",
 			job->id);
@@ -53,6 +59,8 @@ void* processTransformation(int master, t_job* job) {
 
 		void* response = sortTransformationResponse(nodeList, master, fsInfo->filename,
 				job);
+
+		list_destroy_and_destroy_elements(nodeList, &destroyNodeList);
 
 		return response;
 	}
@@ -103,6 +111,7 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 
 		free(blockInfo);
 	}
+	free(info);
 	free(planningParams);
 	return nodeList;
 }

@@ -167,7 +167,6 @@ void* processOperation(int master, char op) {
 		t_job* job = list_get(yama->tabla_jobs, jobIndex);
 		log_trace(yama->log, "Solicitud de Reducción Local. Job %d.", job->id);
 		response = processLocalReduction(master, job->id);
-		viewLRPlannedTable();
 		job->etapa = 'L';
 		list_replace(yama->tabla_jobs, jobIndex, job);
 	}
