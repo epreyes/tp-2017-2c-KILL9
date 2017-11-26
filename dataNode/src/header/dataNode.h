@@ -36,7 +36,7 @@ typedef struct __attribute__((packed)) {
 	 char*  worker_ip_port;
 } t_infoNodo;
 
-static char* DATA_NODE_PATH="./properties/dataNode.properties";
+static char* DATA_NODE_PATH="../properties/dataNode.properties";
 
 /** Variables globales **/
 t_config * t_data_node;

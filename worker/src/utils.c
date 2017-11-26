@@ -37,13 +37,13 @@ char* regenerateScript(char* fileContent, FILE* script, char operation, int sock
 
 
 void loadConfigs(){
-	char* CONFIG_PATH = "properties/worker.properties";
+	char* CONFIG_PATH = "../properties/node.properties";
 
 	if(!(config = config_create(CONFIG_PATH))){
 		log_error(logger, "No se pudo cargar el archivo de configuración");
 		exit(1);
 	};
-	if(!(config_has_property(config,"WORKER_PUERTO"))){
+	if(!(config_has_property(config,"PORT_WORKER"))){
 		log_error(logger, "Error al cargar archivos de configuración");
 		config_destroy(config);
 		exit(1);
@@ -195,7 +195,7 @@ void map_data_node() {
 	int status;
 	size_t size;
 
-	char* dataBinName = config_get_string_value(config,"RUTA_DATABIN");
+	char* dataBinName = config_get_string_value(config,"PATH_DATABIN");
 	/*Abrir el archivo para leer e escribir*/
 	fd = open(dataBinName, O_RDWR);
 	if(fd < 0){
@@ -227,14 +227,13 @@ void map_data_node() {
 char* getBlockData(int blockNumber, int sizeByte) {
 	log_info(logger, "Iniciando lectura  bloque archivo ");
 
-	void * buffer = malloc(sizeByte);
+	void* buffer = malloc(sizeByte);
 
-	void * pos = mapped_data_node + blockNumber * BLOCK_SIZE;
-
+	void* pos = mapped_data_node + blockNumber * BLOCK_SIZE;
 	memcpy(buffer, pos, sizeByte);
 
 	log_info(logger, "Fin lectura bloque archivo ");
-	return (char *) buffer;
+	return (char*)buffer;
 }
 
 
