@@ -282,7 +282,8 @@ void* replanTask(int master, int node, t_planningParams* params, t_job* job,
 
 		job->replanificaciones = 1;
 		list_replace(yama->tabla_jobs, jobindex, job);
-
-		return sortTransformationResponse(replanedTasks, master, filename, job);
+		void* response = sortTransformationResponse(replanedTasks, master, filename, job);
+		list_destroy(replanedTasks);
+		return response;
 	}
 }

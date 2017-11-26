@@ -54,11 +54,12 @@ void* processTransformation(int master, t_job* job) {
 		return fsInfo;
 	} else {
 		/*Creo una lista, que va a ser la respuesta que se le va a mandar al master, sin planificar.*/
-		t_list* nodeList = list_create();
-		nodeList = buildTransformationResponseNodeList(fsInfo, master, job->id);
+		t_list* nodeList = buildTransformationResponseNodeList(fsInfo, master, job->id);
 
 		void* response = sortTransformationResponse(nodeList, master, fsInfo->filename,
 				job);
+
+		free(nodeList);
 
 		return response;
 	}
@@ -95,7 +96,6 @@ t_list* buildTransformationResponseNodeList(elem_info_archivo* fsInfo,
 
 		//Planifico
 		tr_datos* nodeData = doPlanning(blockInfo, master, planningParams);
-
 
 		printf("\nPlanifico -> Bloque: %d - Nodo: %d - Ip: %s - Puerto: %d - Temporal: %s\n", nodeData->bloque, nodeData->nodo, nodeData->ip, nodeData->port, nodeData->tr_tmp);
 
@@ -154,7 +154,7 @@ void* sortTransformationResponse(t_list* buffer, int master, char* fileName,
 				sortedBuffer + sizeAdded + (index * sizeof(tr_datos)), data, sizeof(tr_datos));
 	}
 
-	list_destroy_and_destroy_elements(buffer, &destroyBuffer);
+	list_clean_and_destroy_elements(buffer, &destroyBuffer);
 
 	return sortedBuffer;
 }
