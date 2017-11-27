@@ -187,7 +187,7 @@ check (int test, const char * message, ...)
 
 
 void map_data_node() {
-	log_info(logger," Inicio mapeo del archivo bin en memoria \n");
+	log_info(logger,"Inicio mapeo del archivo bin en memoria");
 
 	int fd;
 	/*Informacion acerca del archivo */
@@ -199,14 +199,14 @@ void map_data_node() {
 	/*Abrir el archivo para leer e escribir*/
 	fd = open(dataBinName, O_RDWR);
 	if(fd < 0){
-		log_error(logger,"Error al abrir el archivo\n");
+		log_error(logger,"Error al abrir el archivo");
 	}
 	check (fd < 0, "open %s failed: %s", dataBinName, strerror (errno));
 
 	/*Obtener el tamanio del archivo */
 	 status = fstat(fd,&stat_data);
 	 if(status < 0){
-	 	log_error(logger,"Error al obtener el tamaño del archivo\n");
+	 	log_error(logger,"Error al obtener el tamaño del archivo");
 	 }
 	 check (status < 0, "stat %s failed: %s", dataBinName, strerror (errno));
 	 size = stat_data.st_size;
@@ -214,11 +214,11 @@ void map_data_node() {
 	 /* Memory-map del archivo. */
 	 mapped_data_node = mmap ((caddr_t) 0, size, PROT_READ, MAP_SHARED, fd, 0);
 	 if(mapped_data_node == MAP_FAILED){
-		 log_error(logger,"Error al mapear el archivo en memoria\n");
+		 log_error(logger,"Error al mapear el archivo en memoria");
 	 }
 	 check (mapped_data_node == MAP_FAILED, "mmap %s failed: %s",dataBinName, strerror (errno));
 
-	 log_info(logger,"Fin mapeo de archivo en memoria \n");
+	 log_info(logger,"Fin mapeo de archivo en memoria");
 }
 
 /*****************************************************

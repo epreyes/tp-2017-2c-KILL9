@@ -96,12 +96,12 @@ int sendNodeRequest(dataThread_GR* datos){
 		counter+=sizeof(int);
 		memcpy(buffer+counter,(datos->brothersData[i].rl_tmp),28);
 		counter+=28;
-		//printf("DATOS:%d %s %d %s\n",datos->brothersData[i].node,datos->brothersData[i].ip,datos->brothersData[i].port,datos->brothersData[i].rl_tmp);
+		printf("DATOS:%d %s %d %s\n",datos->brothersData[i].node,datos->brothersData[i].ip,datos->brothersData[i].port,datos->brothersData[i].rl_tmp);
 	}
 
 
 //ENVÍO A WORKER
-	log_info(logger,"Estableciendo conexión con nodo %d",datos->leadNode);
+	log_info(logger,"Estableciendo conexión con nodo %d(%s:%d)",datos->leadNode,datos->leadIp,datos->leadPort);
 	if(send(nodeSockets[datos->leadNode],buffer,bufferSize,0)<0){
 		log_error(logger,"No se pudo conectar con nodo %d (%s:%d)", datos->leadNode, datos->leadIp, datos->leadPort);
 		reportGRError(datos->leadNode);

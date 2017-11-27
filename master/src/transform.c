@@ -90,6 +90,14 @@ void *runTransformThread(void* data){
 	int i, counter=0;
 	char* scriptString;
 
+	//CONEXION CON WORKER
+		log_info(logger,"Estableciendo conexión con nodo %d",datos->node);
+		if(openNodeConnection(datos->node, datos->ip, datos->port)!=0){
+			checkReplanification(datos->node);
+			return NULL;
+		};
+
+
 //PREPARO PAQUETE PARA WORKER---
 	scriptString=serializeFile(script_transform);	//hacer que se genere una sola vez(?)
 	tr_node* nodeData=malloc(sizeof(tr_node));
@@ -98,6 +106,7 @@ void *runTransformThread(void* data){
 	nodeData->file=malloc(nodeData->fileSize);		//ver el +1
 	strcpy(nodeData->file,scriptString);
 	nodeData->blocksSize=datos->blocksCount;
+	free(scriptString);
 
 //SERIALIZO---
 	void* buffer = malloc(sizeof(char)+sizeof(int)+nodeData->fileSize+sizeof(int)+(sizeof(block)*(datos->blocksCount)));
@@ -115,20 +124,19 @@ void *runTransformThread(void* data){
 		memcpy(buffer+counter+sizeof(int)+sizeof(int)+i*sizeof(block),(datos->blocks[i].tmp),28);
 	}
 
-//CONEXION CON WORKER
-	log_info(logger,"Estableciendo conexión con nodo %d",datos->node);
-	if(openNodeConnection(datos[0].node, datos[0].ip, datos[0].port)!=0){
-		checkReplanification(datos->node);
-		return NULL;
-	};
+	free(nodeData->file);
+	free(nodeData);
+
 
 //ENVIO DATOS A WORKER
 	counter=1+4+(nodeData->fileSize)+4+(36*(datos->blocksCount));
 	if(send(nodeSockets[datos->node],buffer,counter,0)<0){
 		log_warning(logger, "Nodo %d: Desconectado", datos->node);
 		checkReplanification(datos->node);
+		free(buffer);
 		return NULL;
 	};
+	free(buffer);
 	log_trace(logger,"Nodo %d: Transformación iniciada", datos->node);
 
 //METRICS
@@ -174,10 +182,6 @@ void *runTransformThread(void* data){
 	}
 */
 	//free(datos);
-	free(nodeData->file);
-	free(nodeData);
-	free(buffer);
-	free(scriptString);
 
 	return NULL;
 }

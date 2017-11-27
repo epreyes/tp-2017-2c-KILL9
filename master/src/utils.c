@@ -16,13 +16,15 @@ double timediff(struct timeval *a, struct timeval *b){
 void validateArgs(int argc, char* argv[]){
 	int count;
 	if(argc!=5){
-			log_error(logger,"número de argumentos inválido");
-			exit(0);
+			log_error(logger,"Número de argumentos inválido");
+			log_destroy(logger);
+			exit(EXIT_FAILURE);
 	};
 	for(count=3;count<=4;++count){
 		if(strncmp(argv[count],"yamafs:/",8)!=0){
 			log_error(logger, "El archivo %s debe pertenecer a yamafs", argv[count]);
-			exit(0);
+			log_destroy(logger);
+			exit(EXIT_FAILURE);
 		}
 	}
 };
