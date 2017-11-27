@@ -74,24 +74,24 @@ int mergeFiles(char* Aname, char* Bname, char *Cname){
 int mergeBySystem(int filesCuantity, tmp_tr* files, char* mergedFile){
 
 	typedef char space[29];
+	int i;
 
-	char* command = NULL;
 	char filesList[filesCuantity*(sizeof(tmp_tr)+1)]; //= malloc(filesCuantity*(sizeof(tmp_tr)+1));
 	filesList[0]='\0';
 	space filesB[filesCuantity];
-	int i;
 
 	for(i=0;i<filesCuantity;i++){
 		strcpy(filesB[i], strcat(files[i]+1," "));
-		strcpy(filesList, strcat(filesList, filesB[i]));
+		strcat(filesList, filesB[i]);
 	}
 
-	command = malloc(29*filesCuantity+13);
-	asprintf(&command,"cat %s| sort > %s", filesList, mergedFile+1);
+	log_trace(logger,"Apareo de archivos iniciado...");
+	char* command = malloc(29*filesCuantity+12);
+	asprintf(&command,"sort -m %s > %s", filesList, mergedFile+1);
 	//log_info(logger, "%s",command);
-
 //EJECUTO REDUCCION
 	if (system(command)!=0){
+		usleep(1000000);
 		log_error(logger,"No se pudo finalizar el apareo de archivos");
 		free(command);
 		return EXIT_FAILURE;

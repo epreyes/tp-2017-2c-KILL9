@@ -51,16 +51,19 @@ void localReduction(){
 
 
 char reduceFiles(int filesQuantity, tmp_tr* filesNames, char* script, char* reducedFileName){
-	int i=0;
-	char file1[28], file2[28], mergedFile[28];
+	//int i=0;
+	char file1[28], file2[28];
+	char mergedFile[28];
 
 	log_info(logger,"Iniciando etapa de reducción");
 //OBTENGO EL PRIMERO
-	strcpy(file1,filesNames[i]);
-	strcpy(mergedFile,file1);//VALIDO POR SI SOLO HAY UNO
+	//strcpy(file1,filesNames[i]);
+	//strcpy(mergedFile,file1);//VALIDO POR SI SOLO HAY UNO
 	if(filesQuantity>1){
 		strcpy(mergedFile, generateAuxFile());
 		mergeBySystem(filesQuantity, filesNames, mergedFile);
+	}else{
+		strcpy(mergedFile,filesNames[0]);
 	}
 		/*
 //MERGEO TODOS LOS TEMPORALES
@@ -81,8 +84,7 @@ char reduceFiles(int filesQuantity, tmp_tr* filesNames, char* script, char* redu
 	log_info(logger,"Preparando para ejecución de reducción");
 
 //GENERO COMANDO PARA EJECUTAR REDUCCION
-	char* command = NULL;
-	command = malloc(strlen(mergedFile)+strlen(script)+strlen(reducedFileName)+15);
+	char* command = malloc(strlen(mergedFile)+strlen(script)+strlen(reducedFileName)+15);
 	asprintf(&command,"cat %s | ./%s > %s",mergedFile+1,script,reducedFileName+1);
 	printf("\nCOMANDO:%s", command);
 
@@ -96,6 +98,4 @@ char reduceFiles(int filesQuantity, tmp_tr* filesNames, char* script, char* redu
 		free(command);
 		return 'O';
 	}
-/*
-*/
 }
