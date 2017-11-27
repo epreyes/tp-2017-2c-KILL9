@@ -671,11 +671,19 @@ void *connection_handler_worker(void *socket_desc) {
 					socketCliente);
 			return 0;
 		}
+		
+		log_debug(logger,"Se recibio codigo de operacion: %d", cod_op);
 
 		t_header header;
-		header.idMensaje = cod_op;
-
-		procesarPedidoWorker(header, socketCliente);
+		if (cod_op=='S') {
+			header.idMensaje = cod_op;
+			procesarPedidoWorker(header, socketCliente);
+		}
+		else {
+			log_error(logger, "Pedido %d invalido", cod_op);
+			close(socketCliente);
+		}
+		
 	}
 
 	return 0;
