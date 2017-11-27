@@ -721,9 +721,12 @@ t_archivoInfo* obtenerArchivoInfo(char* path) {
 
 			bi->dirWorker0 = malloc(20);
 
-			if (nodod == NULL )
-				log_info(logger,
+			if (nodod == NULL ) {
+				log_warning(logger,
 						"Hay un nodo que todavia no se conecto, no se puede obtener la info del worker");
+				memcpy(bi->dirWorker0, "0.0.0.0:0000", 20);
+
+			}
 			else {
 				memcpy(bi->dirWorker0, nodod->direccion, 20);
 
@@ -752,8 +755,9 @@ t_archivoInfo* obtenerArchivoInfo(char* path) {
 			bi->dirWorker1 = malloc(20);
 
 			if (nodod == NULL ) {
-				log_info(logger,
+				log_warning(logger,
 						"Hay un nodo que todavia no se conecto, no se puede obtener la info del worker");
+				memcpy(bi->dirWorker0, "0.0.0.0:0000", 20);		
 			} else {
 				memcpy(bi->dirWorker1, nodod->direccion, 20);
 				if (nodod->activo == 0)
