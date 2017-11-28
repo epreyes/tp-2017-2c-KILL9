@@ -1174,6 +1174,7 @@ int eliminarArchivo(char* pathArchivo) {
 	}
 
 	// Limpio el bitmap
+
 	int i = 0;
 	int j = 0;
 
@@ -1182,38 +1183,76 @@ int eliminarArchivo(char* pathArchivo) {
 	for (i = 0; i < cantBloques; i++) {
 		t_bloqueInfo* bi = list_get(archInfo->bloques, i);
 
-		for (j = 0; j < list_size(nodos->nodos); j++) {
-			t_nodo* nodo = list_get(nodos->nodos, j);
+        // Actualizo original
 
-			if (nodo->id == atoi(bi->idNodo0)) {
+        int idNodo=atoi(bi->idNodo0);
 
-				t_bitarray* ba = obtenerBitMapBloques(nodo->id);
+        t_bitarray* ba = obtenerBitMapBloques(idNodo);
 
-				log_info(logger,
-						"Limpiando bloque en nodo id: %d - idbloque: %d",
-						nodo->id, bi->idBloque0);
+        // Si no esta en memoria, lo busco en disco
+        if (ba == NULL) {
+        	t_nodo* nod = obtenerNodoDeDataBinPorId(idNodo);
+        	nod->id = idNodo;
+        	ba = obtenerBitMapBloquesNodo(nod);
+        }
 
-				bitarray_clean_bit(ba, bi->idBloque0);
+        log_info(logger,
+                "Limpiando bloque en nodo id: %d - idbloque: %d",
+                idNodo, bi->idBloque0);
 
-				nodo->libre++;
-				actualizarConfigNodoEnBin(nodo);
-			}
+        bitarray_clean_bit(ba, bi->idBloque0);
 
-			if (nodo->id == atoi(bi->idNodo1)) {
+        t_nodo* nodo=buscarNodoPorId_(idNodo);
 
-				t_bitarray* ba = obtenerBitMapBloques(nodo->id);
+        if (nodo!=NULL)
+            // Si esta conectado, actualizo la lista de nodos en memoria
+            nodo->libre++;
+        else
+        {
+            // Obtengo la info de nodos.bin, creo una variable nodo y actualizo
+            nodo = obtenerNodoDeDataBinPorId(idNodo);
+            nodo->libre++;
+            nodo->id = idNodo;
+        }
 
-				log_info(logger,
-						"Limpiando bloque en nodo id: %d - idbloque: %d",
-						nodo->id, bi->idBloque1);
+        actualizarConfigNodoEnBin(nodo);
 
-				bitarray_clean_bit(ba, bi->idBloque1);
+        // Actualizo copia
 
-				nodo->libre++;
-				actualizarConfigNodoEnBin(nodo);
-			}
+        idNodo=atoi(bi->idNodo1);
 
+        ba = obtenerBitMapBloques(idNodo);
+
+        // Si no esta en memoria, lo busco en disco
+		if (ba == NULL) {
+			t_nodo* nod = obtenerNodoDeDataBinPorId(idNodo);
+			nod->id = idNodo;
+			ba = obtenerBitMapBloquesNodo(nod);
 		}
+
+        log_info(logger,
+                "Limpiando bloque en nodo id: %d - idbloque: %d",
+                idNodo, bi->idBloque1);
+
+        bitarray_clean_bit(ba, bi->idBloque1);
+
+
+        nodo=buscarNodoPorId_(idNodo);
+
+
+        if (nodo!=NULL)
+            // Si esta conectado, actualizo la lista de nodos en memoria
+            nodo->libre++;
+        else
+        {
+            // Obtengo la info de nodos.bin, creo una variable nodo y actualizo
+            nodo = obtenerNodoDeDataBinPorId(idNodo);
+            nodo->libre++;
+            nodo->id = idNodo;
+        }
+
+        actualizarConfigNodoEnBin(nodo);
+
 
 	}
 
