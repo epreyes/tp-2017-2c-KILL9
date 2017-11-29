@@ -706,7 +706,8 @@ void procesarPedidoWorker(t_header pedido, int socketCliente) {
 	recv(socketCliente, &fileSize, sizeof(int), 0);
 
 	char* contenido = malloc(fileSize);
-	recv(socketCliente, contenido, fileSize, 0);
+
+	int bytesRecibidos = recv_all(socketCliente, contenido, fileSize,0);
 
 	switch (pedido.idMensaje) {
 

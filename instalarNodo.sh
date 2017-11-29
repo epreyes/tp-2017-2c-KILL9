@@ -23,6 +23,9 @@ SIZE+=MB
 
 truncate -s $SIZE $RUTA/nodo$NOMBRE/data.bin
 
+#SESSION SORT CONFIG
+export LC_ALL=C
+
 #PROPERTIES
 echo -ne "\e[1m\e[95mIP de FILESYSTEM: \e[0m"
 read IP_FILESYSTEM
@@ -30,6 +33,9 @@ read IP_FILESYSTEM
 echo -ne "\e[1m\e[95mPuerto de FILESYSTEM: \e[0m"
 read PORT_FILESYSTEM
 
-echo -e "IP_FILESYSTEM=$IP_FILESYSTEM\nPORT_FILESYSTEM=$PORT_FILESYSTEM\nIP_WORKER=$(hostname -i)\nPORT_WORKER=5050\nNAME_NODO=$NOMBRE\nPATH_DATABIN=../data.bin\n" > $RUTA/nodo$NOMBRE/properties/node.properties
+echo -ne "\e[1m\e[95mIP de WORKER: \e[0m"
+read IP_WORKER
+
+echo -e "IP_FILESYSTEM=$IP_FILESYSTEM\nPORT_FILESYSTEM=$PORT_FILESYSTEM\nIP_WORKER=$IP_WORKER\nPORT_WORKER=5050\nNAME_NODO=$NOMBRE\nPATH_DATABIN=../data.bin\n" > $RUTA/nodo$NOMBRE/properties/node.properties
 
 echo -e "\e[1m\e[36mInstalación de nodo $NOMBRE finalizada correctamente!\e[0m"

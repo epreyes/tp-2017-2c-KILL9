@@ -1059,17 +1059,13 @@ char* obtenerMd5(char* pathArchivo) {
 	int fd;
 
 	if ((fd = open("/tmp/md5temporal", O_RDWR)) == -1) {
-
 		log_error(logger, "No se pudo abrir el archivo: %s", tmpsalida);
-		exit(1);
-
 	}
 
 	struct stat sbuf;
 
 	if (stat(tmpsalida, &sbuf) == -1) {
 		perror("stat");
-		exit(1);
 	}
 
 	char* md5 = malloc(sizeof(char) * sbuf.st_size);
@@ -1078,7 +1074,6 @@ char* obtenerMd5(char* pathArchivo) {
 
 	if (md5 == NULL) {
 		perror("error en map\n");
-		exit(1);
 	}
 
 	log_info(logger, "Md5sum de archivo obtenido: %s (%d)", md5,
@@ -1112,13 +1107,34 @@ int eliminarDirectorio(char* path) {
 		return DIRECTORIO_NO_VACIO;
 	}
 
+
+
 	int indiceDir = obtenerIndiceDir(path);
 	log_debug(logger,
 			"Indice de directorio obtenido para eliminacion de directorio: %d",
 			indiceDir);
 
+	// Verifico si hay algun directorio que dependa de este
+
+	// 0 -1 raiz
+	// 1  0 primerDir
+	// 2  1 subDir
+
 	int i = 0;
 	t_directorio* dir = inicioTablaDirectorios;
+
+	dir++;
+
+	for (i = 1; i < MAX_DIR_FS; i++) {
+		if (dir->padre == indiceDir) {
+			return DIRECTORIO_NO_VACIO;
+		}
+		dir++;
+	}
+
+
+	i = 0;
+	dir = inicioTablaDirectorios;
 
 	dir++;
 
@@ -1174,46 +1190,84 @@ int eliminarArchivo(char* pathArchivo) {
 	}
 
 	// Limpio el bitmap
+
 	int i = 0;
-	int j = 0;
 
 	int cantBloques = list_size(archInfo->bloques);
 
 	for (i = 0; i < cantBloques; i++) {
 		t_bloqueInfo* bi = list_get(archInfo->bloques, i);
 
-		for (j = 0; j < list_size(nodos->nodos); j++) {
-			t_nodo* nodo = list_get(nodos->nodos, j);
+        // Actualizo original
 
-			if (nodo->id == atoi(bi->idNodo0)) {
+        int idNodo=atoi(bi->idNodo0);
 
-				t_bitarray* ba = obtenerBitMapBloques(nodo->id);
+        t_bitarray* ba = obtenerBitMapBloques(idNodo);
 
-				log_info(logger,
-						"Limpiando bloque en nodo id: %d - idbloque: %d",
-						nodo->id, bi->idBloque0);
+        // Si no esta en memoria, lo busco en disco
+        if (ba == NULL) {
+        	t_nodo* nod = obtenerNodoDeDataBinPorId(idNodo);
+        	nod->id = idNodo;
+        	ba = obtenerBitMapBloquesNodo(nod);
+        }
 
-				bitarray_clean_bit(ba, bi->idBloque0);
+        log_info(logger,
+                "Limpiando bloque en nodo id: %d - idbloque: %d",
+                idNodo, bi->idBloque0);
 
-				nodo->libre++;
-				actualizarConfigNodoEnBin(nodo);
-			}
+        bitarray_clean_bit(ba, bi->idBloque0);
 
-			if (nodo->id == atoi(bi->idNodo1)) {
+        t_nodo* nodo=buscarNodoPorId_(idNodo);
 
-				t_bitarray* ba = obtenerBitMapBloques(nodo->id);
+        if (nodo!=NULL)
+            // Si esta conectado, actualizo la lista de nodos en memoria
+            nodo->libre++;
+        else
+        {
+            // Obtengo la info de nodos.bin, creo una variable nodo y actualizo
+            nodo = obtenerNodoDeDataBinPorId(idNodo);
+            nodo->libre++;
+            nodo->id = idNodo;
+        }
 
-				log_info(logger,
-						"Limpiando bloque en nodo id: %d - idbloque: %d",
-						nodo->id, bi->idBloque1);
+        actualizarConfigNodoEnBin(nodo);
 
-				bitarray_clean_bit(ba, bi->idBloque1);
+        // Actualizo copia
 
-				nodo->libre++;
-				actualizarConfigNodoEnBin(nodo);
-			}
+        idNodo=atoi(bi->idNodo1);
 
+        ba = obtenerBitMapBloques(idNodo);
+
+        // Si no esta en memoria, lo busco en disco
+		if (ba == NULL) {
+			t_nodo* nod = obtenerNodoDeDataBinPorId(idNodo);
+			nod->id = idNodo;
+			ba = obtenerBitMapBloquesNodo(nod);
 		}
+
+        log_info(logger,
+                "Limpiando bloque en nodo id: %d - idbloque: %d",
+                idNodo, bi->idBloque1);
+
+        bitarray_clean_bit(ba, bi->idBloque1);
+
+
+        nodo=buscarNodoPorId_(idNodo);
+
+
+        if (nodo!=NULL)
+            // Si esta conectado, actualizo la lista de nodos en memoria
+            nodo->libre++;
+        else
+        {
+            // Obtengo la info de nodos.bin, creo una variable nodo y actualizo
+            nodo = obtenerNodoDeDataBinPorId(idNodo);
+            nodo->libre++;
+            nodo->id = idNodo;
+        }
+
+        actualizarConfigNodoEnBin(nodo);
+
 
 	}
 
