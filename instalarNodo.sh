@@ -23,6 +23,9 @@ SIZE+=MB
 
 truncate -s $SIZE $RUTA/nodo$NOMBRE/data.bin
 
+#SESSION SORT CONFIG
+export LC_ALL=C
+
 #PROPERTIES
 echo -ne "\e[1m\e[95mIP de FILESYSTEM: \e[0m"
 read IP_FILESYSTEM
