@@ -1059,17 +1059,13 @@ char* obtenerMd5(char* pathArchivo) {
 	int fd;
 
 	if ((fd = open("/tmp/md5temporal", O_RDWR)) == -1) {
-
 		log_error(logger, "No se pudo abrir el archivo: %s", tmpsalida);
-		exit(1);
-
 	}
 
 	struct stat sbuf;
 
 	if (stat(tmpsalida, &sbuf) == -1) {
 		perror("stat");
-		exit(1);
 	}
 
 	char* md5 = malloc(sizeof(char) * sbuf.st_size);
@@ -1078,7 +1074,6 @@ char* obtenerMd5(char* pathArchivo) {
 
 	if (md5 == NULL) {
 		perror("error en map\n");
-		exit(1);
 	}
 
 	log_info(logger, "Md5sum de archivo obtenido: %s (%d)", md5,
@@ -1112,13 +1107,34 @@ int eliminarDirectorio(char* path) {
 		return DIRECTORIO_NO_VACIO;
 	}
 
+
+
 	int indiceDir = obtenerIndiceDir(path);
 	log_debug(logger,
 			"Indice de directorio obtenido para eliminacion de directorio: %d",
 			indiceDir);
 
+	// Verifico si hay algun directorio que dependa de este
+
+	// 0 -1 raiz
+	// 1  0 primerDir
+	// 2  1 subDir
+
 	int i = 0;
 	t_directorio* dir = inicioTablaDirectorios;
+
+	dir++;
+
+	for (i = 1; i < MAX_DIR_FS; i++) {
+		if (dir->padre == indiceDir) {
+			return DIRECTORIO_NO_VACIO;
+		}
+		dir++;
+	}
+
+
+	i = 0;
+	dir = inicioTablaDirectorios;
 
 	dir++;
 
@@ -1176,7 +1192,6 @@ int eliminarArchivo(char* pathArchivo) {
 	// Limpio el bitmap
 
 	int i = 0;
-	int j = 0;
 
 	int cantBloques = list_size(archInfo->bloques);
 
