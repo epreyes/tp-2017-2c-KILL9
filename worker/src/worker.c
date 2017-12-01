@@ -23,6 +23,10 @@ void killWorkers(int t){
 }
 
 int main(){
+
+	signal(SIGKILL,killWorkers);
+	signal(SIGTERM,killWorkers);
+
 	createLoggers();
 	loadConfigs();
 	map_data_node();
