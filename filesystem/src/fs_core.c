@@ -92,7 +92,7 @@ bool existeDirectorio(char* path) {
 	if (esDirRaiz) {
 		t_directorio* dir = (t_directorio*) inicioTablaDirectorios;
 		int j = 0;
-		for (j = 0; j < 100; j++) {
+		for (j = 0; j < MAX_DIR_FS; j++) {
 			if (strcmp(dir->nombre, path) == 0) {
 				return true;
 			}
@@ -121,7 +121,7 @@ bool existeDirectorio(char* path) {
 
 		t_directorio* dir = (t_directorio*) inicioTablaDirectorios;
 
-		for (j = 0; j < 100; j++) {
+		for (j = 0; j < MAX_DIR_FS; j++) {
 			char tl[255];
 			strcpy(tl, directorios[k]);
 			if (strcmp(dir->nombre, tl) == 0 && dir->padre == indiceAnt) {
@@ -319,7 +319,7 @@ int obtenerIndiceDirPadre(char* path) {
 
 		t_directorio* dir = (t_directorio*) inicioTablaDirectorios;
 
-		for (j = 0; j < 100; j++) {
+		for (j = 0; j < MAX_DIR_FS; j++) {
 			char tl[255];
 			strcpy(tl, directorios[k]);
 			if (strcmp(dir->nombre, tl) == 0 && dir->padre == indiceAnt) {
@@ -362,7 +362,7 @@ int obtenerIndiceDir(char* path) {
 
 		t_directorio* dir = (t_directorio*) inicioTablaDirectorios;
 
-		for (j = 0; j < 100; j++) {
+		for (j = 0; j < MAX_DIR_FS; j++) {
 			char tl[255];
 			strcpy(tl, path);
 			if (strcmp(dir->nombre, tl) == 0 && dir->padre == 0)
@@ -392,7 +392,7 @@ int obtenerIndiceDir(char* path) {
 
 		t_directorio* dir = (t_directorio*) inicioTablaDirectorios;
 
-		for (j = 0; j < 100; j++) {
+		for (j = 0; j < MAX_DIR_FS; j++) {
 			char tl[255];
 			strcpy(tl, directorios[k]);
 			if (strcmp(dir->nombre, tl) == 0 && dir->padre == indiceAnt) {

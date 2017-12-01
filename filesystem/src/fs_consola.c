@@ -141,7 +141,7 @@ void ejecutarConsola() {
 				else
 					printf("TEXTO)\n");
 
-				int tamanio=0;
+				int tamanio = 0;
 				for (i = 0; i < cantBloques; i++) {
 					t_bloqueInfo* bi = list_get(info->bloques, i);
 					printf(
@@ -150,7 +150,7 @@ void ejecutarConsola() {
 							bi->finBytes);
 					printf("Nro Bloque %d (copia) : Nodo %d - IdBloque %d\n",
 							bi->nroBloque, atoi(bi->idNodo1), bi->idBloque1);
-					tamanio+=bi->finBytes;
+					tamanio += bi->finBytes;
 
 				}
 				printf("Suma de bloques: %d\n", tamanio);
@@ -192,7 +192,7 @@ void ejecutarConsola() {
 
 			char* md5 = obtenerMd5(param1);
 
-			if (md5 == NULL) {
+			if (md5 == NULL ) {
 				printf("No existe el archivo indicado por parametro\n");
 			} else {
 				printf("hash: %s\n", md5);
@@ -262,7 +262,12 @@ void ejecutarConsola() {
 			printf("Obtiene la composicion de bloques y nodos del archivo\n");
 			printf("rm [PathArchivoYama] | rm -d [PathDirectorioYama]\n");
 			printf("Elimina un archivo o un directorio\n");
+			printf("rename [PathArchivoYamaOrigen] [NuevoArchivoYama] | rename -d [PathDirYamaOrigen] [NuevoDirYama]\n");
+			printf("Renombra un archivo o un directorio\n");
 
+			instruccionConsola[0] = '\0';
+			param1[0] = '\0';
+			param2[0] = '\0';
 		}
 
 		// Nuevos comandos
@@ -283,20 +288,19 @@ void ejecutarConsola() {
 
 			int i = 0;
 			t_directorio* dir = inicioTablaDirectorios;
-			int hayDirs=0;
+			int hayDirs = 0;
 
 			dir++;
 
 			for (i = 1; i < MAX_DIR_FS; i++) {
 				if (dir->padre == indiceDir) {
-					hayDirs=1;
+					hayDirs = 1;
 					printf("%s <DIR>\n", dir->nombre);
 				}
 				dir++;
 			}
 
-
-			if (list_size(l) == 0 && hayDirs==0) {
+			if (list_size(l) == 0 && hayDirs == 0) {
 				printf("Directorio vacio\n");
 				instruccionConsola[0] = '\0';
 				param1[0] = '\0';
@@ -306,10 +310,10 @@ void ejecutarConsola() {
 			}
 
 			int j = 0;
-			int sizefile=0;
+			int sizefile = 0;
 			for (j = 0; j < list_size(l); j++) {
-				sizefile=strlen(list_get(l, j))-4;
-				printf("%.*s\n", sizefile, (char*)list_get(l, j));
+				sizefile = strlen(list_get(l, j)) - 4;
+				printf("%.*s\n", sizefile, (char*) list_get(l, j));
 			}
 
 			void* eliminarItem(char* item) {
@@ -317,7 +321,7 @@ void ejecutarConsola() {
 				return 0;
 			}
 
-			list_destroy_and_destroy_elements(l, (void*)eliminarItem);
+			list_destroy_and_destroy_elements(l, (void*) eliminarItem);
 
 			instruccionConsola[0] = '\0';
 			param1[0] = '\0';
@@ -369,7 +373,7 @@ void ejecutarConsola() {
 			char* lect = mmap((caddr_t) 0, sbuf.st_size, PROT_READ, MAP_SHARED,
 					fd, 0);
 
-			if (lect == NULL) {
+			if (lect == NULL ) {
 				perror("error en map\n");
 				exit(1);
 			}
@@ -457,15 +461,56 @@ void ejecutarConsola() {
 			if (resultado == 0)
 				printf("Escritura en local ok\n");
 
+			instruccionConsola[0] = '\0';
 			param1[0] = '\0';
 			param2[0] = '\0';
 		}
 
-		if (strcmp(instruccionConsola, COPIARDEYAMAALOCAL) == 0) {
+		if (strcmp(instruccionConsola, RENOMBRAR) == 0) {
 
-			instruccionConsola[0] = '\0';
-			param1[0] = '\0';
-			param2[0] = '\0';
+			if (strncmp(param1, "-d", 2) != 0) {
+
+				int renombrar = renombrarArchivo(param1, param2);
+
+				switch (renombrar) {
+				case 0:
+					printf("Renombrado ok\n");
+					break;
+				case -1:
+					printf("No existe el archivo especificado\n");
+					break;
+				case -2:
+					printf("El archivo destino ya existe\n");
+					break;
+				}
+
+				instruccionConsola[0] = '\0';
+				param1[0] = '\0';
+				param2[0] = '\0';
+				param3[0] = '\0';
+			}
+
+			if (strncmp(param1, "-d", 2) == 0) {
+
+				int renombrar = renombrarDirectorio(param2, param3);
+
+				switch (renombrar) {
+				case 0:
+					printf("Renombrado ok\n");
+					break;
+				case -1:
+					printf("No existe el directorio especificado\n");
+					break;
+				case -2:
+					printf("El directorio destino ya existe\n");
+					break;
+				}
+
+				instruccionConsola[0] = '\0';
+				param1[0] = '\0';
+				param2[0] = '\0';
+				param3[0] = '\0';
+			}
 
 		}
 	}

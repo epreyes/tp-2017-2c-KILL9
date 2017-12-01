@@ -27,5 +27,7 @@ void config_remove_key(t_config * config, char *key);
 char* obtenerMd5(char* pathArchivo);
 int eliminarDirectorio(char* path);
 int eliminarArchivo(char* pathArchivo);
+int renombrarArchivo(char* pathArchivo, char* nombreDestino);
+int renombrarDirectorio(char* pathDirectorio, char* nombreDestino);
 
 #endif /* FS_COMANDOS_H_ */

@@ -1279,3 +1279,121 @@ int eliminarArchivo(char* pathArchivo) {
 
 }
 
+// Renombra el archivo dado por parametro al nombre indicado
+int renombrarArchivo(char* pathArchivo, char* nombreDestino) {
+
+	if (existeArchivo(pathArchivo) == -1)
+		return -1;
+
+	// Chequeo que no exista un archivo con el nombre "nombreDestino" en el directorio del archivo a renombrar
+
+	int indiceDir = 0;
+	if (strncmp(pathArchivo, "", 0) == 0)
+		indiceDir = 0;
+	else
+		indiceDir = obtenerIndiceDir(pathArchivo);
+
+
+	char* dirs=string_new();
+	if (strcmp(obtenerDirArchivo(pathArchivo),"")!=0) {
+		string_append(&dirs, obtenerDirArchivo(pathArchivo));
+		string_append(&dirs, "/");
+	}
+	string_append(&dirs,nombreDestino);
+
+	log_info(logger,"Validando existencia de %s", dirs);
+
+	if (existeArchivo(dirs) != -1) {
+		free(dirs);
+		return -2;
+	}
+
+	free(dirs);
+
+	char *dirMetadataO = string_new();
+
+	string_append(&dirMetadataO, fs->m_archivos);
+	string_append(&dirMetadataO, string_itoa(indiceDir));
+	string_append(&dirMetadataO, "/");
+	string_append(&dirMetadataO, obtenerNombreArchivo(pathArchivo));
+	string_append(&dirMetadataO, ".csv");
+
+	char *dirMetadataD = string_new();
+
+	string_append(&dirMetadataD, fs->m_archivos);
+	string_append(&dirMetadataD, string_itoa(indiceDir));
+	string_append(&dirMetadataD, "/");
+	string_append(&dirMetadataD, nombreDestino);
+	string_append(&dirMetadataD, ".csv");
+
+	char *comando = string_new();
+
+	string_append(&comando, "mv ");
+	string_append(&comando, dirMetadataO);
+	string_append(&comando, " ");
+	string_append(&comando, dirMetadataD);
+
+	log_info(logger,"Ejecutando comando %s", comando);
+
+	if (system(comando) != 0) {
+		log_error(logger, "Error ejecutando system mv");
+		return -1;
+	}
+
+	free(dirMetadataO);
+	free(dirMetadataD);
+	free(comando);
+
+	return 0;
+
+}
+
+
+// Renombra el directorio dado por parametro al nombre indicado
+int renombrarDirectorio(char* pathDirectorio, char* nombreDestino) {
+
+	if (existeDirectorio(pathDirectorio) == -1)
+		return -1;
+
+	// Chequeo que no exista un directorio con el nombre "nombreDestino" en el directorio del directorio a renombrar
+
+	int dirPadre=obtenerIndiceDirPadre(pathDirectorio);
+
+	int indiceDirectorio = 0;
+	if (strncmp(pathDirectorio, "", 2) == 0)
+		indiceDirectorio = 0;
+	else
+		indiceDirectorio = obtenerIndiceDir(pathDirectorio);
+
+	int i = 0;
+	t_directorio* dir = inicioTablaDirectorios;
+
+	log_info(logger,"Verificando si existe el directorio destino (%s) en el directorio padre de (%s) (%d)", nombreDestino, pathDirectorio, dirPadre);
+
+	for (i = 0; i < MAX_DIR_FS; i++) {
+		if (dir->padre == dirPadre && strcmp(dir->nombre,nombreDestino)==0) {
+			return -2;
+		}
+		dir++;
+	}
+
+	i = 0;
+	dir = inicioTablaDirectorios;
+
+	dir++;
+
+	for (i = 1; i < MAX_DIR_FS; i++) {
+		if (dir->indice == indiceDirectorio) {
+			strcpy(dir->nombre,nombreDestino);
+			return 0;
+		}
+		dir++;
+	}
+
+	return 0;
+
+}
+
+
+
+

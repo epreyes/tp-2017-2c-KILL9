@@ -19,6 +19,7 @@
 #define COPIARDEYAMAALOCAL "cpto"
 #define ELIMINAR "rm"
 #define MD5SUM "md5sum"
+#define RENOMBRAR "rename"
 
 #include "fs_comandos.h"
 
