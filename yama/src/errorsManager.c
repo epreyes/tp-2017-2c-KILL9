@@ -39,8 +39,7 @@ void* processNodeError(int master) {
 
 	if (jobIndex > -1) {
 		t_job* job = list_get(yama->tabla_jobs, jobIndex);
-		printf("\nError en: op=%d, node=%d, jobIndex=%d, master=%d", op, node,
-				jobIndex, master);
+
 		switch (op) {
 		case 'T': {
 			log_error(yama->log,
@@ -76,6 +75,7 @@ void* processNodeError(int master) {
 					master);
 			job->estado = 'E';
 			list_replace(yama->tabla_jobs, jobIndex, job);
+			viewStateTable();
 		}
 			break;
 		}
