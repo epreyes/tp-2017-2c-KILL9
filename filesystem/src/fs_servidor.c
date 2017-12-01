@@ -763,6 +763,8 @@ void procesarPedidoWorker(t_header pedido, int socketCliente) {
 
 		}
 
+		free(contenido);
+
 		break;
 
 	default:
