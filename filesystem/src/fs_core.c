@@ -66,6 +66,14 @@ int crearDirectorio(char* nombreDir) {
 
 	free(directorios);
 
+	char* dirindice = string_new();
+
+	string_append(&dirindice, fs->m_archivos);
+	string_append(&dirindice, string_itoa(indice));
+
+
+	mkdir(dirindice, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
 	return 0;
 
 }
@@ -255,7 +263,20 @@ int formatear() {
 
 	}
 
+	comando = string_new();
+	string_append(&comando, "mkdir -p ");
+	string_append(&comando, fs->m_archivos);
+	string_append(&comando, "0");
+
+
+	if (system(comando) != 0) {
+		log_error(logger, "Error ejecutando system mkdir");
+		return -1;
+	}
+
 	log_info(logger, "Formateado de disco ok");
+
+	free(comando);
 
 	return 0;
 
@@ -464,6 +485,45 @@ t_list* listarArchivos(char* path) {
 	return ta;
 
 }
+
+// Dado un indice de directorio, devuelve los archivos del mismo. Se usa en la inicializacion
+t_list* listarArchivosPorIndice(int indiceDir) {
+
+	t_list* ta = list_create();
+
+	DIR *d;
+	struct dirent *dir;
+
+	char *dpt = string_new();
+
+	string_append(&dpt, fs->m_archivos);
+	string_append(&dpt, string_itoa(indiceDir));
+
+	d = opendir(dpt);
+	if (d) {
+		while ((dir = readdir(d)) != 0) {
+			if (strcmp(dir->d_name, ".") != 0
+					&& strcmp(dir->d_name, "..") != 0) {
+
+				char *dest = malloc(strlen(dir->d_name) + 1);
+				memcpy(dest, dir->d_name, strlen(dir->d_name));
+				dest[strlen(dir->d_name)] = '\0';
+
+				list_add(ta, dest);
+
+			}
+
+		}
+
+		closedir(d);
+	}
+
+	free(dpt);
+
+	return ta;
+
+}
+
 
 // Crea el bitmap para la gestion de bloques de un nodo
 void crearBitMapBloquesNodo(t_nodo* nodo) {
