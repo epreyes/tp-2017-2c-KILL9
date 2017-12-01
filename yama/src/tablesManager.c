@@ -96,8 +96,8 @@ void deleteOfPlanedListByNode(int items, int node, int master) {
 	}
 }
 
-void deleteItems(void* elem){
-	free(((elem_tabla_planificados*)elem)->data);
+void deleteItems(void* elem) {
+	free(((elem_tabla_planificados*) elem)->data);
 	free(elem);
 }
 
@@ -288,17 +288,21 @@ char* getStatusName(char status) {
 void viewStateTable() {
 	t_list* stateTable = yama->tabla_estados;
 	printf("\n\n");
-	printf("------------------------------------------------------- Tabla de estados -------------------------------------------------------\n");
+	printf(
+			"------------------------------------------------------- Tabla de estados -------------------------------------------------------\n");
 	printf("Cantidad de entradas: %d\n", list_size(stateTable));
-	printf("--------------------------------------------------------------------------------------------------------------------------------\n");
+	printf(
+			"--------------------------------------------------------------------------------------------------------------------------------\n");
 	int i = 0;
 	while (i < list_size(stateTable)) {
 		elem_tabla_estados* row = list_get(stateTable, i);
 		i++;
-		printf("Job: %d - Master: %d - Nodo: %d - Bloque: %d - Etapa: %s - Archivo Temporal: %s - Estado: %s\n",
+		printf(
+				"Job: %d - Master: %d - Nodo: %d - Bloque: %d - Etapa: %s - Archivo Temporal: %s - Estado: %s\n",
 				row->job, row->master, row->node, row->block,
 				getStageName(row->op), row->tmp, getStatusName(row->status));
-		printf("--------------------------------------------------------------------------------------------------------------------------------\n");
+		printf(
+				"--------------------------------------------------------------------------------------------------------------------------------\n");
 	}
 }
 
@@ -397,7 +401,7 @@ void updateTasksAborted(int master, int node, char codeOp, t_job* job) {
 				&& (elem->op == codeOp) && (elem->status == 'P')
 				&& (elem->job == job->id)) {
 			updateStatusTable(master, codeOp, node, elem->node_block, 'E', job);
-			if( sentError == 0){
+			if (sentError == 0) {
 				sendErrorToFileSystem(elem->fileProcess);
 				sentError = 1;
 			}

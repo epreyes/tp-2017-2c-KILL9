@@ -85,7 +85,6 @@ int allTransformProcesFinish(int master, int jobid) {
 }
 
 void destroyTablePlanned(void* elem){
-	log_error(yama->log, "Destruyendo tabla planificados");
 	free(((elem_tabla_planificados*)elem)->data);
 	free(elem);
 }

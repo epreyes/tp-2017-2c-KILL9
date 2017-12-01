@@ -1,3 +1,3 @@
 all: 
-	gcc src/*.c -o yama -lcommons -ltplibraries
+	gcc -g src/*.c -o yama -lcommons -ltplibraries
 
