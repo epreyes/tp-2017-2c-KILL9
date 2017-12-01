@@ -1394,6 +1394,92 @@ int renombrarDirectorio(char* pathDirectorio, char* nombreDestino) {
 
 }
 
+// Mueve un archivo a un directorio especifico
+
+//TODO: usar script externo para hacer el mv
+int moverArchivo(char* pathArchivo, char* dirDestino) {
+
+	if (existeArchivo(pathArchivo) == -1)
+		return -1;
+
+
+	int indiceDirectorioD = 0;
+	if (strncmp(dirDestino, ".", 1) == 0)
+		indiceDirectorioD = 0;
+	else
+		indiceDirectorioD = obtenerIndiceDir(dirDestino);
+
+	int indiceDirectorioO = 0;
+
+	indiceDirectorioO = obtenerIndiceDirPadre(pathArchivo);
+
+
+	char* dirs=string_new();
+	if (strcmp(dirDestino,"")!=0) {
+		string_append(&dirs, dirDestino);
+		string_append(&dirs, "/");
+	}
+	string_append(&dirs,obtenerNombreArchivo(pathArchivo));
+
+	log_info(logger,"Validando existencia de %s", dirs);
+
+	// Validar que exista el directorio destino
+	if (!existeDirectorio(dirDestino)) {
+		free(dirs);
+		return -3;
+	}
+
+	// Validar que no exista el archivo en el destino
+	if (existeArchivo(dirs) != -1) {
+		free(dirs);
+		return -2;
+	}
+
+	free(dirs);
+
+
+	char *dirMetadataO = string_new();
+
+	string_append(&dirMetadataO, fs->m_archivos);
+	string_append(&dirMetadataO, string_itoa(indiceDirectorioO));
+	string_append(&dirMetadataO, "/");
+	string_append(&dirMetadataO, obtenerNombreArchivo(pathArchivo));
+	string_append(&dirMetadataO, ".csv");
+
+	char *dirMetadataD = string_new();
+
+	string_append(&dirMetadataD, fs->m_archivos);
+	string_append(&dirMetadataD, string_itoa(indiceDirectorioD));
+	string_append(&dirMetadataD, "/");
+	string_append(&dirMetadataD, obtenerNombreArchivo(pathArchivo));
+	string_append(&dirMetadataD, ".csv");
+
+
+	char *comando = string_new();
+
+	string_append(&comando, "cp ");
+	string_append(&comando, dirMetadataO);
+	string_append(&comando, " ");
+	string_append(&comando, dirMetadataD);
+
+
+	log_info(logger,"Ejecutando comando %s", comando);
+
+	if (system(comando) != 0) {
+		log_error(logger, "Error ejecutando system cp");
+		return -1;
+	}
+
+	remove(dirMetadataO);
+
+	free(comando);
+
+	free(dirMetadataO);
+	free(dirMetadataD);
+
+	return 0;
+
+}
 
 
 

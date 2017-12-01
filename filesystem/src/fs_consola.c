@@ -247,7 +247,7 @@ void ejecutarConsola() {
 			printf(
 					"-Copia un archivo del fs nativo a un directorio del fs yama. Por defecto copia en texto si no se especifica tipo\n");
 			printf("mkdir [directorio]\n");
-			printf("-Crea un directorio\n");
+			printf("-Crea un directorio. Para directorios anidados, debe crearse el directorio de primer nivel y luego crear el segundo con mkdir primer/segundo\n");
 			printf("ls [path]\n");
 			printf("-Lista los archivos del path indicado\n");
 			printf("formatear\n");
@@ -264,6 +264,8 @@ void ejecutarConsola() {
 			printf("Elimina un archivo o un directorio\n");
 			printf("rename [PathArchivoYamaOrigen] [NuevoArchivoYama] | rename -d [PathDirYamaOrigen] [NuevoDirYama]\n");
 			printf("Renombra un archivo o un directorio\n");
+			printf("mv [PathArchivoYamaOrigen] [DirectorioDestinoYama]\n");
+			printf("Mueve un archivo a un directorio\n");
 
 			instruccionConsola[0] = '\0';
 			param1[0] = '\0';
@@ -295,7 +297,7 @@ void ejecutarConsola() {
 			for (i = 1; i < MAX_DIR_FS; i++) {
 				if (dir->padre == indiceDir) {
 					hayDirs = 1;
-					printf("%s <DIR>\n", dir->nombre);
+					printf("(%d) %s - Padre: %d <DIR>\n", dir->indice, dir->nombre, dir->padre);
 				}
 				dir++;
 			}
@@ -481,6 +483,57 @@ void ejecutarConsola() {
 					break;
 				case -2:
 					printf("El archivo destino ya existe\n");
+					break;
+				}
+
+				instruccionConsola[0] = '\0';
+				param1[0] = '\0';
+				param2[0] = '\0';
+				param3[0] = '\0';
+			}
+
+			if (strncmp(param1, "-d", 2) == 0) {
+
+				int renombrar = renombrarDirectorio(param2, param3);
+
+				switch (renombrar) {
+				case 0:
+					printf("Renombrado ok\n");
+					break;
+				case -1:
+					printf("No existe el directorio especificado\n");
+					break;
+				case -2:
+					printf("El directorio destino ya existe\n");
+					break;
+				}
+
+				instruccionConsola[0] = '\0';
+				param1[0] = '\0';
+				param2[0] = '\0';
+				param3[0] = '\0';
+			}
+
+		}
+
+		if (strcmp(instruccionConsola, MOVER) == 0) {
+
+			if (strncmp(param1, "-d", 2) != 0) {
+
+				int mover = moverArchivo(param1, param2);
+
+				switch (mover) {
+				case 0:
+					printf("Mover ok\n");
+					break;
+				case -1:
+					printf("No existe el archivo especificado\n");
+					break;
+				case -2:
+					printf("El archivo en el destino ya existe\n");
+					break;
+				case -3:
+					printf("No existe el directorio destino\n");
 					break;
 				}
 

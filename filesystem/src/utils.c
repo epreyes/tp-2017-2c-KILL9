@@ -95,7 +95,20 @@ void imprimirEstadoNodos() {
 		}
 
 	}
-	printf("Espacio total: %d bytes\n", nodos->tamanio * TAMANIO_BLOQUE);
-	printf("Espacio libre: %d bytes\n\n", nodos->libre * TAMANIO_BLOQUE);
+
+	int total=0;
+	int libre=0;
+	int j=0;
+
+	for (j=0;j<list_size(nodos->nodos);j++)
+	{
+		t_nodo* nodo=list_get(nodos->nodos,j);
+		total+=nodo->total;
+		libre+=nodo->libre;
+	}
+
+
+	printf("Espacio total: %d MB\n", total);
+	printf("Espacio libre: %d MB\n\n", libre);
 }
 

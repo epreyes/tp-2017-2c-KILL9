@@ -29,5 +29,6 @@ int eliminarDirectorio(char* path);
 int eliminarArchivo(char* pathArchivo);
 int renombrarArchivo(char* pathArchivo, char* nombreDestino);
 int renombrarDirectorio(char* pathDirectorio, char* nombreDestino);
+int moverArchivo(char* pathArchivo, char* dirDestino);
 
 #endif /* FS_COMANDOS_H_ */

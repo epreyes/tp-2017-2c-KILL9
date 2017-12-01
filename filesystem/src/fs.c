@@ -214,7 +214,17 @@ void obtenerNodosUnaInstanciaArchivos() {
 			dir++;
 			continue;
 		}
-		t_list* archivos = (t_list*) listarArchivos(dir->nombre);
+		// Listar archivos debe recibir el indice del directorio
+		t_list* archivos = (t_list*) listarArchivosPorIndice(dir->indice);
+		log_debug(logger,"Listando archivos de %s (%d)", dir->nombre, dir->indice);
+
+		if (archivos == NULL)
+		{
+			log_warning(logger,"Precaucion: hay un directorio que no se pudo leer (%s)", dir->nombre);
+			dir++;
+			continue;
+		}
+
 		if (list_size(archivos) == 0) {
 			dir++;
 			continue;
