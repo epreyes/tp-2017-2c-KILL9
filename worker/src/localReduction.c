@@ -43,9 +43,8 @@ void localReduction(){
 
 	free(answer);
 	free(buffer);
-
-	free(datos.tr_tmp);
-	free(datos.file);
+//	free(datos.tr_tmp);
+//	free(datos.file);
 	log_trace(logger, "Master %d: Reducción local finalizada", socket_master);
 };
 
@@ -54,11 +53,12 @@ char reduceFiles(int filesQuantity, tmp_tr* filesNames, char* script, char* redu
 	//int i=0;
 	char file1[28], file2[28];
 	char mergedFile[28];
-
 	log_info(logger,"Iniciando etapa de reducción");
+
 //OBTENGO EL PRIMERO
 	//strcpy(file1,filesNames[i]);
 	//strcpy(mergedFile,file1);//VALIDO POR SI SOLO HAY UNO
+
 	if(filesQuantity>1){
 		strcpy(mergedFile, generateAuxFile());
 		mergeBySystem(filesQuantity, filesNames, mergedFile);
@@ -86,15 +86,17 @@ char reduceFiles(int filesQuantity, tmp_tr* filesNames, char* script, char* redu
 //GENERO COMANDO PARA EJECUTAR REDUCCION
 	char* command = malloc(strlen(mergedFile)+strlen(script)+strlen(reducedFileName)+15);
 	asprintf(&command,"cat %s | ./%s > %s",mergedFile+1,script,reducedFileName+1);
-	printf("\nCOMANDO:%s", command);
+	//printf("\nCOMANDO:%s", command);
 
 //EJECUTO REDUCCION
 	if (system(command)!=0){
 		log_error(logger,"Falló la reducción");
+		//usleep(1000000);
 		free(command);
 		return 'E';
 	}else{
 		log_trace(logger,"Reducción finalizada");
+		//usleep(1000000);
 		free(command);
 		return 'O';
 	}

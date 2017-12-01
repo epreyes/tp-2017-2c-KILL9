@@ -411,7 +411,7 @@ t_list* getTaskFailed(int master, int node, t_job* job) {
 	for (index = 0; index < list_size(yama->tabla_estados); index++) {
 		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
 		if ((elem->node == node) && (elem->master == master)
-				&& (elem->op == 'T') && (elem->status == 'P')
+				&& (elem->op == 'T')
 				&& (elem->job == job->id)) {
 			list_add(tasksFails, elem);
 			updateStatusTable(master, 'T', node, elem->node_block, 'E', job);
