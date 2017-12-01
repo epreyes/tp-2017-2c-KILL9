@@ -643,14 +643,13 @@ int existeArchivo(char* path) {
 
 	char* archivosDir = string_new();
 	archivosDir = obtenerDirectorios(path)[c];
+	string_append(&archivosDir, ".csv");
 
 	int j = 0;
 
 	for (j = 0; j < list_size(archivosEx); j++) {
 
-		int t = string_length((char*) list_get(archivosEx, j));
-
-		if (strncmp(archivosDir, (char*) list_get(archivosEx, j), t - 5) == 0)
+		if (strcmp(archivosDir, (char*) list_get(archivosEx, j)) == 0)
 			return 0;
 
 	}
