@@ -20,6 +20,7 @@
 #define ELIMINAR "rm"
 #define MD5SUM "md5sum"
 #define RENOMBRAR "rename"
+#define MOVER "mv"
 
 #include "fs_comandos.h"
 
