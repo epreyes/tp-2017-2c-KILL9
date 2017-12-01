@@ -56,10 +56,14 @@ void loadScripts(char* transformScript, char* reductionScript){
 //---valído existencia de los archivos
 	if(script_transform==NULL){
 		log_error(logger,"No existe el archivo de transformación solicitado");
+		config_destroy(config);
+		log_destroy(logger);
 		exit(1);
 	}
 	if(script_reduction==NULL){
 		log_error(logger,"No existe el archivo de reduccion solicitado");
+		log_destroy(logger);
+		config_destroy(config);
 		exit(1);
 	}
 }
@@ -70,9 +74,10 @@ void loadConfigs(){
 	char* CONFIG_PATH = "properties/master.properties";
 	config = config_create(CONFIG_PATH);
 	if(!(config_has_property(config,"YAMA_IP"))|| !(config_has_property(config,"YAMA_PUERTO"))){
-		log_error(logger,"error en el archivo de configuración");
+		log_error(logger,"Error en el archivo de configuración");
+		log_destroy(logger);
 		config_destroy(config);
-		exit(0);
+		exit(1);
 	}
 }
 
@@ -82,15 +87,16 @@ void createLoggers(){
 	logger = log_create(LOG_PATH,"master",1,LOG_LEVEL_TRACE);
 }
 
-void readBuffer(int socket,int size,void* destiny){
+int readBuffer(int socket,int size,void* destiny){
 	void* buffer = malloc(size);
 	int bytesReaded = recv(socket, buffer, size, MSG_WAITALL);
 	if (bytesReaded <= 0){
 		log_warning(logger,"Socket %d: desconectado",socket);
-		exit(1);
+		return EXIT_FAILURE;
 	}
 	memcpy(destiny, buffer, size);
 	free(buffer);
+	return EXIT_SUCCESS;
 }
 
 int sendOkToYama(char opCode, int block, int node){

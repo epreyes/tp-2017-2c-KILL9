@@ -44,7 +44,7 @@ replanification = 'F';
 	char code;
 
 	readBuffer(masterSocket, sizeof(char), &(code));
-	if(code!='T'){
+	if(code!='T'){ //'E':error
 		log_warning(logger,"El archivo solicitado no existe o yamafs se encuentra desconectado.");
 		abort();
 	}
@@ -155,7 +155,11 @@ void *runTransformThread(void* data){
 			parallelAux--;
 		pthread_mutex_unlock(&parallelTasks);
 
-		readBuffer(nodeSockets[datos->node], sizeof(int), &(answer->block));
+		//Agrego recepción de error si se mata el worker
+		if(readBuffer(nodeSockets[datos->node], sizeof(int), &(answer->block))!=0){
+			checkReplanification(datos->node);
+			return NULL;
+		};
 		readBuffer(nodeSockets[datos->node], sizeof(char), &(answer->result));
 
 //RESPONDO A YAMA
