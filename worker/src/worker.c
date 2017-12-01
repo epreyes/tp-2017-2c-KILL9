@@ -11,6 +11,17 @@
 #include "headers/worker.h"
 #include "headers/connectionsManager.h"
 
+void killWorkers(int t){
+	int index=0;
+	for(index=0; index < 10; index++)
+		kill(pids[index], SIGKILL);
+
+	log_warning(logger,"Workers finalizados por señal");
+
+	exit(1);
+
+}
+
 int main(){
 	createLoggers();
 	loadConfigs();

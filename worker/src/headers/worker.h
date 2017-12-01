@@ -22,6 +22,7 @@
 #include <unistd.h>
 #include <commons/config.h>
 #include <commons/log.h>
+#include <signal.h>
 #include "utils.h"
 
 //Tamaño de bloque = 1MB
@@ -44,4 +45,6 @@ int socket_master;
 int socket_filesystem;
 int socket_nodes[50];
 
+//========PIDS===============//
+int pids[10];
 #endif /* HEADERS_WORKER_H_ */
