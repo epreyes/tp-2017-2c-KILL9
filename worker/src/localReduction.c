@@ -61,7 +61,10 @@ char reduceFiles(int filesQuantity, tmp_tr* filesNames, char* script, char* redu
 
 	if(filesQuantity>1){
 		strcpy(mergedFile, generateAuxFile());
-		mergeBySystem(filesQuantity, filesNames, mergedFile);
+		if(mergeBySystem(filesQuantity, filesNames, mergedFile)!=0){
+			log_error(logger,"Falló la reducción");
+			return 'E';
+		};
 	}else{
 		strcpy(mergedFile,filesNames[0]);
 	}
@@ -91,12 +94,10 @@ char reduceFiles(int filesQuantity, tmp_tr* filesNames, char* script, char* redu
 //EJECUTO REDUCCION
 	if (system(command)!=0){
 		log_error(logger,"Falló la reducción");
-		//usleep(1000000);
 		free(command);
 		return 'E';
 	}else{
 		log_trace(logger,"Reducción finalizada");
-		//usleep(1000000);
 		free(command);
 		return 'O';
 	}
