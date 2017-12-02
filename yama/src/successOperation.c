@@ -29,23 +29,27 @@ void* processOk(int master) {
 	recv(master, &nodo, sizeof(int), 0);
 
 	int jobIndex = getJobIndex(master, opCode, 'P');
-	t_job* job = list_get(yama->tabla_jobs, jobIndex);
+	if(jobIndex>-1){
+		t_job* job = list_get(yama->tabla_jobs, jobIndex);
 
-	updateStatusTable(master, opCode, nodo, bloque, 'F', job);
-	decreaseNodeCharge(nodo);
+		updateStatusTable(master, opCode, nodo, bloque, 'F', job);
+		decreaseNodeCharge(nodo);
 
-	log_info(yama->log, "Etapa de %s Terminada con exito, en nodo %d, bloque %d, Master %d.", getOpName(opCode), nodo, bloque, master);
+		log_info(yama->log, "Etapa de %s Terminada con exito, en nodo %d, bloque %d, Master %d.", getOpName(opCode), nodo, bloque, master);
 
-	if( opCode == 'S' ){
-		job->estado = 'F';
-		list_replace(yama->tabla_jobs, jobIndex, job);
-		log_trace(yama->log, "Job %d Finalizado con exito. Master %d.", job->id, master);
-		deleteNodeErrors();
+		if( opCode == 'S' ){
+			job->estado = 'F';
+			list_replace(yama->tabla_jobs, jobIndex, job);
+			log_trace(yama->log, "Job %d Finalizado con exito. Master %d.", job->id, master);
+			deleteNodeErrors();
 
-		viewNodeTable();
+			viewNodeTable();
 
-		viewStateTable();
+			viewStateTable();
+		}
+
+		return "O";
+	}else{
+		return "X";
 	}
-
-	return "O";
 }
