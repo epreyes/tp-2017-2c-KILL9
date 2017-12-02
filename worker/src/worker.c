@@ -41,6 +41,7 @@ int main(){
 	loadConfigs();
 	map_data_node();
 	//generateTempsFolder();
+	initPids();
 	loadServer();
 	//-------------
 	log_destroy(logger);
