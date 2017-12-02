@@ -75,6 +75,7 @@ void* processNodeError(int master) {
 					master);
 			job->estado = 'E';
 			list_replace(yama->tabla_jobs, jobIndex, job);
+			viewNodeTable();
 			viewStateTable();
 		}
 			break;
