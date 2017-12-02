@@ -339,7 +339,7 @@ void *connection_handler_nodo(void *socket_desc) {
 					continue;
 				}
 
-				t_list* archivosInit = (t_list*) listarArchivos(dir->nombre);
+				t_list* archivosInit = (t_list*) listarArchivosPorIndice(dir->indice);
 				if (list_size(archivosInit) == 0) {
 					dir++;
 					continue;
@@ -763,6 +763,8 @@ void procesarPedidoWorker(t_header pedido, int socketCliente) {
 
 		}
 
+		free(contenido);
+
 		break;
 
 	default:
@@ -792,7 +794,7 @@ int habilitarBloques(t_nodo* nodo) {
 			continue;
 		}
 
-		t_list* archivosInit = (t_list*) listarArchivos(dir->nombre);
+		t_list* archivosInit = (t_list*) listarArchivosPorIndice(dir->indice);
 		if (list_size(archivosInit) == 0) {
 			dir++;
 			continue;
@@ -871,5 +873,7 @@ int habilitarBloques(t_nodo* nodo) {
 		dir++;
 
 	}
+
+	return 0;
 
 }

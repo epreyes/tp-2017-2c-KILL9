@@ -94,11 +94,11 @@ int sendResponse(int master, void* masterRS, t_job* job) {
 
 		/*Muestro Estado de nodos*/
 		printf("\n");
-		viewNodeTable();
+		//viewNodeTable();
 
 		/*Muestro Tabla de Estados*/
 		printf("\n");
-		viewStateTable();
+		//viewStateTable();
 
 	} else {
 		log_error(yama->log, "Error al enviar la respuesta al Master (%d).",
@@ -115,9 +115,9 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 	if (nbytes <= 0) {
 		if (nbytes == 0) {
 			abortInProcessJobs(socket);
-			log_trace(yama->log, "Master %d desconectado!", socket);
+			log_trace(yama->log, "Master %d desconectado.", socket);
 		} else {
-			log_error(yama->log, "Error al recibir mensajes de master.");
+			log_error(yama->log, "Master %d desconectado.", socket);
 		}
 		/* si hubo error, desconecto el socket y lo saco de la lista de monitoreo */
 		close(socket);
@@ -154,7 +154,7 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 				|| (stage == 'A') || (stage == 'R') || (stage == 'E')) {
 			sendResponse(socket, response, job);
 		} else {
-			if (stage != 'O') {
+			if (stage != 'O' && stage != 'X') {
 				showErrorMessage(response, job);
 				free(response);
 			}

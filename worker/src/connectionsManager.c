@@ -27,6 +27,8 @@ void loadServer(void) {
 	log_trace(logger, "Worker iniciado en puerto %d",
 			config_get_int_value(config, "PORT_WORKER"));
 	listen(workerSocket, 100);
+	int indexpid=0;
+
 
 	struct sockaddr_in clientAddr;
 	unsigned int len;
@@ -46,6 +48,8 @@ void loadServer(void) {
 				perror("ERROR on fork");
 				exit(1);
 			}
+			pids[indexpid]=pid;
+			indexpid++;
 			//si estoy en el proceso hijo, atiendo solicitud
 			if (pid == 0) {
 				socket_master = clientSocket;

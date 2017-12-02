@@ -28,7 +28,7 @@ static char* LOG_PATH = "./log/yama.log";
 typedef struct {
 	int blocks;
 	int sizeInfo;
-	char filename[30];
+	char filename[128];
 	void* info;
 } elem_info_archivo;
 
@@ -49,29 +49,29 @@ typedef struct {
 	int block;
 	char op;
 	char status;
-	char tmp[30];
-	char fileProcess[30];
+	char tmp[128];
+	char fileProcess[128];
 } elem_tabla_estados;
 
 typedef struct{
 	int job;
 	tr_datos* data;
 	int master;
-	char fileName[30];
+	char fileName[128];
 }elem_tabla_planificados;
 
 typedef struct{
 	int job;
 	rl_datos* data;
 	int master;
-	char fileName[30];
+	char fileName[128];
 }elem_tabla_LR_planificados;
 
 typedef struct{
 	int job;
 	rg_datos* data;
 	int master;
-	char fileName[30];
+	char fileName[128];
 }elem_tabla_GR_planificados;
 
 typedef struct{

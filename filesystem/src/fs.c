@@ -10,7 +10,7 @@
 
 #include "fs.h"
 
-int main(void) {
+int main(int argc, char* argv[]) {
 
 	tablaArchivos = list_create();
 
@@ -19,6 +19,21 @@ int main(void) {
 	fs = malloc(sizeof(t_fs));
 
 	cargarArchivoDeConfiguracion(fs, "yamafs.cfg");
+
+	// Chequeo si viene parametro limpio
+
+	if (argc == 2) {
+		if (strncmp(argv[1], "--clean", 7) == 0) {
+
+			log_info(logger, "Limpiando filesystem");
+
+			if (system("./dformat.sh") != 0) {
+				log_error(logger, "Error ejecutando clean");
+				exit(1);
+			}
+
+		}
+	}
 
 	iniciarSemaforos();
 
@@ -50,7 +65,7 @@ void cargarArchivoDeConfiguracion(t_fs *fs, char *configPath) {
 	fs->config = NULL;
 	fs->config = config_create(configPath);
 
-	if (fs->config == NULL ) {
+	if (fs->config == NULL) {
 		printf("No existe el archivo de configuracion\n");
 		exit(1);
 	}
@@ -122,9 +137,9 @@ void iniciarFS() {
 	}
 
 	inicioTablaDirectorios = mmap((caddr_t) 0, sbuf.st_size,
-			PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+	PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
-	if (inicioTablaDirectorios == NULL ) {
+	if (inicioTablaDirectorios == NULL) {
 		perror("error en map\n");
 		exit(1);
 	}
@@ -214,7 +229,19 @@ void obtenerNodosUnaInstanciaArchivos() {
 			dir++;
 			continue;
 		}
-		t_list* archivos = (t_list*) listarArchivos(dir->nombre);
+		// Listar archivos debe recibir el indice del directorio
+		t_list* archivos = (t_list*) listarArchivosPorIndice(dir->indice);
+		log_debug(logger, "Listando archivos de %s (%d)", dir->nombre,
+				dir->indice);
+
+		if (archivos == NULL) {
+			log_warning(logger,
+					"Precaucion: hay un directorio que no se pudo leer (%s)",
+					dir->nombre);
+			dir++;
+			continue;
+		}
+
 		if (list_size(archivos) == 0) {
 			dir++;
 			continue;
@@ -243,7 +270,7 @@ void obtenerNodosUnaInstanciaArchivos() {
 					pathMetadata);
 
 			// No deberia pasar
-			if (archInfo == NULL ) {
+			if (archInfo == NULL) {
 				log_error(logger,
 						"No se encontro el archivo de metadata en inicializacion");
 				exit(1);
