@@ -19,5 +19,6 @@ void readWord(char *word, FILE *file, int* endFile);
 
 int mergeFiles(char* Aname,char* Bname, char *Cname);
 
+int mergeBySystem(int filesCuantity, tmp_tr* files, char* mergedFile);
 
 #endif /* HEADERS_APAREO_H_ */

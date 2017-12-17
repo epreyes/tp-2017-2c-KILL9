@@ -43,14 +43,24 @@ int getSizeToSend(void* masterRS) {
 	int fsSize = sizeof(char) * 40 + sizeof(int) * 2;
 
 	switch (op) {
-	case 'T':
+	case 'T': {
+		int blocks;
+		memcpy(&blocks, masterRS + sizeof(char), sizeof(int));
 		size = (blocks * sizeof(tr_datos)) + sizeof(char) + sizeof(int);
+	}
+
 		break;
-	case 'L':
+	case 'L': {
+		int blocks;
+		memcpy(&blocks, masterRS + sizeof(char), sizeof(int));
 		size = (blocks * sizeof(rl_datos)) + sizeof(char) + sizeof(int);
+	}
 		break;
-	case 'G':
+	case 'G': {
+		int blocks;
+		memcpy(&blocks, masterRS + sizeof(char), sizeof(int));
 		size = (blocks * grSize) + sizeof(char) + sizeof(int);
+	}
 		break;
 	case 'S':
 		size = fsSize + sizeof(char);
@@ -81,6 +91,15 @@ int sendResponse(int master, void* masterRS, t_job* job) {
 
 	if (bytesSent > 0) {
 		sendResponseMsg(master, bytesSent, masterRS, job);
+
+		/*Muestro Estado de nodos*/
+		printf("\n");
+		//viewNodeTable();
+
+		/*Muestro Tabla de Estados*/
+		printf("\n");
+		//viewStateTable();
+
 	} else {
 		log_error(yama->log, "Error al enviar la respuesta al Master (%d).",
 				master);
@@ -96,9 +115,9 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 	if (nbytes <= 0) {
 		if (nbytes == 0) {
 			abortInProcessJobs(socket);
-			log_trace(yama->log, "Master %d desconectado!", socket);
+			log_trace(yama->log, "Master %d desconectado.", socket);
 		} else {
-			log_error(yama->log, "Error al recibir mensajes de master.");
+			log_error(yama->log, "Master %d desconectado.", socket);
 		}
 		/* si hubo error, desconecto el socket y lo saco de la lista de monitoreo */
 		close(socket);
@@ -114,33 +133,30 @@ int getMasterMessage(int socket, fd_set* mastersList) {
 		memcpy(&stage, response, sizeof(char));
 
 		char status = 'P';
-		t_job* job = list_get(yama->tabla_jobs, getJobIndex(socket, stage, status));
+		t_job* job = list_get(yama->tabla_jobs,
+				getJobIndex(socket, stage, status));
 
 		if (stage == 'A') {
 			memcpy(&opRequested, response + sizeof(char), sizeof(char));
 			status = 'E';
-			job = list_get(yama->tabla_jobs, getJobIndex(socket, opRequested, status));
+			job = list_get(yama->tabla_jobs,
+					getJobIndex(socket, opRequested, status));
 		}
 
 		if (stage == 'R') {
 			memcpy(&opRequested, response + sizeof(char), sizeof(char));
 			status = 'P';
-			job = list_get(yama->tabla_jobs, getJobIndex(socket, opRequested, status));
+			job = list_get(yama->tabla_jobs,
+					getJobIndex(socket, opRequested, status));
 		}
 
-
-
-		if ( (stage == 'T') ||
-			 (stage == 'L') ||
-			 (stage == 'G') ||
-			 (stage == 'S') ||
-			 (stage == 'A') ||
-			 (stage == 'R') ||
-			 (stage == 'E') ) {
+		if ((stage == 'T') || (stage == 'L') || (stage == 'G') || (stage == 'S')
+				|| (stage == 'A') || (stage == 'R') || (stage == 'E')) {
 			sendResponse(socket, response, job);
 		} else {
-			if (stage != 'O') {
+			if (stage != 'O' && stage != 'X') {
 				showErrorMessage(response, job);
+				free(response);
 			}
 		}
 
@@ -192,13 +208,16 @@ void waitMastersConnections() {
 		/* bucle para monitorear conexiones */
 		while (TRUE) {
 			mastersListTemp = mastersList;
+
 			activity = select(yama->yama_server.higherSocketDesc + 1,
 					&mastersListTemp, NULL, NULL, NULL);
-			if ( errno == EINTR) {
-				continue;
-			}
+
 			if (activity == -1) {
-				log_error(yama->log, "Error monitoreando conexiones.");
+				if ( errno == EINTR) {
+					continue;
+				} else {
+					log_error(yama->log, "Error monitoreando conexiones.");
+				}
 			} else {
 				/* exploro la actividad reciente */
 				exploreActivity(&mastersListTemp, &mastersList);

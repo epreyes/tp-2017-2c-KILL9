@@ -43,25 +43,35 @@ void localReduction(){
 
 	free(answer);
 	free(buffer);
-
-	free(datos.tr_tmp);
-	free(datos.file);
+//	free(datos.tr_tmp);
+//	free(datos.file);
 	log_trace(logger, "Master %d: Reducción local finalizada", socket_master);
 };
 
 
 char reduceFiles(int filesQuantity, tmp_tr* filesNames, char* script, char* reducedFileName){
-	int i=0;
-	char file1[28], file2[28], mergedFile[28];
-
-	log_info(logger,"Iniciando apareo de archivos");
+	//int i=0;
+	char file1[28], file2[28];
+	char mergedFile[28];
+	log_info(logger,"Iniciando etapa de reducción");
 
 //OBTENGO EL PRIMERO
-	strcpy(file1,filesNames[i]);
-	strcpy(mergedFile,file1+1);//VALIDO POR SI SOLO HAY UNO
+	//strcpy(file1,filesNames[i]);
+	//strcpy(mergedFile,file1);//VALIDO POR SI SOLO HAY UNO
 
+	if(filesQuantity>1){
+		strcpy(mergedFile, generateAuxFile());
+		if(mergeBySystem(filesQuantity, filesNames, mergedFile)!=0){
+			log_error(logger,"Falló la reducción");
+			return 'E';
+		};
+	}else{
+		strcpy(mergedFile,filesNames[0]);
+	}
+		/*
 //MERGEO TODOS LOS TEMPORALES
 	for (i = 1; i < filesQuantity; ++i){
+	log_info(logger,"Iniciando apareo de archivos");
 		strcpy(file2,filesNames[i]);
 		strcpy(mergedFile, generateAuxFile());
 			printf("\nFILE1:%s\nFILE2:%s\n",file1,file2);
@@ -71,15 +81,15 @@ char reduceFiles(int filesQuantity, tmp_tr* filesNames, char* script, char* redu
 		};
 			printf("\nMERGEDFILE:%s\n",mergedFile);
 		strcpy(file1,mergedFile);
-	}
 	log_info(logger,"Apareo de archivos finalizado");
+	}
+*/
 	log_info(logger,"Preparando para ejecución de reducción");
 
 //GENERO COMANDO PARA EJECUTAR REDUCCION
-	char* command = NULL;
-	command = malloc(strlen(mergedFile)+strlen(script)+strlen(reducedFileName)+13);
-	asprintf(&command,"cat %s | %s > %s",mergedFile+1,script,reducedFileName+1);
-	printf("\nCOMANDO\n:%s", command);
+	char* command = malloc(strlen(mergedFile)+strlen(script)+strlen(reducedFileName)+15);
+	asprintf(&command,"cat %s | ./%s > %s",mergedFile+1,script,reducedFileName+1);
+	//printf("\nCOMANDO:%s", command);
 
 //EJECUTO REDUCCION
 	if (system(command)!=0){
@@ -91,6 +101,4 @@ char reduceFiles(int filesQuantity, tmp_tr* filesNames, char* script, char* redu
 		free(command);
 		return 'O';
 	}
-/*
-*/
 }

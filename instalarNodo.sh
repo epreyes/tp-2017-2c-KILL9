@@ -1,4 +1,41 @@
-# parametro 1 path al directorio del nuevo datanode
-# parametro 2 id del nuevo nodo
-cp  dataNode -r $1/dataNode$2
-echo -e 'IP_FILESYSTEM=127.0.0.1\nIP_DATANODE=127.0.0.1\nIP_WORKER=127.0.0.1\nPORT_FILESYSTEM=5003\nNAME_NODO='$2'\nPORT_WORKER=5050\nPORT_DATANODE=5060\nPATH_DATABIN=data.bin\n' > $1/dataNode$2/properties/dataNode.properties
+#!/bin/bash
+
+echo -ne "\e[1m\e[95mRuta del Nodo: \e[0m"
+read RUTA
+
+echo -ne "\e[1m\e[95mNúmero de Nodo: \e[0m"
+read NOMBRE
+
+mkdir -p $RUTA/nodo$NOMBRE
+cp dataNode/ -r $RUTA/nodo$NOMBRE
+cp worker/ -r $RUTA/nodo$NOMBRE
+
+#FOLDERS
+mkdir  -p $RUTA/nodo$NOMBRE/properties
+touch $RUTA/nodo$NOMBRE/properties/node.properties
+mkdir -p $RUTA/nodo$NOMBRE/worker/tmp
+mkdir -p $RUTA/nodo$NOMBRE/worker/tmp_scripts
+
+#DATA.BIN
+echo -ne "\e[1m\e[95mTamaño data.bin: \e[0m"
+read SIZE
+SIZE+=MB
+
+truncate -s $SIZE $RUTA/nodo$NOMBRE/data.bin
+
+#SESSION SORT CONFIG
+export LC_ALL=C
+
+#PROPERTIES
+echo -ne "\e[1m\e[95mIP de FILESYSTEM: \e[0m"
+read IP_FILESYSTEM
+
+echo -ne "\e[1m\e[95mPuerto de FILESYSTEM: \e[0m"
+read PORT_FILESYSTEM
+
+echo -ne "\e[1m\e[95mIP de WORKER: \e[0m"
+read IP_WORKER
+
+echo -e "IP_FILESYSTEM=$IP_FILESYSTEM\nPORT_FILESYSTEM=$PORT_FILESYSTEM\nIP_WORKER=$IP_WORKER\nPORT_WORKER=5050\nNAME_NODO=$NOMBRE\nPATH_DATABIN=../data.bin\n" > $RUTA/nodo$NOMBRE/properties/node.properties
+
+echo -e "\e[1m\e[36mInstalación de nodo $NOMBRE finalizada correctamente!\e[0m"

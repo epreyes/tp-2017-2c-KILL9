@@ -339,7 +339,7 @@ void *connection_handler_nodo(void *socket_desc) {
 					continue;
 				}
 
-				t_list* archivosInit = (t_list*) listarArchivos(dir->nombre);
+				t_list* archivosInit = (t_list*) listarArchivosPorIndice(dir->indice);
 				if (list_size(archivosInit) == 0) {
 					dir++;
 					continue;
@@ -671,11 +671,19 @@ void *connection_handler_worker(void *socket_desc) {
 					socketCliente);
 			return 0;
 		}
+		
+		log_debug(logger,"Se recibio codigo de operacion: %d", cod_op);
 
 		t_header header;
-		header.idMensaje = cod_op;
-
-		procesarPedidoWorker(header, socketCliente);
+		if (cod_op=='S') {
+			header.idMensaje = cod_op;
+			procesarPedidoWorker(header, socketCliente);
+		}
+		else {
+			log_error(logger, "Pedido %d invalido", cod_op);
+			close(socketCliente);
+		}
+		
 	}
 
 	return 0;
@@ -698,7 +706,8 @@ void procesarPedidoWorker(t_header pedido, int socketCliente) {
 	recv(socketCliente, &fileSize, sizeof(int), 0);
 
 	char* contenido = malloc(fileSize);
-	recv(socketCliente, contenido, fileSize, 0);
+
+	int bytesRecibidos = recv_all(socketCliente, contenido, fileSize,0);
 
 	switch (pedido.idMensaje) {
 
@@ -754,6 +763,8 @@ void procesarPedidoWorker(t_header pedido, int socketCliente) {
 
 		}
 
+		free(contenido);
+
 		break;
 
 	default:
@@ -783,7 +794,7 @@ int habilitarBloques(t_nodo* nodo) {
 			continue;
 		}
 
-		t_list* archivosInit = (t_list*) listarArchivos(dir->nombre);
+		t_list* archivosInit = (t_list*) listarArchivosPorIndice(dir->indice);
 		if (list_size(archivosInit) == 0) {
 			dir++;
 			continue;
@@ -862,5 +873,7 @@ int habilitarBloques(t_nodo* nodo) {
 		dir++;
 
 	}
+
+	return 0;
 
 }

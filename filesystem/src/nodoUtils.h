@@ -17,5 +17,6 @@ int buscarNodoPorSocket(int socketNodo);
 int buscarNodoPorId(int idNodo);
 t_nodo* buscarNodoPorId_(int idNodo);
 t_nodo* buscarNodoPorId_2(int idNodo);
+t_nodo* obtenerNodoDeDataBinPorId(int idNodo);
 
 #endif /* NODOUTILS_H_ */

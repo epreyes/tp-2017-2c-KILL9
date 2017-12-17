@@ -16,7 +16,7 @@ void viewLocalReductionResponse(void* response);
 
 void* processLocalReduction(int master, int job);
 
-char* getLocalReductionTmpName(int blockId, int masterId);
+void getLocalReductionTmpName(char* name, int blockId, int masterId);
 
 int allTransformProcesFinish(int master, int jobid);
 

@@ -12,6 +12,7 @@
 #include "datanode.h"
 #include "estructuras.h"
 #include "nodoUtils.h"
+#include <commons/collections/dictionary.h>
 
 int escribirArchivo(char* path, char* contenido, int tipo, int tamanio);
 char* leerArchivo(char* path, int* codigoError);
@@ -19,5 +20,15 @@ int copiarDesdeYamaALocal(char* origen, char* destino);
 t_list* obtenerNodosALeer(t_list* bloques, t_list* nodosExcluir);
 
 void* eliminarItemLectura(t_lectura* lect);
+
+int eliminarBloque(char* pathArchivo, int nroBloque, int nroCopia);
+void eliminarBloqueArchivoMd(char* dirMetadata, int nroBloque, int nroCopia);
+void config_remove_key(t_config * config, char *key);
+char* obtenerMd5(char* pathArchivo);
+int eliminarDirectorio(char* path);
+int eliminarArchivo(char* pathArchivo);
+int renombrarArchivo(char* pathArchivo, char* nombreDestino);
+int renombrarDirectorio(char* pathDirectorio, char* nombreDestino);
+int moverArchivo(char* pathArchivo, char* dirDestino);
 
 #endif /* FS_COMANDOS_H_ */

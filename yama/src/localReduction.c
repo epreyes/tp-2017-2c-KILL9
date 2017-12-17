@@ -58,12 +58,13 @@ void viewLocalReductionResponse(void* response) {
 	}
 }
 
-char* getLocalReductionTmpName(int blockId, int masterId) {
-	char* name;
+void getLocalReductionTmpName(char* name, int blockId, int masterId) {
+	char* nameTmp;
 	long timestamp = current_timestamp();
-	asprintf(&name, "%s%ld-L-M%03d-N%03d", "/tmp/", timestamp, masterId, blockId);
+	asprintf(&nameTmp, "%s%ld-L-M%03d-N%03d", "/tmp/", timestamp, masterId, blockId);
+	strcpy(name, nameTmp);
 
-	return name;
+	free(nameTmp);
 }
 
 int allTransformProcesFinish(int master, int jobid) {
@@ -83,6 +84,11 @@ int allTransformProcesFinish(int master, int jobid) {
 	return response;
 }
 
+void destroyTablePlanned(void* elem){
+	free(((elem_tabla_planificados*)elem)->data);
+	free(elem);
+}
+
 void* processLocalReduction(int master, int job) {
 	if (allTransformProcesFinish(master, job)) {
 		t_list* planed = findTransformationPlaned(master, job);
@@ -96,7 +102,7 @@ void* processLocalReduction(int master, int job) {
 
 		int index = 0;
 		int actualNode = -1;
-		char name[28];
+		char* name = malloc(sizeof(char)*28);
 
 		for (index = 0; index < list_size(planed); index++) {
 			elem_tabla_planificados* elemData = list_get(planed, index);
@@ -110,7 +116,7 @@ void* processLocalReduction(int master, int job) {
 
 			if( actualNode != elem->nodo ){
 				actualNode = elem->nodo;
-				strcpy( name, getLocalReductionTmpName(elem->nodo, master) );
+				getLocalReductionTmpName(name, elem->nodo, master);
 			}
 			strcpy(localRedData->rl_tmp, name);
 
@@ -134,10 +140,14 @@ void* processLocalReduction(int master, int job) {
 
 			free(localRedData);
 		}
+
+		free(name);
+
+		list_destroy_and_destroy_elements(planed, &destroyTablePlanned);
 		return localReductionRes;
 	} else {
 		log_warning(yama->log, "Todas las transformaciones deben terminar antes de empezar las reducciones locales.");
-		return NULL;
+		return "E";
 	}
 
 }

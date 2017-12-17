@@ -11,6 +11,9 @@ void* abortJob(int master, int node, char op, t_job* job) {
 	int size = sizeof(char) * 2 + sizeof(int);
 	void* abort = malloc(size);
 	char code = 'A';
+	if (op != 'T') {
+		code = 'X';
+	}
 	char opCode = op;
 	int node_id = node;
 	memcpy(abort, &code, sizeof(char));
@@ -18,6 +21,7 @@ void* abortJob(int master, int node, char op, t_job* job) {
 	memcpy(abort + sizeof(char) + sizeof(char), &node_id, sizeof(int));
 
 	updateTasksAborted(master, node, op, job);
+	deleteNodeErrors();
 
 	return abort;
 }
@@ -32,40 +36,56 @@ void* processNodeError(int master) {
 	recv(master, &node, sizeof(int), 0);
 
 	int jobIndex = getJobIndex(master, op, 'P');
-	t_job* job = list_get(yama->tabla_jobs, jobIndex);
 
-	switch (op) {
-	case 'T': {
-		log_error(yama->log,
-				"Error en Nodo %d. Comienza replanificacion. Job %d.",
-				node, job->id);
-		t_planningParams* params = getPlanningParams();
-		strcpy(params->algoritm, yama->algoritm);
-		params->availBase = yama->availBase;
-		params->planningDelay = yama->planningDelay;
-		deleteFromPlanedTable(master, node);
-		response = replanTask(master, node, params, job, jobIndex);
-		if( job->replanificaciones == 1 ){
-			log_info(yama->log, "Enviando informacion de replanificacion.");
-		}else{
-			log_info(yama->log, "Enviando informacion de Job Abortado.");
+	if (jobIndex > -1) {
+		t_job* job = list_get(yama->tabla_jobs, jobIndex);
+
+		switch (op) {
+		case 'T': {
+			log_error(yama->log,
+					"Error en Nodo %d. Comienza replanificacion. Job %d.", node,
+					job->id);
+			t_planningParams* params = getPlanningParams();
+			strcpy(params->algoritm, yama->algoritm);
+			params->availBase = yama->availBase;
+			params->planningDelay = yama->planningDelay;
+			deleteFromPlanedTable(master, node);
+
+			increaseNodeError(node);
+			response = replanTask(master, node, params, job, jobIndex);
+			viewNodeTable();
+
+			free(params);
+
+			if (job->replanificaciones == 1) {
+				log_info(yama->log, "Enviando informacion de replanificacion.");
+			} else {
+				log_info(yama->log, "Enviando informacion de Job Abortado.");
+			}
+
 		}
+			break;
+		case 'L':
+		case 'G':
+		case 'S': {
+			log_trace(yama->log, "Recivo error en operacion %c. Job %d.", op,
+					job->id);
+			response = abortJob(master, node, op, job);
+			log_error(yama->log, "Se aborta job %d. Master %d.", job->id,
+					master);
+			job->estado = 'E';
+			list_replace(yama->tabla_jobs, jobIndex, job);
+			viewNodeTable();
+			viewStateTable();
+		}
+			break;
+		}
+	}
+	else{
+		response = malloc(sizeof(char));
+		memcpy(response, "X", sizeof(char));
+	}
 
-	}
-		break;
-	case 'L':
-	case 'G':
-	case 'S': {
-		log_trace(yama->log, "Recivo error en operacion %c. Job %d.",
-				op, job->id);
-		response = abortJob(master, node, op, job);
-		log_error(yama->log, "Se aborta job %d. Master %d.",
-				job->id, master);
-		job->estado = 'E';
-		list_replace(yama->tabla_jobs, jobIndex, job);
-	}
-		break;
-	}
 	return response;
 }
 

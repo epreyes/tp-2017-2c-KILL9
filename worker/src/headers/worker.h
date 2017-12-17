@@ -22,15 +22,16 @@
 #include <unistd.h>
 #include <commons/config.h>
 #include <commons/log.h>
+#include <signal.h>
 #include "utils.h"
 
 //Tamaño de bloque = 1MB
-#define BLOCK_SIZE 20		//cambiar por 1MB = 1048576
+#define BLOCK_SIZE 1000000		//cambiar por 1MB = 1048576
 
 
 /** variables globales**/
 void * mapped_data_node;
-
+size_t mapsize;
 //=========LOGGERS=============//
 t_log* logger;
 //=========CONFIGS============//
@@ -44,4 +45,6 @@ int socket_master;
 int socket_filesystem;
 int socket_nodes[50];
 
+//========PIDS===============//
+int pids[10];
 #endif /* HEADERS_WORKER_H_ */

@@ -82,6 +82,10 @@ void viewFinalStoreResponse(void* response) {
 			op, nodo, ip, puerto, fileName);
 }
 
+void destroyPlanedList(void* elem){
+	free(((elem_tabla_GR_planificados*)elem)->data);
+	free(elem);
+}
 
 void* processFinalStore(int master, int jobid) {
 	if (allGlobalReductionProcesFinish(master, jobid)) {
@@ -115,6 +119,9 @@ void* processFinalStore(int master, int jobid) {
 		increaseNodeCharge(elem->nodo);
 
 		free(elem);
+
+		list_destroy_and_destroy_elements(planed, &destroyPlanedList);
+
 		return finalStoreRes;
 	} else {
 		log_warning(yama->log, "La reducción global debe terminar antes de empezar el almacenamiento final.");

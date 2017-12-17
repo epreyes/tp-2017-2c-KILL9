@@ -63,6 +63,55 @@ void ejecutarConsola() {
 			strcpy(param1, "w.txt");
 		}
 
+		if (strcmp(instruccionConsola, ELIMINAR) == 0) {
+
+			if (strncmp(param1, "-d", 2) != 0) {
+
+				int eliminar = eliminarArchivo(param1);
+
+				switch (eliminar) {
+				case 0:
+					printf("Eliminacion de archivo ok\n");
+					log_info(logger, "Eliminacion de archivo ok: %s", param1);
+					break;
+				case -1:
+					printf("No existe el archivo a eliminar\n");
+					log_error(logger, "No existe el archivo a eliminar: %s",
+							param1);
+					break;
+				}
+
+			}
+
+			if (strncmp(param1, "-d", 2) == 0) {
+				int eliminar = eliminarDirectorio(param2);
+
+				switch (eliminar) {
+				case 0:
+					printf("Eliminacion de directorio ok\n");
+					log_info(logger, "Eliminacion de directorio ok: %s",
+							param2);
+					break;
+				case DIRECTORIO_NO_VACIO:
+					printf("Directorio no vacio, no se pudo eliminar\n");
+					log_error(logger,
+							"Directorio no vacio, no se pudo eliminar: %s",
+							param2);
+					break;
+				case NO_EXISTE_DIR_DESTINO:
+					printf("No existe el directorio a eliminar\n");
+					log_error(logger, "No existe el directorio a eliminar: %s",
+							param2);
+					break;
+				}
+
+			}
+
+			param1[0] = '\0';
+			param2[0] = '\0';
+
+		}
+
 		if (strcmp(instruccionConsola, INFOARCHIVO) == 0) {
 
 			if (param1[0] == '\0') {
@@ -75,25 +124,36 @@ void ejecutarConsola() {
 
 			int estadoArchivo = obtenerEstadoArchivo(param1);
 			t_archivoInfo* info;
+			int cantBloques;
 			int i = 0;
 			switch (estadoArchivo) {
 			case 0:
 				info = obtenerArchivoInfo(param1);
+
+				cantBloques = list_size(info->bloques);
+
 				printf("%s: Online\n", param1);
-				printf("Tamanio: %d bytes (", info->tamanio);
+				printf("Tamanio: %d bytes (%d bloques) (", info->tamanio,
+						cantBloques);
 
 				if (info->tipo == BINARIO)
 					printf("BINARIO)\n");
 				else
 					printf("TEXTO)\n");
 
-				for (i = 0; i < list_size(info->bloques); i++) {
+				int tamanio = 0;
+				for (i = 0; i < cantBloques; i++) {
 					t_bloqueInfo* bi = list_get(info->bloques, i);
-					printf("Nro Bloque %d : Nodo %d - IdBloque %d\n",
-							bi->nroBloque, atoi(bi->idNodo0), bi->idBloque0);
+					printf(
+							"Nro Bloque %d : Nodo %d - IdBloque %d - finBloque: %d\n",
+							bi->nroBloque, atoi(bi->idNodo0), bi->idBloque0,
+							bi->finBytes);
 					printf("Nro Bloque %d (copia) : Nodo %d - IdBloque %d\n",
 							bi->nroBloque, atoi(bi->idNodo1), bi->idBloque1);
+					tamanio += bi->finBytes;
+
 				}
+				printf("Suma de bloques: %d\n", tamanio);
 				free(info);
 				break;
 			case -1:
@@ -119,6 +179,28 @@ void ejecutarConsola() {
 			param1[0] = '\0';
 			param2[0] = '\0';
 			continue;
+		}
+
+		if (strcmp(instruccionConsola, MD5SUM) == 0) {
+
+			if (param1[0] == '\0') {
+				printf("Falta parametro archivo\n");
+				instruccionConsola[0] = '\0';
+				param1[0] = '\0';
+				continue;
+			}
+
+			char* md5 = obtenerMd5(param1);
+
+			if (md5 == NULL ) {
+				printf("No existe el archivo indicado por parametro\n");
+			} else {
+				printf("hash: %s\n", md5);
+
+			}
+			instruccionConsola[0] = '\0';
+			param1[0] = '\0';
+
 		}
 
 		if (strcmp(instruccionConsola, CREAR_DIRECTORIO) == 0) {
@@ -163,9 +245,9 @@ void ejecutarConsola() {
 			printf(
 					"cpfrom [PathArchivoOrigenFsNativo] [PathDirDestinoFsYama] [-b/-t]\n");
 			printf(
-					"-Copia un archivo del fs nativo a un directorio del fs yama. Por defecto copia en binario si no se especifica tipo\n");
+					"-Copia un archivo del fs nativo a un directorio del fs yama. Por defecto copia en texto si no se especifica tipo\n");
 			printf("mkdir [directorio]\n");
-			printf("-Crea un directorio\n");
+			printf("-Crea un directorio. Para directorios anidados, debe crearse el directorio de primer nivel y luego crear el segundo con mkdir primer/segundo\n");
 			printf("ls [path]\n");
 			printf("-Lista los archivos del path indicado\n");
 			printf("formatear\n");
@@ -174,6 +256,20 @@ void ejecutarConsola() {
 			printf("Copia un archivo de yama a un directorio del fs nativo\n");
 			printf("cat [PathArchivoYama]\n");
 			printf("Muestra el contenido de un archivo por consola\n");
+			printf("md5sum [PathArchivoYama]\n");
+			printf("Obtiene el hash md5 del archivo indicado\n");
+			printf("infoarchivo [PathArchivoYama]\n");
+			printf("Obtiene la composicion de bloques y nodos del archivo\n");
+			printf("rm [PathArchivoYama] | rm -d [PathDirectorioYama]\n");
+			printf("Elimina un archivo o un directorio\n");
+			printf("rename [PathArchivoYamaOrigen] [NuevoArchivoYama] | rename -d [PathDirYamaOrigen] [NuevoDirYama]\n");
+			printf("Renombra un archivo o un directorio\n");
+			printf("mv [PathArchivoYamaOrigen] [DirectorioDestinoYama]\n");
+			printf("Mueve un archivo a un directorio\n");
+
+			instruccionConsola[0] = '\0';
+			param1[0] = '\0';
+			param2[0] = '\0';
 		}
 
 		// Nuevos comandos
@@ -190,7 +286,23 @@ void ejecutarConsola() {
 			t_list* l = list_create();
 			l = listarArchivos(param1);
 
-			if (list_size(l) == 0) {
+			int indiceDir = obtenerIndiceDir(param1);
+
+			int i = 0;
+			t_directorio* dir = inicioTablaDirectorios;
+			int hayDirs = 0;
+
+			dir++;
+
+			for (i = 1; i < MAX_DIR_FS; i++) {
+				if (dir->padre == indiceDir) {
+					hayDirs = 1;
+					printf("(%d) %s - Padre: %d <DIR>\n", dir->indice, dir->nombre, dir->padre);
+				}
+				dir++;
+			}
+
+			if (list_size(l) == 0 && hayDirs == 0) {
 				printf("Directorio vacio\n");
 				instruccionConsola[0] = '\0';
 				param1[0] = '\0';
@@ -200,11 +312,23 @@ void ejecutarConsola() {
 			}
 
 			int j = 0;
+			int sizefile = 0;
 			for (j = 0; j < list_size(l); j++) {
-				printf("%s\n", list_get(l, j));
+				sizefile = strlen(list_get(l, j)) - 4;
+				printf("%.*s\n", sizefile, (char*) list_get(l, j));
 			}
 
-			list_destroy(l);
+			void* eliminarItem(char* item) {
+				free(item);
+				return 0;
+			}
+
+			list_destroy_and_destroy_elements(l, (void*) eliminarItem);
+
+			instruccionConsola[0] = '\0';
+			param1[0] = '\0';
+			param2[0] = '\0';
+
 		}
 
 		if (strcmp(instruccionConsola, LEERARCHIVO) == 0) {
@@ -224,6 +348,8 @@ void ejecutarConsola() {
 				break;
 			}
 
+			param1[0] = '\0';
+
 		}
 
 		if (strcmp(instruccionConsola, ESCRIBIR_ARCHIVO_LOCAL_YAMA) == 0) {
@@ -237,6 +363,7 @@ void ejecutarConsola() {
 				instruccionConsola[0] = '\0';
 				param1[0] = '\0';
 				param2[0] = '\0';
+				param3[0] = '\0';
 				continue;
 			}
 
@@ -248,7 +375,7 @@ void ejecutarConsola() {
 			char* lect = mmap((caddr_t) 0, sbuf.st_size, PROT_READ, MAP_SHARED,
 					fd, 0);
 
-			if (lect == NULL) {
+			if (lect == NULL ) {
 				perror("error en map\n");
 				exit(1);
 			}
@@ -271,12 +398,14 @@ void ejecutarConsola() {
 
 			if (strncmp(param3, "-t", 2) != 0
 					&& strncmp(param3, "-b", 2) != 0) {
-				escribir = escribirArchivo(destino, lect, BINARIO,
-						sbuf.st_size);
+				escribir = escribirArchivo(destino, lect, TEXTO, 0);
 			}
 
 			if (escribir == 0) {
 				log_info(logger, "Escritura de %s realizada con exito", param1);
+
+				munmap(lect, sbuf.st_size);
+
 				printf("Escritura ok\n");
 			} else {
 				switch (escribir) {
@@ -317,6 +446,10 @@ void ejecutarConsola() {
 
 			}
 
+			param1[0] = '\0';
+			param2[0] = '\0';
+			param3[0] = '\0';
+
 		}
 
 		if (strcmp(instruccionConsola, COPIARDEYAMAALOCAL) == 0) {
@@ -329,12 +462,110 @@ void ejecutarConsola() {
 				printf("Algun nodo se desconecto\n");
 			if (resultado == 0)
 				printf("Escritura en local ok\n");
+
+			instruccionConsola[0] = '\0';
+			param1[0] = '\0';
+			param2[0] = '\0';
 		}
 
-		instruccionConsola[0] = '\0';
-		param1[0] = '\0';
-		param2[0] = '\0';
+		if (strcmp(instruccionConsola, RENOMBRAR) == 0) {
 
+			if (strncmp(param1, "-d", 2) != 0) {
+
+				int renombrar = renombrarArchivo(param1, param2);
+
+				switch (renombrar) {
+				case 0:
+					printf("Renombrado ok\n");
+					break;
+				case -1:
+					printf("No existe el archivo especificado\n");
+					break;
+				case -2:
+					printf("El archivo destino ya existe\n");
+					break;
+				}
+
+				instruccionConsola[0] = '\0';
+				param1[0] = '\0';
+				param2[0] = '\0';
+				param3[0] = '\0';
+			}
+
+			if (strncmp(param1, "-d", 2) == 0) {
+
+				int renombrar = renombrarDirectorio(param2, param3);
+
+				switch (renombrar) {
+				case 0:
+					printf("Renombrado ok\n");
+					break;
+				case -1:
+					printf("No existe el directorio especificado\n");
+					break;
+				case -2:
+					printf("El directorio destino ya existe\n");
+					break;
+				}
+
+				instruccionConsola[0] = '\0';
+				param1[0] = '\0';
+				param2[0] = '\0';
+				param3[0] = '\0';
+			}
+
+		}
+
+		if (strcmp(instruccionConsola, MOVER) == 0) {
+
+			if (strncmp(param1, "-d", 2) != 0) {
+
+				int mover = moverArchivo(param1, param2);
+
+				switch (mover) {
+				case 0:
+					printf("Mover ok\n");
+					break;
+				case -1:
+					printf("No existe el archivo especificado\n");
+					break;
+				case -2:
+					printf("El archivo en el destino ya existe\n");
+					break;
+				case -3:
+					printf("No existe el directorio destino\n");
+					break;
+				}
+
+				instruccionConsola[0] = '\0';
+				param1[0] = '\0';
+				param2[0] = '\0';
+				param3[0] = '\0';
+			}
+
+			if (strncmp(param1, "-d", 2) == 0) {
+
+				int renombrar = renombrarDirectorio(param2, param3);
+
+				switch (renombrar) {
+				case 0:
+					printf("Renombrado ok\n");
+					break;
+				case -1:
+					printf("No existe el directorio especificado\n");
+					break;
+				case -2:
+					printf("El directorio destino ya existe\n");
+					break;
+				}
+
+				instruccionConsola[0] = '\0';
+				param1[0] = '\0';
+				param2[0] = '\0';
+				param3[0] = '\0';
+			}
+
+		}
 	}
-}
 
+}

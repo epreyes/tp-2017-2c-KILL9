@@ -202,3 +202,33 @@ t_nodo* buscarNodoPorId_2(int idNodo) {
 	return NULL;
 
 }
+
+t_nodo* obtenerNodoDeDataBinPorId(int idNodo) {
+	t_config* nodoConfig = malloc(sizeof(t_config));
+	t_nodo* nodo=malloc(sizeof(t_nodo));
+
+	nodoConfig = config_create(fs->m_nodos);
+
+	char* nodoLibre = string_new();
+	string_append(&nodoLibre, "Nodo");
+	string_append(&nodoLibre, string_itoa(idNodo));
+	string_append(&nodoLibre, "Libre");
+
+	char* nodoTotal = string_new();
+		string_append(&nodoTotal, "Nodo");
+		string_append(&nodoTotal, string_itoa(idNodo));
+		string_append(&nodoTotal, "Total");
+
+	if (config_has_property(nodoConfig, nodoLibre)) {
+
+		nodo->libre=config_get_int_value(nodoConfig, nodoLibre);
+		nodo->total=config_get_int_value(nodoConfig, nodoTotal);
+		nodo->id = idNodo;
+	}
+
+	free(nodoLibre);
+	config_destroy(nodoConfig);
+
+	return nodo;
+
+}

@@ -44,9 +44,9 @@ replanification = 'F';
 	char code;
 
 	readBuffer(masterSocket, sizeof(char), &(code));
-	if(code!='T'){
+	if(code!='T'){ //'E':error
 		log_warning(logger,"El archivo solicitado no existe o yamafs se encuentra desconectado.");
-		exit(1);
+		abort();
 	}
 	transform_rs* yamaAnswer=malloc(sizeof(transform_rs));
 	readBuffer(masterSocket, sizeof(int), &(yamaAnswer->bocksQuantity));
@@ -90,6 +90,14 @@ void *runTransformThread(void* data){
 	int i, counter=0;
 	char* scriptString;
 
+	//CONEXION CON WORKER
+		log_info(logger,"Estableciendo conexión con nodo %d",datos->node);
+		if(openNodeConnection(datos->node, datos->ip, datos->port)!=0){
+			checkReplanification(datos->node);
+			return NULL;
+		};
+
+
 //PREPARO PAQUETE PARA WORKER---
 	scriptString=serializeFile(script_transform);	//hacer que se genere una sola vez(?)
 	tr_node* nodeData=malloc(sizeof(tr_node));
@@ -98,6 +106,7 @@ void *runTransformThread(void* data){
 	nodeData->file=malloc(nodeData->fileSize);		//ver el +1
 	strcpy(nodeData->file,scriptString);
 	nodeData->blocksSize=datos->blocksCount;
+	free(scriptString);
 
 //SERIALIZO---
 	void* buffer = malloc(sizeof(char)+sizeof(int)+nodeData->fileSize+sizeof(int)+(sizeof(block)*(datos->blocksCount)));
@@ -109,28 +118,25 @@ void *runTransformThread(void* data){
 	counter+=nodeData->fileSize;
 	memcpy(buffer+counter,&(nodeData->blocksSize),sizeof(int));
 	counter+=sizeof(int);
-
 	for (i = 0; i < (datos->blocksCount); ++i){
 		memcpy(buffer+counter+(i*sizeof(block)),&(datos->blocks[i].pos),sizeof(int));
 		memcpy(buffer+counter+sizeof(int)+i*sizeof(block),&(datos->blocks[i].size),sizeof(int));
 		memcpy(buffer+counter+sizeof(int)+sizeof(int)+i*sizeof(block),(datos->blocks[i].tmp),28);
 	}
 
-//CONEXION CON WORKER
-	log_info(logger,"Estableciendo conexión con nodo %d",datos->node);
-	if(openNodeConnection(datos[0].node, datos[0].ip, datos[0].port)!=0){
-		checkReplanification(datos->node);
-		return NULL;
-	};
+	free(nodeData->file);
+	free(nodeData);
+
 
 //ENVIO DATOS A WORKER
 	counter=1+4+(nodeData->fileSize)+4+(36*(datos->blocksCount));
 	if(send(nodeSockets[datos->node],buffer,counter,0)<0){
 		log_warning(logger, "Nodo %d: Desconectado", datos->node);
 		checkReplanification(datos->node);
+		free(buffer);
 		return NULL;
 	};
-
+	free(buffer);
 	log_trace(logger,"Nodo %d: Transformación iniciada", datos->node);
 
 //METRICS
@@ -149,7 +155,11 @@ void *runTransformThread(void* data){
 			parallelAux--;
 		pthread_mutex_unlock(&parallelTasks);
 
-		readBuffer(nodeSockets[datos->node], sizeof(int), &(answer->block));
+		//Agrego recepción de error si se mata el worker
+		if(readBuffer(nodeSockets[datos->node], sizeof(int), &(answer->block))!=0){
+			checkReplanification(datos->node);
+			return NULL;
+		};
 		readBuffer(nodeSockets[datos->node], sizeof(char), &(answer->result));
 
 //RESPONDO A YAMA
@@ -175,10 +185,8 @@ void *runTransformThread(void* data){
 		printf("\t nodo:%d \t pos:%d  \t tam:%d\n", datos[0].node, datos[0].blocks[i].pos, datos[0].blocks[i].size);
 	}
 */
-	free(buffer);
-	free(nodeData->file);
-	free(nodeData);
-	free(scriptString);
+	//free(datos);
+
 	return NULL;
 }
 
@@ -213,7 +221,7 @@ int transformFile(char* filename){
 
 	while(recordCounter<totalRecords){
 		nodo = yamaBlocks[recordCounter].nodo;	//init first key
-		while(yamaBlocks[recordCounter].nodo==nodo && recordCounter<totalRecords){
+		while(recordCounter<totalRecords && yamaBlocks[recordCounter].nodo==nodo){
 			blocks=(block *) realloc(blocks,(sizeof(block)*(blockCounter+1)));
 			blocks[blockCounter].pos = yamaBlocks[recordCounter].bloque;
 			blocks[blockCounter].size = yamaBlocks[recordCounter].tamanio;
@@ -257,10 +265,12 @@ int transformFile(char* filename){
 	free(dataThreads);
 	free(threads);
 	free(blocks);
+	free(yamaAnswer->blockData);
 	free(yamaAnswer);
+	free(yamaBlocks);
 
 
-//EJECUTO REPLANIFICACIÓN--------
+//EJECUTO REPLANIFICACIÓN-------S-
 	if(replanification == 'T'){
 		log_info(logger,"Replanificación confirmada, iniciando transformación de pendientes");
 		transformFile(filename);

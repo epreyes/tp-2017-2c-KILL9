@@ -12,7 +12,7 @@ void loadServer(void) {
 	struct sockaddr_in workerAddr;
 	workerAddr.sin_family = AF_INET;
 	workerAddr.sin_addr.s_addr = INADDR_ANY;
-	workerAddr.sin_port = htons(config_get_int_value(config, "WORKER_PUERTO"));
+	workerAddr.sin_port = htons(config_get_int_value(config, "PORT_WORKER"));
 	int workerSocket = socket(AF_INET, SOCK_STREAM, 0);
 
 	int activado = 1;
@@ -21,12 +21,14 @@ void loadServer(void) {
 
 	if (bind(workerSocket, (void*) &workerAddr, sizeof(workerAddr)) != 0) {
 		log_error(logger, "No se pudo realizar el bind en puerto %d",
-				config_get_int_value(config, "WORKER_PUERTO"));
+				config_get_int_value(config, "PORT_WORKER"));
 		exit(1);
 	}
 	log_trace(logger, "Worker iniciado en puerto %d",
-			config_get_int_value(config, "WORKER_PUERTO"));
+			config_get_int_value(config, "PORT_WORKER"));
 	listen(workerSocket, 100);
+	int indexpid=0;
+
 
 	struct sockaddr_in clientAddr;
 	unsigned int len;
@@ -46,6 +48,8 @@ void loadServer(void) {
 				perror("ERROR on fork");
 				exit(1);
 			}
+			pids[indexpid]=pid;
+			indexpid++;
 			//si estoy en el proceso hijo, atiendo solicitud
 			if (pid == 0) {
 				socket_master = clientSocket;
@@ -66,7 +70,7 @@ void loadServer(void) {
 void openFileSystemConnection(void) {
 	struct sockaddr_in fileSystemAddr;
 	char* fileSystem_ip = config_get_string_value(config, "IP_FILESYSTEM");
-	int fileSystem_port = config_get_int_value(config, "PUERTO_FILESYSTEM");
+	int fileSystem_port = config_get_int_value(config, "PORT_FILESYSTEM");
 	fileSystemAddr.sin_family = AF_INET;
 	fileSystemAddr.sin_addr.s_addr = inet_addr(fileSystem_ip);
 	fileSystemAddr.sin_port = htons(fileSystem_port);

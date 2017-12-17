@@ -59,9 +59,9 @@ void viewNodeTable() {
 	for (index = 0; index < list_size(yama->tabla_nodos); index++) {
 		elem_tabla_nodos* node = list_get(yama->tabla_nodos, index);
 		printf(
-				"ID: %d, Disponibilidad: %d, Tareas en Progreso: %d, Tareas Finalizadas: %d\n",
+				"ID: %d, Disponibilidad: %d, Tareas en Progreso: %d, Tareas Finalizadas: %d, errores: %d\n",
 				node->node_id, node->availability, node->tasks_in_progress,
-				node->tasts_done);
+				node->tasts_done, node->errors);
 	}
 	printf("----------------------------------------------\n");
 }
@@ -80,15 +80,40 @@ void viewPlannedTable() {
 	}
 }
 
+void deleteOfPlanedListByNode(int items, int node, int master) {
+	int i = 0;
+	for (i = 0; i < items; i++) {
+		int j = 0;
+		for (j = 0; j < list_size(yama->tabla_T_planificados); j++) {
+			elem_tabla_planificados* elem = list_get(yama->tabla_T_planificados,
+					j);
+			if (elem->data->nodo == node && elem->master == master) {
+				list_remove(yama->tabla_T_planificados, j);
+				break;
+			}
+		}
+
+	}
+}
+
+void deleteItems(void* elem) {
+	free(((elem_tabla_planificados*) elem)->data);
+	free(elem);
+}
+
 void deleteFromPlanedTable(int master, int node) {
 	int index = 0;
+	t_list* itemsToRemove = list_create();
 	for (index = 0; index < list_size(yama->tabla_T_planificados); index++) {
 		elem_tabla_planificados* planed = list_get(yama->tabla_T_planificados,
 				index);
-		if( planed->master == master && planed->data->nodo == node){
-			list_remove(yama->tabla_T_planificados, index);
+		if (planed->master == master && planed->data->nodo == node) {
+			list_add(itemsToRemove, planed);
 		}
 	}
+
+	deleteOfPlanedListByNode(list_size(itemsToRemove), node, master);
+	list_destroy_and_destroy_elements(itemsToRemove, &deleteItems);
 }
 
 void viewFileInfo() {
@@ -153,6 +178,7 @@ void addToNodeList(void* fsInfo) {
 			node->node_id = b->node2;
 			node->tasks_in_progress = 0;
 			node->tasts_done = 0;
+			node->errors = 0;
 			if (strcmp(b->node2_ip, "xxx") != 0) {
 				list_add(yama->tabla_nodos, node);
 			}
@@ -168,6 +194,29 @@ void increaseNodeCharge(int node_id) {
 	elem_tabla_nodos* node = list_get(yama->tabla_nodos, index);
 	node->availability--;
 	node->tasks_in_progress++;
+	if (node->errors > 0) {
+		node->errors = 0;
+	}
+	list_replace(yama->tabla_nodos, index, node);
+}
+
+void deleteNodeErrors() {
+	int index = 0;
+	if (!list_is_empty(yama->tabla_nodos)) {
+		for (index = 0; index < list_size(yama->tabla_nodos); index++) {
+			elem_tabla_nodos* node = list_get(yama->tabla_nodos, index);
+			node->errors = 0;
+			list_replace(yama->tabla_nodos, index, node);
+		}
+	}
+}
+
+void increaseNodeError(int node_id) {
+	int index = findNode(node_id);
+	elem_tabla_nodos* node = list_get(yama->tabla_nodos, index);
+	node->availability = 0;
+	node->tasks_in_progress = 0;
+	node->errors++;
 	list_replace(yama->tabla_nodos, index, node);
 }
 
@@ -239,22 +288,22 @@ char* getStatusName(char status) {
 void viewStateTable() {
 	t_list* stateTable = yama->tabla_estados;
 	printf("\n\n");
-	log_debug(yama->log,
-			"----------------------- Tabla de estados -----------------------");
-	log_debug(yama->log, "Cantidad de entradas: %d", list_size(stateTable));
-	log_debug(yama->log,
-			"----------------------------------------------------------------");
+	printf(
+			"------------------------------------------------------- Tabla de estados -------------------------------------------------------\n");
+	printf("Cantidad de entradas: %d\n", list_size(stateTable));
+	printf(
+			"--------------------------------------------------------------------------------------------------------------------------------\n");
 	int i = 0;
 	while (i < list_size(stateTable)) {
 		elem_tabla_estados* row = list_get(stateTable, i);
 		i++;
-		log_debug(yama->log,
-				"Job: %d - Master: %d - Nodo: %d - Bloque: %d - Etapa: %s - Archivo Temporal: %s - Estado: %s",
+		printf(
+				"Job: %d - Master: %d - Nodo: %d - Bloque: %d - Etapa: %s - Archivo Temporal: %s - Estado: %s\n",
 				row->job, row->master, row->node, row->block,
 				getStageName(row->op), row->tmp, getStatusName(row->status));
+		printf(
+				"--------------------------------------------------------------------------------------------------------------------------------\n");
 	}
-	log_debug(yama->log,
-			"----------------------- Fin Tabla de estados -----------------------");
 }
 
 int findInProcessTasks(int master, int node_id, int block, char op, t_job* job) {
@@ -345,13 +394,17 @@ void addToGlobalReductionPlanedTable(int master, rg_datos* nodeData,
 
 void updateTasksAborted(int master, int node, char codeOp, t_job* job) {
 	int index = 0;
+	int sentError = 0;
 	for (index = 0; index < list_size(yama->tabla_estados); index++) {
 		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
 		if ((elem->node == node) && (elem->master == master)
 				&& (elem->op == codeOp) && (elem->status == 'P')
 				&& (elem->job == job->id)) {
 			updateStatusTable(master, codeOp, node, elem->node_block, 'E', job);
-			sendErrorToFileSystem(elem->fileProcess);
+			if (sentError == 0) {
+				sendErrorToFileSystem(elem->fileProcess);
+				sentError = 1;
+			}
 		}
 	}
 }
@@ -362,7 +415,7 @@ t_list* getTaskFailed(int master, int node, t_job* job) {
 	for (index = 0; index < list_size(yama->tabla_estados); index++) {
 		elem_tabla_estados* elem = list_get(yama->tabla_estados, index);
 		if ((elem->node == node) && (elem->master == master)
-				&& (elem->op == 'T') && (elem->status == 'P')
+				&& (elem->op == 'T')
 				&& (elem->job == job->id)) {
 			list_add(tasksFails, elem);
 			updateStatusTable(master, 'T', node, elem->node_block, 'E', job);
@@ -383,9 +436,12 @@ block_info* findBlock(int block) {
 			memcpy(blockInfo, info + (j * sizeof(block_info)),
 					sizeof(block_info));
 			if (blockInfo->block_id == block) {
+				free(info);
 				return blockInfo;
 			}
+			free(blockInfo);
 		}
+		free(info);
 	}
 
 	return NULL;

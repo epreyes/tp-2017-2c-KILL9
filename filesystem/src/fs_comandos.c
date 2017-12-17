@@ -530,9 +530,8 @@ char* leerArchivo(char* path, int* codigoError) {
 			t_nodoSelect* res = list_get(nodosALeer, j);
 
 			lect->nroBloque = bi->nroBloque;
-			//lect->idNodo = atoi(bi->idNodo0); // TODO: Siempre busco en la primera copia, debe distribuirse
-
 			lect->idNodo = res->idNodo;
+
 			log_debug(logger, "Nodo seleccionado para leer de id: %d",
 					res->idNodo);
 
@@ -566,7 +565,13 @@ char* leerArchivo(char* path, int* codigoError) {
 				break;
 			}
 
-			int lectura = leerDeDataNode(bi->idBloque0, nodo->socketNodo,
+			int idBloque = 0;
+			if (atoi(bi->idNodo0) == nodo->id)
+				idBloque = bi->idBloque0;
+			if (atoi(bi->idNodo1) == nodo->id)
+				idBloque = bi->idBloque1;
+
+			int lectura = leerDeDataNode(idBloque, nodo->socketNodo,
 					bi->finBytes, bi->nroBloque, logger);
 
 			if (lectura == -2) {
@@ -631,21 +636,22 @@ char* leerArchivo(char* path, int* codigoError) {
 		offset += lect->finBytes;
 	}
 
-	list_destroy_and_destroy_elements(lista, eliminarItemLectura);
+	void* eliminarItemLectura(t_lectura* lect) {
+		free(lect->lectura);
+		free(lect);
+		return 0;
+	}
+
+	list_destroy_and_destroy_elements(lista, (void*) eliminarItemLectura);
+
+	lista = NULL;
 
 	sem_post(&semLista);
 
-	lista = NULL;
 	list_destroy(nodosExc);
 	free(archivo);
 
 	return respuesta;
-}
-
-void* eliminarItemLectura(t_lectura* lect) {
-	free(lect->lectura);
-	free(lect);
-	return 0;
 }
 
 // Obtiene la lista de nodos a leer optima. Excluye los nodos de la lista nodosExcluir
@@ -701,11 +707,6 @@ t_list* obtenerNodosALeer(t_list* bloques, t_list* nodosExcluir) {
 	log_debug(logger, "Nodos sin repetir: %d - nodos a excluir: %d",
 			list_size(nodosSinRepetir), list_size(nodosExcluir));
 
-	/*	if (list_size(nodosSinRepetir) == list_size(nodosExcluir)) {
-	 list_destroy(nodosSinRepetir);
-	 return NULL;
-	 }*/
-
 	list_clean(nodosSinRepetir);
 
 	// Creo lista de resultados
@@ -714,8 +715,10 @@ t_list* obtenerNodosALeer(t_list* bloques, t_list* nodosExcluir) {
 		t_bloqueInfo* bi = list_get(bloques, j);
 		t_nodoSelect* ns = malloc(sizeof(t_nodoSelect));
 		ns->nroBloque = bi->nroBloque;
+
 		ns->nodo1 = atoi(bi->idNodo0);
 		ns->nodo2 = atoi(bi->idNodo1);
+
 		list_add(resultado, ns);
 	}
 
@@ -787,14 +790,14 @@ t_list* obtenerNodosALeer(t_list* bloques, t_list* nodosExcluir) {
 	int k = 0;
 
 	int encontro = 0;
-	int iteraciones=0;
+	int iteraciones = 0;
 
 	// Selecciono nodos
 	for (i = 0; i < list_size(resultado); i++) {
 		encontro = 0;
 		iteraciones++;
-		if (iteraciones>list_size(resultado)*2) {
-			log_debug(logger,"Iteraciones: %d", iteraciones);
+		if (iteraciones > list_size(resultado) * 2) {
+			log_debug(logger, "Iteraciones: %d", iteraciones);
 			return NULL;
 		}
 
@@ -810,7 +813,6 @@ t_list* obtenerNodosALeer(t_list* bloques, t_list* nodosExcluir) {
 			}
 		}
 
-
 		// Si no encontro nodo sin uso en 0->reseteo todos y vuelvo a buscar
 		if (encontro == 0) {
 			i--;
@@ -822,7 +824,7 @@ t_list* obtenerNodosALeer(t_list* bloques, t_list* nodosExcluir) {
 		}
 
 	}
-	log_debug(logger,"Iteraciones: %d", iteraciones);
+	log_debug(logger, "Iteraciones: %d", iteraciones);
 
 	list_destroy(nodosSinRepetir);
 
@@ -882,6 +884,602 @@ int copiarDesdeYamaALocal(char* origen, char* destino) {
 	// Escribo archivo
 	memcpy(destinoArchivo, lectura, aInfo->tamanio);
 
+	// Libero
+	munmap(destinoArchivo, aInfo->tamanio);
+	free(lectura);
+	free(aInfo);
+	free(dest);
+
 	return 0;
 
 }
+
+// Elimina un bloque de un nodo, eliminando la referencia del archivo indicado
+int eliminarBloque(char* pathArchivo, int nroBloque, int nroCopia) {
+
+	// Primero identifico a que archivo pertence el bloque a eliminar
+	// Elimino una instancia del bloque del archivo en la lista tablaArchivos (mientras me quede 1 instancia del bloque)
+
+	t_archivoInfo* archInfo = obtenerArchivoInfo(pathArchivo);
+
+	if (archInfo == NULL) {
+		return -1;
+	}
+
+	char* dirArchivo = obtenerDirArchivo(pathArchivo);
+
+	// Traduzco a path nativo (porque la lista de archivos tiene los archivos en este formato)
+	int indiceDir = 0;
+	if (strncmp(pathArchivo, "./", 2) == 0)
+		indiceDir = 0;
+	else
+		indiceDir = obtenerIndiceDir(dirArchivo);
+
+	char *dirMetadata = string_new();
+
+	string_append(&dirMetadata, fs->m_archivos);
+	string_append(&dirMetadata, string_itoa(indiceDir));
+	string_append(&dirMetadata, "/");
+	string_append(&dirMetadata, obtenerNombreArchivo(pathArchivo));
+	string_append(&dirMetadata, ".csv");
+
+	int k = 0;
+	for (k = 0; k < list_size(archInfo->bloques); k++) {
+
+		t_bloqueInfo* bi = list_get(archInfo->bloques, k);
+
+		if ((bi->nroBloque == nroBloque)) {
+
+			// Busco en la lista de archivos el archivo que corresponda con el bloque indicado a eliminar (idBloque, idNodo)
+			int y = 0;
+			int z = 0;
+
+			sem_wait(&semTablaArchivos);
+
+			for (y = 0; y < list_size(tablaArchivos); y++) {
+				t_archivoInit* lb = list_get(tablaArchivos, y);
+				if (strcmp(lb->identificador, dirMetadata) == 0) {
+					// Busco su bloque (en lb) y elimino una instancia (mientras no quede 0)
+					int elimino = 0;
+					for (z = 0; z < list_size(lb->bloques); z++) {
+						t_bloqueInit* bli = list_get(lb->bloques, z);
+
+						if (bli->nroBloque == nroBloque) {
+
+							// Elimino solo si tiene mas de 1 instancia
+							if (bli->cantInstancias > 1) {
+								bli->cantInstancias -= 1;
+								elimino = 1;
+								free(archInfo);
+								log_info(logger,
+										"Eliminando nro bloque %d - copia %d",
+										nroBloque, nroCopia);
+
+								// Elimino de metadata
+								log_info(logger,
+										"Abriendo archivo de metadata para eliminar: %s",
+										dirMetadata);
+								eliminarBloqueArchivoMd(dirMetadata, nroBloque,
+										nroCopia);
+
+								free(dirMetadata);
+
+								log_info(logger,
+										"Se elimino bloque de metadata de archivo");
+
+								return 0;
+
+							}
+
+						}
+
+					}
+
+					if (elimino == 0) {
+						// No se puede eliminar
+						log_error(logger,
+								"No se pudo eliminar el bloque pedido, es el unico del archivo");
+						free(dirMetadata);
+						free(archInfo);
+						return -1;
+					}
+
+				}
+
+			}
+
+			sem_post(&semTablaArchivos);
+
+		}
+
+	}
+
+	free(dirMetadata);
+	free(archInfo);
+
+	log_error(logger, "No se pudo eliminar el bloque pedido porque no existe");
+
+	return -1;
+
+}
+
+// Elimina una entrada de bloque de un archivo de su metadata
+void eliminarBloqueArchivoMd(char* dirMetadata, int nroBloque, int nroCopia) {
+	t_config * metadata = config_create(dirMetadata);
+
+	if (metadata == NULL) {
+		log_error(logger, "No se pudo abrir la metadata de archivo %s",
+				dirMetadata);
+		return;
+	}
+
+	char* bloque = string_new();
+	string_append(&bloque, "BLOQUE");
+	string_append(&bloque, string_itoa(nroBloque));
+	string_append(&bloque, "COPIA");
+	string_append(&bloque, string_itoa(nroCopia));
+
+	if (config_has_property(metadata, bloque)) {
+
+		config_remove_key(metadata, bloque);
+		config_save(metadata);
+
+	} else {
+		return;
+	}
+
+}
+
+void config_remove_key(t_config * config, char *key) {
+	log_debug(logger, "Eliminado clave de archivo: %s", key);
+	dictionary_remove(config->properties, key);
+
+}
+
+char* obtenerMd5(char* pathArchivo) {
+
+	if (existeArchivo(pathArchivo) == -1)
+		return NULL;
+
+	int escribir = copiarDesdeYamaALocal(pathArchivo, "/tmp");
+
+	char* tmpsalida = string_new();
+	string_append(&tmpsalida, "/tmp/");
+	string_append(&tmpsalida, obtenerNombreArchivo(pathArchivo));
+
+	char* comando = malloc(26 + strlen(tmpsalida));
+
+	asprintf(&comando, "md5sum %s > /tmp/md5temporal", tmpsalida);
+
+	log_info(logger, "Ejecutando comando %s", comando);
+
+	system(comando);
+	free(comando);
+
+	int fd;
+
+	if ((fd = open("/tmp/md5temporal", O_RDWR)) == -1) {
+		log_error(logger, "No se pudo abrir el archivo: %s", tmpsalida);
+	}
+
+	struct stat sbuf;
+
+	if (stat(tmpsalida, &sbuf) == -1) {
+		perror("stat");
+	}
+
+	char* md5 = malloc(sizeof(char) * sbuf.st_size);
+
+	md5 = mmap((caddr_t) 0, sbuf.st_size, PROT_READ, MAP_SHARED, fd, 0);
+
+	if (md5 == NULL) {
+		perror("error en map\n");
+	}
+
+	log_info(logger, "Md5sum de archivo obtenido: %s (%d)", md5,
+			sizeof(char) * sbuf.st_size);
+
+	free(tmpsalida);
+
+	return md5;
+
+}
+
+// Elimina un directorio. Debe estar vacio
+int eliminarDirectorio(char* path) {
+
+	if (!existeDirectorio(path)) {
+		return NO_EXISTE_DIR_DESTINO;
+	}
+
+	t_list* archivos = list_create();
+	archivos = listarArchivos(path);
+
+	if (list_size(archivos) > 0) {
+
+		void* eliminarItem(char* item) {
+			free(item);
+			return 0;
+		}
+
+		list_destroy_and_destroy_elements(archivos, eliminarItem);
+
+		return DIRECTORIO_NO_VACIO;
+	}
+
+
+
+	int indiceDir = obtenerIndiceDir(path);
+	log_debug(logger,
+			"Indice de directorio obtenido para eliminacion de directorio: %d",
+			indiceDir);
+
+	// Verifico si hay algun directorio que dependa de este
+
+	// 0 -1 raiz
+	// 1  0 primerDir
+	// 2  1 subDir
+
+	int i = 0;
+	t_directorio* dir = inicioTablaDirectorios;
+
+	dir++;
+
+	for (i = 1; i < MAX_DIR_FS; i++) {
+		if (dir->padre == indiceDir) {
+			return DIRECTORIO_NO_VACIO;
+		}
+		dir++;
+	}
+
+
+	i = 0;
+	dir = inicioTablaDirectorios;
+
+	dir++;
+
+	for (i = 1; i < MAX_DIR_FS; i++) {
+		if (dir->indice == indiceDir) {
+			dir->padre = -1;
+			memset(dir->nombre, '\0', 256);
+			return 0;
+		}
+		dir++;
+	}
+
+	return NO_EXISTE_DIR_DESTINO;
+
+}
+
+// Elimina un archivo. Implica eliminacion de metadata y limpieza de los bits de bloques usados
+int eliminarArchivo(char* pathArchivo) {
+
+	if (existeArchivo(pathArchivo) == -1)
+		return -1;
+
+	t_archivoInfo* archInfo = obtenerArchivoInfo(pathArchivo);
+
+	if (archInfo == NULL) {
+		return -1;
+	}
+
+	char* comando = string_new();
+
+	char* dirArchivo = obtenerDirArchivo(pathArchivo);
+
+	int indiceDir = 0;
+	if (strncmp(pathArchivo, "./", 2) == 0)
+		indiceDir = 0;
+	else
+		indiceDir = obtenerIndiceDir(dirArchivo);
+
+	char *dirMetadata = string_new();
+
+	string_append(&dirMetadata, fs->m_archivos);
+	string_append(&dirMetadata, string_itoa(indiceDir));
+	string_append(&dirMetadata, "/");
+	string_append(&dirMetadata, obtenerNombreArchivo(pathArchivo));
+	string_append(&dirMetadata, ".csv");
+
+	string_append(&comando, "rm ");
+	string_append(&comando, dirMetadata);
+
+	if (system(comando) != 0) {
+		log_error(logger, "Error ejecutando system rm");
+		return -1;
+	}
+
+	// Limpio el bitmap
+
+	int i = 0;
+
+	int cantBloques = list_size(archInfo->bloques);
+
+	for (i = 0; i < cantBloques; i++) {
+		t_bloqueInfo* bi = list_get(archInfo->bloques, i);
+
+        // Actualizo original
+
+        int idNodo=atoi(bi->idNodo0);
+
+        t_bitarray* ba = obtenerBitMapBloques(idNodo);
+
+        // Si no esta en memoria, lo busco en disco
+        if (ba == NULL) {
+        	t_nodo* nod = obtenerNodoDeDataBinPorId(idNodo);
+        	nod->id = idNodo;
+        	ba = obtenerBitMapBloquesNodo(nod);
+        }
+
+        log_info(logger,
+                "Limpiando bloque en nodo id: %d - idbloque: %d",
+                idNodo, bi->idBloque0);
+
+        bitarray_clean_bit(ba, bi->idBloque0);
+
+        t_nodo* nodo=buscarNodoPorId_(idNodo);
+
+        if (nodo!=NULL)
+            // Si esta conectado, actualizo la lista de nodos en memoria
+            nodo->libre++;
+        else
+        {
+            // Obtengo la info de nodos.bin, creo una variable nodo y actualizo
+            nodo = obtenerNodoDeDataBinPorId(idNodo);
+            nodo->libre++;
+            nodo->id = idNodo;
+        }
+
+        actualizarConfigNodoEnBin(nodo);
+
+        // Actualizo copia
+
+        idNodo=atoi(bi->idNodo1);
+
+        ba = obtenerBitMapBloques(idNodo);
+
+        // Si no esta en memoria, lo busco en disco
+		if (ba == NULL) {
+			t_nodo* nod = obtenerNodoDeDataBinPorId(idNodo);
+			nod->id = idNodo;
+			ba = obtenerBitMapBloquesNodo(nod);
+		}
+
+        log_info(logger,
+                "Limpiando bloque en nodo id: %d - idbloque: %d",
+                idNodo, bi->idBloque1);
+
+        bitarray_clean_bit(ba, bi->idBloque1);
+
+
+        nodo=buscarNodoPorId_(idNodo);
+
+
+        if (nodo!=NULL)
+            // Si esta conectado, actualizo la lista de nodos en memoria
+            nodo->libre++;
+        else
+        {
+            // Obtengo la info de nodos.bin, creo una variable nodo y actualizo
+            nodo = obtenerNodoDeDataBinPorId(idNodo);
+            nodo->libre++;
+            nodo->id = idNodo;
+        }
+
+        actualizarConfigNodoEnBin(nodo);
+
+
+	}
+
+	free(comando);
+	free(dirMetadata);
+	free(dirArchivo);
+
+	return 0;
+
+}
+
+// Renombra el archivo dado por parametro al nombre indicado
+int renombrarArchivo(char* pathArchivo, char* nombreDestino) {
+
+	if (existeArchivo(pathArchivo) == -1)
+		return -1;
+
+	// Chequeo que no exista un archivo con el nombre "nombreDestino" en el directorio del archivo a renombrar
+
+	int indiceDir = 0;
+	if (strncmp(pathArchivo, "", 0) == 0)
+		indiceDir = 0;
+	else
+		indiceDir = obtenerIndiceDir(pathArchivo);
+
+
+	char* dirs=string_new();
+	if (strcmp(obtenerDirArchivo(pathArchivo),"")!=0) {
+		string_append(&dirs, obtenerDirArchivo(pathArchivo));
+		string_append(&dirs, "/");
+	}
+	string_append(&dirs,nombreDestino);
+
+	log_info(logger,"Validando existencia de %s", dirs);
+
+	if (existeArchivo(dirs) != -1) {
+		free(dirs);
+		return -2;
+	}
+
+	free(dirs);
+
+	char *dirMetadataO = string_new();
+
+	string_append(&dirMetadataO, fs->m_archivos);
+	string_append(&dirMetadataO, string_itoa(indiceDir));
+	string_append(&dirMetadataO, "/");
+	string_append(&dirMetadataO, obtenerNombreArchivo(pathArchivo));
+	string_append(&dirMetadataO, ".csv");
+
+	char *dirMetadataD = string_new();
+
+	string_append(&dirMetadataD, fs->m_archivos);
+	string_append(&dirMetadataD, string_itoa(indiceDir));
+	string_append(&dirMetadataD, "/");
+	string_append(&dirMetadataD, nombreDestino);
+	string_append(&dirMetadataD, ".csv");
+
+	char *comando = string_new();
+
+	string_append(&comando, "mv ");
+	string_append(&comando, dirMetadataO);
+	string_append(&comando, " ");
+	string_append(&comando, dirMetadataD);
+
+	log_info(logger,"Ejecutando comando %s", comando);
+
+	if (system(comando) != 0) {
+		log_error(logger, "Error ejecutando system mv");
+		return -1;
+	}
+
+	free(dirMetadataO);
+	free(dirMetadataD);
+	free(comando);
+
+	return 0;
+
+}
+
+
+// Renombra el directorio dado por parametro al nombre indicado
+int renombrarDirectorio(char* pathDirectorio, char* nombreDestino) {
+
+	if (existeDirectorio(pathDirectorio) == -1)
+		return -1;
+
+	// Chequeo que no exista un directorio con el nombre "nombreDestino" en el directorio del directorio a renombrar
+
+	int dirPadre=obtenerIndiceDirPadre(pathDirectorio);
+
+	int indiceDirectorio = 0;
+	if (strncmp(pathDirectorio, "", 2) == 0)
+		indiceDirectorio = 0;
+	else
+		indiceDirectorio = obtenerIndiceDir(pathDirectorio);
+
+	int i = 0;
+	t_directorio* dir = inicioTablaDirectorios;
+
+	log_info(logger,"Verificando si existe el directorio destino (%s) en el directorio padre de (%s) (%d)", nombreDestino, pathDirectorio, dirPadre);
+
+	for (i = 0; i < MAX_DIR_FS; i++) {
+		if (dir->padre == dirPadre && strcmp(dir->nombre,nombreDestino)==0) {
+			return -2;
+		}
+		dir++;
+	}
+
+	i = 0;
+	dir = inicioTablaDirectorios;
+
+	dir++;
+
+	for (i = 1; i < MAX_DIR_FS; i++) {
+		if (dir->indice == indiceDirectorio) {
+			strcpy(dir->nombre,nombreDestino);
+			return 0;
+		}
+		dir++;
+	}
+
+	return 0;
+
+}
+
+// Mueve un archivo a un directorio especifico
+
+//TODO: usar script externo para hacer el mv
+int moverArchivo(char* pathArchivo, char* dirDestino) {
+
+	if (existeArchivo(pathArchivo) == -1)
+		return -1;
+
+
+	int indiceDirectorioD = 0;
+	if (strncmp(dirDestino, ".", 1) == 0)
+		indiceDirectorioD = 0;
+	else
+		indiceDirectorioD = obtenerIndiceDir(dirDestino);
+
+	int indiceDirectorioO = 0;
+
+	indiceDirectorioO = obtenerIndiceDirPadre(pathArchivo);
+
+
+	char* dirs=string_new();
+	if (strcmp(dirDestino,"")!=0) {
+		string_append(&dirs, dirDestino);
+		string_append(&dirs, "/");
+	}
+	string_append(&dirs,obtenerNombreArchivo(pathArchivo));
+
+	log_info(logger,"Validando existencia de %s", dirs);
+
+	// Validar que exista el directorio destino
+	if (!existeDirectorio(dirDestino)) {
+		free(dirs);
+		return -3;
+	}
+
+	// Validar que no exista el archivo en el destino
+	if (existeArchivo(dirs) != -1) {
+		free(dirs);
+		return -2;
+	}
+
+	free(dirs);
+
+
+	char *dirMetadataO = string_new();
+
+	string_append(&dirMetadataO, fs->m_archivos);
+	string_append(&dirMetadataO, string_itoa(indiceDirectorioO));
+	string_append(&dirMetadataO, "/");
+	string_append(&dirMetadataO, obtenerNombreArchivo(pathArchivo));
+	string_append(&dirMetadataO, ".csv");
+
+	char *dirMetadataD = string_new();
+
+	string_append(&dirMetadataD, fs->m_archivos);
+	string_append(&dirMetadataD, string_itoa(indiceDirectorioD));
+	string_append(&dirMetadataD, "/");
+	string_append(&dirMetadataD, obtenerNombreArchivo(pathArchivo));
+	string_append(&dirMetadataD, ".csv");
+
+
+	char *comando = string_new();
+
+	string_append(&comando, "cp ");
+	string_append(&comando, dirMetadataO);
+	string_append(&comando, " ");
+	string_append(&comando, dirMetadataD);
+
+
+	log_info(logger,"Ejecutando comando %s", comando);
+
+	if (system(comando) != 0) {
+		log_error(logger, "Error ejecutando system cp");
+		return -1;
+	}
+
+	remove(dirMetadataO);
+
+	free(comando);
+
+	free(dirMetadataO);
+	free(dirMetadataD);
+
+	return 0;
+
+}
+
+
+

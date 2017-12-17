@@ -37,13 +37,13 @@ char* regenerateScript(char* fileContent, FILE* script, char operation, int sock
 
 
 void loadConfigs(){
-	char* CONFIG_PATH = "properties/worker.properties";
+	char* CONFIG_PATH = "../properties/node.properties";
 
 	if(!(config = config_create(CONFIG_PATH))){
 		log_error(logger, "No se pudo cargar el archivo de configuración");
 		exit(1);
 	};
-	if(!(config_has_property(config,"WORKER_PUERTO"))){
+	if(!(config_has_property(config,"PORT_WORKER"))){
 		log_error(logger, "Error al cargar archivos de configuración");
 		config_destroy(config);
 		exit(1);
@@ -82,7 +82,12 @@ char* generateAuxFile(){
 	return name;
 }
 
-
+char* generateBlockFileName(int pos){
+	char* name = malloc(sizeof(char)*28);
+	long timestamp = current_timestamp();
+	asprintf(&name, "/tmp/%ld-TMP-BLOCK%d",timestamp,pos);
+	return name;
+}
 
 int readBuffer(int socket,int size,void* destiny){
 	void* buffer = malloc(size);
@@ -107,7 +112,6 @@ char* serializeFile(char* fileName){
 	if(file==NULL){
 		log_warning(logger,"El archivo %s no existe",fileName);
 	}
-
 //---obtengo el tamaño del archivo
 	fseek(file,0,SEEK_END);
 	fileSize = ftell(file)+1;
@@ -141,8 +145,8 @@ char* generateFile(char* fileContent, char operation, int socket){
 
 
 
-char* generateBinFile(char* fileContent){
-	char* fileName = generateAuxFile();
+char* generateBlockFile(char* fileContent, int pos){
+	char* fileName = generateBlockFileName(pos);
 	FILE* file = fopen(fileName+1,"w");
 	if(file == NULL){
 		log_error(logger,"Error al crear el archivo %s", fileName);
@@ -150,12 +154,21 @@ char* generateBinFile(char* fileContent){
 	}
 	fputs(fileContent,file);
 	fclose(file);
-
 	log_info(logger,"Archivo tmp del contenido almacenado en \"%s\"", fileName);
 	return fileName;
 };
 
-
+char* generateGLFile(char* fileContent, char* name){
+	FILE* file = fopen(name+1,"w");
+	if(file == NULL){
+		log_error(logger,"Error al crear el archivo %s", name);
+		return NULL;
+	}
+	fputs(fileContent,file);
+	fclose(file);
+	log_info(logger,"Archivo tmp del contenido almacenado en \"%s\"", name);
+	return name;
+};
 
 
 
@@ -174,7 +187,7 @@ check (int test, const char * message, ...)
 
 
 void map_data_node() {
-	log_info(logger," Inicio mapeo del archivo bin en memoria \n");
+	log_info(logger,"Inicio mapeo del archivo bin en memoria");
 
 	int fd;
 	/*Informacion acerca del archivo */
@@ -182,18 +195,18 @@ void map_data_node() {
 	int status;
 	size_t size;
 
-	char* dataBinName = config_get_string_value(config,"RUTA_DATABIN");
+	char* dataBinName = config_get_string_value(config,"PATH_DATABIN");
 	/*Abrir el archivo para leer e escribir*/
 	fd = open(dataBinName, O_RDWR);
 	if(fd < 0){
-		log_error(logger,"Error al abrir el archivo\n");
+		log_error(logger,"Error al abrir el archivo");
 	}
 	check (fd < 0, "open %s failed: %s", dataBinName, strerror (errno));
 
 	/*Obtener el tamanio del archivo */
 	 status = fstat(fd,&stat_data);
 	 if(status < 0){
-	 	log_error(logger,"Error al obtener el tamaño del archivo\n");
+	 	log_error(logger,"Error al obtener el tamaño del archivo");
 	 }
 	 check (status < 0, "stat %s failed: %s", dataBinName, strerror (errno));
 	 size = stat_data.st_size;
@@ -201,11 +214,11 @@ void map_data_node() {
 	 /* Memory-map del archivo. */
 	 mapped_data_node = mmap ((caddr_t) 0, size, PROT_READ, MAP_SHARED, fd, 0);
 	 if(mapped_data_node == MAP_FAILED){
-		 log_error(logger,"Error al mapear el archivo en memoria\n");
+		 log_error(logger,"Error al mapear el archivo en memoria");
 	 }
 	 check (mapped_data_node == MAP_FAILED, "mmap %s failed: %s",dataBinName, strerror (errno));
 
-	log_info(logger,"Fin mapeo de archivo en memoria \n");
+	 log_info(logger,"Fin mapeo de archivo en memoria");
 }
 
 /*****************************************************
@@ -214,12 +227,13 @@ void map_data_node() {
 char* getBlockData(int blockNumber, int sizeByte) {
 	log_info(logger, "Iniciando lectura  bloque archivo ");
 
-	void * buffer = malloc(sizeByte);
+	void* buffer = malloc(sizeByte);
 
-	void * pos = mapped_data_node + blockNumber * BLOCK_SIZE;
+	void* pos = mapped_data_node + blockNumber * BLOCK_SIZE;
 	memcpy(buffer, pos, sizeByte);
+
 	log_info(logger, "Fin lectura bloque archivo ");
-	return (char *) buffer;
+	return (char*)buffer;
 }
 
 

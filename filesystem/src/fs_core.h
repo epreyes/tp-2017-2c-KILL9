@@ -46,4 +46,6 @@ t_list* decidirNodo(t_list* nodos);
 bool estaFormateado();
 int obtenerEstadoArchivo(char* path);
 
+t_list* listarArchivosPorIndice(int indiceDir);
+
 #endif /* FS_CORE_H_ */

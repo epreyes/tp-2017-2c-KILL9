@@ -128,6 +128,7 @@ void abortInProcessJobs(int master) {
 			}
 		}
 	}
+	deleteNodeErrors();
 }
 
 /*
